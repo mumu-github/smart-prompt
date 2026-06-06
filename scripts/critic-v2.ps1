@@ -28,11 +28,14 @@ $requiredFiles = @(
   "prototypes/browser-extension/tests/site-adapters.test.js",
   "apps/desktop-shell/index.html",
   "apps/desktop-shell/src/app.js",
+  "apps/desktop-shell/scripts/tauri-command.js",
   "apps/desktop-shell/src-tauri/tauri.conf.json",
   "apps/desktop-shell/src-tauri/src/main.rs",
   "apps/desktop-shell/tests/desktop-shell.test.js",
+  "apps/desktop-shell/tests/tauri-runtime.test.js",
   "research/v2-implementation-rubric.md",
-  "research/v2-verification.md"
+  "research/v2-verification.md",
+  "scripts/check-v2-tauri-runtime.ps1"
 )
 
 foreach ($file in $requiredFiles) {
@@ -79,7 +82,8 @@ if ($RequireRuntimeEvidence) {
     "LOCAL_SERVICE_BRIDGE_PASS"
   )
   foreach ($marker in $markers) {
-    if (-not $verification.Contains($marker)) {
+    $pattern = '(?m)^\s*-\s*`?' + [regex]::Escape($marker) + '`?\b'
+    if (-not [regex]::IsMatch($verification, $pattern)) {
       Add-Failure "Missing runtime evidence marker: $marker"
     }
   }
@@ -91,5 +95,5 @@ if ($failures.Count -gt 0) {
 
 Write-Output "PASS: V2 automated checks passed."
 if (-not $RequireRuntimeEvidence) {
-  Write-Output "NOTE: runtime evidence was not required for this run; do not mark V2 complete without live-site and Tauri runtime verification."
+  Write-Output "NOTE: runtime evidence was not required for this run; do not mark V2 complete without live-site Insert/display evidence and real LLM quota proof."
 }

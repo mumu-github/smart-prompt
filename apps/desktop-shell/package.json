@@ -4,9 +4,10 @@
   "private": true,
   "description": "Tauri desktop shell scaffold for Smart Prompt V2.",
   "scripts": {
-    "dev": "tauri dev",
-    "build": "tauri build",
+    "dev": "node scripts/tauri-command.js dev",
+    "build": "node scripts/tauri-command.js build",
     "preview": "node tests/static-preview.js",
+    "runtime-test": "node tests/tauri-runtime.test.js",
     "test": "node tests/desktop-shell.test.js"
   },
   "devDependencies": {

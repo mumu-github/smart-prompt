@@ -23,15 +23,24 @@ assert.ok(app.includes("/skills/import-folder"));
 assert.ok(app.includes("set_global_shortcut"));
 assert.ok(app.includes("start_local_service"));
 assert.ok(app.includes("api-key"));
+assert.ok(app.includes("smart-prompt-shortcut"));
+assert.ok(app.includes("__smartPromptShortcutHits"));
+assert.ok(app.includes("__smartPromptEventsReady"));
 
 const rust = fs.readFileSync(path.join(root, "src-tauri/src/main.rs"), "utf8");
 assert.ok(rust.includes("TrayIconBuilder"));
 assert.ok(rust.includes("tauri_plugin_global_shortcut"));
 assert.ok(rust.includes("set_global_shortcut"));
+assert.ok(rust.includes("get_shortcut_hits"));
+assert.ok(rust.includes("on_shortcut"));
+assert.ok(rust.includes("ShortcutState::Pressed"));
+assert.ok(rust.includes("ShortcutRuntimeState"));
+assert.ok(rust.includes("Code::KeyP"));
 assert.ok(rust.includes("start_local_service"));
 assert.ok(rust.includes("Command::new(\"node\")"));
 
 const tauriConfig = JSON.parse(fs.readFileSync(path.join(root, "src-tauri/tauri.conf.json"), "utf8"));
 assert.equal(tauriConfig.productName, "Smart Prompt");
+assert.equal(tauriConfig.app.withGlobalTauri, true);
 
 console.log("desktop-shell static tests passed");

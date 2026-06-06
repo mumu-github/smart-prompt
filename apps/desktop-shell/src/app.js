@@ -34,6 +34,13 @@ function setStatus(text, ok) {
   els.status.style.color = ok ? "#166d69" : "#8b312d";
 }
 
+function recordShortcutTrigger(shortcut) {
+  window.__smartPromptShortcutHits = (window.__smartPromptShortcutHits || 0) + 1;
+  document.documentElement.dataset.shortcutHits = String(window.__smartPromptShortcutHits);
+  document.documentElement.dataset.lastShortcut = shortcut || "";
+  setStatus(`shortcut triggered: ${shortcut || "unknown"}`, true);
+}
+
 function renderSkills(skills) {
   if (!skills?.length) {
     els.skillList.innerHTML = '<div class="skill-row">No imported skills yet.</div>';
@@ -95,6 +102,15 @@ async function saveShortcut() {
   localStorage.setItem("smartPromptShortcut", els.shortcut.value);
 }
 
+async function bindTauriEvents() {
+  if (window.__TAURI__?.event?.listen) {
+    window.__TAURI__.event.listen("smart-prompt-shortcut", (event) => {
+      recordShortcutTrigger(event.payload);
+    }).catch((error) => setStatus(error.message, false));
+  }
+  window.__smartPromptEventsReady = true;
+}
+
 async function startLocalService() {
   if (window.__TAURI__?.core?.invoke) {
     await window.__TAURI__.core.invoke("start_local_service");
@@ -109,4 +125,7 @@ els.startService.addEventListener("click", () => startLocalService().catch((erro
 els.importFolder.addEventListener("click", () => importFolder().catch((error) => setStatus(error.message, false)));
 els.saveShortcut.addEventListener("click", () => saveShortcut().catch((error) => setStatus(error.message, false)));
 els.shortcut.value = localStorage.getItem("smartPromptShortcut") || els.shortcut.value;
+window.__smartPromptShortcutHits = 0;
+window.__smartPromptEventsReady = false;
+bindTauriEvents().catch((error) => setStatus(error.message, false));
 loadServiceState();

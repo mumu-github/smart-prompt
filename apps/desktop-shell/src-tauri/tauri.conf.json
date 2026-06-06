@@ -10,6 +10,7 @@
     "devUrl": "http://127.0.0.1:17372"
   },
   "app": {
+    "withGlobalTauri": true,
     "windows": [
       {
         "title": "Smart Prompt",
