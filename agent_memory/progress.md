@@ -29,7 +29,7 @@
 
 ## 正在进行
 
-- 等待配置 `OPENAI_API_KEY` 后严格复跑 `gpt-image-2` API 图像生成；当前其他交付物已完成，且小人原型已固定。
+- 用户再次要求以指定小人原型图重新生成对应 UI/UX 图；已复查原型图、prompt 与脚本，仍等待配置 `OPENAI_API_KEY` 后严格复跑 `gpt-image-2` API 图像生成。
 
 ## 下一步
 
@@ -38,10 +38,10 @@
 
 ## 验证状态
 
-- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；初始提交已成功；Process/User/Machine 三层环境变量均缺少 `OPENAI_API_KEY`；`gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目。
+- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；初始提交已成功；Process/User/Machine 三层环境变量均缺少 `OPENAI_API_KEY`；`gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目且本次复查仍存在。
 - 未验证：显式 fallback CLI/API `gpt-image-2` 真实生成路径；OMX completion 是否完成。
 - 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-autoresearch.ps1` 当前应失败在缺少 `prompt-copilot-uiux-gpt-image-2.png`；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun` 当前通过。
 
 ## 最近变化
 
-- 复查确认 Process/User/Machine 三层环境变量均无 `OPENAI_API_KEY`；完整 critic 必须看到显式 `gpt-image-2` CLI/API 输出图，因此当前因缺少外部凭据不能完成 goal。
+- 用户重新要求用该小人原型生成 UI/UX 图后，复查确认 Process/User/Machine 三层环境变量仍均无 `OPENAI_API_KEY`；dry-run 输出确认 endpoint `/v1/images/edits`、model `gpt-image-2`、input `assets/ui-ux/mascot-token-run.png`、output `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png` 均正确，但真实图片尚未生成。
