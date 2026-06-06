@@ -2,7 +2,9 @@ param(
   [string]$Report = "",
   [string]$ProfileDir = "",
   [string[]]$SiteIds = @(),
-  [int]$LoginWaitSeconds = 0
+  [int]$LoginWaitSeconds = 0,
+  [int]$CdpPort = 9232,
+  [switch]$AttachCdp
 )
 
 $ErrorActionPreference = "Stop"
@@ -17,6 +19,10 @@ New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Report) | Out-Nul
 Push-Location (Join-Path $Root "prototypes/browser-extension")
 try {
   $env:SMART_PROMPT_LIVE_REPORT = $Report
+  $env:SMART_PROMPT_LIVE_CDP_PORT = [string]$CdpPort
+  if ($AttachCdp) {
+    $env:SMART_PROMPT_LIVE_ATTACH_CDP = "1"
+  }
   if ($ProfileDir) {
     if ([System.IO.Path]::IsPathRooted($ProfileDir)) {
       $resolvedProfile = $ProfileDir
@@ -38,6 +44,8 @@ try {
   }
 } finally {
   Remove-Item Env:\SMART_PROMPT_LIVE_REPORT -ErrorAction SilentlyContinue
+  Remove-Item Env:\SMART_PROMPT_LIVE_CDP_PORT -ErrorAction SilentlyContinue
+  Remove-Item Env:\SMART_PROMPT_LIVE_ATTACH_CDP -ErrorAction SilentlyContinue
   Remove-Item Env:\SMART_PROMPT_LIVE_PROFILE_DIR -ErrorAction SilentlyContinue
   Remove-Item Env:\SMART_PROMPT_LIVE_SITE_IDS -ErrorAction SilentlyContinue
   Remove-Item Env:\SMART_PROMPT_LIVE_LOGIN_WAIT_MS -ErrorAction SilentlyContinue

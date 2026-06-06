@@ -151,7 +151,7 @@ if (Test-Path $desktopAppPath) {
 $liveProbePath = Join-Path $Root "prototypes/browser-extension/tests/live-site-probe.test.js"
 if (Test-Path $liveProbePath) {
   $liveProbe = Get-Content -Raw -Encoding UTF8 $liveProbePath
-  foreach ($token in @("SMART_PROMPT_LIVE_PROFILE_DIR", "SMART_PROMPT_LIVE_SITE_IDS", "SMART_PROMPT_LIVE_LOGIN_WAIT_MS")) {
+  foreach ($token in @("SMART_PROMPT_LIVE_PROFILE_DIR", "SMART_PROMPT_LIVE_SITE_IDS", "SMART_PROMPT_LIVE_LOGIN_WAIT_MS", "SMART_PROMPT_LIVE_ATTACH_CDP", "Target.createTarget")) {
     if (-not $liveProbe.Contains($token)) {
       Add-Failure "Live-site probe missing authenticated-run support token: $token"
     }

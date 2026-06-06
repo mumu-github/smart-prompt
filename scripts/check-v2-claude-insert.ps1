@@ -1,7 +1,9 @@
 param(
   [string]$Report = "research/v2-claude-insert.latest.json",
   [string]$ProfileDir = ".runtime/v2-live-chrome-profile",
-  [int]$LoginWaitSeconds = 180
+  [int]$LoginWaitSeconds = 180,
+  [int]$CdpPort = 9232,
+  [switch]$AttachCdp
 )
 
 $ErrorActionPreference = "Stop"
@@ -11,4 +13,6 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
   -Report $Report `
   -ProfileDir $ProfileDir `
   -SiteIds claude `
-  -LoginWaitSeconds $LoginWaitSeconds
+  -LoginWaitSeconds $LoginWaitSeconds `
+  -CdpPort $CdpPort `
+  -AttachCdp:$AttachCdp

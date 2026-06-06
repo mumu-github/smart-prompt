@@ -8,6 +8,7 @@ const { createStore } = require("../../../apps/local-service/src/store");
 
 const chromePath = process.env.CHROME_PATH || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const remotePort = Number(process.env.SMART_PROMPT_LIVE_CDP_PORT || 9232);
+const attachCdp = process.env.SMART_PROMPT_LIVE_ATTACH_CDP === "1";
 const headless = process.env.SMART_PROMPT_LIVE_HEADLESS === "1";
 const extensionDir = path.resolve(__dirname, "..");
 const reportPath = process.env.SMART_PROMPT_LIVE_REPORT || "";
@@ -92,12 +93,15 @@ function closeServer(server) {
   return new Promise((resolve) => server.close(resolve));
 }
 
-async function waitForTarget() {
+async function waitForTarget(targetId = "") {
   const deadline = Date.now() + 15000;
   while (Date.now() < deadline) {
     try {
       const targets = await getJson(`http://127.0.0.1:${remotePort}/json/list`);
-      const target = targets.find((item) => item.type === "page" && item.webSocketDebuggerUrl);
+      const target = targets.find((item) => {
+        if (item.type !== "page" || !item.webSocketDebuggerUrl) return false;
+        return targetId ? item.id === targetId : true;
+      });
       if (target) return target;
     } catch {
       // Chrome is still starting.
@@ -496,10 +500,10 @@ async function injectProbeRuntime(client) {
 }
 
 (async () => {
-  assert.ok(fs.existsSync(chromePath), `Chrome not found: ${chromePath}`);
+  if (!attachCdp) assert.ok(fs.existsSync(chromePath), `Chrome not found: ${chromePath}`);
   assert.equal(missingSiteFilters.length, 0, `Unknown SMART_PROMPT_LIVE_SITE_IDS: ${missingSiteFilters.join(", ")}`);
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-service-"));
-  const profileDir = profileDirOverride || fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-chrome-"));
+  const profileDir = profileDirOverride || (attachCdp ? "" : fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-chrome-")));
   if (profileDirOverride) fs.mkdirSync(profileDir, { recursive: true });
   const service = await startServiceForProbe(dataDir);
   const args = [
@@ -513,11 +517,12 @@ async function injectProbeRuntime(client) {
   ];
   if (headless) args.unshift("--headless=new");
 
-  const chrome = spawn(chromePath, args, { stdio: "ignore" });
+  const chrome = attachCdp ? null : spawn(chromePath, args, { stdio: "ignore" });
   const results = [];
   let extensionLoad = { ok: false };
   let browserClient;
   let client;
+  let probeTargetId = "";
   try {
     const browserEndpoint = await waitForBrowserEndpoint();
     browserClient = await createCdpClient(browserEndpoint);
@@ -533,7 +538,11 @@ async function injectProbeRuntime(client) {
       extensionLoad = { ok: false, error: error.message };
     }
 
-    const target = await waitForTarget();
+    if (attachCdp) {
+      const created = await browserClient.send("Target.createTarget", { url: "about:blank" });
+      probeTargetId = created.targetId || "";
+    }
+    const target = await waitForTarget(probeTargetId);
     client = await createCdpClient(target.webSocketDebuggerUrl);
     await client.send("Runtime.enable");
     await client.send("Page.enable");
@@ -546,15 +555,20 @@ async function injectProbeRuntime(client) {
     }
   } finally {
     if (client) client.close();
+    if (probeTargetId && browserClient) {
+      await browserClient.send("Target.closeTarget", { targetId: probeTargetId }).catch(() => {});
+    }
     if (browserClient) browserClient.close();
-    if (!chrome.killed) chrome.kill();
-    await new Promise((resolve) => {
-      chrome.once("exit", resolve);
-      setTimeout(resolve, 2000);
-    });
+    if (chrome) {
+      if (!chrome.killed) chrome.kill();
+      await new Promise((resolve) => {
+        chrome.once("exit", resolve);
+        setTimeout(resolve, 2000);
+      });
+    }
     await closeServer(service);
     await removeDirWithRetry(dataDir);
-    if (!profileDirOverride) await removeDirWithRetry(profileDir);
+    if (!profileDirOverride && profileDir) await removeDirWithRetry(profileDir);
   }
 
   const displayPasses = results.filter((item) => item.passedDisplay).length;
@@ -563,6 +577,8 @@ async function injectProbeRuntime(client) {
   const requiredInsertIds = activeSites.filter((site) => site.requireInsert).map((site) => site.id);
   const report = {
     createdAt: new Date().toISOString(),
+    attachCdp,
+    remotePort,
     headless,
     injectFallback,
     loginWaitMs,
