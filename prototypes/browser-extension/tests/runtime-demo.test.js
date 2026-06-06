@@ -14,13 +14,13 @@ function sleep(ms) {
 }
 
 async function removeDirWithRetry(dir) {
-  for (let attempt = 0; attempt < 8; attempt += 1) {
+  for (let attempt = 0; attempt < 20; attempt += 1) {
     try {
-      fs.rmSync(dir, { recursive: true, force: true, maxRetries: 3, retryDelay: 120 });
+      fs.rmSync(dir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 });
       return;
     } catch (error) {
-      if (attempt === 7) throw error;
-      await sleep(200);
+      if (attempt === 19) throw error;
+      await sleep(500);
     }
   }
 }
@@ -189,8 +189,9 @@ async function waitFor(client, expression, predicate, timeout = 10000) {
     }
     await new Promise((resolve) => {
       chrome.once("exit", resolve);
-      setTimeout(resolve, 1200);
+      setTimeout(resolve, 4000);
     });
+    await sleep(500);
     await closeServer(service.server);
     await removeDirWithRetry(dataDir);
     await removeDirWithRetry(profileDir);

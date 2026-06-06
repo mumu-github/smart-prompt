@@ -116,9 +116,29 @@ if (Test-Path $localServiceTestPath) {
 $siteAdapterTestPath = Join-Path $Root "prototypes/browser-extension/tests/site-adapters.test.js"
 if (Test-Path $siteAdapterTestPath) {
   $siteAdapterTest = Get-Content -Raw -Encoding UTF8 $siteAdapterTestPath
-  foreach ($token in @("expectedInsertStrategies", "chatgpt", "claude", "gemini", "requestSubmit")) {
+  foreach ($token in @("expectedAdapterIds", "expectedInsertStrategies", "selectorExpectations", "sharedCore.SITE_ADAPTERS", "chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit", "v0.app", "requestSubmit")) {
     if (-not $siteAdapterTest.Contains($token)) {
       Add-Failure "Browser extension tests missing insert/no-submit coverage token: $token"
+    }
+  }
+}
+
+$siteAdaptersPath = Join-Path $Root "prototypes/browser-extension/src/site-adapters.js"
+if (Test-Path $siteAdaptersPath) {
+  $siteAdapters = Get-Content -Raw -Encoding UTF8 $siteAdaptersPath
+  foreach ($token in @('textarea[id^="prompt-textarea"]', 'aria-label*="Type your idea"', 'aria-label="Chat input"', 'textarea[placeholder*="Replit"]', 'textarea[placeholder*="Ask"]')) {
+    if (-not $siteAdapters.Contains($token)) {
+      Add-Failure "Browser extension site adapters missing strengthened selector token: $token"
+    }
+  }
+}
+
+$sharedCorePath = Join-Path $Root "packages/shared/smart-prompt-core.js"
+if (Test-Path $sharedCorePath) {
+  $sharedCore = Get-Content -Raw -Encoding UTF8 $sharedCorePath
+  foreach ($token in @("v0.app", 'textarea[id^="prompt-textarea"]', 'aria-label*="Type your idea"', 'aria-label="Chat input"', 'textarea[placeholder*="Replit"]', 'textarea[placeholder*="Ask"]')) {
+    if (-not $sharedCore.Contains($token)) {
+      Add-Failure "Shared core site adapters missing strengthened selector token: $token"
     }
   }
 }

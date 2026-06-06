@@ -74,56 +74,56 @@
       id: "chatgpt",
       tool: "ChatGPT",
       hostnames: ["chatgpt.com", "chat.openai.com"],
-      inputSelectors: ['#prompt-textarea', 'textarea', '[contenteditable="true"][data-id]', '[role="textbox"]'],
+      inputSelectors: ['#prompt-textarea', 'textarea[data-id="prompt-textarea"]', '[contenteditable="true"][data-id]', '[contenteditable="true"][role="textbox"]', '[role="textbox"]'],
       insertStrategy: "contenteditable-or-textarea"
     },
     {
       id: "claude",
       tool: "Claude",
       hostnames: ["claude.ai"],
-      inputSelectors: ['div[contenteditable="true"]', '[role="textbox"]', 'textarea'],
+      inputSelectors: ['[data-testid="chat-input"] div[contenteditable="true"]', 'div[contenteditable="true"][role="textbox"]', 'div[contenteditable="true"]', '[role="textbox"]', 'textarea'],
       insertStrategy: "contenteditable-or-textarea"
     },
     {
       id: "gemini",
       tool: "Gemini",
       hostnames: ["gemini.google.com"],
-      inputSelectors: ['rich-textarea div[contenteditable="true"]', 'div[contenteditable="true"]', '[role="textbox"]'],
+      inputSelectors: ['rich-textarea div[contenteditable="true"]', 'div[aria-label][contenteditable="true"]', 'div[contenteditable="true"]', '[role="textbox"]'],
       insertStrategy: "contenteditable"
     },
     {
       id: "perplexity",
       tool: "Perplexity",
       hostnames: ["perplexity.ai", "www.perplexity.ai"],
-      inputSelectors: ['textarea', '[contenteditable="true"]', '[role="textbox"]'],
+      inputSelectors: ['textarea[placeholder*="Ask"]', 'textarea[aria-label*="Ask"]', '[data-testid*="composer"] textarea', '[contenteditable="true"][role="textbox"]', '[contenteditable="true"]', '[role="textbox"]', 'textarea'],
       insertStrategy: "contenteditable-or-textarea"
     },
     {
       id: "lovable",
       tool: "Lovable",
       hostnames: ["lovable.dev"],
-      inputSelectors: ['textarea', '[contenteditable="true"]', '[role="textbox"]'],
+      inputSelectors: ['[role="textbox"][aria-label="Chat input"]', '[contenteditable="true"][aria-label="Chat input"]', '[data-testid*="chat"] [role="textbox"]', 'textarea[placeholder*="Build"]', '[contenteditable="true"]', '[role="textbox"]', 'textarea'],
       insertStrategy: "textarea-first"
     },
     {
       id: "bolt",
       tool: "Bolt",
       hostnames: ["bolt.new"],
-      inputSelectors: ['textarea', '[contenteditable="true"]', '[role="textbox"]'],
+      inputSelectors: ['[role="textbox"][aria-label*="Type your idea"]', '[contenteditable="true"][aria-label*="Type your idea"]', 'textarea[placeholder*="Type your idea"]', '[data-testid*="chat"] [role="textbox"]', '[contenteditable="true"]', '[role="textbox"]', 'textarea'],
       insertStrategy: "textarea-first"
     },
     {
       id: "v0",
       tool: "v0",
-      hostnames: ["v0.dev"],
-      inputSelectors: ['textarea', '[contenteditable="true"]', '[role="textbox"]'],
+      hostnames: ["v0.dev", "v0.app"],
+      inputSelectors: ['textarea[id^="prompt-textarea"]', 'textarea[placeholder*="v0"]', '[data-testid*="prompt"] textarea', 'textarea', '[contenteditable="true"]', '[role="textbox"]'],
       insertStrategy: "textarea-first"
     },
     {
       id: "replit",
       tool: "Replit",
       hostnames: ["replit.com"],
-      inputSelectors: ['textarea', '[contenteditable="true"]', '[role="textbox"]'],
+      inputSelectors: ['textarea[placeholder*="Replit"]', 'textarea[placeholder*="Ask"]', 'textarea[aria-label*="Ask"]', '[data-cy*="ai"] textarea', '[data-testid*="ai"] textarea', '[contenteditable="true"][role="textbox"]', '[role="textbox"]', 'textarea'],
       insertStrategy: "textarea-first"
     }
   ]);
