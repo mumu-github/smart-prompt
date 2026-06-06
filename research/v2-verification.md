@@ -5,6 +5,7 @@ Status: in progress
 ## Automated Evidence
 
 - Local service tests: `apps/local-service npm test` passed in the latest automated V2 critic run.
+- Local service API contract: `apps/local-service/README.md` defines JSON request/response contracts for health, settings, skill import, skill recommendation, and generation. The V2 critic checks that the contract includes the privacy invariants `uploadWholePage: false` and `autoSubmit: false`.
 - Three-mode LLM gateway test double: `apps/local-service/tests/local-service.test.js` injects `generateWithLlm` into the local service and verifies `/generate` returns `generatedBy: "llm"` for `idea`, `continue`, and `polish` with `allowTemplateFallback: false`.
 - Browser extension tests: `prototypes/browser-extension npm test` passed in the latest automated V2 critic run.
 - Insert strategy tests: `prototypes/browser-extension/tests/site-adapters.test.js` verifies ChatGPT, Claude, and Gemini adapter insert strategies and checks the content script does not call submit/requestSubmit, form submit paths, or Enter key auto-send behavior.
@@ -15,7 +16,7 @@ Status: in progress
 - `GLOBAL_SHORTCUT_PASS`: `scripts/check-v2-tauri-runtime.ps1` invokes the runtime `set_global_shortcut` command, sends the registered `Ctrl+Alt+P` hotkey through Win32 keyboard events, and confirms the Rust shortcut hit counter increments through `get_shortcut_hits`.
 - Tauri local service start: `scripts/check-v2-tauri-runtime.ps1` invokes `start_local_service` from the running Tauri app with a test port and confirms `/health` responds from `smart-prompt-local-service`.
 - Live-site probe harness: `scripts/check-v2-live-sites.ps1` launches a temporary browser profile, loads the unpacked extension through the browser-level CDP `Extensions.loadUnpacked` command, checks live web AI pages, and writes `research/v2-live-site-probe.latest.json`. The probe records `injectedProbe: true` only when it must fall back to DevTools source injection; those fallback results are compatibility evidence, not formal extension-load pass markers.
-- Authenticated Claude probe path: `scripts/check-v2-claude-insert.ps1` runs the same live-site probe with a persistent local Chrome profile, `SiteIds claude`, and a login wait window so Claude Insert can be proven after an interactive login. This is a verification path, not a pass marker until the report contains `INSERT_CLAUDE_PASS`.
+- Authenticated Claude probe path: `scripts/check-v2-claude-insert.ps1` runs the same live-site probe with a persistent local Chrome profile, `SiteIds claude`, a login wait window, and an isolated report at `research/v2-claude-insert.latest.json` so Claude Insert can be proven after an interactive login without overwriting the 5-site report. This is a verification path, not a pass marker until the report contains `INSERT_CLAUDE_PASS`.
 - `LIVE_5_SITES_PASS`: latest formal extension-loaded probe shows mascot display on ChatGPT, Gemini, Bolt, v0.app, and Lovable with `injectedProbe: false`.
 - `INSERT_CHATGPT_PASS`: latest formal extension-loaded probe inserts into ChatGPT without auto-send and closes the card.
 - `INSERT_GEMINI_PASS`: latest formal extension-loaded probe inserts into Gemini without auto-send and closes the card.

@@ -1,4 +1,5 @@
 param(
+  [string]$Report = "",
   [string]$ProfileDir = "",
   [string[]]$SiteIds = @(),
   [int]$LoginWaitSeconds = 0
@@ -6,7 +7,12 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-$Report = Join-Path $Root "research/v2-live-site-probe.latest.json"
+if (-not $Report) {
+  $Report = Join-Path $Root "research/v2-live-site-probe.latest.json"
+} elseif (-not [System.IO.Path]::IsPathRooted($Report)) {
+  $Report = Join-Path $Root $Report
+}
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Report) | Out-Null
 
 Push-Location (Join-Path $Root "prototypes/browser-extension")
 try {

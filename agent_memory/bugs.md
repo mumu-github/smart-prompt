@@ -28,7 +28,7 @@
 ## 待回顾
 
 - 真实 Chrome/Edge 扩展在 ChatGPT、Claude、Gemini 等站点的逐站点兼容性。
-- V2 runtime evidence：Claude Insert；当前已提供持久 profile 辅助脚本，但还需要登录态报告作为通过证据。
+- V2 runtime evidence：Claude Insert；当前已提供持久 profile 辅助脚本和独立报告路径，但还需要登录态通过报告作为证据。
 - live-site probe 当前失败原因：Claude 跳到登录/登出页；Perplexity challenge；Replit/DeepSeek/Doubao 登录或区域限制。
 
 ## 已解决

@@ -19,6 +19,7 @@ function Add-Failure {
 $requiredFiles = @(
   "packages/shared/smart-prompt-core.js",
   "packages/shared/llm-gateway.js",
+  "apps/local-service/README.md",
   "apps/local-service/src/server.js",
   "apps/local-service/src/store.js",
   "apps/local-service/src/skill-library.js",
@@ -93,12 +94,32 @@ if (Test-Path $siteAdapterTestPath) {
   }
 }
 
+$localServiceReadmePath = Join-Path $Root "apps/local-service/README.md"
+if (Test-Path $localServiceReadmePath) {
+  $localServiceReadme = Get-Content -Raw -Encoding UTF8 $localServiceReadmePath
+  foreach ($token in @("## API Contract", "GET /settings", "PUT /settings", "POST /skills/import-folder", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit")) {
+    if (-not $localServiceReadme.Contains($token)) {
+      Add-Failure "Local-service API contract missing token: $token"
+    }
+  }
+}
+
 $liveProbePath = Join-Path $Root "prototypes/browser-extension/tests/live-site-probe.test.js"
 if (Test-Path $liveProbePath) {
   $liveProbe = Get-Content -Raw -Encoding UTF8 $liveProbePath
   foreach ($token in @("SMART_PROMPT_LIVE_PROFILE_DIR", "SMART_PROMPT_LIVE_SITE_IDS", "SMART_PROMPT_LIVE_LOGIN_WAIT_MS")) {
     if (-not $liveProbe.Contains($token)) {
       Add-Failure "Live-site probe missing authenticated-run support token: $token"
+    }
+  }
+}
+
+$claudeProbePath = Join-Path $Root "scripts/check-v2-claude-insert.ps1"
+if (Test-Path $claudeProbePath) {
+  $claudeProbe = Get-Content -Raw -Encoding UTF8 $claudeProbePath
+  foreach ($token in @("v2-claude-insert.latest.json", "-Report", "-SiteIds claude")) {
+    if (-not $claudeProbe.Contains($token)) {
+      Add-Failure "Claude insert probe missing separate-report token: $token"
     }
   }
 }
