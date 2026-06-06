@@ -47,6 +47,7 @@ $requiredFiles = @(
   "apps/desktop-shell/src-tauri/tauri.conf.json",
   "apps/desktop-shell/src-tauri/src/main.rs",
   "apps/desktop-shell/tests/desktop-shell.test.js",
+  "apps/desktop-shell/tests/desktop-shell-interaction.test.js",
   "apps/desktop-shell/tests/tauri-runtime.test.js",
   "research/v2-implementation-rubric.md",
   "research/v2-verification.md",
@@ -217,6 +218,16 @@ if (Test-Path $desktopAppPath) {
   foreach ($token in @("/prompts", "/llm/providers", "renderPrompts", "savePrompt", "deletePrompt", "deleteSkill", "delete-prompt", "delete-skill", "provider", "PROVIDER_DEFAULTS", "applyProviderDefaults", "renderProviderStatus", "providerKeys", "openai-api-key", "anthropic-api-key", "gemini-api-key")) {
     if (-not $desktopApp.Contains($token)) {
       Add-Failure "Desktop shell prompt library UI missing token: $token"
+    }
+  }
+}
+
+$desktopInteractionTestPath = Join-Path $Root "apps/desktop-shell/tests/desktop-shell-interaction.test.js"
+if (Test-Path $desktopInteractionTestPath) {
+  $desktopInteractionTest = Get-Content -Raw -Encoding UTF8 $desktopInteractionTestPath
+  foreach ($token in @("vm.runInContext", "fakeFetch", "serviceRequests", "providerKeys", "PUT", "/settings", "POST", "/skills/import-folder", "DELETE", "/skills/skill-imported", "/prompts", "/prompts/prompt-saved", "set_global_shortcut", "start_local_service", "smartPromptShortcut", "__smartPromptShortcutHits")) {
+    if (-not $desktopInteractionTest.Contains($token)) {
+      Add-Failure "Desktop shell interaction test missing service/UI token: $token"
     }
   }
 }

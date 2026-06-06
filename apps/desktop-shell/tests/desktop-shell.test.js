@@ -8,6 +8,7 @@ const required = [
   "index.html",
   "src/app.js",
   "src/styles.css",
+  "tests/desktop-shell-interaction.test.js",
   "src-tauri/tauri.conf.json",
   "src-tauri/Cargo.toml",
   "src-tauri/src/main.rs"
@@ -47,6 +48,15 @@ assert.ok(app.includes("gemini-api-key"));
 assert.ok(app.includes("smart-prompt-shortcut"));
 assert.ok(app.includes("__smartPromptShortcutHits"));
 assert.ok(app.includes("__smartPromptEventsReady"));
+
+const interactionTest = fs.readFileSync(path.join(root, "tests/desktop-shell-interaction.test.js"), "utf8");
+assert.ok(interactionTest.includes("vm.runInContext"));
+assert.ok(interactionTest.includes("fakeFetch"));
+assert.ok(interactionTest.includes("/settings"));
+assert.ok(interactionTest.includes("/skills/import-folder"));
+assert.ok(interactionTest.includes("/prompts"));
+assert.ok(interactionTest.includes("set_global_shortcut"));
+assert.ok(interactionTest.includes("start_local_service"));
 
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert.ok(html.includes("Prompt Library"));

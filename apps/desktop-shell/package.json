@@ -8,7 +8,7 @@
     "build": "node scripts/tauri-command.js build",
     "preview": "node tests/static-preview.js",
     "runtime-test": "node tests/tauri-runtime.test.js",
-    "test": "node tests/desktop-shell.test.js"
+    "test": "node tests/desktop-shell.test.js && node tests/desktop-shell-interaction.test.js"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"
