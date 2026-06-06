@@ -2,7 +2,7 @@
 
 ## 当前问题
 
-- 小人形象原型已提供：`assets/ui-ux/mascot-token-run.png`。当前已有 UI/UX 图仍是旧概念小人版本；需要在配置 `OPENAI_API_KEY` 后用 `gpt-image-2` 基于原型图重生成。
+- 小人形象原型已提供：`assets/ui-ux/mascot-token-run.png`。当前已有内置 `image_gen` + 原始小人合成版：`assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png`；严格 `gpt-image-2` API 版仍未生成。
 - `gpt-image-2` 的实际 API 已在本环境发起调用，但返回 `Billing hard limit has been reached`；说明 `OPENAI_API_KEY` 已生效，当前阻塞转为 OpenAI 账户/项目 billing 硬额度限制。已补齐 prompt 文件、原型图和复跑脚本，dry-run 通过，但真实 API 图尚未生成。
 
 ## 已知风险
@@ -29,4 +29,5 @@
 
 - 已补齐项目记忆文件。
 - 已完成研究文档、PRD、UI/UX 概念图。
+- 已完成一版不依赖 API billing 的内置 `image_gen` UI/UX 图，并本地贴入原始小人以避免模型重绘角色。
 - 研究/PRD/内置图像资产已通过旧本地 critic 并记录过 OMX pass verdict；现已调严门槛，需真实 `gpt-image-2` API 输出图后才能重新记录 pass。
