@@ -305,21 +305,57 @@ function chooseConfiguredProvider(settings = {}, env = process.env) {
   return statuses.find((status) => status.envKey || status.settingsKey)?.provider || PROVIDERS.OPENAI_COMPATIBLE;
 }
 
-async function generateWithConfiguredProvider(args) {
-  const requestedProvider = normalizeProvider(args.settings?.provider);
-  const provider = chooseConfiguredProvider(args.settings);
-  const settings = {
-    ...(args.settings || {}),
+function getConfiguredProviderOrder(settings = {}, env = process.env) {
+  const provider = normalizeProvider(settings.provider);
+  if (provider !== PROVIDERS.AUTO) return [provider];
+  const configured = PROVIDER_ORDER.filter((item) => Boolean(getApiKey(item, settings, env)));
+  return configured.length ? configured : [PROVIDERS.OPENAI_COMPATIBLE];
+}
+
+function createProviderSettings(settings = {}, provider, requestedProvider) {
+  const defaults = getProviderDefaults(provider);
+  return {
+    ...(settings || {}),
+    ...(requestedProvider === PROVIDERS.AUTO ? {
+      baseUrl: defaults.baseUrl,
+      model: defaults.model
+    } : {}),
     provider,
     apiKey: requestedProvider === PROVIDERS.AUTO && provider !== PROVIDERS.OPENAI_COMPATIBLE
-      && !args.settings?.providerKeys?.[provider]
+      && !settings?.providerKeys?.[provider]
       ? ""
-      : args.settings?.apiKey
+      : settings?.apiKey
   };
+}
+
+async function generateWithProvider(provider, args, requestedProvider) {
+  const settings = createProviderSettings(args.settings, provider, requestedProvider);
   const nextArgs = { ...args, settings };
   if (provider === PROVIDERS.ANTHROPIC) return generateWithAnthropic(nextArgs);
   if (provider === PROVIDERS.GEMINI) return generateWithGemini(nextArgs);
   return generateWithOpenAICompatible(nextArgs);
+}
+
+async function generateWithConfiguredProvider(args) {
+  const requestedProvider = normalizeProvider(args.settings?.provider);
+  const providers = getConfiguredProviderOrder(args.settings);
+  const attempts = [];
+  for (const provider of providers) {
+    try {
+      return await generateWithProvider(provider, args, requestedProvider);
+    } catch (error) {
+      attempts.push({
+        provider,
+        code: error.code || "unknown",
+        status: error.status || null,
+        message: error.message
+      });
+      if (provider === providers[providers.length - 1]) {
+        error.attempts = attempts;
+        throw error;
+      }
+    }
+  }
 }
 
 module.exports = {
@@ -339,6 +375,7 @@ module.exports = {
   generateWithConfiguredProvider,
   generateWithGemini,
   generateWithOpenAICompatible,
+  getConfiguredProviderOrder,
   getProviderDefaults,
   getProviderStatuses,
   getStoredApiKey,

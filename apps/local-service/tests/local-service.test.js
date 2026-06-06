@@ -14,6 +14,7 @@ const {
   chooseConfiguredProvider,
   generateWithConfiguredProvider,
   generateWithOpenAICompatible,
+  getConfiguredProviderOrder,
   getProviderStatuses,
   getStoredApiKey
 } = require("../../../packages/shared/llm-gateway");
@@ -81,6 +82,10 @@ Use for login, auth, and privacy-sensitive flows.
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, apiKey: "stored-openai" }, {}), PROVIDERS.OPENAI_COMPATIBLE);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, providerKeys: { anthropic: "stored-ant" } }, {}), PROVIDERS.ANTHROPIC);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, providerKeys: { gemini: "stored-gem" } }, {}), PROVIDERS.GEMINI);
+  assert.deepEqual(
+    getConfiguredProviderOrder({ provider: PROVIDERS.AUTO, providerKeys: { anthropic: "stored-ant", gemini: "stored-gem" } }, {}),
+    [PROVIDERS.ANTHROPIC, PROVIDERS.GEMINI]
+  );
   assert.equal(getStoredApiKey(PROVIDERS.ANTHROPIC, { provider: PROVIDERS.AUTO, providerKeys: { anthropic: "stored-ant" } }), "stored-ant");
   const providerStatus = getProviderStatuses({ provider: PROVIDERS.AUTO }, { ANTHROPIC_API_KEY: "ant" });
   assert.equal(providerStatus.selected, PROVIDERS.AUTO);
@@ -180,6 +185,42 @@ Use for login, auth, and privacy-sensitive flows.
   });
   assert.equal(geminiGenerated.provider, PROVIDERS.GEMINI);
   assert.equal(geminiGenerated.prompt, "Gemini generated prompt");
+
+  const autoFallbackCalls = [];
+  const autoFallbackGenerated = await generateWithConfiguredProvider({
+    input: "Build a privacy-safe product spec prompt",
+    context: { host: "chatgpt.com", tool: "ChatGPT", inputKind: "textarea" },
+    skills: imported,
+    settings: {
+      provider: PROVIDERS.AUTO,
+      model: "gpt-test-should-not-leak-to-auto-providers",
+      providerKeys: { anthropic: "stored-ant", gemini: "stored-gem" }
+    },
+    fetchImpl: async (url, options) => {
+      const body = JSON.parse(options.body);
+      autoFallbackCalls.push({ url, body, headers: options.headers });
+      if (url.endsWith("/messages")) {
+        return {
+          ok: false,
+          status: 429,
+          async text() {
+            return "anthropic quota reached";
+          }
+        };
+      }
+      return {
+        ok: true,
+        async json() {
+          return { candidates: [{ content: { parts: [{ text: "Auto fallback Gemini prompt" }] } }] };
+        }
+      };
+    }
+  });
+  assert.equal(autoFallbackGenerated.provider, PROVIDERS.GEMINI);
+  assert.equal(autoFallbackGenerated.prompt, "Auto fallback Gemini prompt");
+  assert.equal(autoFallbackCalls.length, 2);
+  assert.equal(autoFallbackCalls[0].body.model, "claude-sonnet-4-20250514");
+  assert.ok(autoFallbackCalls[1].url.includes("/models/gemini-2.5-flash:generateContent"));
 
   const gatewayCalls = [];
   store.saveSettings({ provider: PROVIDERS.GEMINI, apiKey: "provider-secret", model: "gemini-test" });

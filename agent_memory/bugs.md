@@ -10,7 +10,7 @@
 - SkillHub/ClawHub 命名和生态边界不唯一；文档已标注不确定性。
 - 自动识别并写入任意桌面/网页输入框涉及权限、隐私和平台安全限制；PRD 已限定 MVP 从 allowlist 网页输入框开始。
 - 当前浏览器 MVP 使用 DOM 写入；复杂 contenteditable/富文本编辑器可能需要站点适配器，否则一键填入可能不稳定。
-- 真实 LLM gateway 代码路径已接入并支持 auto、OpenAI-compatible、Anthropic、Gemini provider，且有三模式 test double 覆盖；provider-specific saved keys 已支持，但当前可用 key/billing 不足时仍会回退本地模板，生成质量会受模板限制。
+- 真实 LLM gateway 代码路径已接入并支持 auto、OpenAI-compatible、Anthropic、Gemini provider，且有三模式 test double 覆盖；provider-specific saved keys、provider 默认模型和 auto provider 失败转移已支持，但当前可用 key/billing 不足时仍会回退本地模板，生成质量会受模板限制。
 - 真实 LLM 生成需要 API key 和可用 billing；没有 key 时本地服务只会按调用方允许返回 template fallback。
 - 当前 User 环境只发现 `OPENAI_API_KEY`，未发现 `ANTHROPIC_API_KEY`、`GEMINI_API_KEY` 或 `GOOGLE_API_KEY`；本地服务现在也支持桌面壳保存 provider-specific keys，但尚未拿到 Anthropic/Gemini 真实联网通过证据。
 - strict runtime critic 现在会读取 `research/v2-real-llm.latest.json`，当前 OpenAI 429 报告会明确阻止 V2 完成。

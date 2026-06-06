@@ -105,7 +105,7 @@ if (Test-Path $contentPath) {
 $localServiceTestPath = Join-Path $Root "apps/local-service/tests/local-service.test.js"
 if (Test-Path $localServiceTestPath) {
   $localServiceTest = Get-Content -Raw -Encoding UTF8 $localServiceTestPath
-  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false", "PROVIDERS.ANTHROPIC", "PROVIDERS.GEMINI", "PROVIDERS.AUTO", "generateWithConfiguredProvider", "chooseConfiguredProvider", "getProviderStatuses", "providerKeys", "getStoredApiKey")) {
+  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false", "PROVIDERS.ANTHROPIC", "PROVIDERS.GEMINI", "PROVIDERS.AUTO", "generateWithConfiguredProvider", "chooseConfiguredProvider", "getConfiguredProviderOrder", "getProviderStatuses", "providerKeys", "getStoredApiKey")) {
     if (-not $localServiceTest.Contains($token)) {
       Add-Failure "Local-service tests missing three-mode LLM gateway coverage token: $token"
     }
@@ -135,7 +135,7 @@ if (Test-Path $localServiceReadmePath) {
 $llmGatewayPath = Join-Path $Root "packages/shared/llm-gateway.js"
 if (Test-Path $llmGatewayPath) {
   $llmGateway = Get-Content -Raw -Encoding UTF8 $llmGatewayPath
-  foreach ($token in @("PROVIDERS", "PROVIDER_ORDER", "chooseConfiguredProvider", "getProviderStatuses", "getStoredApiKey", "createAnthropicMessagesRequest", "createGeminiGenerateContentRequest", "generateWithConfiguredProvider", "anthropic-version", "x-goog-api-key")) {
+  foreach ($token in @("PROVIDERS", "PROVIDER_ORDER", "chooseConfiguredProvider", "getConfiguredProviderOrder", "createProviderSettings", "getProviderStatuses", "getStoredApiKey", "createAnthropicMessagesRequest", "createGeminiGenerateContentRequest", "generateWithConfiguredProvider", "anthropic-version", "x-goog-api-key")) {
     if (-not $llmGateway.Contains($token)) {
       Add-Failure "LLM gateway missing provider support token: $token"
     }

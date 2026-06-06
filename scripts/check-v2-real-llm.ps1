@@ -58,8 +58,8 @@ const samples = [
   const settings = {
     provider,
     baseUrl: process.env.SMART_PROMPT_TEST_BASE_URL || undefined,
-    model: chooseModel(chooseConfiguredProvider({ provider })),
-    apiKey: chooseApiKey(chooseConfiguredProvider({ provider }))
+    model: process.env.SMART_PROMPT_TEST_PROVIDER ? chooseModel(chooseConfiguredProvider({ provider })) : undefined,
+    apiKey: process.env.SMART_PROMPT_TEST_PROVIDER ? chooseApiKey(chooseConfiguredProvider({ provider })) : undefined
   };
   const selectedProvider = chooseConfiguredProvider(settings);
   const results = [];
