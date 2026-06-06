@@ -6,6 +6,11 @@ $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $failures = @()
 
+$cargoBin = Join-Path $env:USERPROFILE ".cargo/bin"
+if (Test-Path $cargoBin) {
+  $env:PATH = "$cargoBin;$env:PATH"
+}
+
 function Add-Failure {
   param([string]$Message)
   $script:failures += $Message
@@ -39,7 +44,8 @@ foreach ($file in $requiredFiles) {
 $commands = @(
   @{ Dir = "apps/local-service"; Cmd = "npm test"; Label = "local service tests" },
   @{ Dir = "prototypes/browser-extension"; Cmd = "npm test"; Label = "browser extension tests" },
-  @{ Dir = "apps/desktop-shell"; Cmd = "npm test"; Label = "desktop shell tests" }
+  @{ Dir = "apps/desktop-shell"; Cmd = "npm test"; Label = "desktop shell tests" },
+  @{ Dir = "apps/desktop-shell"; Cmd = "cargo check --manifest-path src-tauri\Cargo.toml"; Label = "Tauri cargo check" }
 )
 
 foreach ($command in $commands) {

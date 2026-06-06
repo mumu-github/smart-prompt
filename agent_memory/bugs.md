@@ -2,7 +2,7 @@
 
 ## 当前问题
 
-- 当前无阻塞 V2 自动化代码路径推进的问题；完整验收缺少真实站点和 Tauri runtime 验证证据。
+- 当前无阻塞 V2 自动化代码路径推进的问题；完整验收缺少真实站点、真实 LLM quota 可用性和 Tauri runtime 验证证据。
 
 ## 已知风险
 
@@ -11,7 +11,6 @@
 - 自动识别并写入任意桌面/网页输入框涉及权限、隐私和平台安全限制；PRD 已限定 MVP 从 allowlist 网页输入框开始。
 - 当前浏览器 MVP 使用 DOM 写入；复杂 contenteditable/富文本编辑器可能需要站点适配器，否则一键填入可能不稳定。
 - 当前 prompt 生成使用本地模板和 skill routing；尚未接入 LLM gateway，因此生成质量受模板限制。
-- 当前环境缺少 Rust/Cargo，无法实际运行 `tauri dev`，只能静态验证 Tauri 壳代码。
 - 真实 LLM 生成需要 API key 和可用 billing；没有 key 时本地服务只会按调用方允许返回 template fallback。
 
 ## 失败尝试
@@ -39,3 +38,4 @@
 - 本地 critic 已按更新目标通过，OMX 已记录 pass verdict。
 - 已开始第一版实现：新增 Chrome/Edge MV3 浏览器扩展 MVP 原型和基础验证脚本。
 - 已接入 V2 本地服务、LLM gateway 代码路径、站点适配器、Tauri scaffold 和 V2 critic 自动化检查。
+- 已安装 Rustup/Cargo，并通过 Tauri `cargo check`；当前剩余的是运行态 app 启动和全局快捷键验证，不是 Rust 编译环境缺失。

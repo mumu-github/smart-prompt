@@ -39,20 +39,20 @@
 
 ## 正在进行
 
-- 正在推进 V2 runtime 验收；当前自动化代码路径已通过，但真实站点插入和 Tauri 启动尚未验证。
+- 正在推进 V2 runtime 验收；当前自动化代码路径和本地服务桥接 demo 已通过，但真实站点插入和 Tauri 运行态启动尚未验证。
 
 ## 下一步
 
-- 安装/确认 Rust+Cargo/Tauri 环境后运行 Tauri shell。
+- 在真实运行态启动 Tauri shell，并验证全局快捷键。
 - 在至少 5 个真实网页 AI 输入框手测小人稳定出现。
 - 在 ChatGPT、Claude、Gemini 手测 Insert 成功且不自动发送。
 - 将通过证据写入 `research/v2-verification.md`，再运行 `scripts/critic-v2.ps1 -RequireRuntimeEvidence`。
 
 ## 验证状态
 
-- 已验证：`scripts/critic-v2.ps1` 默认自动化检查 PASS；local-service、browser-extension、desktop-shell 静态测试 PASS；Node 语法检查 PASS；本地服务可启动并响应 `/health` 和 `/generate` fallback。
-- 未验证：真实加载 Chrome/Edge 扩展后在 5 个生产站点逐站点手测；ChatGPT/Claude/Gemini Insert 生产站点成功；Tauri shell 真实启动；全局快捷键 runtime 触发。当前环境缺少 Rust/Cargo。
-- 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` 按预期失败并列出缺失 runtime markers。
+- 已验证：`scripts/critic-v2.ps1` 默认自动化检查 PASS；local-service、browser-extension、desktop-shell 静态测试 PASS；Node 语法检查 PASS；本地服务可启动并响应 `/health` 和 `/generate` fallback；Chrome headless demo 能显示小人和 prompt card，并确认 Insert 只写入不提交；Rust/Cargo 已安装，Tauri `cargo check` PASS。
+- 未验证：真实加载 Chrome/Edge 扩展后在 5 个生产站点逐站点手测；ChatGPT/Claude/Gemini Insert 生产站点成功；Tauri shell 作为真实 app 启动；全局快捷键 runtime 触发；真实 LLM 三模式因当前 OpenAI quota/billing 429 未证明。
+- 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1` 当前返回 OpenAI 429 quota/billing；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` 按预期失败并列出缺失 runtime markers。
 
 ## 最近变化
 
@@ -64,3 +64,4 @@
 - 用户更新目标，明确“不需要严格 gpt-image-2”；已移除显式 API 输出图作为 critic 门槛，critic 和 OMX verdict 均已 PASS。
 - 用户新目标为“根据这个 prd.md 文档开始实现第一版”；当前已按 PRD M1 开始实现浏览器扩展 MVP。
 - 用户新目标为 V2；当前已实现主要代码路径，但未达到完整 runtime 验收。
+- V2 续跑新增 Chrome headless runtime demo 测试，覆盖本地服务桥接、卡片刷新、Insert 不提交；已安装 Rustup 并让 Tauri `cargo check` 进入默认 critic。

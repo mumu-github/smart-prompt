@@ -4,10 +4,10 @@
   "version": "0.2.0",
   "identifier": "com.smartprompt.desktop",
   "build": {
-    "beforeDevCommand": "",
+    "beforeDevCommand": "npm run preview",
     "beforeBuildCommand": "",
     "frontendDist": "../",
-    "devUrl": "../index.html"
+    "devUrl": "http://127.0.0.1:17372"
   },
   "app": {
     "windows": [
@@ -25,6 +25,8 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "icon": []
+    "icon": [
+      "icons/icon.ico"
+    ]
   }
 }

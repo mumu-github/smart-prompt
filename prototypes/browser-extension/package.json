@@ -4,6 +4,6 @@
   "private": true,
   "description": "Chrome/Edge MV3 prototype for Smart Prompt Copilot.",
   "scripts": {
-    "test": "node tests/prompt-engine.test.js && node tests/manifest.test.js && node tests/site-adapters.test.js"
+    "test": "node tests/prompt-engine.test.js && node tests/manifest.test.js && node tests/site-adapters.test.js && node tests/runtime-demo.test.js"
   }
 }

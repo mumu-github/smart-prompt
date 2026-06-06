@@ -73,6 +73,19 @@
         border-color: #2e8f8c;
         box-shadow: 0 0 0 3px rgba(46, 143, 140, 0.12);
       }
+
+      .demo-send {
+        height: 36px;
+        margin-top: 10px;
+        padding: 0 14px;
+        border: 1px solid #237d79;
+        border-radius: 6px;
+        background: #2e8f8c;
+        color: #ffffff;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 800;
+      }
     </style>
   </head>
   <body>
@@ -81,12 +94,18 @@
         <div class="demo-thread">
           <div class="demo-message">Demo 输入框用于检查扩展第一版的悬浮入口、三模式 prompt card 和一键填入。</div>
         </div>
-        <div class="composer">
+        <form id="demo-form" class="composer">
           <textarea autofocus placeholder="试试：帮我做一个 CRM 后台，要有客户列表和跟进记录"></textarea>
-        </div>
+          <button class="demo-send" type="submit">Send</button>
+        </form>
       </section>
     </main>
     <script>
+      window.__demoSubmitCount = 0;
+      document.getElementById("demo-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+        window.__demoSubmitCount += 1;
+      });
       window.chrome = {
         runtime: {
           getURL(path) {
