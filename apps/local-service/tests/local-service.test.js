@@ -7,6 +7,7 @@ const { createStore } = require("../src/store");
 const { importSkillFolder } = require("../src/skill-library");
 const { startServer } = require("../src/server");
 const { createOpenAIChatRequest, generateWithOpenAICompatible } = require("../../../packages/shared/llm-gateway");
+const { MODE, buildCard } = require("../../../packages/shared/smart-prompt-core");
 
 function tempDir(name) {
   return fs.mkdtempSync(path.join(os.tmpdir(), name));
@@ -93,7 +94,26 @@ Use for login, auth, and privacy-sensitive flows.
   assert.equal(generated.generatedBy, "llm");
   assert.equal(generated.prompt, "LLM generated prompt");
 
-  const server = startServer({ port: 0, store });
+  const gatewayCalls = [];
+  const server = startServer({
+    port: 0,
+    store,
+    generateWithLlm: async ({ input, context, skills, variantIndex, settings }) => {
+      gatewayCalls.push({
+        input,
+        mode: context.mode,
+        skillCount: skills.length,
+        model: settings.model,
+        hasApiKey: Boolean(settings.apiKey)
+      });
+      return {
+        ...buildCard(input, context, skills, variantIndex),
+        prompt: `LLM test double prompt for ${context.mode}`,
+        generatedBy: "llm",
+        model: settings.model
+      };
+    }
+  });
   await new Promise((resolve) => server.once("listening", resolve));
   const port = server.address().port;
   try {
@@ -107,13 +127,26 @@ Use for login, auth, and privacy-sensitive flows.
     assert.equal(rec.status, 200);
     assert.ok(rec.body.skills.length >= 1 && rec.body.skills.length <= 3);
 
-    const fallback = await request(port, "POST", "/generate", {
-      input: "做一个 CRM",
-      context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea" },
-      allowTemplateFallback: true
-    });
-    assert.equal(fallback.status, 200);
-    assert.ok(["llm", "template-fallback"].includes(fallback.body.card.generatedBy));
+    const modeSamples = [
+      { mode: MODE.IDEA, input: "" },
+      { mode: MODE.CONTINUE, input: "Build a CRM with customer list and follow-up notes." },
+      { mode: MODE.POLISH, input: "Goal: refactor login\nContext: Next.js app\nConstraints: keep API unchanged\nOutput: patch and tests\nAcceptance: tests pass" }
+    ];
+
+    for (const sample of modeSamples) {
+      const generatedResponse = await request(port, "POST", "/generate", {
+        input: sample.input,
+        mode: sample.mode,
+        context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea" },
+        allowTemplateFallback: false
+      });
+      assert.equal(generatedResponse.status, 200);
+      assert.equal(generatedResponse.body.card.generatedBy, "llm");
+      assert.equal(generatedResponse.body.card.mode, sample.mode);
+      assert.ok(generatedResponse.body.card.prompt.includes(sample.mode));
+    }
+    assert.deepEqual(gatewayCalls.map((call) => call.mode), [MODE.IDEA, MODE.CONTINUE, MODE.POLISH]);
+    assert.ok(gatewayCalls.every((call) => call.model === "gpt-test" && call.hasApiKey));
   } finally {
     server.close();
   }

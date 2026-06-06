@@ -37,6 +37,8 @@
 - 已新增 Tauri 桌面壳 scaffold：`apps/desktop-shell/`，含设置页、skill 管理 UI、服务启动入口、tray/global-shortcut Rust 代码和静态测试。
 - 已新增 V2 critic：`scripts/critic-v2.ps1`；默认自动化检查 PASS，`-RequireRuntimeEvidence` 会严格要求真实站点和 Tauri runtime evidence。
 - 已新增 Claude 登录态验证辅助脚本：`scripts/check-v2-claude-insert.ps1`，使用持久 Chrome profile、只跑 Claude、并提供登录等待窗口。
+- 已补强本地服务 V2 测试：通过注入 `generateWithLlm` test double，经由 `/generate` 覆盖 `idea`、`continue`、`polish` 三模式且 `allowTemplateFallback: false`。
+- 已补强浏览器扩展测试：显式检查 ChatGPT、Claude、Gemini insert strategy，并扩大“不自动发送”静态禁区到 `submit`、`requestSubmit`、form submit path 和 Enter key。
 
 ## 正在进行
 
@@ -67,4 +69,5 @@
 - V2 继续补强 Tauri：开启 `withGlobalTauri`，修复带空格路径下的本地服务启动，新增 runtime smoke，验证真实 app 启动、Tauri command、本地服务启动和全局快捷键触发。
 - V2 继续补强真实站点探针：改用 browser-level CDP `Extensions.loadUnpacked` 正式加载扩展，补 `v0.app` 域名，扩展输入扫描支持 open shadow DOM。当前正式扩展证据达到 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 个显示和 ChatGPT/Gemini Insert；Claude 仍因登录页未过。
 - V2 继续补强 Claude 验证路径：`check-v2-live-sites.ps1` 现支持 `-ProfileDir`、`-SiteIds`、`-LoginWaitSeconds`，可用持久 profile 复用 Claude 登录态后跑正式扩展 Insert 验收。
-- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：默认 V2 critic PASS，严格 runtime critic 仅缺 `INSERT_CLAUDE_PASS`；真实 LLM 复核仍为 OpenAI 429 quota/billing。
+- V2 继续补强本地 rubric 证据：local-service API 现在有三模式 LLM gateway test double 覆盖；browser-extension 测试显式覆盖 ChatGPT/Claude/Gemini insert strategy 与更严禁自动发送检查。
+- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：本地服务三模式 LLM test double 与扩展 insert/no-submit 覆盖已补强，默认 V2 critic PASS，严格 runtime critic 仅缺 `INSERT_CLAUDE_PASS`；真实 LLM 复核仍为 OpenAI 429 quota/billing。

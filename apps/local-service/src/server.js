@@ -31,7 +31,9 @@ function publicSettings(settings) {
   };
 }
 
-function createApp(store = createStore()) {
+function createApp(store = createStore(), options = {}) {
+  const generateWithLlm = options.generateWithLlm || generateWithOpenAICompatible;
+
   return async function app(req, res) {
     if (req.method === "OPTIONS") {
       sendJson(res, 200, { ok: true });
@@ -87,7 +89,7 @@ function createApp(store = createStore()) {
         const settings = store.getSettings();
         let card;
         try {
-          card = await generateWithOpenAICompatible({
+          card = await generateWithLlm({
             input: body.input || "",
             context,
             skills,
@@ -141,8 +143,12 @@ function createApp(store = createStore()) {
   };
 }
 
-function startServer({ port = Number(process.env.SMART_PROMPT_PORT || DEFAULT_PORT), store = createStore() } = {}) {
-  const server = http.createServer(createApp(store));
+function startServer({
+  port = Number(process.env.SMART_PROMPT_PORT || DEFAULT_PORT),
+  store = createStore(),
+  generateWithLlm
+} = {}) {
+  const server = http.createServer(createApp(store, { generateWithLlm }));
   server.listen(port, "127.0.0.1");
   return server;
 }

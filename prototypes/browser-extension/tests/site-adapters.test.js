@@ -9,6 +9,15 @@ for (const id of ["chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt"
   assert.ok(adapter, `missing adapter ${id}`);
   assert.ok(adapter.inputSelectors.length >= 1);
 }
+const expectedInsertStrategies = {
+  chatgpt: "contenteditable-or-textarea",
+  claude: "contenteditable-or-textarea",
+  gemini: "contenteditable"
+};
+for (const [id, strategy] of Object.entries(expectedInsertStrategies)) {
+  const adapter = adapters.SITE_ADAPTERS.find((item) => item.id === id);
+  assert.equal(adapter.insertStrategy, strategy, `${id} insert strategy changed`);
+}
 
 assert.equal(adapters.detectSiteAdapter("chatgpt.com").id, "chatgpt");
 assert.equal(adapters.detectSiteAdapter("claude.ai").id, "claude");
@@ -45,6 +54,8 @@ assert.ok(content.includes("bindInputElementEvents"));
 assert.ok(content.includes("MutationObserver"));
 assert.ok(content.includes("setInterval(refreshDynamicBindings"));
 assert.ok(!/submit\s*\(/.test(content));
+assert.ok(!/requestSubmit\s*\(/.test(content));
+assert.ok(!/closest\(["']form["']\)/.test(content));
 assert.ok(!/KeyboardEvent\([^)]*Enter/.test(content));
 
 console.log("site-adapters tests passed");

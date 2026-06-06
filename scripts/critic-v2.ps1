@@ -68,8 +68,28 @@ foreach ($command in $commands) {
 $contentPath = Join-Path $Root "prototypes/browser-extension/src/content.js"
 if (Test-Path $contentPath) {
   $content = Get-Content -Raw -Encoding UTF8 $contentPath
-  if ($content -match "submit\s*\(" -or $content -match "KeyboardEvent\([^)]*Enter") {
+  if ($content -match "submit\s*\(" -or $content -match "requestSubmit\s*\(" -or $content -match "closest\([""']form[""']\)" -or $content -match "KeyboardEvent\([^)]*Enter") {
     Add-Failure "Browser extension appears to auto-submit or press Enter."
+  }
+}
+
+$localServiceTestPath = Join-Path $Root "apps/local-service/tests/local-service.test.js"
+if (Test-Path $localServiceTestPath) {
+  $localServiceTest = Get-Content -Raw -Encoding UTF8 $localServiceTestPath
+  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false")) {
+    if (-not $localServiceTest.Contains($token)) {
+      Add-Failure "Local-service tests missing three-mode LLM gateway coverage token: $token"
+    }
+  }
+}
+
+$siteAdapterTestPath = Join-Path $Root "prototypes/browser-extension/tests/site-adapters.test.js"
+if (Test-Path $siteAdapterTestPath) {
+  $siteAdapterTest = Get-Content -Raw -Encoding UTF8 $siteAdapterTestPath
+  foreach ($token in @("expectedInsertStrategies", "chatgpt", "claude", "gemini", "requestSubmit")) {
+    if (-not $siteAdapterTest.Contains($token)) {
+      Add-Failure "Browser extension tests missing insert/no-submit coverage token: $token"
+    }
   }
 }
 
