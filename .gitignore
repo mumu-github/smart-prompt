@@ -1,4 +1,5 @@
 .smart-prompt-data/
+.runtime/
 node_modules/
 target/
 apps/desktop-shell/src-tauri/gen/

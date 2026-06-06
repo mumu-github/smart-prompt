@@ -12,6 +12,16 @@ const headless = process.env.SMART_PROMPT_LIVE_HEADLESS === "1";
 const extensionDir = path.resolve(__dirname, "..");
 const reportPath = process.env.SMART_PROMPT_LIVE_REPORT || "";
 const injectFallback = process.env.SMART_PROMPT_LIVE_INJECT_FALLBACK !== "0";
+const profileDirOverride = process.env.SMART_PROMPT_LIVE_PROFILE_DIR
+  ? path.resolve(process.env.SMART_PROMPT_LIVE_PROFILE_DIR)
+  : "";
+const loginWaitMs = Number(process.env.SMART_PROMPT_LIVE_LOGIN_WAIT_MS || 0);
+const siteFilter = new Set(
+  String(process.env.SMART_PROMPT_LIVE_SITE_IDS || "")
+    .split(",")
+    .map((item) => item.trim().toLowerCase())
+    .filter(Boolean)
+);
 const sourceFiles = [
   "src/site-adapters.js",
   "src/local-service-client.js",
@@ -42,6 +52,10 @@ const sites = [
   { id: "lovable", name: "Lovable", url: "https://lovable.dev/", requireInsert: false },
   { id: "replit", name: "Replit", url: "https://replit.com/ai", requireInsert: false }
 ];
+const activeSites = siteFilter.size
+  ? sites.filter((site) => siteFilter.has(site.id))
+  : sites;
+const missingSiteFilters = Array.from(siteFilter).filter((id) => !sites.some((site) => site.id === id));
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
@@ -196,7 +210,7 @@ async function probeSite(client, site) {
     };
   })()`);
 
-  const focusResult = await evaluate(client, `(() => {
+  const focusExpression = `(() => {
     ${collectInputsSource}
     const candidates = smartPromptProbeInputs()
       .filter((element) => {
@@ -219,7 +233,13 @@ async function probeSite(client, site) {
       contentEditable: target.isContentEditable,
       beforeValue: ("value" in target ? target.value : target.textContent || "").slice(0, 80)
     };
-  })()`);
+  })()`;
+  let focusResult = await evaluate(client, focusExpression);
+
+  if (!focusResult.ok && loginWaitMs > 0) {
+    await sleep(loginWaitMs);
+    focusResult = await evaluate(client, focusExpression);
+  }
 
   if (!focusResult.ok) {
     if (injectFallback && await injectProbeRuntime(client)) {
@@ -477,8 +497,10 @@ async function injectProbeRuntime(client) {
 
 (async () => {
   assert.ok(fs.existsSync(chromePath), `Chrome not found: ${chromePath}`);
+  assert.equal(missingSiteFilters.length, 0, `Unknown SMART_PROMPT_LIVE_SITE_IDS: ${missingSiteFilters.join(", ")}`);
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-service-"));
-  const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-chrome-"));
+  const profileDir = profileDirOverride || fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-chrome-"));
+  if (profileDirOverride) fs.mkdirSync(profileDir, { recursive: true });
   const service = await startServiceForProbe(dataDir);
   const args = [
     "--disable-gpu",
@@ -515,7 +537,7 @@ async function injectProbeRuntime(client) {
     client = await createCdpClient(target.webSocketDebuggerUrl);
     await client.send("Runtime.enable");
     await client.send("Page.enable");
-    for (const site of sites) {
+    for (const site of activeSites) {
       try {
         results.push(await probeSite(client, site));
       } catch (error) {
@@ -532,17 +554,25 @@ async function injectProbeRuntime(client) {
     });
     await closeServer(service);
     await removeDirWithRetry(dataDir);
-    await removeDirWithRetry(profileDir);
+    if (!profileDirOverride) await removeDirWithRetry(profileDir);
   }
 
   const displayPasses = results.filter((item) => item.passedDisplay).length;
   const insertPasses = results.filter((item) => item.requireInsert && item.passedInsert).map((item) => item.id);
+  const displayRequired = siteFilter.size ? activeSites.length : 5;
+  const requiredInsertIds = activeSites.filter((site) => site.requireInsert).map((site) => site.id);
   const report = {
     createdAt: new Date().toISOString(),
     headless,
     injectFallback,
+    loginWaitMs,
+    siteFilter: Array.from(siteFilter),
+    profilePersistent: Boolean(profileDirOverride),
+    profileDir: profileDirOverride || "",
     extensionLoad,
     displayPasses,
+    displayRequired,
+    requiredInsertIds,
     insertPasses,
     results
   };
@@ -551,9 +581,8 @@ async function injectProbeRuntime(client) {
   }
   console.log(JSON.stringify(report, null, 2));
 
-  const requiredInsertIds = ["chatgpt", "claude", "gemini"];
   const missingInsert = requiredInsertIds.filter((id) => !insertPasses.includes(id));
-  if (displayPasses < 5 || missingInsert.length > 0) {
+  if (displayPasses < displayRequired || missingInsert.length > 0) {
     process.exitCode = 1;
   }
 })();

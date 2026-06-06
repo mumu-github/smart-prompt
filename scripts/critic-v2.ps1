@@ -37,6 +37,7 @@ $requiredFiles = @(
   "research/v2-implementation-rubric.md",
   "research/v2-verification.md",
   "scripts/check-v2-live-sites.ps1",
+  "scripts/check-v2-claude-insert.ps1",
   "scripts/check-v2-tauri-runtime.ps1"
 )
 
@@ -69,6 +70,16 @@ if (Test-Path $contentPath) {
   $content = Get-Content -Raw -Encoding UTF8 $contentPath
   if ($content -match "submit\s*\(" -or $content -match "KeyboardEvent\([^)]*Enter") {
     Add-Failure "Browser extension appears to auto-submit or press Enter."
+  }
+}
+
+$liveProbePath = Join-Path $Root "prototypes/browser-extension/tests/live-site-probe.test.js"
+if (Test-Path $liveProbePath) {
+  $liveProbe = Get-Content -Raw -Encoding UTF8 $liveProbePath
+  foreach ($token in @("SMART_PROMPT_LIVE_PROFILE_DIR", "SMART_PROMPT_LIVE_SITE_IDS", "SMART_PROMPT_LIVE_LOGIN_WAIT_MS")) {
+    if (-not $liveProbe.Contains($token)) {
+      Add-Failure "Live-site probe missing authenticated-run support token: $token"
+    }
   }
 }
 
