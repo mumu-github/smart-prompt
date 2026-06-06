@@ -1,5 +1,13 @@
+param(
+  [string]$Report = "research/v2-real-llm.latest.json"
+)
+
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+if (-not [System.IO.Path]::IsPathRooted($Report)) {
+  $Report = Join-Path $Root $Report
+}
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Report) | Out-Null
 
 foreach ($name in @("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GOOGLE_API_KEY")) {
   if (-not [Environment]::GetEnvironmentVariable($name, "Process")) {
@@ -16,7 +24,9 @@ if (-not ($env:OPENAI_API_KEY -or $env:ANTHROPIC_API_KEY -or $env:GEMINI_API_KEY
 
 Push-Location $Root
 try {
+  $env:SMART_PROMPT_REAL_LLM_REPORT = $Report
   @'
+const fs = require("node:fs");
 const { PROVIDERS, chooseConfiguredProvider, generateWithConfiguredProvider } = require("./packages/shared/llm-gateway");
 
 function chooseProvider() {
@@ -82,9 +92,20 @@ const samples = [
       break;
     }
   }
-  console.log(JSON.stringify(results, null, 2));
+  const report = {
+    createdAt: new Date().toISOString(),
+    requestedProvider: provider,
+    selectedProvider,
+    pass: results.length === samples.length && results.every((result) => result.ok && result.generatedBy === "llm"),
+    results
+  };
+  if (process.env.SMART_PROMPT_REAL_LLM_REPORT) {
+    fs.writeFileSync(process.env.SMART_PROMPT_REAL_LLM_REPORT, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+  }
+  console.log(JSON.stringify(report, null, 2));
 })();
 '@ | node -
 } finally {
+  Remove-Item Env:\SMART_PROMPT_REAL_LLM_REPORT -ErrorAction SilentlyContinue
   Pop-Location
 }

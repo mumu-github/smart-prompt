@@ -16,6 +16,19 @@ function Add-Failure {
   $script:failures += $Message
 }
 
+function Read-JsonReport {
+  param([string]$Path)
+  if (-not (Test-Path $Path)) {
+    return $null
+  }
+  try {
+    return Get-Content -Raw -Encoding UTF8 $Path | ConvertFrom-Json
+  } catch {
+    Add-Failure "Invalid JSON report: $Path"
+    return $null
+  }
+}
+
 $requiredFiles = @(
   "packages/shared/smart-prompt-core.js",
   "packages/shared/llm-gateway.js",
@@ -39,6 +52,7 @@ $requiredFiles = @(
   "research/v2-verification.md",
   "scripts/check-v2-live-sites.ps1",
   "scripts/check-v2-claude-insert.ps1",
+  "scripts/check-v2-real-llm.ps1",
   "scripts/check-v2-tauri-runtime.ps1"
 )
 
@@ -161,9 +175,19 @@ if (Test-Path $liveProbePath) {
 $claudeProbePath = Join-Path $Root "scripts/check-v2-claude-insert.ps1"
 if (Test-Path $claudeProbePath) {
   $claudeProbe = Get-Content -Raw -Encoding UTF8 $claudeProbePath
-  foreach ($token in @("v2-claude-insert.latest.json", "-Report", "-SiteIds claude")) {
+  foreach ($token in @("v2-claude-insert.latest.json", "-Report", "-SiteIds claude", "-AttachCdp")) {
     if (-not $claudeProbe.Contains($token)) {
       Add-Failure "Claude insert probe missing separate-report token: $token"
+    }
+  }
+}
+
+$realLlmProbePath = Join-Path $Root "scripts/check-v2-real-llm.ps1"
+if (Test-Path $realLlmProbePath) {
+  $realLlmProbe = Get-Content -Raw -Encoding UTF8 $realLlmProbePath
+  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "idea", "continue", "polish")) {
+    if (-not $realLlmProbe.Contains($token)) {
+      Add-Failure "Real LLM probe missing report or three-mode token: $token"
     }
   }
 }
@@ -171,6 +195,7 @@ if (Test-Path $claudeProbePath) {
 $verification = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/v2-verification.md")
 if ($RequireRuntimeEvidence) {
   $markers = @(
+    "REAL_LLM_3_MODES_PASS",
     "LIVE_5_SITES_PASS",
     "INSERT_CHATGPT_PASS",
     "INSERT_CLAUDE_PASS",
@@ -183,6 +208,43 @@ if ($RequireRuntimeEvidence) {
     $pattern = '(?m)^\s*-\s*`?' + [regex]::Escape($marker) + '`?\b'
     if (-not [regex]::IsMatch($verification, $pattern)) {
       Add-Failure "Missing runtime evidence marker: $marker"
+    }
+  }
+
+  $claudeReportPath = Join-Path $Root "research/v2-claude-insert.latest.json"
+  $claudeReport = Read-JsonReport $claudeReportPath
+  if (-not $claudeReport) {
+    Add-Failure "Missing Claude Insert runtime report: research/v2-claude-insert.latest.json"
+  } else {
+    $claudeResult = @($claudeReport.results) | Where-Object { $_.id -eq "claude" } | Select-Object -First 1
+    if (-not $claudeReport.extensionLoad.ok) {
+      Add-Failure "Claude Insert report does not prove unpacked extension load."
+    }
+    if (-not (@($claudeReport.insertPasses) -contains "claude")) {
+      Add-Failure "Claude Insert report missing claude in insertPasses."
+    }
+    if (-not $claudeResult -or -not $claudeResult.passedDisplay -or -not $claudeResult.passedInsert -or -not $claudeResult.insert.ok) {
+      Add-Failure "Claude Insert report does not prove display and insert pass."
+    }
+    if ($claudeResult -and $claudeResult.injectedProbe) {
+      Add-Failure "Claude Insert report used DevTools fallback injection instead of formal extension behavior."
+    }
+  }
+
+  $realLlmReportPath = Join-Path $Root "research/v2-real-llm.latest.json"
+  $realLlmReport = Read-JsonReport $realLlmReportPath
+  if (-not $realLlmReport) {
+    Add-Failure "Missing real LLM runtime report: research/v2-real-llm.latest.json"
+  } else {
+    $results = @($realLlmReport.results)
+    foreach ($modeName in @("idea", "continue", "polish")) {
+      $modeResult = $results | Where-Object { $_.name -eq $modeName } | Select-Object -First 1
+      if (-not $modeResult -or -not $modeResult.ok -or $modeResult.generatedBy -ne "llm" -or $modeResult.promptLength -lt 40) {
+        Add-Failure "Real LLM report does not prove $modeName mode generated through LLM."
+      }
+    }
+    if (-not $realLlmReport.pass) {
+      Add-Failure "Real LLM report pass flag is false."
     }
   }
 }

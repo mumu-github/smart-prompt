@@ -1,0 +1,17 @@
+{
+  "createdAt": "2026-06-06T17:11:10.307Z",
+  "requestedProvider": "auto",
+  "selectedProvider": "openai-compatible",
+  "pass": false,
+  "results": [
+    {
+      "name": "idea",
+      "ok": false,
+      "provider": "openai-compatible",
+      "code": "llm_request_failed",
+      "status": 429,
+      "message": "LLM request failed with 429.",
+      "bodyPreview": "{\n    \"error\": {\n        \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api"
+    }
+  ]
+}

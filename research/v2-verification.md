@@ -21,13 +21,14 @@ Status: in progress
 - Tauri local service start: `scripts/check-v2-tauri-runtime.ps1` invokes `start_local_service` from the running Tauri app with a test port and confirms `/health` responds from `smart-prompt-local-service`.
 - Live-site probe harness: `scripts/check-v2-live-sites.ps1` launches a temporary browser profile, loads the unpacked extension through the browser-level CDP `Extensions.loadUnpacked` command, checks live web AI pages, and writes `research/v2-live-site-probe.latest.json`. The probe records `injectedProbe: true` only when it must fall back to DevTools source injection; those fallback results are compatibility evidence, not formal extension-load pass markers.
 - Authenticated Claude probe path: `scripts/check-v2-claude-insert.ps1` runs the same live-site probe with a persistent local Chrome profile, `SiteIds claude`, a login wait window, and an isolated report at `research/v2-claude-insert.latest.json` so Claude Insert can be proven after an interactive login without overwriting the 5-site report. It also supports `-AttachCdp` for attaching to an already launched Chrome remote-debugging session and probing Claude in a newly created tab, which is the safest path for reusing an existing Claude login. This is a verification path, not a pass marker until the report contains `INSERT_CLAUDE_PASS`.
+- Runtime evidence gate: `scripts/critic-v2.ps1 -RequireRuntimeEvidence` now requires machine-readable runtime reports. Claude Insert must be proven by `research/v2-claude-insert.latest.json`, and real LLM generation must be proven by `research/v2-real-llm.latest.json` with `idea`, `continue`, and `polish` all returning `generatedBy: "llm"`.
 - `LIVE_5_SITES_PASS`: latest formal extension-loaded probe shows mascot display on ChatGPT, Gemini, Bolt, v0.app, and Lovable with `injectedProbe: false`.
 - `INSERT_CHATGPT_PASS`: latest formal extension-loaded probe inserts into ChatGPT without auto-send and closes the card.
 - `INSERT_GEMINI_PASS`: latest formal extension-loaded probe inserts into Gemini without auto-send and closes the card.
 
 ## Runtime Evidence Attempted But Not Passing
 
-- Real LLM: `scripts/check-v2-real-llm.ps1` now supports auto-selection across OpenAI-compatible, Anthropic, and Gemini provider keys. The current User environment only exposes `OPENAI_API_KEY`, and that OpenAI-compatible request still returns HTTP 429 quota/billing failure on the first `idea` mode request, so the three-mode real LLM acceptance is not proven.
+- Real LLM: `scripts/check-v2-real-llm.ps1` now supports auto-selection across OpenAI-compatible, Anthropic, and Gemini provider keys and writes `research/v2-real-llm.latest.json`. The current User environment only exposes `OPENAI_API_KEY`, and that OpenAI-compatible request still returns HTTP 429 quota/billing failure on the first `idea` mode request, so the three-mode real LLM acceptance is not proven.
 - Live sites: Claude Insert is still not proven because Claude redirects to sign-in/logout in the temporary browser profile. Perplexity is behind a challenge page, and Replit/DeepSeek/Doubao are login/region limited in this environment.
 
 ## Manual / Runtime Evidence Still Required
@@ -36,4 +37,4 @@ Status: in progress
 
 Do not mark V2 complete until these runtime checks are replaced with concrete pass evidence.
 
-Latest live-site probe proves formal extension display on 5 sites plus ChatGPT/Gemini Insert. Latest strict `scripts/critic-v2.ps1 -RequireRuntimeEvidence` fails only on missing `INSERT_CLAUDE_PASS`; default `scripts/critic-v2.ps1` still passes, and `scripts/check-v2-real-llm.ps1` still reaches the gateway but returns OpenAI HTTP 429 quota/billing failure.
+Latest live-site probe proves formal extension display on 5 sites plus ChatGPT/Gemini Insert. Default `scripts/critic-v2.ps1` still passes. Strict `scripts/critic-v2.ps1 -RequireRuntimeEvidence` must remain failing until `research/v2-claude-insert.latest.json` proves Claude Insert and `research/v2-real-llm.latest.json` proves all three real LLM modes; the current real LLM report still reaches the gateway but returns OpenAI HTTP 429 quota/billing failure.
