@@ -14,6 +14,7 @@
 - 真实 LLM 生成需要 API key 和可用 billing；没有 key 时本地服务只会按调用方允许返回 template fallback。
 - 当前 User 环境只发现 `OPENAI_API_KEY`，未发现 `ANTHROPIC_API_KEY`、`GEMINI_API_KEY` 或 `GOOGLE_API_KEY`，所以新增 provider 还没有真实联网通过证据。
 - 真实站点验证可能需要浏览器登录态和平台页面稳定性；当前不能用本地 demo 代替生产站点证据。
+- 默认隐私上下文已收窄到 host/origin/tool/inputKind/pathKind；后续如果要上传 URL、页面标题或页面内容，必须做成显式用户开关和可见范围提示。
 - 当前 Chrome/Edge 环境未接受命令行 unpacked extension 加载；已改用 browser-level CDP `Extensions.loadUnpacked` 获取正式扩展加载证据。
 
 ## 失败尝试

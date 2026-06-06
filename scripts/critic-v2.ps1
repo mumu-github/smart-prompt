@@ -72,6 +72,20 @@ if (Test-Path $contentPath) {
   if ($content -match "submit\s*\(" -or $content -match "requestSubmit\s*\(" -or $content -match "closest\([""']form[""']\)" -or $content -match "KeyboardEvent\([^)]*Enter") {
     Add-Failure "Browser extension appears to auto-submit or press Enter."
   }
+  foreach ($token in @("url: location.href", "title: document.title", "document.body.innerText", "document.documentElement.innerText")) {
+    if ($content.Contains($token)) {
+      Add-Failure "Browser extension default context may upload sensitive page data: $token"
+    }
+  }
+  if ($content -match "document\.body\.(innerText|textContent|innerHTML)" -or $content -match "document\.documentElement\.(innerText|textContent)") {
+    Add-Failure "Browser extension default context appears to read whole-page text."
+  }
+  if (-not $content.Contains("getPathKind")) {
+    Add-Failure "Browser extension should classify path shape without sending the full URL."
+  }
+  if (-not $content.Contains("location.origin")) {
+    Add-Failure "Browser extension should send origin rather than full URL when host context is needed."
+  }
 }
 
 $localServiceTestPath = Join-Path $Root "apps/local-service/tests/local-service.test.js"

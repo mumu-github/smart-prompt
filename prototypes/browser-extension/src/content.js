@@ -116,15 +116,22 @@
     return event.composedPath?.()[0] || event.target;
   }
 
+  function getPathKind() {
+    const segments = location.pathname.split("/").filter(Boolean).length;
+    if (segments === 0) return "root";
+    if (segments === 1) return "one-segment";
+    return "multi-segment";
+  }
+
   function getContext(element) {
     const adapter = siteAdapters?.detectSiteAdapter(location.hostname);
     return {
       host: location.hostname,
-      title: document.title,
+      origin: location.origin,
       tool: adapter?.tool || engine.detectTool(location.hostname, document.title),
       adapterId: adapter?.id || "generic",
       inputKind: element?.tagName?.toLowerCase() || (element?.isContentEditable ? "contenteditable" : "textbox"),
-      url: location.href
+      pathKind: getPathKind()
     };
   }
 
