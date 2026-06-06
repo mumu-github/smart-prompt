@@ -101,6 +101,9 @@ if (Test-Path $contentPath) {
   if (-not $content.Contains("location.origin")) {
     Add-Failure "Browser extension should send origin rather than full URL when host context is needed."
   }
+  if (-not $content.Contains("lastAdapterId")) {
+    Add-Failure "Browser extension debug state should expose the active site adapter id."
+  }
 }
 
 $localServiceTestPath = Join-Path $Root "apps/local-service/tests/local-service.test.js"
@@ -186,7 +189,7 @@ if (Test-Path $desktopAppPath) {
 $liveProbePath = Join-Path $Root "prototypes/browser-extension/tests/live-site-probe.test.js"
 if (Test-Path $liveProbePath) {
   $liveProbe = Get-Content -Raw -Encoding UTF8 $liveProbePath
-  foreach ($token in @("SMART_PROMPT_LIVE_PROFILE_DIR", "SMART_PROMPT_LIVE_SITE_IDS", "SMART_PROMPT_LIVE_LOGIN_WAIT_MS", "SMART_PROMPT_LIVE_ATTACH_CDP", "Target.createTarget")) {
+  foreach ($token in @("SMART_PROMPT_LIVE_PROFILE_DIR", "SMART_PROMPT_LIVE_SITE_IDS", "SMART_PROMPT_LIVE_LOGIN_WAIT_MS", "SMART_PROMPT_LIVE_ATTACH_CDP", "Target.createTarget", "siteAdapters.SITE_ADAPTERS", "getProbeSelectors", "createCollectInputsSource", "inputSelectors:", "genericInputSelectors")) {
     if (-not $liveProbe.Contains($token)) {
       Add-Failure "Live-site probe missing authenticated-run support token: $token"
     }

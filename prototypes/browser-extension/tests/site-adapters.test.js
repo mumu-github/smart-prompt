@@ -81,6 +81,7 @@ const content = fs.readFileSync(path.join(__dirname, "../src/content.js"), "utf8
 assert.ok(content.includes("localService.generate"));
 assert.ok(content.includes("allowTemplateFallback"));
 assert.ok(content.includes("composedPath"));
+assert.ok(content.includes("lastAdapterId"));
 assert.ok(content.includes("bindShadowRootEvents"));
 assert.ok(content.includes("bindInputElementEvents"));
 assert.ok(content.includes("MutationObserver"));
@@ -95,5 +96,12 @@ assert.ok(!/submit\s*\(/.test(content));
 assert.ok(!/requestSubmit\s*\(/.test(content));
 assert.ok(!/closest\(["']form["']\)/.test(content));
 assert.ok(!/KeyboardEvent\([^)]*Enter/.test(content));
+
+const liveProbe = fs.readFileSync(path.join(__dirname, "live-site-probe.test.js"), "utf8");
+assert.ok(liveProbe.includes("siteAdapters.SITE_ADAPTERS"));
+assert.ok(liveProbe.includes("getProbeSelectors"));
+assert.ok(liveProbe.includes("createCollectInputsSource"));
+assert.ok(liveProbe.includes("inputSelectors:"));
+assert.ok(liveProbe.includes("genericInputSelectors"));
 
 console.log("site-adapters tests passed");

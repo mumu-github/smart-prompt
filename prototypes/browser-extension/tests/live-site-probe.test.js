@@ -5,6 +5,7 @@ const path = require("node:path");
 const { spawn } = require("node:child_process");
 const { startServer } = require("../../../apps/local-service/src/server");
 const { createStore } = require("../../../apps/local-service/src/store");
+const siteAdapters = require("../src/site-adapters.js");
 
 const chromePath = process.env.CHROME_PATH || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
 const remotePort = Number(process.env.SMART_PROMPT_LIVE_CDP_PORT || 9232);
@@ -29,19 +30,45 @@ const sourceFiles = [
   "src/prompt-engine.js",
   "src/content.js"
 ];
-const inputSelector = 'textarea,input[type="text"],input[type="search"],input[type="url"],input:not([type]),[contenteditable="true"],[role="textbox"]';
-const collectInputsSource = `
-function smartPromptProbeInputs(root = document, out = []) {
+const genericInputSelectors = [
+  "textarea",
+  'input[type="text"]',
+  'input[type="search"]',
+  'input[type="url"]',
+  "input:not([type])",
+  '[contenteditable="true"]',
+  '[role="textbox"]'
+];
+function unique(values) {
+  return Array.from(new Set(values.filter(Boolean)));
+}
+
+function getProbeSelectors(site) {
+  const adapter = siteAdapters.SITE_ADAPTERS.find((item) => item.id === site.id);
+  return unique([...(adapter?.inputSelectors || []), ...genericInputSelectors]);
+}
+
+function createCollectInputsSource(site) {
+  const selectors = JSON.stringify(getProbeSelectors(site));
+  return `
+function smartPromptProbeInputs(root = document, out = [], seen = new Set()) {
   if (!root.querySelectorAll) return out;
-  for (const element of root.querySelectorAll('${inputSelector}')) {
-    out.push(element);
+  const selectors = ${selectors};
+  for (const selector of selectors) {
+    for (const element of root.querySelectorAll(selector)) {
+      if (!seen.has(element)) {
+        seen.add(element);
+        out.push(element);
+      }
+    }
   }
   for (const element of root.querySelectorAll("*")) {
-    if (element.shadowRoot) smartPromptProbeInputs(element.shadowRoot, out);
+    if (element.shadowRoot) smartPromptProbeInputs(element.shadowRoot, out, seen);
   }
   return out;
 }
 `;
+}
 
 const sites = [
   { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com/", requireInsert: true },
@@ -185,6 +212,8 @@ async function probeSite(client, site) {
   await client.send("Page.loadEventFired").catch(() => {});
   await sleep(Number(process.env.SMART_PROMPT_LIVE_SETTLE_MS || 8000));
   let injectedProbe = false;
+  const probeSelectors = getProbeSelectors(site);
+  const collectInputsSource = createCollectInputsSource(site);
 
   const initial = await evaluate(client, `(() => {
     ${collectInputsSource}
@@ -210,6 +239,7 @@ async function probeSite(client, site) {
       injectedProbe: Boolean(window.__smartPromptProbeInjected),
       mascot: Boolean(document.getElementById("smart-prompt-mascot")),
       card: Boolean(document.getElementById("smart-prompt-card")),
+      inputSelectors: ${JSON.stringify(probeSelectors)},
       candidates
     };
   })()`);
@@ -344,6 +374,8 @@ async function probeSite(client, site) {
 
 async function probeSiteAfterInjection(client, site, initialBeforeInjection, focusBeforeInjection) {
   await waitFor(client, "Boolean(window.__smartPromptCopilotReady)", (value) => value, 3000).catch(() => {});
+  const probeSelectors = getProbeSelectors(site);
+  const collectInputsSource = createCollectInputsSource(site);
   const refocused = await evaluate(client, `(() => {
     ${collectInputsSource}
     const candidates = smartPromptProbeInputs()

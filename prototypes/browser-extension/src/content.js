@@ -36,7 +36,8 @@
       deepActiveChecks: 0,
       lastFocusTag: "",
       lastFocusHost: "",
-      lastFocusKind: ""
+      lastFocusKind: "",
+      lastAdapterId: ""
     }
   };
 
@@ -172,10 +173,12 @@
   function onFocus(event) {
     const target = getEventTarget(event);
     if (!state.settings.enabled || !isTextInput(target) || !isVisible(target)) return;
+    const adapter = siteAdapters?.detectSiteAdapter(location.hostname);
     state.debug.focusEvents += 1;
     state.debug.lastFocusTag = target.tagName || "";
     state.debug.lastFocusHost = location.hostname;
     state.debug.lastFocusKind = target.isContentEditable ? "contenteditable" : target.tagName?.toLowerCase() || "";
+    state.debug.lastAdapterId = adapter?.id || "generic";
     state.activeInput = target;
     createMascot();
     setMascotState(engine.detectMode(getInputText(target)) === engine.MODE.IDEA ? "normal" : "resting");
