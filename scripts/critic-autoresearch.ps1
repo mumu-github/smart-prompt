@@ -73,6 +73,32 @@ if (-not (Test-Path $gptImage2Image)) {
   Write-Error "Expected UI/UX image generated through the explicit gpt-image-2 CLI/API path at assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png."
 }
 
+$stateFiles = @(
+  "assets/ui-ux/mascot-states/normal.png",
+  "assets/ui-ux/mascot-states/resting.png",
+  "assets/ui-ux/mascot-states/thinking.png",
+  "assets/ui-ux/mascot-states/suggesting.png",
+  "assets/ui-ux/mascot-states/success.png",
+  "assets/ui-ux/mascot-states/clapping.png"
+)
+foreach ($stateFile in $stateFiles) {
+  if (-not (Test-Path (Join-Path $Root $stateFile))) {
+    Write-Error "Expected mascot state asset at $stateFile."
+  }
+}
+
+$animationFiles = @(
+  "assets/ui-ux/mascot-animations/mascot-state-loop.mp4",
+  "assets/ui-ux/mascot-animations/floating-prompt-assistant.mp4",
+  "prototypes/remotion-mascot/src/Composition.tsx",
+  "prototypes/remotion-mascot/src/Root.tsx"
+)
+foreach ($animationFile in $animationFiles) {
+  if (-not (Test-Path (Join-Path $Root $animationFile))) {
+    Write-Error "Expected Remotion animation artifact at $animationFile."
+  }
+}
+
 if (-not (Test-Path (Join-Path $Root ".git"))) {
   Write-Error "Git repository is missing."
 }

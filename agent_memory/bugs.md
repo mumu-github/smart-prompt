@@ -19,6 +19,7 @@
 - 调严 critic 后，当前失败在缺少显式 `gpt-image-2` API 输出图：`assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
 - 本次按用户要求再次 dry-run 通过；随后在 User 级 `OPENAI_API_KEY` 生效后真实调用 `gpt-image-2`，但被 billing hard limit 拦截。
 - 用户配置 User 级 `OPENAI_API_KEY` 后再次真实调用；`uv run --with openai` 成功安装临时 SDK 并调用 Image API，但 OpenAI 返回 billing hard limit，未生成输出图。
+- Goal 续跑中再次真实调用 `gpt-image-2`；API 仍返回 billing hard limit。更新后的 critic 仍失败在缺少 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
 
 ## 待回顾
 
@@ -31,4 +32,5 @@
 - 已完成研究文档、PRD、UI/UX 概念图。
 - 已完成一版不依赖 API billing 的内置 `image_gen` UI/UX 图，并本地贴入原始小人以避免模型重绘角色。
 - 已完成六种小人状态动作资产并抠成透明 PNG：normal、resting、thinking、suggesting、success、clapping。
+- 已完成 Remotion 轻量动画原型和两个 MP4 渲染资产。
 - 研究/PRD/内置图像资产已通过旧本地 critic 并记录过 OMX pass verdict；现已调严门槛，需真实 `gpt-image-2` API 输出图后才能重新记录 pass。
