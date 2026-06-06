@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Smart Prompt",
+  "version": "0.2.0",
+  "identifier": "com.smartprompt.desktop",
+  "build": {
+    "beforeDevCommand": "",
+    "beforeBuildCommand": "",
+    "frontendDist": "../",
+    "devUrl": "../index.html"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Smart Prompt",
+        "width": 920,
+        "height": 720,
+        "resizable": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": []
+  }
+}

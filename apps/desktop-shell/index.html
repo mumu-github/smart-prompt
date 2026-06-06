@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Prompt Desktop</title>
+    <link rel="stylesheet" href="src/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <h1>Smart Prompt</h1>
+          <p>V2 desktop shell</p>
+        </div>
+        <div class="status-actions">
+          <span id="service-status" class="status-pill">checking</span>
+          <button id="start-service" type="button">Start Service</button>
+        </div>
+      </header>
+
+      <section class="panel">
+        <h2>LLM Settings</h2>
+        <label>
+          Base URL
+          <input id="base-url" value="https://api.openai.com/v1">
+        </label>
+        <label>
+          Model
+          <input id="model" value="gpt-4o-mini">
+        </label>
+        <label>
+          API Key
+          <input id="api-key" type="password" placeholder="Stored by local service">
+        </label>
+        <button id="save-settings" type="button">Save Settings</button>
+      </section>
+
+      <section class="panel">
+        <h2>Skill Library</h2>
+        <label>
+          Folder path
+          <input id="skill-folder" placeholder="C:\\Users\\you\\.codex\\skills">
+        </label>
+        <button id="import-folder" type="button">Import Folder</button>
+        <div id="skill-list" class="skill-list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Shortcut</h2>
+        <label>
+          Global shortcut
+          <input id="shortcut" value="CmdOrCtrl+Shift+Space">
+        </label>
+        <button id="save-shortcut" type="button">Save Shortcut</button>
+      </section>
+    </main>
+    <script src="src/app.js"></script>
+  </body>
+</html>

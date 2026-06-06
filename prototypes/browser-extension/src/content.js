@@ -1,5 +1,7 @@
 (function initSmartPromptContent() {
   const engine = globalThis.SmartPromptEngine;
+  const siteAdapters = globalThis.SmartPromptSiteAdapters;
+  const localService = globalThis.SmartPromptLocalService;
   if (!engine || globalThis.__smartPromptCopilotLoaded) return;
   globalThis.__smartPromptCopilotLoaded = true;
 
@@ -20,7 +22,9 @@
     lastContext: null,
     settings: {
       enabled: true,
-      quietUntilFocus: true
+      quietUntilFocus: true,
+      preferLocalService: true,
+      serviceUrl: localService?.DEFAULT_SERVICE_URL || "http://127.0.0.1:17371"
     }
   };
 
@@ -77,9 +81,11 @@
   }
 
   function queryInputs() {
-    return Array.from(
-      document.querySelectorAll('textarea, input[type="text"], input[type="search"], input[type="url"], input[type="email"], [contenteditable="true"], [role="textbox"]')
-    ).filter((element) => isTextInput(element) && isVisible(element));
+    const adapter = siteAdapters?.detectSiteAdapter(location.hostname);
+    const candidates = siteAdapters?.queryInputCandidates
+      ? siteAdapters.queryInputCandidates(document, adapter)
+      : Array.from(document.querySelectorAll('textarea, input[type="text"], input[type="search"], input[type="url"], input[type="email"], [contenteditable="true"], [role="textbox"]'));
+    return candidates.filter((element) => isTextInput(element) && isVisible(element));
   }
 
   function getInputText(element) {
@@ -90,26 +96,17 @@
 
   function setInputText(element, value) {
     if (!element) return false;
-    element.focus();
-    if ("value" in element) {
-      const prototype = element.tagName.toLowerCase() === "textarea" ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
-      const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
-      if (setter) setter.call(element, value);
-      else element.value = value;
-    } else {
-      element.textContent = value;
-    }
-
-    element.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertText", data: value }));
-    element.dispatchEvent(new Event("change", { bubbles: true }));
-    return true;
+    if (siteAdapters?.writeInput) return siteAdapters.writeInput(element, value);
+    return false;
   }
 
   function getContext(element) {
+    const adapter = siteAdapters?.detectSiteAdapter(location.hostname);
     return {
       host: location.hostname,
       title: document.title,
-      tool: engine.detectTool(location.hostname, document.title),
+      tool: adapter?.tool || engine.detectTool(location.hostname, document.title),
+      adapterId: adapter?.id || "generic",
       inputKind: element?.tagName?.toLowerCase() || (element?.isContentEditable ? "contenteditable" : "textbox"),
       url: location.href
     };
@@ -182,17 +179,10 @@
       .join("");
   }
 
-  function refreshCardPreview(advanceVariant) {
-    if (!state.card || !state.activeInput) return;
-    if (advanceVariant) state.variant += 1;
-
-    const inputText = getInputText(state.activeInput);
-    const context = getContext(state.activeInput);
-    const card = engine.buildCard(inputText, context, state.importedSkills, state.variant);
+  function renderCard(card, context, generatedBy) {
+    if (!state.card) return;
     state.lastPrompt = card.prompt;
-    state.lastInputText = inputText;
     state.lastContext = context;
-
     const label = state.card.querySelector(".spc-mode");
     const textarea = state.card.querySelector(".spc-output");
     const skills = state.card.querySelector(".spc-skills");
@@ -201,7 +191,35 @@
     label.className = `spc-mode ${modeClass(card.mode)}`;
     textarea.value = card.prompt;
     skills.innerHTML = renderSkillChips(card.skills);
-    contextLine.textContent = [card.tool, context.host, card.inputKind].filter(Boolean).join(" / ");
+    contextLine.textContent = [card.tool, context.host, context.inputKind, generatedBy].filter(Boolean).join(" / ");
+  }
+
+  async function refreshCardPreview(advanceVariant) {
+    if (!state.card || !state.activeInput) return;
+    if (advanceVariant) state.variant += 1;
+
+    const inputText = getInputText(state.activeInput);
+    const context = getContext(state.activeInput);
+    const card = engine.buildCard(inputText, context, state.importedSkills, state.variant);
+    state.lastInputText = inputText;
+    renderCard(card, context, "template");
+
+    if (!state.settings.preferLocalService || !localService?.generate) return;
+
+    try {
+      const result = await localService.generate({
+        input: inputText,
+        context,
+        variantIndex: state.variant,
+        allowTemplateFallback: true
+      }, state.settings.serviceUrl);
+      if (state.activeInput && getInputText(state.activeInput) === inputText) {
+        renderCard(result.card, context, result.card.generatedBy || "service");
+      }
+    } catch (error) {
+      const contextLine = state.card?.querySelector(".spc-context");
+      if (contextLine) contextLine.textContent = `${contextLine.textContent} / service offline`;
+    }
   }
 
   function openPromptCard() {

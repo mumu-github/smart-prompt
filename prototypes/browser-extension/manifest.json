@@ -20,7 +20,9 @@
     "https://v0.dev/*",
     "https://replit.com/*",
     "https://www.doubao.com/*",
-    "https://chat.deepseek.com/*"
+    "https://chat.deepseek.com/*",
+    "http://127.0.0.1:17371/*",
+    "http://localhost:17371/*"
   ],
   "content_scripts": [
     {
@@ -39,6 +41,8 @@
         "https://chat.deepseek.com/*"
       ],
       "js": [
+        "src/site-adapters.js",
+        "src/local-service-client.js",
         "src/prompt-engine.js",
         "src/content.js"
       ],

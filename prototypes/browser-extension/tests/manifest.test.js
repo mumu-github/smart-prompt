@@ -8,12 +8,18 @@ const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "u
 assert.equal(manifest.manifest_version, 3);
 assert.equal(manifest.options_page, "options/options.html");
 assert.ok(manifest.action.default_popup);
+assert.ok(manifest.host_permissions.includes("http://127.0.0.1:17371/*"));
+assert.ok(manifest.host_permissions.includes("http://localhost:17371/*"));
+assert.ok(manifest.content_scripts[0].js.includes("src/site-adapters.js"));
+assert.ok(manifest.content_scripts[0].js.includes("src/local-service-client.js"));
 assert.ok(manifest.content_scripts[0].js.includes("src/prompt-engine.js"));
 assert.ok(manifest.content_scripts[0].js.includes("src/content.js"));
 assert.ok(manifest.content_scripts[0].css.includes("src/content.css"));
 
 for (const resource of [
   "src/prompt-engine.js",
+  "src/site-adapters.js",
+  "src/local-service-client.js",
   "src/content.js",
   "src/content.css",
   "options/options.html",

@@ -4,13 +4,13 @@
 
 - 当前项目要解决的问题：为 Windows 和 macOS 通用的“提示词自动化生成小工具”做深度调研、竞品/开源实现分析、可行性方案、PRD 和 UI/UX 概念图。
 - 主要用户或使用场景：vibe coding 工具用户、网页 LLM/Agent 对话用户；用户可能不会写提示词、缺少提示习惯、缺少可复用 skills 或经常忘记调用已有 skills。
-- 不应偏离的边界：当前已进入第一版实现；优先按 PRD M1 做浏览器 MVP，不先扩大到桌面 OS 级输入框识别。
+- 不应偏离的边界：当前进入 V2；要实现真实 LLM、本地服务、浏览器强化和 Tauri 桌面壳，但仍不自动发送消息、不默认上传整页内容。
 
 ## 系统概览
 
-- 技术栈：第一版为 Chrome/Edge Manifest V3 浏览器扩展原型，静态 JS/CSS/HTML，无打包依赖；后续再进入 Tauri/Electron 桌面壳。
-- 关键入口：`prototypes/browser-extension/manifest.json`，content script 为 `src/prompt-engine.js` + `src/content.js`。
-- 关键模块：环境识别、三种提示词模式、悬浮小人入口、提示词生成/续写/优化、刷新/编辑/复制/收藏/填入、skill 推荐与导入。
+- 技术栈：V1 为 Chrome/Edge MV3；V2 新增 Node 本地服务、共享 JS core、OpenAI-compatible LLM gateway 和 Tauri desktop shell scaffold。
+- 关键入口：扩展 `prototypes/browser-extension/manifest.json`；本地服务 `apps/local-service/src/server.js`；桌面壳 `apps/desktop-shell/index.html` 与 `apps/desktop-shell/src-tauri/src/main.rs`。
+- 关键模块：环境识别、站点适配器、三种提示词模式、悬浮小人入口、本地服务 LLM 生成、prompt/skill 库、刷新/编辑/复制/收藏/填入、Tauri 托盘和全局快捷键。
 - 外部依赖或服务：可能包括 OpenAI 图像生成 API、LLM API、Remotion 或类似动画渲染方案、浏览器/桌面自动化能力。
 
 ## 重要约定
@@ -22,7 +22,7 @@
 
 ## 决策记录
 
-- 尚在生效的关键决策：使用 `oh-my-codex:autoresearch-goal` 工作流推进；第一版实现选择 PRD M1 浏览器 MVP，而不是先做桌面壳。
+- 尚在生效的关键决策：使用 `oh-my-codex:autoresearch-goal` 工作流推进；V2 mission slug 为 `smart-prompt-v2`。
 - 已确认的用户偏好：默认中文沟通；信息按需提供；最小改动；先读再改；非简单任务维护 `agent_memory/`。
 - 需要避免重复讨论的结论：仓库已在 `codex/prompt-automation-research` 分支提交研究/PRD/视觉资产；当前新增 `prototypes/browser-extension/` 作为第一版应用原型。
 

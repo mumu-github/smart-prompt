@@ -10,6 +10,8 @@
 - Prompt card：Refresh、Edit、Copy、Save、Insert。
 - 一键填入：DOM 写入并触发 `input` / `change`，不自动发送。
 - 本地 skill 导入：options 页支持粘贴或选择 Markdown / rules 文本，默认只作为文本建议引用。
+- V2 本地服务桥接：优先请求 `http://127.0.0.1:17371/generate`，服务不可用时回退本地模板。
+- 站点适配器：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit。
 - 无依赖测试：prompt engine 和 manifest 结构校验。
 
 ## 本地加载
@@ -26,6 +28,17 @@ npm test
 ```
 
 也可以打开 `demo/demo.html` 做本地视觉检查；它会用同一套 content script 模拟扩展运行。
+
+## V2 本地服务
+
+先启动：
+
+```powershell
+cd ..\..\apps\local-service
+npm start
+```
+
+再加载扩展。Prompt Card 会优先走真实 LLM gateway；若未配置 API key，则本地服务会按 `allowTemplateFallback` 返回模板结果。
 
 ## 当前边界
 

@@ -1,0 +1,11 @@
+{
+  "name": "smart-prompt-local-service",
+  "version": "0.2.0",
+  "private": true,
+  "description": "Local service for Smart Prompt V2 skill library, settings, and LLM gateway.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node tests/local-service.test.js"
+  }
+}

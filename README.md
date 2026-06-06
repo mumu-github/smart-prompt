@@ -14,6 +14,9 @@
 - `assets/ui-ux/mascot-animations/`：Remotion 渲染的轻量小人状态动画。
 - `prototypes/remotion-mascot/`：Remotion 动画原型源码。
 - `prototypes/browser-extension/`：按 PRD M1 实现的 Chrome/Edge MV3 浏览器 MVP 原型。
+- `packages/shared/`：V2 共享 prompt core、站点适配配置和 LLM gateway。
+- `apps/local-service/`：V2 本地服务，负责设置、skill 文件夹导入、skill 推荐和真实 LLM gateway。
+- `apps/desktop-shell/`：V2 Tauri 桌面壳 scaffold，包含设置页、托盘/快捷键 Rust 代码和本地服务入口。
 - `assets/ui-ux/README.md`：图像生成说明与提示词。
 - `research/autoresearch-rubric.md`：autoresearch-goal 验收 rubric。
 - `scripts/critic-autoresearch.ps1`：本地完成门槛检查脚本。
@@ -41,4 +44,16 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-im
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-browser-extension.ps1
+```
+
+V2 自动化验证：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1
+```
+
+V2 完整验收还需要真实站点和 Tauri runtime 证据；严格检查：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence
 ```
