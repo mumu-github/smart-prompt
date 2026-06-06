@@ -26,6 +26,8 @@ Set `SMART_PROMPT_DATA_DIR` to override it. The Tauri shell, manual local servic
 
 All responses are JSON. Successful responses include `ok: true`; failures include `ok: false` and an `error` object with `code` and `message`.
 
+CORS allows `GET`, `POST`, `PUT`, `DELETE`, and `OPTIONS` for the desktop shell and browser extension local bridge. The emitted method header is `GET,POST,PUT,DELETE,OPTIONS`.
+
 ### `GET /health`
 
 Response:
@@ -159,6 +161,16 @@ Request:
 ```
 
 Response includes `imported` and the merged `skills` library.
+
+### `DELETE /skills/:id`
+
+Deletes an imported skill by id.
+
+Response:
+
+```json
+{ "ok": true, "skills": [] }
+```
 
 ### `POST /skills/recommend`
 

@@ -149,7 +149,7 @@ if (Test-Path $sharedCorePath) {
 $localServiceReadmePath = Join-Path $Root "apps/local-service/README.md"
 if (Test-Path $localServiceReadmePath) {
   $localServiceReadme = Get-Content -Raw -Encoding UTF8 $localServiceReadmePath
-  foreach ($token in @("## API Contract", "GET /settings", "GET /llm/providers", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit", "providerKeys", "SMART_PROMPT_DATA_DIR", "auto", "openai-compatible", "anthropic", "gemini")) {
+  foreach ($token in @("## API Contract", "GET /settings", "GET /llm/providers", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "DELETE /skills/:id", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit", "providerKeys", "SMART_PROMPT_DATA_DIR", "GET,POST,PUT,DELETE,OPTIONS", "auto", "openai-compatible", "anthropic", "gemini")) {
     if (-not $localServiceReadme.Contains($token)) {
       Add-Failure "Local-service API contract missing token: $token"
     }
@@ -169,7 +169,7 @@ if (Test-Path $llmGatewayPath) {
 $localServiceServerPath = Join-Path $Root "apps/local-service/src/server.js"
 if (Test-Path $localServiceServerPath) {
   $localServiceServer = Get-Content -Raw -Encoding UTF8 $localServiceServerPath
-  foreach ($token in @('GET" && url.pathname === "/prompts', 'POST" && url.pathname === "/prompts', 'DELETE" && url.pathname.startsWith("/prompts/')) {
+  foreach ($token in @('GET" && url.pathname === "/prompts', 'POST" && url.pathname === "/prompts', 'DELETE" && url.pathname.startsWith("/prompts/', 'DELETE" && url.pathname.startsWith("/skills/', 'Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS')) {
     if (-not $localServiceServer.Contains($token)) {
       Add-Failure "Local-service prompt library route missing token: $token"
     }
@@ -179,7 +179,7 @@ if (Test-Path $localServiceServerPath) {
 $desktopAppPath = Join-Path $Root "apps/desktop-shell/src/app.js"
 if (Test-Path $desktopAppPath) {
   $desktopApp = Get-Content -Raw -Encoding UTF8 $desktopAppPath
-  foreach ($token in @("/prompts", "/llm/providers", "renderPrompts", "savePrompt", "provider", "PROVIDER_DEFAULTS", "applyProviderDefaults", "renderProviderStatus", "providerKeys", "openai-api-key", "anthropic-api-key", "gemini-api-key")) {
+  foreach ($token in @("/prompts", "/llm/providers", "renderPrompts", "savePrompt", "deletePrompt", "deleteSkill", "delete-prompt", "delete-skill", "provider", "PROVIDER_DEFAULTS", "applyProviderDefaults", "renderProviderStatus", "providerKeys", "openai-api-key", "anthropic-api-key", "gemini-api-key")) {
     if (-not $desktopApp.Contains($token)) {
       Add-Failure "Desktop shell prompt library UI missing token: $token"
     }

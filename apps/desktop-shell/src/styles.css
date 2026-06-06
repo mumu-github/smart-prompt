@@ -146,3 +146,19 @@ button {
   color: var(--muted);
   font-size: 12px;
 }
+
+.library-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.row-action {
+  height: 30px;
+  margin-top: 0;
+  padding: 0 10px;
+  border-color: rgba(139, 49, 45, 0.35);
+  background: #ffffff;
+  color: #8b312d;
+}

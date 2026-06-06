@@ -50,6 +50,29 @@ async function request(port, method, route, body) {
   });
 }
 
+async function rawRequest(port, method, route) {
+  return new Promise((resolve, reject) => {
+    const req = http.request({
+      hostname: "127.0.0.1",
+      port,
+      path: route,
+      method
+    }, (res) => {
+      const chunks = [];
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => {
+        resolve({
+          status: res.statusCode,
+          headers: res.headers,
+          body: chunks.length ? JSON.parse(Buffer.concat(chunks).toString("utf8")) : null
+        });
+      });
+    });
+    req.on("error", reject);
+    req.end();
+  });
+}
+
 (async () => {
   const previousDataDir = process.env.SMART_PROMPT_DATA_DIR;
   delete process.env.SMART_PROMPT_DATA_DIR;
@@ -255,6 +278,10 @@ Use for login, auth, and privacy-sensitive flows.
     const health = await request(port, "GET", "/health");
     assert.equal(health.status, 200);
 
+    const options = await rawRequest(port, "OPTIONS", "/skills");
+    assert.equal(options.status, 200);
+    assert.ok(options.headers["access-control-allow-methods"].includes("DELETE"));
+
     const providers = await request(port, "GET", "/llm/providers");
     assert.equal(providers.status, 200);
     assert.ok(providers.body.providers.length >= 3);
@@ -266,6 +293,14 @@ Use for login, auth, and privacy-sensitive flows.
     });
     assert.equal(rec.status, 200);
     assert.ok(rec.body.skills.length >= 1 && rec.body.skills.length <= 3);
+
+    const deletedSkill = await request(port, "DELETE", `/skills/${encodeURIComponent(imported[0].id)}`);
+    assert.equal(deletedSkill.status, 200);
+    assert.ok(!deletedSkill.body.skills.some((skill) => skill.id === imported[0].id));
+
+    const missingSkill = await request(port, "DELETE", "/skills/not-found");
+    assert.equal(missingSkill.status, 404);
+    assert.equal(missingSkill.body.error.code, "skill_not_found");
 
     const emptyPrompt = await request(port, "POST", "/prompts", {
       title: "Empty",

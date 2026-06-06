@@ -29,7 +29,15 @@ assert.ok(app.includes("providerKeys"));
 assert.ok(app.includes("claude-sonnet-4-20250514"));
 assert.ok(app.includes("gemini-2.5-flash"));
 assert.ok(app.includes("/skills/import-folder"));
+assert.ok(app.includes("/skills/${encodeURIComponent(id)}"));
+assert.ok(app.includes("deleteSkill"));
+assert.ok(app.includes("delete-skill"));
 assert.ok(app.includes("/prompts"));
+assert.ok(app.includes("/prompts/${encodeURIComponent(id)}"));
+assert.ok(app.includes("deletePrompt"));
+assert.ok(app.includes("delete-prompt"));
+assert.ok(app.includes("handleSkillListAction"));
+assert.ok(app.includes("handlePromptListAction"));
 assert.ok(app.includes("set_global_shortcut"));
 assert.ok(app.includes("start_local_service"));
 assert.ok(app.includes("api-key"));
@@ -54,6 +62,10 @@ assert.ok(html.includes("gemini-api-key"));
 assert.ok(html.includes("prompt-title"));
 assert.ok(html.includes("prompt-body"));
 assert.ok(html.includes("save-prompt"));
+
+const css = fs.readFileSync(path.join(root, "src/styles.css"), "utf8");
+assert.ok(css.includes(".library-row"));
+assert.ok(css.includes(".row-action"));
 
 const rust = fs.readFileSync(path.join(root, "src-tauri/src/main.rs"), "utf8");
 assert.ok(rust.includes("TrayIconBuilder"));

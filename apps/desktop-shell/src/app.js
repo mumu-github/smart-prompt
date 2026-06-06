@@ -75,7 +75,8 @@ function renderSkills(skills) {
     return;
   }
   els.skillList.innerHTML = skills.slice(0, 20).map((skill) => {
-    return `<div class="skill-row"><strong>${escapeHtml(skill.name)}</strong><br>${escapeHtml(skill.description || "")}</div>`;
+    const id = encodeURIComponent(skill.id || "");
+    return `<div class="skill-row library-row"><div><strong>${escapeHtml(skill.name)}</strong><br>${escapeHtml(skill.description || "")}</div><button type="button" class="row-action" data-action="delete-skill" data-skill-id="${id}">Delete</button></div>`;
   }).join("");
 }
 
@@ -86,7 +87,8 @@ function renderPrompts(prompts) {
   }
   els.promptList.innerHTML = prompts.slice(0, 20).map((prompt) => {
     const body = String(prompt.body || "").slice(0, 180);
-    return `<div class="skill-row"><strong>${escapeHtml(prompt.title)}</strong><br>${escapeHtml(body)}</div>`;
+    const id = encodeURIComponent(prompt.id || "");
+    return `<div class="skill-row library-row"><div><strong>${escapeHtml(prompt.title)}</strong><br>${escapeHtml(body)}</div><button type="button" class="row-action" data-action="delete-prompt" data-prompt-id="${id}">Delete</button></div>`;
   }).join("");
 }
 
@@ -181,6 +183,14 @@ async function importFolder() {
   renderSkills(result.skills);
 }
 
+async function deleteSkill(id) {
+  if (!id) return;
+  const result = await serviceRequest(`/skills/${encodeURIComponent(id)}`, {
+    method: "DELETE"
+  });
+  renderSkills(result.skills);
+}
+
 async function savePrompt() {
   const result = await serviceRequest("/prompts", {
     method: "POST",
@@ -193,6 +203,26 @@ async function savePrompt() {
   els.promptTitle.value = "";
   els.promptBody.value = "";
   renderPrompts(result.prompts);
+}
+
+async function deletePrompt(id) {
+  if (!id) return;
+  const result = await serviceRequest(`/prompts/${encodeURIComponent(id)}`, {
+    method: "DELETE"
+  });
+  renderPrompts(result.prompts);
+}
+
+function handleSkillListAction(event) {
+  const button = event.target.closest('button[data-action="delete-skill"]');
+  if (!button) return;
+  deleteSkill(decodeURIComponent(button.dataset.skillId || "")).catch((error) => setStatus(error.message, false));
+}
+
+function handlePromptListAction(event) {
+  const button = event.target.closest('button[data-action="delete-prompt"]');
+  if (!button) return;
+  deletePrompt(decodeURIComponent(button.dataset.promptId || "")).catch((error) => setStatus(error.message, false));
 }
 
 async function saveShortcut() {
@@ -224,6 +254,8 @@ els.saveSettings.addEventListener("click", () => saveSettings().catch((error) =>
 els.startService.addEventListener("click", () => startLocalService().catch((error) => setStatus(error.message, false)));
 els.importFolder.addEventListener("click", () => importFolder().catch((error) => setStatus(error.message, false)));
 els.savePrompt.addEventListener("click", () => savePrompt().catch((error) => setStatus(error.message, false)));
+els.skillList.addEventListener("click", handleSkillListAction);
+els.promptList.addEventListener("click", handlePromptListAction);
 els.provider.addEventListener("change", applyProviderDefaults);
 els.saveShortcut.addEventListener("click", () => saveShortcut().catch((error) => setStatus(error.message, false)));
 els.shortcut.value = localStorage.getItem("smartPromptShortcut") || els.shortcut.value;

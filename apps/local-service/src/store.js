@@ -109,6 +109,13 @@ function createStore(dataDir = defaultDataDir()) {
     return saveSkills(merged);
   }
 
+  function deleteSkill(id) {
+    const before = getSkills();
+    const next = before.filter((skill) => skill.id !== id);
+    saveSkills(next);
+    return before.length !== next.length;
+  }
+
   function getPrompts() {
     return readJson(promptsFile, []);
   }
@@ -156,6 +163,7 @@ function createStore(dataDir = defaultDataDir()) {
     getSkills,
     saveSkills,
     addSkills,
+    deleteSkill,
     getPrompts,
     savePrompts,
     addPrompt,

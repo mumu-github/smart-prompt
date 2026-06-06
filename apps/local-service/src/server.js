@@ -10,7 +10,7 @@ function sendJson(res, status, value) {
     "Content-Type": "application/json",
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "GET,POST,PUT,OPTIONS"
+    "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
   });
   res.end(JSON.stringify(value));
 }
@@ -105,6 +105,15 @@ function createApp(store = createStore(), options = {}) {
         const imported = importSkillFolder(body.path);
         const skills = store.addSkills(imported);
         sendJson(res, 200, { ok: true, imported, skills });
+        return;
+      }
+
+      if (req.method === "DELETE" && url.pathname.startsWith("/skills/")) {
+        const id = decodeURIComponent(url.pathname.slice("/skills/".length));
+        const deleted = store.deleteSkill(id);
+        sendJson(res, deleted ? 200 : 404, deleted
+          ? { ok: true, skills: store.getSkills() }
+          : { ok: false, error: { code: "skill_not_found", message: "Skill not found." } });
         return;
       }
 
