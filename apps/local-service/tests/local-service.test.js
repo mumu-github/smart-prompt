@@ -14,7 +14,8 @@ const {
   chooseConfiguredProvider,
   generateWithConfiguredProvider,
   generateWithOpenAICompatible,
-  getProviderStatuses
+  getProviderStatuses,
+  getStoredApiKey
 } = require("../../../packages/shared/llm-gateway");
 const { MODE, buildCard } = require("../../../packages/shared/smart-prompt-core");
 
@@ -70,16 +71,24 @@ Use for login, auth, and privacy-sensitive flows.
   const settings = store.saveSettings({ apiKey: "sk-test-secret", model: "gpt-test" });
   assert.equal(settings.uploadWholePage, false);
   assert.equal(settings.autoSubmit, false);
+  assert.equal(settings.apiKey, "");
+  assert.equal(settings.providerKeys[PROVIDERS.OPENAI_COMPATIBLE], "sk-test-secret");
   assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AUTO);
 
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { ANTHROPIC_API_KEY: "ant" }), PROVIDERS.ANTHROPIC);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { GEMINI_API_KEY: "gem" }), PROVIDERS.GEMINI);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { OPENAI_API_KEY: "openai" }), PROVIDERS.OPENAI_COMPATIBLE);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, apiKey: "stored-openai" }, {}), PROVIDERS.OPENAI_COMPATIBLE);
+  assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, providerKeys: { anthropic: "stored-ant" } }, {}), PROVIDERS.ANTHROPIC);
+  assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, providerKeys: { gemini: "stored-gem" } }, {}), PROVIDERS.GEMINI);
+  assert.equal(getStoredApiKey(PROVIDERS.ANTHROPIC, { provider: PROVIDERS.AUTO, providerKeys: { anthropic: "stored-ant" } }), "stored-ant");
   const providerStatus = getProviderStatuses({ provider: PROVIDERS.AUTO }, { ANTHROPIC_API_KEY: "ant" });
   assert.equal(providerStatus.selected, PROVIDERS.AUTO);
   assert.equal(providerStatus.auto.provider, PROVIDERS.ANTHROPIC);
   assert.ok(providerStatus.providers.some((provider) => provider.provider === PROVIDERS.ANTHROPIC && provider.keyAvailable));
+  const storedStatus = getProviderStatuses({ provider: PROVIDERS.AUTO, providerKeys: { gemini: "stored-gem" } }, {});
+  assert.equal(storedStatus.auto.provider, PROVIDERS.GEMINI);
+  assert.ok(storedStatus.providers.some((provider) => provider.provider === PROVIDERS.GEMINI && provider.usesStoredKey));
 
   const requestShape = createOpenAIChatRequest({
     input: "帮我重构登录模块，需要注意权限、隐私、测试和回归风险",
@@ -184,7 +193,7 @@ Use for login, auth, and privacy-sensitive flows.
         skillCount: skills.length,
         provider: settings.provider,
         model: settings.model,
-        hasApiKey: Boolean(settings.apiKey)
+        hasApiKey: Boolean(settings.apiKey || settings.providerKeys?.[settings.provider])
       });
       return {
         ...buildCard(input, context, skills, variantIndex),

@@ -26,6 +26,9 @@ const els = {
   baseUrl: document.getElementById("base-url"),
   model: document.getElementById("model"),
   apiKey: document.getElementById("api-key"),
+  openaiApiKey: document.getElementById("openai-api-key"),
+  anthropicApiKey: document.getElementById("anthropic-api-key"),
+  geminiApiKey: document.getElementById("gemini-api-key"),
   startService: document.getElementById("start-service"),
   saveSettings: document.getElementById("save-settings"),
   skillFolder: document.getElementById("skill-folder"),
@@ -99,6 +102,19 @@ function renderProviderStatus(status) {
   els.providerStatus.textContent = `Selected: ${status.selected}; auto: ${status.auto?.provider || "n/a"}; ready: ${ready}`;
 }
 
+function setKeyPlaceholder(element, redacted, label) {
+  element.value = "";
+  element.placeholder = redacted ? `Stored ${redacted}` : label;
+}
+
+function collectProviderKeys() {
+  const providerKeys = {};
+  if (els.openaiApiKey.value) providerKeys["openai-compatible"] = els.openaiApiKey.value;
+  if (els.anthropicApiKey.value) providerKeys.anthropic = els.anthropicApiKey.value;
+  if (els.geminiApiKey.value) providerKeys.gemini = els.geminiApiKey.value;
+  return providerKeys;
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -124,6 +140,10 @@ async function loadServiceState() {
     els.provider.value = settings.settings.provider || els.provider.value;
     els.baseUrl.value = settings.settings.baseUrl || els.baseUrl.value;
     els.model.value = settings.settings.model || els.model.value;
+    setKeyPlaceholder(els.apiKey, settings.settings.apiKey, "Stored by local service");
+    setKeyPlaceholder(els.openaiApiKey, settings.settings.providerKeys?.["openai-compatible"], "OpenAI-compatible API key");
+    setKeyPlaceholder(els.anthropicApiKey, settings.settings.providerKeys?.anthropic, "Anthropic API key");
+    setKeyPlaceholder(els.geminiApiKey, settings.settings.providerKeys?.gemini, "Gemini API key");
     renderSkills(skills.skills);
     renderPrompts(prompts.prompts);
     renderProviderStatus(providerStatus);
@@ -134,16 +154,22 @@ async function loadServiceState() {
 }
 
 async function saveSettings() {
+  const providerKeys = collectProviderKeys();
+  const payload = {
+    provider: els.provider.value,
+    baseUrl: els.baseUrl.value,
+    model: els.model.value
+  };
+  if (els.apiKey.value) payload.apiKey = els.apiKey.value;
+  if (Object.keys(providerKeys).length) payload.providerKeys = providerKeys;
   await serviceRequest("/settings", {
     method: "PUT",
-    body: JSON.stringify({
-      provider: els.provider.value,
-      baseUrl: els.baseUrl.value,
-      model: els.model.value,
-      apiKey: els.apiKey.value
-    })
+    body: JSON.stringify(payload)
   });
   els.apiKey.value = "";
+  els.openaiApiKey.value = "";
+  els.anthropicApiKey.value = "";
+  els.geminiApiKey.value = "";
   await loadServiceState();
 }
 

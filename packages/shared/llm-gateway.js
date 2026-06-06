@@ -121,8 +121,20 @@ function getEnvKey(provider, env = process.env) {
   return defaults.envKeys.find((name) => env[name]) || "";
 }
 
+function getStoredApiKey(provider, settings = {}) {
+  const providerKey = settings.providerKeys?.[provider];
+  if (providerKey) return providerKey;
+
+  const selected = normalizeProvider(settings.provider);
+  if (settings.apiKey && (selected === provider || (selected === PROVIDERS.AUTO && provider === PROVIDERS.OPENAI_COMPATIBLE))) {
+    return settings.apiKey;
+  }
+  return "";
+}
+
 function getApiKey(provider, settings = {}, env = process.env) {
-  if (settings.apiKey) return settings.apiKey;
+  const storedKey = getStoredApiKey(provider, settings);
+  if (storedKey) return storedKey;
   const envKey = getEnvKey(provider, env);
   return envKey ? env[envKey] : "";
 }
@@ -135,9 +147,7 @@ function getProviderStatuses(settings = {}, env = process.env) {
   const selected = normalizeProvider(settings.provider);
   const statuses = PROVIDER_ORDER.map((provider) => {
     const defaults = getProviderDefaults(provider);
-    const selectedWithStoredKey = selected === provider && Boolean(settings.apiKey);
-    const autoOpenAIStoredKey = selected === PROVIDERS.AUTO && provider === PROVIDERS.OPENAI_COMPATIBLE && Boolean(settings.apiKey);
-    const configuredKeyAvailable = selectedWithStoredKey || autoOpenAIStoredKey;
+    const configuredKeyAvailable = Boolean(getStoredApiKey(provider, settings));
     const envKey = getEnvKey(provider, env);
     return {
       ...defaults,
@@ -290,7 +300,7 @@ function chooseConfiguredProvider(settings = {}, env = process.env) {
   const statuses = PROVIDER_ORDER.map((item) => ({
     provider: item,
     envKey: getEnvKey(item, env),
-    settingsKey: item === PROVIDERS.OPENAI_COMPATIBLE && Boolean(settings.apiKey)
+    settingsKey: Boolean(getStoredApiKey(item, settings))
   }));
   return statuses.find((status) => status.envKey || status.settingsKey)?.provider || PROVIDERS.OPENAI_COMPATIBLE;
 }
@@ -302,6 +312,7 @@ async function generateWithConfiguredProvider(args) {
     ...(args.settings || {}),
     provider,
     apiKey: requestedProvider === PROVIDERS.AUTO && provider !== PROVIDERS.OPENAI_COMPATIBLE
+      && !args.settings?.providerKeys?.[provider]
       ? ""
       : args.settings?.apiKey
   };
@@ -330,5 +341,6 @@ module.exports = {
   generateWithOpenAICompatible,
   getProviderDefaults,
   getProviderStatuses,
+  getStoredApiKey,
   redactKey
 };

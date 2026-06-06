@@ -23,9 +23,14 @@ async function readJson(req) {
 }
 
 function publicSettings(settings) {
+  const providerKeys = {};
+  for (const [provider, value] of Object.entries(settings.providerKeys || {})) {
+    providerKeys[provider] = value ? redactKey(value) : "";
+  }
   return {
     ...settings,
     apiKey: settings.apiKey ? redactKey(settings.apiKey) : "",
+    providerKeys,
     uploadWholePage: false,
     autoSubmit: false
   };

@@ -44,6 +44,7 @@
 - 已补强本地服务 V2 测试：通过注入 `generateWithLlm` test double，经由 `/generate` 覆盖 `idea`、`continue`、`polish` 三模式且 `allowTemplateFallback: false`。
 - 已补强浏览器扩展测试：显式检查 ChatGPT、Claude、Gemini insert strategy，并扩大“不自动发送”静态禁区到 `submit`、`requestSubmit`、form submit path 和 Enter key。
 - 已补强默认隐私上下文：浏览器扩展不再把完整 `location.href` 或页面标题传给本地服务，改为 host/origin/tool/inputKind/pathKind；critic 检查不默认上传整页文本。
+- 已补强 provider-specific API key 管理：local-service 与桌面壳可分别保存 OpenAI-compatible、Anthropic、Gemini key，`auto` 可选择已保存的 Anthropic/Gemini key。
 
 ## 正在进行
 
@@ -77,6 +78,7 @@
 - V2 继续补强本地 rubric 证据：local-service API 现在有三模式 LLM gateway test double 覆盖；browser-extension 测试显式覆盖 ChatGPT/Claude/Gemini insert strategy 与更严禁自动发送检查。
 - V2 继续补强本地 prompt/skill 库：本轮增加 prompt library API、桌面壳 Prompt Library UI、local-service/desktop-shell 测试和 critic 检查。
 - V2 继续补强真实 LLM 可用性：本轮新增 `GET /llm/providers` readiness、`auto` provider、桌面壳 provider 状态显示与自动默认值；当前 User 环境只发现 `OPENAI_API_KEY`，auto 仍落到 OpenAI-compatible，复核仍为 429。
+- V2 继续补强真实 LLM 可用性：本轮新增 provider-specific saved keys，避免桌面壳只能保存单个 OpenAI-compatible key；仍需可用 billing/key 才能证明三模式真实 LLM。
 - V2 继续补强隐私边界：本轮移除扩展默认 context 中的完整 URL 和页面标题，并用测试/critic 固化不读取整页文本。
 - V2 继续补强验收报告保全：Claude 单站点验证默认写入独立 `research/v2-claude-insert.latest.json`，不覆盖已有 5 站点 live probe 报告。
 - 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：auto provider 和 provider readiness 已补强，默认 V2 critic PASS，严格 runtime critic 仅缺 `INSERT_CLAUDE_PASS`；真实 LLM 复核仍为 OpenAI 429 quota/billing。

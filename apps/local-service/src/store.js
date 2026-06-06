@@ -8,6 +8,11 @@ const DEFAULT_SETTINGS = Object.freeze({
   model: "gpt-4o-mini",
   temperature: 0.35,
   apiKey: "",
+  providerKeys: {
+    "openai-compatible": "",
+    anthropic: "",
+    gemini: ""
+  },
   uploadWholePage: false,
   autoSubmit: false
 });
@@ -33,6 +38,34 @@ function writeJson(file, value) {
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
+function normalizeProvider(value, fallback = "auto") {
+  return ["auto", "openai-compatible", "anthropic", "gemini"].includes(value) ? value : fallback;
+}
+
+function normalizeProviderKeys(current, incoming, provider, legacyApiKey) {
+  const merged = {
+    ...DEFAULT_SETTINGS.providerKeys,
+    ...(current?.providerKeys || {})
+  };
+  const currentProvider = normalizeProvider(current?.provider, "openai-compatible");
+  if (current?.apiKey) {
+    const legacyProvider = currentProvider === "auto" ? "openai-compatible" : currentProvider;
+    if (!merged[legacyProvider]) merged[legacyProvider] = current.apiKey;
+  }
+  if (incoming && typeof incoming === "object") {
+    for (const key of Object.keys(DEFAULT_SETTINGS.providerKeys)) {
+      if (Object.prototype.hasOwnProperty.call(incoming, key)) {
+        merged[key] = String(incoming[key] || "");
+      }
+    }
+  }
+  if (legacyApiKey) {
+    const targetProvider = provider === "auto" ? "openai-compatible" : provider;
+    merged[targetProvider] = String(legacyApiKey);
+  }
+  return merged;
+}
+
 function createStore(dataDir = defaultDataDir()) {
   ensureDir(dataDir);
   const settingsFile = path.join(dataDir, "settings.json");
@@ -46,13 +79,13 @@ function createStore(dataDir = defaultDataDir()) {
 
   function saveSettings(next) {
     const current = getSettings();
-    const provider = ["auto", "openai-compatible", "anthropic", "gemini"].includes(next?.provider)
-      ? next.provider
-      : current.provider;
+    const provider = normalizeProvider(next?.provider, current.provider);
     const safe = {
       ...current,
       ...next,
       provider,
+      apiKey: "",
+      providerKeys: normalizeProviderKeys(current, next?.providerKeys, provider, next?.apiKey),
       uploadWholePage: false,
       autoSubmit: false
     };

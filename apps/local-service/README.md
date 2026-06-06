@@ -41,6 +41,11 @@ Response:
     "model": "gpt-4o-mini",
     "temperature": 0.35,
     "apiKey": "sk-...abcd",
+    "providerKeys": {
+      "openai-compatible": "sk-...abcd",
+      "anthropic": "",
+      "gemini": ""
+    },
     "uploadWholePage": false,
     "autoSubmit": false
   }
@@ -73,6 +78,10 @@ Request:
   "settings": {
     "provider": "openai-compatible",
     "apiKey": "sk-test",
+    "providerKeys": {
+      "anthropic": "sk-ant-test",
+      "gemini": "gemini-test"
+    },
     "baseUrl": "https://api.openai.com/v1",
     "model": "gpt-4o-mini",
     "temperature": 0.35
@@ -84,7 +93,7 @@ Response: same shape as `GET /settings`. The service forces `uploadWholePage` an
 
 Supported `provider` values:
 
-- `auto`: choose the first available provider key from Anthropic, Gemini, then OpenAI-compatible.
+- `auto`: choose the first available provider key from saved provider keys or environment variables in Anthropic, Gemini, then OpenAI-compatible order.
 - `openai-compatible`: OpenAI-compatible chat completions with `OPENAI_API_KEY`.
 - `anthropic`: Anthropic Messages API with `ANTHROPIC_API_KEY`.
 - `gemini`: Gemini `generateContent` API with `GEMINI_API_KEY` or `GOOGLE_API_KEY`.
@@ -188,8 +197,8 @@ Response:
 }
 ```
 
-`/generate` uses an OpenAI-compatible chat completions gateway when `apiKey` or `OPENAI_API_KEY` is available. If the caller passes `allowTemplateFallback: true`, it falls back to local template generation when the LLM gateway is unavailable.
-The gateway also supports Anthropic and Gemini through the `provider` setting.
+`/generate` uses the configured provider and can read saved provider-specific keys or environment variables. If the caller passes `allowTemplateFallback: true`, it falls back to local template generation when the LLM gateway is unavailable.
+The gateway supports OpenAI-compatible chat completions, Anthropic Messages, and Gemini `generateContent`; `auto` can choose among all three when keys are available.
 
 The service keeps `uploadWholePage` and `autoSubmit` forced to `false`.
 
