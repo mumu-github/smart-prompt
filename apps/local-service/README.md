@@ -14,6 +14,14 @@ Default URL:
 http://127.0.0.1:17371
 ```
 
+Default local data directory:
+
+```text
+apps/local-service/.smart-prompt-data
+```
+
+Set `SMART_PROMPT_DATA_DIR` to override it. The Tauri shell, manual local service runs, and V2 real LLM verification use the same default directory.
+
 ## API Contract
 
 All responses are JSON. Successful responses include `ok: true`; failures include `ok: false` and an `error` object with `code` and `message`.
@@ -206,4 +214,10 @@ The service keeps `uploadWholePage` and `autoSubmit` forced to `false`.
 
 ```powershell
 npm test
+```
+
+Real LLM verification reads the saved provider settings by default:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File ..\..\scripts\check-v2-real-llm.ps1
 ```

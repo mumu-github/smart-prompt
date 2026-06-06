@@ -18,7 +18,7 @@ const DEFAULT_SETTINGS = Object.freeze({
 });
 
 function defaultDataDir() {
-  return process.env.SMART_PROMPT_DATA_DIR || path.join(process.cwd(), ".smart-prompt-data");
+  return process.env.SMART_PROMPT_DATA_DIR || path.join(__dirname, "..", ".smart-prompt-data");
 }
 
 function ensureDir(dir) {

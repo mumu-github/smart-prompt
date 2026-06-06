@@ -3,7 +3,7 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const http = require("node:http");
-const { createStore } = require("../src/store");
+const { createStore, defaultDataDir } = require("../src/store");
 const { importSkillFolder } = require("../src/skill-library");
 const { startServer } = require("../src/server");
 const {
@@ -51,6 +51,11 @@ async function request(port, method, route, body) {
 }
 
 (async () => {
+  const previousDataDir = process.env.SMART_PROMPT_DATA_DIR;
+  delete process.env.SMART_PROMPT_DATA_DIR;
+  assert.equal(defaultDataDir(), path.resolve(__dirname, "..", ".smart-prompt-data"));
+  if (previousDataDir) process.env.SMART_PROMPT_DATA_DIR = previousDataDir;
+
   const skillDir = tempDir("smart-prompt-skills-");
   fs.writeFileSync(path.join(skillDir, "SKILL.md"), `---
 name: security-review

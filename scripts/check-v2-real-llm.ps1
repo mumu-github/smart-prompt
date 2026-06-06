@@ -28,10 +28,11 @@ try {
   @'
 const fs = require("node:fs");
 const { PROVIDERS, chooseConfiguredProvider, generateWithConfiguredProvider } = require("./packages/shared/llm-gateway");
+const { createStore, defaultDataDir } = require("./apps/local-service/src/store");
 
-function chooseProvider() {
+function chooseProvider(storedSettings) {
   if (process.env.SMART_PROMPT_TEST_PROVIDER) return process.env.SMART_PROMPT_TEST_PROVIDER;
-  return PROVIDERS.AUTO;
+  return storedSettings.provider || PROVIDERS.AUTO;
 }
 
 function chooseApiKey(provider) {
@@ -54,12 +55,14 @@ const samples = [
 ];
 
 (async () => {
-  const provider = chooseProvider();
+  const storedSettings = createStore(process.env.SMART_PROMPT_DATA_DIR || undefined).getSettings();
+  const provider = chooseProvider(storedSettings);
   const settings = {
+    ...storedSettings,
     provider,
-    baseUrl: process.env.SMART_PROMPT_TEST_BASE_URL || undefined,
-    model: process.env.SMART_PROMPT_TEST_PROVIDER ? chooseModel(chooseConfiguredProvider({ provider })) : undefined,
-    apiKey: process.env.SMART_PROMPT_TEST_PROVIDER ? chooseApiKey(chooseConfiguredProvider({ provider })) : undefined
+    baseUrl: process.env.SMART_PROMPT_TEST_BASE_URL || storedSettings.baseUrl,
+    model: process.env.SMART_PROMPT_TEST_PROVIDER ? chooseModel(chooseConfiguredProvider({ provider })) : storedSettings.model,
+    apiKey: process.env.SMART_PROMPT_TEST_PROVIDER ? chooseApiKey(chooseConfiguredProvider({ provider })) : storedSettings.apiKey
   };
   const selectedProvider = chooseConfiguredProvider(settings);
   const results = [];
@@ -94,6 +97,7 @@ const samples = [
   }
   const report = {
     createdAt: new Date().toISOString(),
+    dataDir: process.env.SMART_PROMPT_DATA_DIR || defaultDataDir(),
     requestedProvider: provider,
     selectedProvider,
     pass: results.length === samples.length && results.every((result) => result.ok && result.generatedBy === "llm"),

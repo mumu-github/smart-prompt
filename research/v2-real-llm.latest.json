@@ -1,5 +1,6 @@
 {
-  "createdAt": "2026-06-06T17:28:42.477Z",
+  "createdAt": "2026-06-06T17:40:37.258Z",
+  "dataDir": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\apps\\local-service\\.smart-prompt-data",
   "requestedProvider": "auto",
   "selectedProvider": "openai-compatible",
   "pass": false,

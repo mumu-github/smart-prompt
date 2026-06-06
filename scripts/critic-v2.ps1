@@ -105,7 +105,7 @@ if (Test-Path $contentPath) {
 $localServiceTestPath = Join-Path $Root "apps/local-service/tests/local-service.test.js"
 if (Test-Path $localServiceTestPath) {
   $localServiceTest = Get-Content -Raw -Encoding UTF8 $localServiceTestPath
-  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false", "PROVIDERS.ANTHROPIC", "PROVIDERS.GEMINI", "PROVIDERS.AUTO", "generateWithConfiguredProvider", "chooseConfiguredProvider", "getConfiguredProviderOrder", "getProviderStatuses", "providerKeys", "getStoredApiKey")) {
+  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false", "PROVIDERS.ANTHROPIC", "PROVIDERS.GEMINI", "PROVIDERS.AUTO", "generateWithConfiguredProvider", "chooseConfiguredProvider", "getConfiguredProviderOrder", "getProviderStatuses", "providerKeys", "getStoredApiKey", "defaultDataDir")) {
     if (-not $localServiceTest.Contains($token)) {
       Add-Failure "Local-service tests missing three-mode LLM gateway coverage token: $token"
     }
@@ -125,7 +125,7 @@ if (Test-Path $siteAdapterTestPath) {
 $localServiceReadmePath = Join-Path $Root "apps/local-service/README.md"
 if (Test-Path $localServiceReadmePath) {
   $localServiceReadme = Get-Content -Raw -Encoding UTF8 $localServiceReadmePath
-  foreach ($token in @("## API Contract", "GET /settings", "GET /llm/providers", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit", "providerKeys", "auto", "openai-compatible", "anthropic", "gemini")) {
+  foreach ($token in @("## API Contract", "GET /settings", "GET /llm/providers", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit", "providerKeys", "SMART_PROMPT_DATA_DIR", "auto", "openai-compatible", "anthropic", "gemini")) {
     if (-not $localServiceReadme.Contains($token)) {
       Add-Failure "Local-service API contract missing token: $token"
     }
@@ -195,7 +195,7 @@ if (Test-Path $claudeProbePath) {
 $realLlmProbePath = Join-Path $Root "scripts/check-v2-real-llm.ps1"
 if (Test-Path $realLlmProbePath) {
   $realLlmProbe = Get-Content -Raw -Encoding UTF8 $realLlmProbePath
-  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "idea", "continue", "polish")) {
+  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "createStore", "defaultDataDir", "idea", "continue", "polish")) {
     if (-not $realLlmProbe.Contains($token)) {
       Add-Failure "Real LLM probe missing report or three-mode token: $token"
     }

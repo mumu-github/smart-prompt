@@ -46,6 +46,7 @@
 - 已补强默认隐私上下文：浏览器扩展不再把完整 `location.href` 或页面标题传给本地服务，改为 host/origin/tool/inputKind/pathKind；critic 检查不默认上传整页文本。
 - 已补强 provider-specific API key 管理：local-service 与桌面壳可分别保存 OpenAI-compatible、Anthropic、Gemini key，`auto` 可选择已保存的 Anthropic/Gemini key。
 - 已补强 auto LLM provider：auto 模式现在按实际 provider 使用各自默认 baseUrl/model，且一个 provider 请求失败时可继续尝试下一个已配置 provider。
+- 已补强 settings 持久化一致性：local-service 默认数据目录固定为 `apps/local-service/.smart-prompt-data`，真实 LLM 验收脚本会读取同一份桌面壳保存的 provider settings。
 - 已补强 Claude 登录态验证路径：live-site probe 支持 `-AttachCdp` 附着到已开启远程调试端口的 Chrome，并用新标签复用现有 Claude 登录态跑 Insert 证据。
 - 已补强 runtime evidence 严格门：`critic-v2.ps1 -RequireRuntimeEvidence` 现在会读取 Claude Insert 和真实 LLM JSON 报告，避免只靠手写 marker 误判完成。
 - 已补强 live-site/Tauri 机器证据门：strict critic 现在会读取 5 站点正式扩展报告和 Tauri runtime JSON 报告。
@@ -84,6 +85,7 @@
 - V2 继续补强真实 LLM 可用性：本轮新增 `GET /llm/providers` readiness、`auto` provider、桌面壳 provider 状态显示与自动默认值；当前 User 环境只发现 `OPENAI_API_KEY`，auto 仍落到 OpenAI-compatible，复核仍为 429。
 - V2 继续补强真实 LLM 可用性：本轮新增 provider-specific saved keys，避免桌面壳只能保存单个 OpenAI-compatible key；仍需可用 billing/key 才能证明三模式真实 LLM。
 - V2 继续补强真实 LLM 可用性：本轮修正 auto provider 的模型/端点选择，并增加 provider 失败转移测试；当前环境仍只有 OpenAI key 且 429。
+- V2 继续补强真实 LLM 可用性：本轮统一 local-service/Tauri/验收脚本的默认 settings 数据目录；用户通过桌面壳保存的 provider keys 可被 `check-v2-real-llm.ps1` 复用。
 - V2 继续补强隐私边界：本轮移除扩展默认 context 中的完整 URL 和页面标题，并用测试/critic 固化不读取整页文本。
 - V2 继续补强验收报告保全：Claude 单站点验证默认写入独立 `research/v2-claude-insert.latest.json`，不覆盖已有 5 站点 live probe 报告。
 - V2 继续补强 Claude runtime 验证：本轮新增 CDP attach 模式，可复用已登录 Chrome 会话而不杀掉用户浏览器，只关闭探针新标签。
