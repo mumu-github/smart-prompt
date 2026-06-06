@@ -40,6 +40,11 @@ npm start
 
 再加载扩展。Prompt Card 会优先走真实 LLM gateway；若未配置 API key，则本地服务会按 `allowTemplateFallback` 返回模板结果。
 
+V2 bridge behavior:
+- Generate calls `POST /generate` first and falls back to the extension template when the desktop/local service is unavailable.
+- Save calls `POST /prompts` first so saved prompts enter the local prompt library; if the service is offline, it falls back to `chrome.storage.local`.
+- Insert only writes into the active input box. It does not submit, press Enter, or upload whole-page text by default.
+
 ## 当前边界
 
 - 这是浏览器 MVP，不包含 Tauri/Electron 桌面壳。

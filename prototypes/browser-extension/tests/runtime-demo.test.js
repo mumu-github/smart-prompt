@@ -45,6 +45,20 @@ async function waitForLocalService() {
   return false;
 }
 
+async function waitForPromptCount(count) {
+  const deadline = Date.now() + 5000;
+  while (Date.now() < deadline) {
+    try {
+      const prompts = await getJson("http://127.0.0.1:17371/prompts");
+      if (prompts.ok && prompts.prompts.length >= count) return prompts;
+    } catch {
+      // Save is still crossing the extension-to-service bridge.
+    }
+    await sleep(150);
+  }
+  throw new Error(`Prompt library did not reach ${count} saved prompts.`);
+}
+
 function startServiceForTest(dataDir) {
   return new Promise((resolve, reject) => {
     const server = startServer({ port: 17371, store: createStore(dataDir) });
@@ -166,6 +180,19 @@ async function waitFor(client, expression, predicate, timeout = 10000) {
 
     assert.ok(ready.context.includes("ChatGPT"));
     assert.ok(/template-fallback|llm/.test(ready.context));
+
+    if (!service.external) {
+      const beforePrompts = await getJson("http://127.0.0.1:17371/prompts");
+      await evaluate(client, `(() => {
+        document.querySelector('button[data-action="favorite"]').click();
+        return true;
+      })()`);
+      const savedPrompts = await waitForPromptCount(beforePrompts.prompts.length + 1);
+      assert.equal(savedPrompts.prompts[0].source, "browser-extension");
+      assert.ok(savedPrompts.prompts[0].body.length > 80);
+      assert.equal(savedPrompts.prompts[0].context.tool, "ChatGPT");
+      assert.equal(savedPrompts.prompts[0].context.inputKind, "textarea");
+    }
 
     const afterInsert = await evaluate(client, `(() => {
       const output = document.querySelector(".spc-output").value;

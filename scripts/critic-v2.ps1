@@ -104,6 +104,21 @@ if (Test-Path $contentPath) {
   if (-not $content.Contains("lastAdapterId")) {
     Add-Failure "Browser extension debug state should expose the active site adapter id."
   }
+  foreach ($token in @("localService.savePrompt", "saveFavoriteLocally", 'source: "browser-extension"')) {
+    if (-not $content.Contains($token)) {
+      Add-Failure "Browser extension Save should bridge to the local prompt library token: $token"
+    }
+  }
+}
+
+$localServiceClientPath = Join-Path $Root "prototypes/browser-extension/src/local-service-client.js"
+if (Test-Path $localServiceClientPath) {
+  $localServiceClient = Get-Content -Raw -Encoding UTF8 $localServiceClientPath
+  foreach ($token in @("function savePrompt", 'request("/prompts"', "savePrompt")) {
+    if (-not $localServiceClient.Contains($token)) {
+      Add-Failure "Browser extension local-service client missing prompt save token: $token"
+    }
+  }
 }
 
 $localServiceTestPath = Join-Path $Root "apps/local-service/tests/local-service.test.js"
@@ -119,9 +134,19 @@ if (Test-Path $localServiceTestPath) {
 $siteAdapterTestPath = Join-Path $Root "prototypes/browser-extension/tests/site-adapters.test.js"
 if (Test-Path $siteAdapterTestPath) {
   $siteAdapterTest = Get-Content -Raw -Encoding UTF8 $siteAdapterTestPath
-  foreach ($token in @("expectedAdapterIds", "expectedInsertStrategies", "selectorExpectations", "sharedCore.SITE_ADAPTERS", "chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit", "v0.app", "requestSubmit")) {
+  foreach ($token in @("expectedAdapterIds", "expectedInsertStrategies", "selectorExpectations", "sharedCore.SITE_ADAPTERS", "chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit", "v0.app", "requestSubmit", "localService.savePrompt", "saveFavoriteLocally")) {
     if (-not $siteAdapterTest.Contains($token)) {
       Add-Failure "Browser extension tests missing insert/no-submit coverage token: $token"
+    }
+  }
+}
+
+$runtimeDemoTestPath = Join-Path $Root "prototypes/browser-extension/tests/runtime-demo.test.js"
+if (Test-Path $runtimeDemoTestPath) {
+  $runtimeDemoTest = Get-Content -Raw -Encoding UTF8 $runtimeDemoTestPath
+  foreach ($token in @("waitForPromptCount", "button[data-action=""favorite""]", "/prompts", "browser-extension", "context.inputKind")) {
+    if (-not $runtimeDemoTest.Contains($token)) {
+      Add-Failure "Runtime demo missing local prompt library save coverage token: $token"
     }
   }
 }

@@ -38,11 +38,19 @@
     }, serviceUrl);
   }
 
+  function savePrompt(payload, serviceUrl) {
+    return request("/prompts", {
+      method: "POST",
+      body: JSON.stringify(payload)
+    }, serviceUrl);
+  }
+
   const api = {
     DEFAULT_SERVICE_URL,
     generate,
     health,
-    recommend
+    recommend,
+    savePrompt
   };
 
   if (typeof module !== "undefined" && module.exports) module.exports = api;

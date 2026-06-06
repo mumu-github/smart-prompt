@@ -240,6 +240,40 @@
     contextLine.textContent = [card.tool, context.host, context.inputKind, generatedBy].filter(Boolean).join(" / ");
   }
 
+  function createFavoritePrompt(prompt) {
+    const mode = engine.detectMode(state.lastInputText);
+    return {
+      id: `prompt-${Date.now()}`,
+      title: `${engine.MODE_META[mode].label} prompt`,
+      body: prompt,
+      mode,
+      source: "browser-extension",
+      created_at: new Date().toISOString(),
+      context: state.lastContext
+    };
+  }
+
+  async function saveFavoriteLocally(favorite) {
+    const existing = await storageGet([STORAGE_KEYS.favorites]);
+    const favorites = Array.isArray(existing[STORAGE_KEYS.favorites]) ? existing[STORAGE_KEYS.favorites] : [];
+    favorites.unshift(favorite);
+    await storageSet({ [STORAGE_KEYS.favorites]: favorites.slice(0, 50) });
+    return favorite;
+  }
+
+  async function saveFavoritePrompt(prompt) {
+    const favorite = createFavoritePrompt(prompt);
+    if (state.settings.preferLocalService && localService?.savePrompt) {
+      try {
+        await localService.savePrompt(favorite, state.settings.serviceUrl);
+        return favorite;
+      } catch {
+        // Fall back to the extension-local library when the desktop service is offline.
+      }
+    }
+    return saveFavoriteLocally(favorite);
+  }
+
   async function refreshCardPreview(advanceVariant) {
     if (!state.card || !state.activeInput) return;
     if (advanceVariant) state.variant += 1;
@@ -343,18 +377,7 @@
     }
 
     if (action === "favorite") {
-      const existing = await storageGet([STORAGE_KEYS.favorites]);
-      const favorites = Array.isArray(existing[STORAGE_KEYS.favorites]) ? existing[STORAGE_KEYS.favorites] : [];
-      favorites.unshift({
-        id: `prompt-${Date.now()}`,
-        title: `${engine.MODE_META[engine.detectMode(state.lastInputText)].label} prompt`,
-        body: prompt,
-        mode: engine.detectMode(state.lastInputText),
-        source: "browser-extension",
-        created_at: new Date().toISOString(),
-        context: state.lastContext
-      });
-      await storageSet({ [STORAGE_KEYS.favorites]: favorites.slice(0, 50) });
+      await saveFavoritePrompt(prompt);
       setMascotState("clapping");
       return;
     }

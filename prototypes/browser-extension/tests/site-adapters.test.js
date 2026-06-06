@@ -79,6 +79,9 @@ assert.deepEqual(
 
 const content = fs.readFileSync(path.join(__dirname, "../src/content.js"), "utf8");
 assert.ok(content.includes("localService.generate"));
+assert.ok(content.includes("localService.savePrompt"));
+assert.ok(content.includes("saveFavoriteLocally"));
+assert.ok(content.includes("source: \"browser-extension\""));
 assert.ok(content.includes("allowTemplateFallback"));
 assert.ok(content.includes("composedPath"));
 assert.ok(content.includes("lastAdapterId"));
@@ -96,6 +99,10 @@ assert.ok(!/submit\s*\(/.test(content));
 assert.ok(!/requestSubmit\s*\(/.test(content));
 assert.ok(!/closest\(["']form["']\)/.test(content));
 assert.ok(!/KeyboardEvent\([^)]*Enter/.test(content));
+
+const localServiceClient = fs.readFileSync(path.join(__dirname, "../src/local-service-client.js"), "utf8");
+assert.ok(localServiceClient.includes("function savePrompt"));
+assert.ok(localServiceClient.includes("\"/prompts\""));
 
 const liveProbe = fs.readFileSync(path.join(__dirname, "live-site-probe.test.js"), "utf8");
 assert.ok(liveProbe.includes("siteAdapters.SITE_ADAPTERS"));
