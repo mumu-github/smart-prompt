@@ -29,7 +29,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-autoresearch.
 PASS: autoresearch artifacts meet local critic checks.
 ```
 
-当前说明：完整 critic 还要求存在通过显式 `gpt-image-2` CLI/API 路径生成的 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。该路径使用用户指定的小人原型 `assets/ui-ux/mascot-token-run.png` 作为 edit 输入图，要求保留原型小人，不重新设计角色。当前 API key 可到达 OpenAI，但 API 项目/账户返回 billing hard limit；修复 API 额度后再复跑。若只检查调用参数，可先 dry-run：
+当前说明：用户已确认不需要严格 `gpt-image-2` API 输出图；完整 critic 以当前内置 `image_gen` UI/UX 图、状态动作、Remotion 动画、研究文档和 git 管理为门槛。显式 `gpt-image-2` 路径仍保留为可选复跑工具；若只检查调用参数，可 dry-run：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun

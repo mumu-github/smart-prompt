@@ -2,8 +2,7 @@
 
 ## 当前问题
 
-- 小人形象原型已提供：`assets/ui-ux/mascot-token-run.png`。当前已有内置 `image_gen` + 原始小人合成版：`assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png`；严格 `gpt-image-2` API 版仍未生成。
-- `gpt-image-2` 的实际 API 已在本环境发起调用，但返回 `Billing hard limit has been reached`；说明 `OPENAI_API_KEY` 已生效，当前阻塞转为 OpenAI 账户/项目 billing 硬额度限制。已补齐 prompt 文件、原型图和复跑脚本，dry-run 通过，但真实 API 图尚未生成。
+- 当前无阻塞当前目标完成的问题。用户已确认不需要严格 `gpt-image-2` API 产物。
 
 ## 已知风险
 
@@ -16,14 +15,13 @@
 - 初始 critic 脚本包含中文字符串，Windows PowerShell 以非 UTF-8 解析时报错；已改为 ASCII-only 检查。
 - 初始 critic 在文档未填充时失败；后续补齐来源与文档。
 - 第二次 critic 在 UI/UX 图未生成时失败；后续生成图片并通过。
-- 调严 critic 后，当前失败在缺少显式 `gpt-image-2` API 输出图：`assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
+- 调严 critic 后曾失败在缺少显式 `gpt-image-2` API 输出图：`assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`；用户后来确认不需要严格 `gpt-image-2`，该项已从完成门槛移除。
 - 本次按用户要求再次 dry-run 通过；随后在 User 级 `OPENAI_API_KEY` 生效后真实调用 `gpt-image-2`，但被 billing hard limit 拦截。
 - 用户配置 User 级 `OPENAI_API_KEY` 后再次真实调用；`uv run --with openai` 成功安装临时 SDK 并调用 Image API，但 OpenAI 返回 billing hard limit，未生成输出图。
 - Goal 续跑中再次真实调用 `gpt-image-2`；API 仍返回 billing hard limit。更新后的 critic 仍失败在缺少 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
 
 ## 待回顾
 
-- 用户提供小人原型图后是否需要重生成 UI/UX 图和动作资产。
 - 是否继续进入原型开发阶段。
 
 ## 已解决
@@ -33,4 +31,4 @@
 - 已完成一版不依赖 API billing 的内置 `image_gen` UI/UX 图，并本地贴入原始小人以避免模型重绘角色。
 - 已完成六种小人状态动作资产并抠成透明 PNG：normal、resting、thinking、suggesting、success、clapping。
 - 已完成 Remotion 轻量动画原型和两个 MP4 渲染资产。
-- 研究/PRD/内置图像资产已通过旧本地 critic 并记录过 OMX pass verdict；现已调严门槛，需真实 `gpt-image-2` API 输出图后才能重新记录 pass。
+- 本地 critic 已按更新目标通过，OMX 已记录 pass verdict。

@@ -8,19 +8,19 @@
 - `mascot-states/`：小人状态动作资产，包括 `normal`、`resting`、`thinking`、`suggesting`、`success`、`clapping` 六种透明 PNG 和总览板。
 - `mascot-animations/`：基于 Remotion 渲染的轻量动画 MP4 和 still 检查帧。
 - `gpt-image-2-uiux.prompt.txt`：显式 `gpt-image-2` CLI/API 复跑使用的提示词。
-- `prompt-copilot-uiux-gpt-image-2.png`：显式 `gpt-image-2` CLI/API 复跑后的目标输出；当前尚未生成，因为 OpenAI API 返回 `Billing hard limit has been reached`。
+- `prompt-copilot-uiux-gpt-image-2.png`：显式 `gpt-image-2` CLI/API 复跑后的可选目标输出；用户已确认当前不需要严格 `gpt-image-2` API 产物。
 
 ## 说明
 
 - 生成方式：`prompt-copilot-uiux-builtin-exact-mascot-v2.png` 使用 Codex 内置 `image_gen` 生成 UI 底图，并通过本地合成把原始小人 PNG 放入界面。
-- 模型/API 状态：User 级 `OPENAI_API_KEY` 已生效，显式 `gpt-image-2` CLI/API 调用可到达 OpenAI，但当前 API 项目/账户触发 billing hard limit，尚未成功产出 `prompt-copilot-uiux-gpt-image-2.png`。
+- 模型/API 状态：User 级 `OPENAI_API_KEY` 已生效，显式 `gpt-image-2` CLI/API 调用可到达 OpenAI，但当前用户已确认不需要严格 `gpt-image-2`。该路径保留为可选复跑工具，不作为完成门槛。
 - 小人形象：用户已指定 `mascot-token-run.png` 作为唯一原型；后续生成必须保留这个小人本体、动作比例、表情、颜色和线条风格。
 - 状态动作：`mascot-states/*.png` 是基于原型风格生成的动作变体，已经本地抠成透明 PNG，可用于悬浮入口、状态切换或后续动画。
 - Remotion 动画：`mascot-animations/*.mp4` 从 `prototypes/remotion-mascot` 渲染，可用于展示小人状态轮播和输入框旁悬浮反馈。
 - 覆盖要素：输入框旁悬浮入口、三种模式、prompt card、skills 推荐、刷新/编辑/插入操作、Windows/macOS 兼容信号。
 - 后续迭代：用户提供小人原型图后，应基于原型重生成动作与表情；再用 Remotion 制作待机、思考、建议、成功等轻量动画。
 
-## gpt-image-2 复跑
+## 可选 gpt-image-2 复跑
 
 Dry-run 验证参数：
 
@@ -28,7 +28,7 @@ Dry-run 验证参数：
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun
 ```
 
-真实生成需要 API billing/额度可用。脚本会调用 `gpt-image-2` 的 image edit 路径，并把 `mascot-token-run.png` 作为输入图：
+真实生成需要 API billing/额度可用。脚本会调用 `gpt-image-2` 的 image edit 路径，并把 `mascot-token-run.png` 作为输入图；这一步当前不是验收必需项：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -Force

@@ -4,6 +4,26 @@ param(
 
 $ErrorActionPreference = "Stop"
 
+$failures = @()
+function Add-Failure {
+  param([string]$Message)
+  $script:failures += $Message
+}
+
+function Read-RequiredFile {
+  param(
+    [string]$Path,
+    [string]$Label
+  )
+
+  if (-not (Test-Path $Path)) {
+    Add-Failure "Missing required file: $Label"
+    return ""
+  }
+
+  return Get-Content -Raw -Encoding UTF8 $Path
+}
+
 $requiredFiles = @(
   "docs/research-report.md",
   "docs/competitive-analysis.md",
@@ -20,57 +40,47 @@ foreach ($file in $requiredFiles) {
 }
 
 if ($missing.Count -gt 0) {
-  Write-Error ("Missing required files: " + ($missing -join ", "))
+  Add-Failure ("Missing required files: " + ($missing -join ", "))
 }
 
-$researchText = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "docs/research-report.md")
-$competitiveText = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "docs/competitive-analysis.md")
-$openSourceText = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "docs/open-source-skills-analysis.md")
-$prdText = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "docs/prd.md")
+$researchText = Read-RequiredFile (Join-Path $Root "docs/research-report.md") "docs/research-report.md"
+$competitiveText = Read-RequiredFile (Join-Path $Root "docs/competitive-analysis.md") "docs/competitive-analysis.md"
+$openSourceText = Read-RequiredFile (Join-Path $Root "docs/open-source-skills-analysis.md") "docs/open-source-skills-analysis.md"
+$prdText = Read-RequiredFile (Join-Path $Root "docs/prd.md") "docs/prd.md"
 
 $allText = @($researchText, $competitiveText, $openSourceText, $prdText) -join "`n"
 $linkCount = ([regex]::Matches($allText, "https?://")).Count
 if ($linkCount -lt 18) {
-  Write-Error "Expected at least 18 source links across research docs; found $linkCount."
+  Add-Failure "Expected at least 18 source links across research docs; found $linkCount."
 }
 
 $unfinishedMarkers = @("STATUS_IN_PROGRESS", "TODO:", "TBD:", "PLACEHOLDER")
 foreach ($marker in $unfinishedMarkers) {
   if ($allText.Contains($marker)) {
-    Write-Error "Unfinished marker remains: $marker"
+    Add-Failure "Unfinished marker remains: $marker"
   }
 }
 
 $prdSectionCount = ([regex]::Matches($prdText, "(?m)^##\s+")).Count
 if ($prdSectionCount -lt 10) {
-  Write-Error "PRD expected at least 10 top-level sections; found $prdSectionCount."
+  Add-Failure "PRD expected at least 10 top-level sections; found $prdSectionCount."
 }
 
 $uiFiles = Get-ChildItem -Path (Join-Path $Root "assets/ui-ux") -File -ErrorAction SilentlyContinue |
   Where-Object { $_.Extension -in @(".png", ".jpg", ".jpeg", ".webp") }
 
 if ($uiFiles.Count -lt 1) {
-  Write-Error "Expected at least one UI/UX image file in assets/ui-ux."
+  Add-Failure "Expected at least one UI/UX image file in assets/ui-ux."
 }
 
-$gptImage2Prompt = Join-Path $Root "assets/ui-ux/gpt-image-2-uiux.prompt.txt"
-if (-not (Test-Path $gptImage2Prompt)) {
-  Write-Error "Expected gpt-image-2 prompt file at assets/ui-ux/gpt-image-2-uiux.prompt.txt."
+$builtInUiImage = Join-Path $Root "assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png"
+if (-not (Test-Path $builtInUiImage)) {
+  Add-Failure "Expected built-in image_gen UI/UX concept image at assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png."
 }
 
 $mascotFile = Join-Path $Root "assets/ui-ux/mascot-token-run.png"
 if (-not (Test-Path $mascotFile)) {
-  Write-Error "Expected mascot reference image at assets/ui-ux/mascot-token-run.png."
-}
-
-$gptImage2Script = Join-Path $Root "scripts/generate-uiux-gpt-image-2.ps1"
-if (-not (Test-Path $gptImage2Script)) {
-  Write-Error "Expected gpt-image-2 generation script at scripts/generate-uiux-gpt-image-2.ps1."
-}
-
-$gptImage2Image = Join-Path $Root "assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png"
-if (-not (Test-Path $gptImage2Image)) {
-  Write-Error "Expected UI/UX image generated through the explicit gpt-image-2 CLI/API path at assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png."
+  Add-Failure "Expected mascot reference image at assets/ui-ux/mascot-token-run.png."
 }
 
 $stateFiles = @(
@@ -83,7 +93,7 @@ $stateFiles = @(
 )
 foreach ($stateFile in $stateFiles) {
   if (-not (Test-Path (Join-Path $Root $stateFile))) {
-    Write-Error "Expected mascot state asset at $stateFile."
+    Add-Failure "Expected mascot state asset at $stateFile."
   }
 }
 
@@ -95,12 +105,16 @@ $animationFiles = @(
 )
 foreach ($animationFile in $animationFiles) {
   if (-not (Test-Path (Join-Path $Root $animationFile))) {
-    Write-Error "Expected Remotion animation artifact at $animationFile."
+    Add-Failure "Expected Remotion animation artifact at $animationFile."
   }
 }
 
 if (-not (Test-Path (Join-Path $Root ".git"))) {
-  Write-Error "Git repository is missing."
+  Add-Failure "Git repository is missing."
+}
+
+if ($failures.Count -gt 0) {
+  Write-Error ("Completion audit failed:`n - " + ($failures -join "`n - "))
 }
 
 Write-Output "PASS: autoresearch artifacts meet local critic checks."

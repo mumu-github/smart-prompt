@@ -12,6 +12,13 @@ $promptFile = Join-Path $root "assets\ui-ux\gpt-image-2-uiux.prompt.txt"
 $mascotFile = Join-Path $root "assets\ui-ux\mascot-token-run.png"
 $outFile = Join-Path $root "assets\ui-ux\prompt-copilot-uiux-gpt-image-2.png"
 
+if (-not $env:OPENAI_API_KEY) {
+  $userKey = [Environment]::GetEnvironmentVariable("OPENAI_API_KEY", "User")
+  if ($userKey) {
+    $env:OPENAI_API_KEY = $userKey
+  }
+}
+
 if (-not (Test-Path $imageGen)) {
   throw "image_gen.py not found at $imageGen"
 }
@@ -24,7 +31,7 @@ if (-not (Test-Path $mascotFile)) {
   throw "Mascot reference image not found at $mascotFile"
 }
 
-$args = @(
+$imageGenArgs = @(
   $imageGen,
   "edit",
   "--model", "gpt-image-2",
@@ -36,11 +43,30 @@ $args = @(
 )
 
 if ($DryRun) {
-  $args += "--dry-run"
+  $imageGenArgs += "--dry-run"
 }
 
 if ($Force) {
-  $args += "--force"
+  $imageGenArgs += "--force"
 }
 
-python @args
+$pythonHasOpenAI = $false
+try {
+  python -c "import openai" 2>$null
+  if ($LASTEXITCODE -eq 0) {
+    $pythonHasOpenAI = $true
+  }
+} catch {
+  $pythonHasOpenAI = $false
+}
+
+if ($pythonHasOpenAI) {
+  python @imageGenArgs
+} else {
+  $uv = Get-Command uv -ErrorAction SilentlyContinue
+  if (-not $uv) {
+    throw "The active Python environment does not have the openai SDK, and uv is not available to run a temporary SDK environment."
+  }
+
+  uv run --with openai python @imageGenArgs
+}
