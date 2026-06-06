@@ -93,6 +93,20 @@ async function waitForTarget() {
   throw new Error("Chrome CDP target did not become available.");
 }
 
+async function waitForBrowserEndpoint() {
+  const deadline = Date.now() + 15000;
+  while (Date.now() < deadline) {
+    try {
+      const version = await getJson(`http://127.0.0.1:${remotePort}/json/version`);
+      if (version.webSocketDebuggerUrl) return version.webSocketDebuggerUrl;
+    } catch {
+      // Chrome is still starting.
+    }
+    await sleep(250);
+  }
+  throw new Error("Chrome browser CDP endpoint did not become available.");
+}
+
 function createCdpClient(url) {
   return new Promise((resolve, reject) => {
     const socket = new WebSocket(url);
@@ -153,13 +167,6 @@ async function probeSite(client, site) {
   await client.send("Page.loadEventFired").catch(() => {});
   await sleep(Number(process.env.SMART_PROMPT_LIVE_SETTLE_MS || 8000));
   let injectedProbe = false;
-  if (injectFallback) {
-    injectedProbe = await injectProbeRuntime(client);
-    if (injectedProbe) {
-      await waitFor(client, "Boolean(window.__smartPromptCopilotReady)", (value) => value, 3000).catch(() => {});
-    }
-    await sleep(500);
-  }
 
   const initial = await evaluate(client, `(() => {
     ${collectInputsSource}
@@ -201,7 +208,9 @@ async function probeSite(client, site) {
     if (!target) return { ok: false, reason: "no visible input candidate" };
     target.scrollIntoView({ block: "center", inline: "center" });
     target.focus();
+    target.click?.();
     target.dispatchEvent(new FocusEvent("focusin", { bubbles: true, composed: true }));
+    globalThis.__smartPromptDebugProbeFocus = target;
     return {
       ok: true,
       tag: target.tagName,
@@ -213,8 +222,21 @@ async function probeSite(client, site) {
   })()`);
 
   if (!focusResult.ok) {
+    if (injectFallback && await injectProbeRuntime(client)) {
+      injectedProbe = true;
+      await sleep(500);
+      return probeSiteAfterInjection(client, site, initial, focusResult);
+    }
     return { ...site, injectedProbe, passedDisplay: false, passedInsert: false, initial, focusResult };
   }
+  await evaluate(client, `(() => {
+    const target = window.__smartPromptDebugProbeFocus;
+    if (target) {
+      target.focus();
+      target.dispatchEvent(new FocusEvent("focusin", { bubbles: true, composed: true }));
+    }
+    return window.__smartPromptDebug || null;
+  })()`).catch(() => null);
 
   let display;
   try {
@@ -225,10 +247,16 @@ async function probeSite(client, site) {
         mascot: Boolean(mascot),
         visible: Boolean(mascot && rect && rect.width > 20 && rect.height > 20),
         state: mascot?.dataset?.state || "",
-        transform: mascot?.style?.transform || ""
+        transform: mascot?.style?.transform || "",
+        debug: window.__smartPromptDebug || null
       };
     })()`, (value) => value.mascot && value.visible, 10000);
   } catch (error) {
+    if (!injectedProbe && injectFallback && await injectProbeRuntime(client)) {
+      injectedProbe = true;
+      await sleep(500);
+      return probeSiteAfterInjection(client, site, initial, focusResult);
+    }
     return { ...site, injectedProbe, passedDisplay: false, passedInsert: false, initial, focusResult, displayError: error.message };
   }
 
@@ -290,6 +318,138 @@ async function probeSite(client, site) {
   return { ...site, injectedProbe, passedDisplay: true, passedInsert: Boolean(insert.ok), initial, focusResult, display, insert };
 }
 
+async function probeSiteAfterInjection(client, site, initialBeforeInjection, focusBeforeInjection) {
+  await waitFor(client, "Boolean(window.__smartPromptCopilotReady)", (value) => value, 3000).catch(() => {});
+  const refocused = await evaluate(client, `(() => {
+    ${collectInputsSource}
+    const candidates = smartPromptProbeInputs()
+      .filter((element) => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return rect.width > 24 && rect.height > 18 && style.visibility !== "hidden" && style.display !== "none";
+      });
+    const target = candidates[0];
+    if (!target) return { ok: false, reason: "no visible input candidate after injection" };
+    target.scrollIntoView({ block: "center", inline: "center" });
+    target.focus();
+    target.click?.();
+    target.dispatchEvent(new FocusEvent("focusin", { bubbles: true, composed: true }));
+    globalThis.__smartPromptDebugProbeFocus = target;
+    return {
+      ok: true,
+      tag: target.tagName,
+      id: target.id || "",
+      role: target.getAttribute("role") || "",
+      contentEditable: target.isContentEditable,
+      beforeValue: ("value" in target ? target.value : target.textContent || "").slice(0, 80)
+    };
+  })()`);
+  if (!refocused.ok) {
+    return {
+      ...site,
+      injectedProbe: true,
+      passedDisplay: false,
+      passedInsert: false,
+      initial: initialBeforeInjection,
+      focusResult: focusBeforeInjection,
+      injectedFocusResult: refocused
+    };
+  }
+
+  let display;
+  try {
+    display = await waitFor(client, `(() => {
+      const mascot = document.getElementById("smart-prompt-mascot");
+      const rect = mascot?.getBoundingClientRect();
+      return {
+        mascot: Boolean(mascot),
+        visible: Boolean(mascot && rect && rect.width > 20 && rect.height > 20),
+        state: mascot?.dataset?.state || "",
+        transform: mascot?.style?.transform || "",
+        debug: window.__smartPromptDebug || null
+      };
+    })()`, (value) => value.mascot && value.visible, 10000);
+  } catch (error) {
+    return {
+      ...site,
+      injectedProbe: true,
+      passedDisplay: false,
+      passedInsert: false,
+      initial: initialBeforeInjection,
+      focusResult: focusBeforeInjection,
+      injectedFocusResult: refocused,
+      displayError: error.message
+    };
+  }
+
+  if (!site.requireInsert) {
+    return {
+      ...site,
+      injectedProbe: true,
+      passedDisplay: true,
+      passedInsert: null,
+      initial: initialBeforeInjection,
+      focusResult: focusBeforeInjection,
+      injectedFocusResult: refocused,
+      display
+    };
+  }
+
+  let insert;
+  try {
+    await evaluate(client, `document.getElementById("smart-prompt-mascot")?.click()`);
+    const card = await waitFor(client, `(() => {
+      const output = document.querySelector("#smart-prompt-card .spc-output")?.value || "";
+      return {
+        card: Boolean(document.getElementById("smart-prompt-card")),
+        outputLength: output.length,
+        context: document.querySelector("#smart-prompt-card .spc-context")?.textContent || ""
+      };
+    })()`, (value) => value.card && value.outputLength > 80, 12000);
+    const afterInsert = await evaluate(client, `(() => {
+      const output = document.querySelector("#smart-prompt-card .spc-output")?.value || "";
+      document.querySelector('#smart-prompt-card button[data-action="insert"]')?.click();
+      ${collectInputsSource}
+      const inputs = smartPromptProbeInputs()
+        .filter((element) => {
+          const rect = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          return rect.width > 24 && rect.height > 18 && style.visibility !== "hidden" && style.display !== "none";
+        });
+      const target = inputs[0];
+      const value = target ? ("value" in target ? target.value : target.textContent || "") : "";
+      return {
+        output,
+        value,
+        outputLength: output.length,
+        valueLength: value.length,
+        cardClosed: !document.getElementById("smart-prompt-card"),
+        url: location.href
+      };
+    })()`);
+    insert = {
+      opened: true,
+      card,
+      afterInsert,
+      ok: afterInsert.cardClosed && afterInsert.outputLength > 80 && afterInsert.value.includes(afterInsert.output.slice(0, 40))
+    };
+  } catch (error) {
+    insert = { opened: false, ok: false, error: error.message };
+  }
+
+  return {
+    ...site,
+    injectedProbe: true,
+    passedDisplay: true,
+    passedInsert: Boolean(insert.ok),
+    initial: initialBeforeInjection,
+    focusResult: focusBeforeInjection,
+    injectedFocusResult: refocused,
+    display,
+    insert
+  };
+}
+
 async function injectProbeRuntime(client) {
   const alreadyInjected = await evaluate(client, "Boolean(window.__smartPromptProbeInjected)");
   if (alreadyInjected) return false;
@@ -319,9 +479,6 @@ async function injectProbeRuntime(client) {
   assert.ok(fs.existsSync(chromePath), `Chrome not found: ${chromePath}`);
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-service-"));
   const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-chrome-"));
-  const extensionWorkRoot = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-live-ext-"));
-  const extensionWorkDir = path.join(extensionWorkRoot, "extension");
-  fs.cpSync(extensionDir, extensionWorkDir, { recursive: true });
   const service = await startServiceForProbe(dataDir);
   const args = [
     "--disable-gpu",
@@ -330,16 +487,30 @@ async function injectProbeRuntime(client) {
     "--disable-blink-features=AutomationControlled",
     `--user-data-dir=${profileDir}`,
     `--remote-debugging-port=${remotePort}`,
-    `--disable-extensions-except=${extensionWorkDir}`,
-    `--load-extension=${extensionWorkDir}`,
     "about:blank"
   ];
   if (headless) args.unshift("--headless=new");
 
   const chrome = spawn(chromePath, args, { stdio: "ignore" });
   const results = [];
+  let extensionLoad = { ok: false };
+  let browserClient;
   let client;
   try {
+    const browserEndpoint = await waitForBrowserEndpoint();
+    browserClient = await createCdpClient(browserEndpoint);
+    try {
+      const loaded = await browserClient.send("Extensions.loadUnpacked", { path: extensionDir });
+      const extensions = await browserClient.send("Extensions.getExtensions");
+      extensionLoad = {
+        ok: true,
+        id: loaded.id,
+        matchedExtension: extensions.extensions.find((extension) => extension.id === loaded.id) || null
+      };
+    } catch (error) {
+      extensionLoad = { ok: false, error: error.message };
+    }
+
     const target = await waitForTarget();
     client = await createCdpClient(target.webSocketDebuggerUrl);
     await client.send("Runtime.enable");
@@ -353,6 +524,7 @@ async function injectProbeRuntime(client) {
     }
   } finally {
     if (client) client.close();
+    if (browserClient) browserClient.close();
     if (!chrome.killed) chrome.kill();
     await new Promise((resolve) => {
       chrome.once("exit", resolve);
@@ -361,7 +533,6 @@ async function injectProbeRuntime(client) {
     await closeServer(service);
     await removeDirWithRetry(dataDir);
     await removeDirWithRetry(profileDir);
-    await removeDirWithRetry(extensionWorkRoot);
   }
 
   const displayPasses = results.filter((item) => item.passedDisplay).length;
@@ -370,6 +541,7 @@ async function injectProbeRuntime(client) {
     createdAt: new Date().toISOString(),
     headless,
     injectFallback,
+    extensionLoad,
     displayPasses,
     insertPasses,
     results

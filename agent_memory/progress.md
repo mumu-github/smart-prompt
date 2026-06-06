@@ -39,19 +39,18 @@
 
 ## 正在进行
 
-- 正在推进 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务和全局快捷键触发已通过，但真实站点小人显示和真实站点 Insert 尚未验证。
+- 正在推进 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务、全局快捷键触发、5 个真实站点正式扩展显示、ChatGPT/Gemini Insert 已通过，但 Claude Insert 和真实 LLM quota 尚未验证。
 
 ## 下一步
 
-- 在至少 5 个真实网页 AI 输入框手测小人稳定出现。
-- 在 ChatGPT、Claude、Gemini 手测 Insert 成功且不自动发送。
-- 将通过证据写入 `research/v2-verification.md`，再运行 `scripts/critic-v2.ps1 -RequireRuntimeEvidence`。
+- 在 Claude 登录态下手测 Insert 成功且不自动发送，并补充 `INSERT_CLAUDE_PASS` 证据。
+- 提供可用 LLM billing/key 后复跑三模式真实 LLM 验收。
 
 ## 验证状态
 
-- 已验证：`scripts/critic-v2.ps1` 默认自动化检查 PASS；local-service、browser-extension、desktop-shell 静态测试 PASS；Node 语法检查 PASS；本地服务可启动并响应 `/health` 和 `/generate` fallback；Chrome headless demo 能显示小人和 prompt card，并确认 Insert 只写入不提交；Rust/Cargo 已安装，Tauri `cargo check` PASS；`scripts/check-v2-tauri-runtime.ps1` 已验证 Tauri app 启动、Tauri command、从 Tauri 启动本地服务、全局快捷键触发计数。
-- 未验证：真实加载 Chrome/Edge 扩展后在 5 个生产站点逐站点手测；ChatGPT/Claude/Gemini Insert 生产站点成功；真实 LLM 三模式因当前 OpenAI quota/billing 429 未证明。
-- 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runtime.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1` 当前返回 OpenAI 429 quota/billing。
+- 已验证：`scripts/critic-v2.ps1` 默认自动化检查 PASS；local-service、browser-extension、desktop-shell 静态测试 PASS；Node 语法检查 PASS；本地服务可启动并响应 `/health` 和 `/generate` fallback；Chrome headless demo 能显示小人和 prompt card，并确认 Insert 只写入不提交；Rust/Cargo 已安装，Tauri `cargo check` PASS；`scripts/check-v2-tauri-runtime.ps1` 已验证 Tauri app 启动、Tauri command、从 Tauri 启动本地服务、全局快捷键触发计数；`scripts/check-v2-live-sites.ps1` 已通过 CDP `Extensions.loadUnpacked` 证明 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 站点正式扩展显示，且 ChatGPT/Gemini Insert 成功。
+- 未验证：Claude Insert 生产站点成功；真实 LLM 三模式因当前 OpenAI quota/billing 429 未证明。
+- 验证命令或方式：`npm test` 已在 `prototypes/browser-extension` PASS；`node -c prototypes\browser-extension\tests\live-site-probe.test.js` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` 仅失败在 `INSERT_CLAUDE_PASS`；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runtime.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1` 当前返回 OpenAI 429 quota/billing。
 
 ## 最近变化
 
@@ -65,4 +64,5 @@
 - 用户新目标为 V2；当前已实现主要代码路径，但未达到完整 runtime 验收。
 - V2 续跑新增 Chrome headless runtime demo 测试，覆盖本地服务桥接、卡片刷新、Insert 不提交；已安装 Rustup 并让 Tauri `cargo check` 进入默认 critic。
 - V2 继续补强 Tauri：开启 `withGlobalTauri`，修复带空格路径下的本地服务启动，新增 runtime smoke，验证真实 app 启动、Tauri command、本地服务启动和全局快捷键触发。
-- V2 继续补强真实站点探针：新增 `scripts/check-v2-live-sites.ps1` 和 live-site probe，补 `v0.app` 域名，扩展输入扫描支持 open shadow DOM。当前注入式生产 DOM 兼容性达到 ChatGPT/Bolt/v0.app/Lovable 4 个显示和 ChatGPT Insert，但正式扩展加载/5 站点/Claude/Gemini Insert 仍未通过。
+- V2 继续补强真实站点探针：改用 browser-level CDP `Extensions.loadUnpacked` 正式加载扩展，补 `v0.app` 域名，扩展输入扫描支持 open shadow DOM。当前正式扩展证据达到 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 个显示和 ChatGPT/Gemini Insert；Claude 仍因登录页未过。
+- 本轮 OMX `smart-prompt-v2` verdict 记为 `fail`：已有正式 5 站点显示和 ChatGPT/Gemini Insert 证据，但 Claude Insert 与真实 LLM quota 仍未满足 V2 完整验收。

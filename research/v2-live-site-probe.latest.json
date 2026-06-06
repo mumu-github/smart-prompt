@@ -1,10 +1,22 @@
 {
-  "createdAt": "2026-06-06T15:12:16.556Z",
+  "createdAt": "2026-06-06T15:35:17.410Z",
   "headless": false,
   "injectFallback": true,
-  "displayPasses": 4,
+  "extensionLoad": {
+    "ok": true,
+    "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
+    "matchedExtension": {
+      "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
+      "name": "Smart Prompt Copilot",
+      "version": "0.1.0",
+      "path": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\prototypes\\browser-extension",
+      "enabled": true
+    }
+  },
+  "displayPasses": 5,
   "insertPasses": [
-    "chatgpt"
+    "chatgpt",
+    "gemini"
   ],
   "results": [
     {
@@ -12,13 +24,13 @@
       "name": "ChatGPT",
       "url": "https://chatgpt.com/",
       "requireInsert": true,
-      "injectedProbe": true,
+      "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": true,
       "initial": {
         "url": "https://chatgpt.com/",
         "title": "ChatGPT",
-        "injectedProbe": true,
+        "injectedProbe": false,
         "mascot": true,
         "card": false,
         "candidates": [
@@ -58,14 +70,15 @@
         "mascot": true,
         "visible": true,
         "state": "normal",
-        "transform": "translate(777px, 336px)"
+        "transform": "translate(777px, 336px)",
+        "debug": null
       },
       "insert": {
         "opened": true,
         "card": {
           "card": true,
           "outputLength": 230,
-          "context": "ChatGPT / chatgpt.com / div / template / service offline"
+          "context": "ChatGPT / chatgpt.com / div / template"
         },
         "afterInsert": {
           "output": "你是熟悉 ChatGPT 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
@@ -89,7 +102,7 @@
       "initial": {
         "url": "https://claude.ai/login?from=logout",
         "title": "Sign in - Claude",
-        "injectedProbe": true,
+        "injectedProbe": false,
         "mascot": false,
         "card": false,
         "candidates": []
@@ -97,6 +110,10 @@
       "focusResult": {
         "ok": false,
         "reason": "no visible input candidate"
+      },
+      "injectedFocusResult": {
+        "ok": false,
+        "reason": "no visible input candidate after injection"
       }
     },
     {
@@ -104,14 +121,14 @@
       "name": "Gemini",
       "url": "https://gemini.google.com/app",
       "requireInsert": true,
-      "injectedProbe": true,
-      "passedDisplay": false,
-      "passedInsert": false,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": true,
       "initial": {
         "url": "https://gemini.google.com/app",
         "title": "Google Gemini",
-        "injectedProbe": true,
-        "mascot": false,
+        "injectedProbe": false,
+        "mascot": true,
         "card": false,
         "candidates": [
           {
@@ -122,7 +139,7 @@
             "contentEditable": true,
             "placeholder": "为 Gemini 输入提示",
             "visible": true,
-            "width": 425,
+            "width": 712,
             "height": 24
           },
           {
@@ -146,7 +163,30 @@
         "contentEditable": true,
         "beforeValue": ""
       },
-      "displayError": "Condition not met: (() => {\n      const mascot = document.getElementById(\"smart-prompt-mascot\");\n      const rect = mascot?.getBoundingClientRect();\n      return {\n        mascot: Boolean(mascot),\n        visible: Boolean(mascot && rect && rect.width > 20 && rect.height > 20),\n        state: mascot?.dataset?.state || \"\",\n        transform: mascot?.style?.transform || \"\"\n      };\n    })()\nLast value: {\"mascot\":false,\"visible\":false,\"state\":\"\",\"transform\":\"\"}"
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "state": "normal",
+        "transform": "translate(847px, 332px)",
+        "debug": null
+      },
+      "insert": {
+        "opened": true,
+        "card": {
+          "card": true,
+          "outputLength": 229,
+          "context": "Gemini / gemini.google.com / div / template"
+        },
+        "afterInsert": {
+          "output": "你是熟悉 Gemini 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "value": "你是熟悉 Gemini 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "outputLength": 229,
+          "valueLength": 229,
+          "cardClosed": true,
+          "url": "https://gemini.google.com/app"
+        },
+        "ok": true
+      }
     },
     {
       "id": "perplexity",
@@ -157,9 +197,9 @@
       "passedDisplay": false,
       "passedInsert": false,
       "initial": {
-        "url": "https://www.perplexity.ai/",
-        "title": "请稍候…",
-        "injectedProbe": true,
+        "url": "https://www.perplexity.ai/?__cf_chl_rt_tk=QF0oEmHEcaa33mQR95iczvdqR1JdMKvD5ud5WA8Zlug-1780760080-1.0.1.1-iRARtkDS52Ia7zZK_uNyWeOb2_Zp5JD05vuaQcXsliE",
+        "title": "Just a moment...",
+        "injectedProbe": false,
         "mascot": false,
         "card": false,
         "candidates": []
@@ -167,6 +207,10 @@
       "focusResult": {
         "ok": false,
         "reason": "no visible input candidate"
+      },
+      "injectedFocusResult": {
+        "ok": false,
+        "reason": "no visible input candidate after injection"
       }
     },
     {
@@ -174,13 +218,13 @@
       "name": "Bolt",
       "url": "https://bolt.new/",
       "requireInsert": false,
-      "injectedProbe": true,
+      "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": null,
       "initial": {
         "url": "https://bolt.new/",
         "title": "Bolt AI builder: Websites, apps & prototypes",
-        "injectedProbe": true,
+        "injectedProbe": false,
         "mascot": false,
         "card": false,
         "candidates": [
@@ -220,7 +264,8 @@
         "mascot": true,
         "visible": true,
         "state": "normal",
-        "transform": "translate(754px, 386px)"
+        "transform": "translate(754px, 386px)",
+        "debug": null
       }
     },
     {
@@ -228,13 +273,13 @@
       "name": "v0",
       "url": "https://v0.dev/chat",
       "requireInsert": false,
-      "injectedProbe": true,
+      "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": null,
       "initial": {
         "url": "https://v0.app/",
         "title": "v0 by Vercel - Build Full-Stack Web Apps with AI",
-        "injectedProbe": true,
+        "injectedProbe": false,
         "mascot": true,
         "card": false,
         "candidates": [
@@ -263,7 +308,8 @@
         "mascot": true,
         "visible": true,
         "state": "normal",
-        "transform": "translate(782px, 272px)"
+        "transform": "translate(782px, 272px)",
+        "debug": null
       }
     },
     {
@@ -271,13 +317,13 @@
       "name": "Lovable",
       "url": "https://lovable.dev/",
       "requireInsert": false,
-      "injectedProbe": true,
+      "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": null,
       "initial": {
         "url": "https://lovable.dev/",
         "title": "AI App Builder | Vibe Code Apps & Websites with AI, Fast",
-        "injectedProbe": true,
+        "injectedProbe": false,
         "mascot": false,
         "card": false,
         "candidates": [
@@ -317,7 +363,8 @@
         "mascot": true,
         "visible": true,
         "state": "normal",
-        "transform": "translate(818px, 385px)"
+        "transform": "translate(818px, 385px)",
+        "debug": null
       }
     },
     {
@@ -331,7 +378,7 @@
       "initial": {
         "url": "https://replit.com/ai",
         "title": "Replit AI – Turn natural language into apps and websites",
-        "injectedProbe": true,
+        "injectedProbe": false,
         "mascot": false,
         "card": false,
         "candidates": []
@@ -339,6 +386,10 @@
       "focusResult": {
         "ok": false,
         "reason": "no visible input candidate"
+      },
+      "injectedFocusResult": {
+        "ok": false,
+        "reason": "no visible input candidate after injection"
       }
     }
   ]

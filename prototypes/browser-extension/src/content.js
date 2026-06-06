@@ -28,7 +28,16 @@
     },
     observedShadowRoots: new WeakSet(),
     observedInputs: new WeakSet(),
-    dynamicScanTimer: null
+    dynamicScanTimer: null,
+    debug: {
+      focusEvents: 0,
+      inputBindings: 0,
+      shadowBindings: 0,
+      deepActiveChecks: 0,
+      lastFocusTag: "",
+      lastFocusHost: "",
+      lastFocusKind: ""
+    }
   };
 
   const mascotMap = {
@@ -156,6 +165,10 @@
   function onFocus(event) {
     const target = getEventTarget(event);
     if (!state.settings.enabled || !isTextInput(target) || !isVisible(target)) return;
+    state.debug.focusEvents += 1;
+    state.debug.lastFocusTag = target.tagName || "";
+    state.debug.lastFocusHost = location.hostname;
+    state.debug.lastFocusKind = target.isContentEditable ? "contenteditable" : target.tagName?.toLowerCase() || "";
     state.activeInput = target;
     createMascot();
     setMascotState(engine.detectMode(getInputText(target)) === engine.MODE.IDEA ? "normal" : "resting");
@@ -167,6 +180,22 @@
     if (getEventTarget(event) !== state.activeInput) return;
     setMascotState(engine.detectMode(getInputText(state.activeInput)) === engine.MODE.IDEA ? "normal" : "resting");
     if (state.card) refreshCardPreview(false);
+  }
+
+  function getDeepActiveElement(root = document) {
+    let active = root.activeElement;
+    while (active?.shadowRoot?.activeElement) {
+      active = active.shadowRoot.activeElement;
+    }
+    return active;
+  }
+
+  function refreshDeepActiveInput() {
+    state.debug.deepActiveChecks += 1;
+    const focused = getDeepActiveElement();
+    if (focused && focused !== state.activeInput) {
+      onFocus({ target: focused });
+    }
   }
 
   function closeCard() {
@@ -397,6 +426,7 @@
     for (const element of Array.from(root.querySelectorAll("*"))) {
       if (!element.shadowRoot || state.observedShadowRoots.has(element.shadowRoot)) continue;
       state.observedShadowRoots.add(element.shadowRoot);
+      state.debug.shadowBindings += 1;
       element.shadowRoot.addEventListener("focusin", onFocus, true);
       element.shadowRoot.addEventListener("input", onInput, true);
       bindShadowRootEvents(element.shadowRoot);
@@ -413,6 +443,7 @@
     for (const element of candidates) {
       if (!isTextInput(element) || state.observedInputs.has(element)) continue;
       state.observedInputs.add(element);
+      state.debug.inputBindings += 1;
       element.addEventListener("focus", onFocus, true);
       element.addEventListener("focusin", onFocus, true);
       element.addEventListener("input", onInput, true);
@@ -422,10 +453,15 @@
   async function start() {
     await loadSettings();
     bindEvents();
+    globalThis.__smartPromptDebug = state.debug;
     const focused = document.activeElement;
     if (isTextInput(focused) && isVisible(focused)) {
       onFocus({ target: focused });
     }
+    refreshDeepActiveInput();
+    setTimeout(refreshDeepActiveInput, 500);
+    setTimeout(refreshDeepActiveInput, 1500);
+    setTimeout(refreshDeepActiveInput, 3500);
     globalThis.__smartPromptCopilotReady = true;
   }
 

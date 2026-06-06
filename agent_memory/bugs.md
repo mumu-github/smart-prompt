@@ -2,7 +2,7 @@
 
 ## 当前问题
 
-- 当前无阻塞 V2 自动化代码路径推进的问题；完整验收缺少真实站点验证和真实 LLM quota 可用性。
+- 当前无阻塞 V2 自动化代码路径推进的问题；完整验收缺少 Claude Insert 验证和真实 LLM quota 可用性。
 
 ## 已知风险
 
@@ -10,10 +10,10 @@
 - SkillHub/ClawHub 命名和生态边界不唯一；文档已标注不确定性。
 - 自动识别并写入任意桌面/网页输入框涉及权限、隐私和平台安全限制；PRD 已限定 MVP 从 allowlist 网页输入框开始。
 - 当前浏览器 MVP 使用 DOM 写入；复杂 contenteditable/富文本编辑器可能需要站点适配器，否则一键填入可能不稳定。
-- 当前 prompt 生成使用本地模板和 skill routing；尚未接入 LLM gateway，因此生成质量受模板限制。
+- 真实 LLM gateway 代码路径已接入；但当前 key/billing 不可用时仍会回退本地模板，生成质量会受模板限制。
 - 真实 LLM 生成需要 API key 和可用 billing；没有 key 时本地服务只会按调用方允许返回 template fallback。
 - 真实站点验证可能需要浏览器登录态和平台页面稳定性；当前不能用本地 demo 代替生产站点证据。
-- 当前 Chrome/Edge 环境未接受命令行 unpacked extension 加载；live-site probe 只能用 DevTools 注入源码作为 DOM 兼容性证据，不能等同正式扩展加载证据。
+- 当前 Chrome/Edge 环境未接受命令行 unpacked extension 加载；已改用 browser-level CDP `Extensions.loadUnpacked` 获取正式扩展加载证据。
 
 ## 失败尝试
 
@@ -28,8 +28,8 @@
 ## 待回顾
 
 - 真实 Chrome/Edge 扩展在 ChatGPT、Claude、Gemini 等站点的逐站点兼容性。
-- V2 runtime evidence：5 个真实站点小人显示、ChatGPT/Claude/Gemini Insert。
-- live-site probe 当前失败原因：正式扩展未能命令行加载；Claude 跳到登录/登出页；Gemini shadow 输入可检测但小人触发仍失败；Perplexity challenge；Replit/DeepSeek/Doubao 登录或区域限制。
+- V2 runtime evidence：Claude Insert。
+- live-site probe 当前失败原因：Claude 跳到登录/登出页；Perplexity challenge；Replit/DeepSeek/Doubao 登录或区域限制。
 
 ## 已解决
 
