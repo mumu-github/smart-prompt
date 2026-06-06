@@ -53,6 +53,26 @@ if ($uiFiles.Count -lt 1) {
   Write-Error "Expected at least one UI/UX image file in assets/ui-ux."
 }
 
+$gptImage2Prompt = Join-Path $Root "assets/ui-ux/gpt-image-2-uiux.prompt.txt"
+if (-not (Test-Path $gptImage2Prompt)) {
+  Write-Error "Expected gpt-image-2 prompt file at assets/ui-ux/gpt-image-2-uiux.prompt.txt."
+}
+
+$mascotFile = Join-Path $Root "assets/ui-ux/mascot-token-run.png"
+if (-not (Test-Path $mascotFile)) {
+  Write-Error "Expected mascot reference image at assets/ui-ux/mascot-token-run.png."
+}
+
+$gptImage2Script = Join-Path $Root "scripts/generate-uiux-gpt-image-2.ps1"
+if (-not (Test-Path $gptImage2Script)) {
+  Write-Error "Expected gpt-image-2 generation script at scripts/generate-uiux-gpt-image-2.ps1."
+}
+
+$gptImage2Image = Join-Path $Root "assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png"
+if (-not (Test-Path $gptImage2Image)) {
+  Write-Error "Expected UI/UX image generated through the explicit gpt-image-2 CLI/API path at assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png."
+}
+
 if (-not (Test-Path (Join-Path $Root ".git"))) {
   Write-Error "Git repository is missing."
 }

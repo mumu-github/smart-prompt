@@ -1,0 +1,35 @@
+Use the input image as the exact mascot reference.
+
+Critical mascot preservation:
+- Do not redesign the mascot.
+- Keep the same white rounded body, black outline, tiny sprout/leaf on the head, running pose, open happy mouth, oval eyes, peach cheek blush, small limbs, and overall proportions.
+- You may scale and position the mascot inside the UI scene, but do not change its identity, expression, silhouette, colors, line style, or pose.
+- The mascot should appear as a floating assistant beside AI input boxes, using the provided image character as-is.
+
+UI/UX concept:
+Create a polished high-fidelity UI/UX concept image for a Windows/macOS desktop + browser extension tool that floats this mascot beside AI input boxes. The product helps vibe coding and LLM users in three modes: empty input idea mode, partial prompt continuation mode, and full prompt polish mode.
+
+Scene/backdrop:
+A clean desktop workspace showing a browser AI chat input on the left and a coding agent/editor input on the right. Place the provided mascot near the input field as the assistant, without blocking input text.
+
+Interface details:
+- Main center: prompt card opened beside an input box.
+- Side controls: segmented modes labeled "Idea", "Continue", "Polish".
+- Prompt card actions: Refresh, Edit, Insert.
+- Local skills row: chips labeled "Skills", "Web", "API", "UI/UX".
+- Subtle Windows and macOS compatibility badges.
+
+Style:
+Premium SaaS product UI mockup, crisp modern desktop interface, realistic but clean design system, no marketing hero, no decorative blobs.
+
+Composition/framing:
+16:9 product concept board. Keep the UI legible and spacious. The mascot is clearly visible near the active input box and repeated only if needed as small state thumbnails.
+
+Color palette:
+Off-white surfaces, charcoal text, muted teal accent, small amber highlight, soft slate borders. Preserve the mascot's original colors exactly.
+
+Text:
+Use only minimal legible text: "Prompt Copilot", "Idea", "Continue", "Polish", "Skills", "Refresh", "Edit", "Insert".
+
+Avoid:
+No real AI product logos, no watermark, no unreadable paragraphs, no robot redesign, no different animal/character, no clothing/costume changes, no 3D redesign of the mascot.

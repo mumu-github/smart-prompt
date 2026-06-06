@@ -2,8 +2,8 @@
 
 ## 当前问题
 
-- 小人形象的原型未提供，当前 UI/UX 图使用概念占位形象；如用户提供原型图，应重生成动作与表情。
-- `gpt-image-2` 的实际 API 可用性尚未在本环境通过 CLI/API 实测；当前 shell 环境缺少 `OPENAI_API_KEY`，PRD 已将模型 ID 设计为可配置。
+- 小人形象原型已提供：`assets/ui-ux/mascot-token-run.png`。当前已有 UI/UX 图仍是旧概念小人版本；需要在配置 `OPENAI_API_KEY` 后用 `gpt-image-2` 基于原型图重生成。
+- `gpt-image-2` 的实际 API 可用性尚未在本环境通过 CLI/API 实测；当前 shell 环境缺少 `OPENAI_API_KEY`。已补齐 prompt 文件、原型图和复跑脚本，dry-run 通过，但真实 API 图尚未生成。
 
 ## 已知风险
 
@@ -16,6 +16,7 @@
 - 初始 critic 脚本包含中文字符串，Windows PowerShell 以非 UTF-8 解析时报错；已改为 ASCII-only 检查。
 - 初始 critic 在文档未填充时失败；后续补齐来源与文档。
 - 第二次 critic 在 UI/UX 图未生成时失败；后续生成图片并通过。
+- 调严 critic 后，当前失败在缺少显式 `gpt-image-2` API 输出图：`assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
 
 ## 待回顾
 
@@ -26,4 +27,4 @@
 
 - 已补齐项目记忆文件。
 - 已完成研究文档、PRD、UI/UX 概念图。
-- 已通过本地 critic 并记录 OMX pass verdict。
+- 研究/PRD/内置图像资产已通过旧本地 critic 并记录过 OMX pass verdict；现已调严门槛，需真实 `gpt-image-2` API 输出图后才能重新记录 pass。
