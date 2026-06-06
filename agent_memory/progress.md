@@ -38,10 +38,10 @@
 
 ## 验证状态
 
-- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；初始提交已成功；shell 环境缺少 `OPENAI_API_KEY`；`gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目。
+- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；初始提交已成功；Process/User/Machine 三层环境变量均缺少 `OPENAI_API_KEY`；`gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目。
 - 未验证：显式 fallback CLI/API `gpt-image-2` 真实生成路径；OMX completion 是否完成。
 - 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-autoresearch.ps1` 当前应失败在缺少 `prompt-copilot-uiux-gpt-image-2.png`；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun` 当前通过。
 
 ## 最近变化
 
-- 将完成门槛调严：完整 critic 必须看到显式 `gpt-image-2` CLI/API 输出图，因此当前因缺少 `OPENAI_API_KEY` 不能完成 goal。
+- 复查确认 Process/User/Machine 三层环境变量均无 `OPENAI_API_KEY`；完整 critic 必须看到显式 `gpt-image-2` CLI/API 输出图，因此当前因缺少外部凭据不能完成 goal。
