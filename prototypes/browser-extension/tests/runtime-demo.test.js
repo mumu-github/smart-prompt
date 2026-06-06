@@ -209,6 +209,51 @@ async function waitFor(client, expression, predicate, timeout = 10000) {
     assert.equal(afterInsert.input, afterInsert.output);
     assert.equal(afterInsert.submitCount, 0);
     assert.equal(afterInsert.cardClosed, true);
+
+    await client.send("Page.enable");
+    const offlineServiceUrl = "http://127.0.0.1:65534";
+    const offlineDemoUrl = `file:///${demoPath}?open=1&serviceUrl=${encodeURIComponent(offlineServiceUrl)}`;
+    await client.send("Page.navigate", { url: offlineDemoUrl });
+    await sleep(500);
+    const offlineReady = await waitFor(client, `(() => ({
+      mascot: Boolean(document.getElementById("smart-prompt-mascot")),
+      card: Boolean(document.getElementById("smart-prompt-card")),
+      context: document.querySelector(".spc-context")?.textContent || "",
+      output: document.querySelector(".spc-output")?.value || "",
+      serviceUrl: window.__demoStorage?.smartPromptSettings?.serviceUrl || ""
+    }))()`, (value) => value.mascot && value.card && value.context.includes("service offline") && value.output.length > 80);
+
+    assert.equal(offlineReady.serviceUrl, offlineServiceUrl);
+    assert.ok(offlineReady.context.includes("service offline"));
+
+    await evaluate(client, `(() => {
+      document.querySelector('button[data-action="favorite"]').click();
+      return true;
+    })()`);
+    const offlineFavorite = await waitFor(client, `(() => ({
+      favorites: window.__demoStorage?.smartPromptFavorites || [],
+      mascotState: document.getElementById("smart-prompt-mascot")?.dataset.state || ""
+    }))()`, (value) => value.favorites.length === 1 && value.mascotState === "clapping");
+
+    assert.equal(offlineFavorite.favorites[0].source, "browser-extension");
+    assert.ok(offlineFavorite.favorites[0].body.length > 80);
+    assert.equal(offlineFavorite.favorites[0].context.tool, "ChatGPT");
+
+    const offlineInsert = await evaluate(client, `(() => {
+      const output = document.querySelector(".spc-output").value;
+      document.querySelector('button[data-action="insert"]').click();
+      const input = document.querySelector("textarea").value;
+      return {
+        output,
+        input,
+        submitCount: window.__demoSubmitCount,
+        cardClosed: !document.getElementById("smart-prompt-card")
+      };
+    })()`);
+
+    assert.equal(offlineInsert.input, offlineInsert.output);
+    assert.equal(offlineInsert.submitCount, 0);
+    assert.equal(offlineInsert.cardClosed, true);
   } finally {
     if (client) client.close();
     if (!chrome.killed) {

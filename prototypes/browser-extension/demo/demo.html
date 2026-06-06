@@ -106,6 +106,24 @@
         event.preventDefault();
         window.__demoSubmitCount += 1;
       });
+      const demoParams = new URLSearchParams(location.search);
+      window.__demoStorage = {
+        smartPromptSkills: [
+          {
+            id: "demo-skill-product",
+            name: "product-prd",
+            description: "Demo skill for product requirements, scope, acceptance, and milestones.",
+            tags: ["prd", "product", "acceptance", "milestone"],
+            source_type: "demo"
+          }
+        ]
+      };
+      if (demoParams.has("serviceUrl") || demoParams.has("preferLocalService")) {
+        window.__demoStorage.smartPromptSettings = {
+          ...(demoParams.has("serviceUrl") ? { serviceUrl: demoParams.get("serviceUrl") } : {}),
+          ...(demoParams.has("preferLocalService") ? { preferLocalService: demoParams.get("preferLocalService") !== "false" } : {})
+        };
+      }
       window.chrome = {
         runtime: {
           getURL(path) {
@@ -115,6 +133,8 @@
         storage: {
           local: {
             get(keys, callback) {
+              callback({ ...window.__demoStorage });
+              return;
               callback({
                 smartPromptSkills: [
                   {
@@ -128,6 +148,7 @@
               });
             },
             set(values, callback) {
+              Object.assign(window.__demoStorage, values);
               callback && callback();
             }
           },

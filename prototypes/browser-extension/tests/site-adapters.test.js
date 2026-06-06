@@ -104,6 +104,12 @@ const localServiceClient = fs.readFileSync(path.join(__dirname, "../src/local-se
 assert.ok(localServiceClient.includes("function savePrompt"));
 assert.ok(localServiceClient.includes("\"/prompts\""));
 
+const demo = fs.readFileSync(path.join(__dirname, "../demo/demo.html"), "utf8");
+assert.ok(demo.includes("__demoStorage"));
+assert.ok(demo.includes("smartPromptSettings"));
+assert.ok(demo.includes("serviceUrl"));
+assert.ok(demo.includes("smartPromptFavorites") || demo.includes("Object.assign(window.__demoStorage"));
+
 const liveProbe = fs.readFileSync(path.join(__dirname, "live-site-probe.test.js"), "utf8");
 assert.ok(liveProbe.includes("siteAdapters.SITE_ADAPTERS"));
 assert.ok(liveProbe.includes("getProbeSelectors"));

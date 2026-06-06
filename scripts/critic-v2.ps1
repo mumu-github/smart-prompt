@@ -144,9 +144,19 @@ if (Test-Path $siteAdapterTestPath) {
 $runtimeDemoTestPath = Join-Path $Root "prototypes/browser-extension/tests/runtime-demo.test.js"
 if (Test-Path $runtimeDemoTestPath) {
   $runtimeDemoTest = Get-Content -Raw -Encoding UTF8 $runtimeDemoTestPath
-  foreach ($token in @("waitForPromptCount", "button[data-action=""favorite""]", "/prompts", "browser-extension", "context.inputKind")) {
+  foreach ($token in @("waitForPromptCount", "button[data-action=""favorite""]", "/prompts", "browser-extension", "context.inputKind", "offlineServiceUrl", "service offline", "smartPromptFavorites", "Page.navigate")) {
     if (-not $runtimeDemoTest.Contains($token)) {
       Add-Failure "Runtime demo missing local prompt library save coverage token: $token"
+    }
+  }
+}
+
+$browserDemoPath = Join-Path $Root "prototypes/browser-extension/demo/demo.html"
+if (Test-Path $browserDemoPath) {
+  $browserDemo = Get-Content -Raw -Encoding UTF8 $browserDemoPath
+  foreach ($token in @("__demoStorage", "smartPromptSettings", "serviceUrl", "Object.assign(window.__demoStorage")) {
+    if (-not $browserDemo.Contains($token)) {
+      Add-Failure "Browser extension demo missing configurable storage fallback token: $token"
     }
   }
 }
