@@ -3,7 +3,7 @@
 ## 当前问题
 
 - 小人形象原型已提供：`assets/ui-ux/mascot-token-run.png`。当前已有 UI/UX 图仍是旧概念小人版本；需要在配置 `OPENAI_API_KEY` 后用 `gpt-image-2` 基于原型图重生成。
-- `gpt-image-2` 的实际 API 可用性尚未在本环境通过 CLI/API 实测；本次用户重新要求生成后已复查，Process/User/Machine 三层环境变量仍均缺少 `OPENAI_API_KEY`。已补齐 prompt 文件、原型图和复跑脚本，dry-run 通过，但真实 API 图尚未生成。
+- `gpt-image-2` 的实际 API 已在本环境发起调用，但返回 `Billing hard limit has been reached`；说明 `OPENAI_API_KEY` 已生效，当前阻塞转为 OpenAI 账户/项目 billing 硬额度限制。已补齐 prompt 文件、原型图和复跑脚本，dry-run 通过，但真实 API 图尚未生成。
 
 ## 已知风险
 
@@ -17,7 +17,8 @@
 - 初始 critic 在文档未填充时失败；后续补齐来源与文档。
 - 第二次 critic 在 UI/UX 图未生成时失败；后续生成图片并通过。
 - 调严 critic 后，当前失败在缺少显式 `gpt-image-2` API 输出图：`assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
-- 本次按用户要求再次 dry-run 通过，但因仍缺少 `OPENAI_API_KEY`，无法调用真实 `gpt-image-2` 生成对应 UI/UX 图。
+- 本次按用户要求再次 dry-run 通过；随后在 User 级 `OPENAI_API_KEY` 生效后真实调用 `gpt-image-2`，但被 billing hard limit 拦截。
+- 用户配置 User 级 `OPENAI_API_KEY` 后再次真实调用；`uv run --with openai` 成功安装临时 SDK 并调用 Image API，但 OpenAI 返回 billing hard limit，未生成输出图。
 
 ## 待回顾
 

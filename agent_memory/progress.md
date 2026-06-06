@@ -29,19 +29,19 @@
 
 ## 正在进行
 
-- 用户再次要求以指定小人原型图重新生成对应 UI/UX 图；已复查原型图、prompt 与脚本，仍等待配置 `OPENAI_API_KEY` 后严格复跑 `gpt-image-2` API 图像生成。
+- 用户再次要求以指定小人原型图重新生成对应 UI/UX 图；`OPENAI_API_KEY` 已在 User 级环境变量中出现，真实 `gpt-image-2` API 调用已发起，但当前 OpenAI 账户/项目触发 `Billing hard limit has been reached`，因此图片仍未生成。
 
 ## 下一步
 
-- 若用户配置 `OPENAI_API_KEY`，用 `gpt-image-2` CLI/API 复跑 UI/UX 图生成并更新资产：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -Force`。
+- 若用户调整 OpenAI billing/额度后，用 `gpt-image-2` CLI/API 复跑 UI/UX 图生成并更新资产：`$env:OPENAI_API_KEY = [Environment]::GetEnvironmentVariable('OPENAI_API_KEY','User'); uv run --with openai python $env:USERPROFILE\.codex\skills\.system\imagegen\scripts\image_gen.py edit --model gpt-image-2 --image assets\ui-ux\mascot-token-run.png --prompt-file assets\ui-ux\gpt-image-2-uiux.prompt.txt --quality high --size 2048x1152 --out assets\ui-ux\prompt-copilot-uiux-gpt-image-2.png --force`。
 - 否则可将当前内置 `image_gen` 产物作为概念图版本继续进入原型设计/开发。
 
 ## 验证状态
 
-- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；初始提交已成功；Process/User/Machine 三层环境变量均缺少 `OPENAI_API_KEY`；`gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目且本次复查仍存在。
-- 未验证：显式 fallback CLI/API `gpt-image-2` 真实生成路径；OMX completion 是否完成。
+- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；初始提交已成功；User 级环境变量存在 `OPENAI_API_KEY`；`gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目且本次复查仍存在；真实 API 调用到达 OpenAI 后返回 billing hard limit 错误。
+- 未验证：显式 fallback CLI/API `gpt-image-2` 成功输出图；OMX completion 是否完成。
 - 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-autoresearch.ps1` 当前应失败在缺少 `prompt-copilot-uiux-gpt-image-2.png`；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun` 当前通过。
 
 ## 最近变化
 
-- 用户重新要求用该小人原型生成 UI/UX 图后，复查确认 Process/User/Machine 三层环境变量仍均无 `OPENAI_API_KEY`；dry-run 输出确认 endpoint `/v1/images/edits`、model `gpt-image-2`、input `assets/ui-ux/mascot-token-run.png`、output `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png` 均正确，但真实图片尚未生成。
+- 用户重新要求用该小人原型生成 UI/UX 图后，复查确认 User 级环境变量已有 `OPENAI_API_KEY`。使用 `uv run --with openai` 临时环境调用 `gpt-image-2` edit，API 返回 `Billing hard limit has been reached`，输出文件 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png` 仍不存在。
