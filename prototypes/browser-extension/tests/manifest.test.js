@@ -10,6 +10,7 @@ assert.equal(manifest.options_page, "options/options.html");
 assert.ok(manifest.action.default_popup);
 assert.ok(manifest.host_permissions.includes("http://127.0.0.1:17371/*"));
 assert.ok(manifest.host_permissions.includes("http://localhost:17371/*"));
+assert.ok(manifest.host_permissions.includes("https://v0.app/*"));
 assert.ok(manifest.content_scripts[0].js.includes("src/site-adapters.js"));
 assert.ok(manifest.content_scripts[0].js.includes("src/local-service-client.js"));
 assert.ok(manifest.content_scripts[0].js.includes("src/prompt-engine.js"));

@@ -25,7 +25,10 @@
       quietUntilFocus: true,
       preferLocalService: true,
       serviceUrl: localService?.DEFAULT_SERVICE_URL || "http://127.0.0.1:17371"
-    }
+    },
+    observedShadowRoots: new WeakSet(),
+    observedInputs: new WeakSet(),
+    dynamicScanTimer: null
   };
 
   const mascotMap = {
@@ -100,6 +103,10 @@
     return false;
   }
 
+  function getEventTarget(event) {
+    return event.composedPath?.()[0] || event.target;
+  }
+
   function getContext(element) {
     const adapter = siteAdapters?.detectSiteAdapter(location.hostname);
     return {
@@ -147,7 +154,7 @@
   }
 
   function onFocus(event) {
-    const target = event.target;
+    const target = getEventTarget(event);
     if (!state.settings.enabled || !isTextInput(target) || !isVisible(target)) return;
     state.activeInput = target;
     createMascot();
@@ -157,7 +164,7 @@
   }
 
   function onInput(event) {
-    if (event.target !== state.activeInput) return;
+    if (getEventTarget(event) !== state.activeInput) return;
     setMascotState(engine.detectMode(getInputText(state.activeInput)) === engine.MODE.IDEA ? "normal" : "resting");
     if (state.card) refreshCardPreview(false);
   }
@@ -352,6 +359,14 @@
   function bindEvents() {
     document.addEventListener("focusin", onFocus, true);
     document.addEventListener("input", onInput, true);
+    refreshDynamicBindings();
+    state.dynamicScanTimer = setInterval(refreshDynamicBindings, 1000);
+    setTimeout(() => {
+      if (state.dynamicScanTimer) clearInterval(state.dynamicScanTimer);
+      state.dynamicScanTimer = null;
+    }, 30000);
+    const observer = new MutationObserver(refreshDynamicBindings);
+    observer.observe(document.documentElement, { childList: true, subtree: true });
     window.addEventListener("resize", () => {
       placeMascot();
       placeCard();
@@ -372,6 +387,38 @@
     });
   }
 
+  function refreshDynamicBindings() {
+    bindShadowRootEvents(document);
+    bindInputElementEvents(document);
+  }
+
+  function bindShadowRootEvents(root) {
+    if (!root?.querySelectorAll) return;
+    for (const element of Array.from(root.querySelectorAll("*"))) {
+      if (!element.shadowRoot || state.observedShadowRoots.has(element.shadowRoot)) continue;
+      state.observedShadowRoots.add(element.shadowRoot);
+      element.shadowRoot.addEventListener("focusin", onFocus, true);
+      element.shadowRoot.addEventListener("input", onInput, true);
+      bindShadowRootEvents(element.shadowRoot);
+      bindInputElementEvents(element.shadowRoot);
+    }
+  }
+
+  function bindInputElementEvents(root) {
+    if (!root?.querySelectorAll) return;
+    const adapter = siteAdapters?.detectSiteAdapter(location.hostname);
+    const candidates = siteAdapters?.queryInputCandidates
+      ? siteAdapters.queryInputCandidates(root, adapter)
+      : Array.from(root.querySelectorAll('textarea, input[type="text"], input[type="search"], input[type="url"], input[type="email"], [contenteditable="true"], [role="textbox"]'));
+    for (const element of candidates) {
+      if (!isTextInput(element) || state.observedInputs.has(element)) continue;
+      state.observedInputs.add(element);
+      element.addEventListener("focus", onFocus, true);
+      element.addEventListener("focusin", onFocus, true);
+      element.addEventListener("input", onInput, true);
+    }
+  }
+
   async function start() {
     await loadSettings();
     bindEvents();
@@ -379,6 +426,7 @@
     if (isTextInput(focused) && isVisible(focused)) {
       onFocus({ target: focused });
     }
+    globalThis.__smartPromptCopilotReady = true;
   }
 
   start();

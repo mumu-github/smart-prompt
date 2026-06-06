@@ -45,7 +45,7 @@
     {
       id: "v0",
       tool: "v0",
-      hostnames: ["v0.dev"],
+      hostnames: ["v0.dev", "v0.app"],
       inputSelectors: ['textarea', '[contenteditable="true"]', '[role="textbox"]'],
       insertStrategy: "textarea-first"
     },
@@ -67,7 +67,16 @@
     const selectors = adapter?.inputSelectors?.length
       ? adapter.inputSelectors
       : ['textarea', 'input[type="text"]', 'input[type="search"]', '[contenteditable="true"]', '[role="textbox"]'];
-    return selectors.flatMap((selector) => Array.from(documentRef.querySelectorAll(selector)));
+    return selectors.flatMap((selector) => querySelectorAllDeep(documentRef, selector));
+  }
+
+  function querySelectorAllDeep(root, selector, results = []) {
+    if (!root?.querySelectorAll) return results;
+    results.push(...Array.from(root.querySelectorAll(selector)));
+    for (const element of Array.from(root.querySelectorAll("*"))) {
+      if (element.shadowRoot) querySelectorAllDeep(element.shadowRoot, selector, results);
+    }
+    return results;
   }
 
   function setNativeValue(element, value) {
@@ -110,6 +119,7 @@
     SITE_ADAPTERS,
     detectSiteAdapter,
     queryInputCandidates,
+    querySelectorAllDeep,
     writeInput
   };
 

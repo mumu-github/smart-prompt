@@ -1,0 +1,345 @@
+{
+  "createdAt": "2026-06-06T15:12:16.556Z",
+  "headless": false,
+  "injectFallback": true,
+  "displayPasses": 4,
+  "insertPasses": [
+    "chatgpt"
+  ],
+  "results": [
+    {
+      "id": "chatgpt",
+      "name": "ChatGPT",
+      "url": "https://chatgpt.com/",
+      "requireInsert": true,
+      "injectedProbe": true,
+      "passedDisplay": true,
+      "passedInsert": true,
+      "initial": {
+        "url": "https://chatgpt.com/",
+        "title": "ChatGPT",
+        "injectedProbe": true,
+        "mascot": true,
+        "card": false,
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "TEXTAREA",
+            "id": "",
+            "role": "",
+            "contentEditable": false,
+            "placeholder": "有问题，尽管问",
+            "visible": false,
+            "width": 0,
+            "height": 0
+          },
+          {
+            "index": 1,
+            "tag": "DIV",
+            "id": "prompt-textarea",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "与 ChatGPT 聊天",
+            "visible": true,
+            "width": 460,
+            "height": 40
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "prompt-textarea",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "state": "normal",
+        "transform": "translate(777px, 336px)"
+      },
+      "insert": {
+        "opened": true,
+        "card": {
+          "card": true,
+          "outputLength": 230,
+          "context": "ChatGPT / chatgpt.com / div / template / service offline"
+        },
+        "afterInsert": {
+          "output": "你是熟悉 ChatGPT 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "value": "你是熟悉 ChatGPT 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "outputLength": 230,
+          "valueLength": 230,
+          "cardClosed": true,
+          "url": "https://chatgpt.com/"
+        },
+        "ok": true
+      }
+    },
+    {
+      "id": "claude",
+      "name": "Claude",
+      "url": "https://claude.ai/new",
+      "requireInsert": true,
+      "injectedProbe": true,
+      "passedDisplay": false,
+      "passedInsert": false,
+      "initial": {
+        "url": "https://claude.ai/login?from=logout",
+        "title": "Sign in - Claude",
+        "injectedProbe": true,
+        "mascot": false,
+        "card": false,
+        "candidates": []
+      },
+      "focusResult": {
+        "ok": false,
+        "reason": "no visible input candidate"
+      }
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "url": "https://gemini.google.com/app",
+      "requireInsert": true,
+      "injectedProbe": true,
+      "passedDisplay": false,
+      "passedInsert": false,
+      "initial": {
+        "url": "https://gemini.google.com/app",
+        "title": "Google Gemini",
+        "injectedProbe": true,
+        "mascot": false,
+        "card": false,
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "为 Gemini 输入提示",
+            "visible": true,
+            "width": 425,
+            "height": 24
+          },
+          {
+            "index": 1,
+            "tag": "DIV",
+            "id": "",
+            "role": "",
+            "contentEditable": true,
+            "placeholder": "",
+            "visible": false,
+            "width": 0,
+            "height": 1
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "displayError": "Condition not met: (() => {\n      const mascot = document.getElementById(\"smart-prompt-mascot\");\n      const rect = mascot?.getBoundingClientRect();\n      return {\n        mascot: Boolean(mascot),\n        visible: Boolean(mascot && rect && rect.width > 20 && rect.height > 20),\n        state: mascot?.dataset?.state || \"\",\n        transform: mascot?.style?.transform || \"\"\n      };\n    })()\nLast value: {\"mascot\":false,\"visible\":false,\"state\":\"\",\"transform\":\"\"}"
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "url": "https://www.perplexity.ai/",
+      "requireInsert": false,
+      "injectedProbe": true,
+      "passedDisplay": false,
+      "passedInsert": false,
+      "initial": {
+        "url": "https://www.perplexity.ai/",
+        "title": "请稍候…",
+        "injectedProbe": true,
+        "mascot": false,
+        "card": false,
+        "candidates": []
+      },
+      "focusResult": {
+        "ok": false,
+        "reason": "no visible input candidate"
+      }
+    },
+    {
+      "id": "bolt",
+      "name": "Bolt",
+      "url": "https://bolt.new/",
+      "requireInsert": false,
+      "injectedProbe": true,
+      "passedDisplay": true,
+      "passedInsert": null,
+      "initial": {
+        "url": "https://bolt.new/",
+        "title": "Bolt AI builder: Websites, apps & prototypes",
+        "injectedProbe": true,
+        "mascot": false,
+        "card": false,
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Type your idea and we'll build it together.",
+            "visible": true,
+            "width": 614,
+            "height": 80
+          },
+          {
+            "index": 1,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Type your idea and we'll build it together.",
+            "visible": true,
+            "width": 525,
+            "height": 80
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "state": "normal",
+        "transform": "translate(754px, 386px)"
+      }
+    },
+    {
+      "id": "v0",
+      "name": "v0",
+      "url": "https://v0.dev/chat",
+      "requireInsert": false,
+      "injectedProbe": true,
+      "passedDisplay": true,
+      "passedInsert": null,
+      "initial": {
+        "url": "https://v0.app/",
+        "title": "v0 by Vercel - Build Full-Stack Web Apps with AI",
+        "injectedProbe": true,
+        "mascot": true,
+        "card": false,
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "TEXTAREA",
+            "id": "prompt-textarea-_new-chat_",
+            "role": "",
+            "contentEditable": false,
+            "placeholder": "让 v0 构建…",
+            "visible": true,
+            "width": 664,
+            "height": 54
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "TEXTAREA",
+        "id": "prompt-textarea-_new-chat_",
+        "role": "",
+        "contentEditable": false,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "state": "normal",
+        "transform": "translate(782px, 272px)"
+      }
+    },
+    {
+      "id": "lovable",
+      "name": "Lovable",
+      "url": "https://lovable.dev/",
+      "requireInsert": false,
+      "injectedProbe": true,
+      "passedDisplay": true,
+      "passedInsert": null,
+      "initial": {
+        "url": "https://lovable.dev/",
+        "title": "AI App Builder | Vibe Code Apps & Websites with AI, Fast",
+        "injectedProbe": true,
+        "mascot": false,
+        "card": false,
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Chat input",
+            "visible": true,
+            "width": 742,
+            "height": 80
+          },
+          {
+            "index": 1,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Chat input",
+            "visible": true,
+            "width": 550,
+            "height": 80
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "state": "normal",
+        "transform": "translate(818px, 385px)"
+      }
+    },
+    {
+      "id": "replit",
+      "name": "Replit",
+      "url": "https://replit.com/ai",
+      "requireInsert": false,
+      "injectedProbe": true,
+      "passedDisplay": false,
+      "passedInsert": false,
+      "initial": {
+        "url": "https://replit.com/ai",
+        "title": "Replit AI – Turn natural language into apps and websites",
+        "injectedProbe": true,
+        "mascot": false,
+        "card": false,
+        "candidates": []
+      },
+      "focusResult": {
+        "ok": false,
+        "reason": "no visible input candidate"
+      }
+    }
+  ]
+}

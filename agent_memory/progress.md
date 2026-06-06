@@ -65,3 +65,4 @@
 - 用户新目标为 V2；当前已实现主要代码路径，但未达到完整 runtime 验收。
 - V2 续跑新增 Chrome headless runtime demo 测试，覆盖本地服务桥接、卡片刷新、Insert 不提交；已安装 Rustup 并让 Tauri `cargo check` 进入默认 critic。
 - V2 继续补强 Tauri：开启 `withGlobalTauri`，修复带空格路径下的本地服务启动，新增 runtime smoke，验证真实 app 启动、Tauri command、本地服务启动和全局快捷键触发。
+- V2 继续补强真实站点探针：新增 `scripts/check-v2-live-sites.ps1` 和 live-site probe，补 `v0.app` 域名，扩展输入扫描支持 open shadow DOM。当前注入式生产 DOM 兼容性达到 ChatGPT/Bolt/v0.app/Lovable 4 个显示和 ChatGPT Insert，但正式扩展加载/5 站点/Claude/Gemini Insert 仍未通过。

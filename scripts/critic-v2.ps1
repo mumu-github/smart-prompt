@@ -26,6 +26,7 @@ $requiredFiles = @(
   "prototypes/browser-extension/src/site-adapters.js",
   "prototypes/browser-extension/src/local-service-client.js",
   "prototypes/browser-extension/tests/site-adapters.test.js",
+  "prototypes/browser-extension/tests/live-site-probe.test.js",
   "apps/desktop-shell/index.html",
   "apps/desktop-shell/src/app.js",
   "apps/desktop-shell/scripts/tauri-command.js",
@@ -35,6 +36,7 @@ $requiredFiles = @(
   "apps/desktop-shell/tests/tauri-runtime.test.js",
   "research/v2-implementation-rubric.md",
   "research/v2-verification.md",
+  "scripts/check-v2-live-sites.ps1",
   "scripts/check-v2-tauri-runtime.ps1"
 )
 
