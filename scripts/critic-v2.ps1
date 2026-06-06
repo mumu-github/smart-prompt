@@ -52,6 +52,7 @@ $requiredFiles = @(
   "research/v2-verification.md",
   "scripts/check-v2-live-sites.ps1",
   "scripts/check-v2-claude-insert.ps1",
+  "scripts/start-v2-claude-cdp.ps1",
   "scripts/check-v2-real-llm.ps1",
   "scripts/check-v2-tauri-runtime.ps1"
 )
@@ -188,6 +189,16 @@ if (Test-Path $claudeProbePath) {
   foreach ($token in @("v2-claude-insert.latest.json", "-Report", "-SiteIds claude", "-AttachCdp")) {
     if (-not $claudeProbe.Contains($token)) {
       Add-Failure "Claude insert probe missing separate-report token: $token"
+    }
+  }
+}
+
+$claudeCdpStartPath = Join-Path $Root "scripts/start-v2-claude-cdp.ps1"
+if (Test-Path $claudeCdpStartPath) {
+  $claudeCdpStart = Get-Content -Raw -Encoding UTF8 $claudeCdpStartPath
+  foreach ($token in @("remote-debugging-port", "v2-live-chrome-profile", "check-v2-claude-insert.ps1", "-AttachCdp", "-DryRun")) {
+    if (-not $claudeCdpStart.Contains($token)) {
+      Add-Failure "Claude CDP start helper missing token: $token"
     }
   }
 }

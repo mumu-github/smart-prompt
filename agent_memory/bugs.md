@@ -14,7 +14,7 @@
 - 真实 LLM 生成需要 API key 和可用 billing；没有 key 时本地服务只会按调用方允许返回 template fallback。
 - 当前 User 环境只发现 `OPENAI_API_KEY`，未发现 `ANTHROPIC_API_KEY`、`GEMINI_API_KEY` 或 `GOOGLE_API_KEY`；本地服务和验收脚本现在也支持读取桌面壳保存的 provider-specific keys，但尚未拿到 Anthropic/Gemini 真实联网通过证据。
 - strict runtime critic 现在会读取 `research/v2-real-llm.latest.json`，当前 OpenAI 429 报告会明确阻止 V2 完成。
-- 真实站点验证可能需要浏览器登录态和平台页面稳定性；当前不能用本地 demo 代替生产站点证据。Claude 可通过新 `-AttachCdp` 模式复用已登录 Chrome 会话，但仍需要真实登录态报告。
+- 真实站点验证可能需要浏览器登录态和平台页面稳定性；当前不能用本地 demo 代替生产站点证据。Claude 可通过 `scripts/start-v2-claude-cdp.ps1` 打开持久 Chrome profile，再用 `-AttachCdp` 模式复用已登录 Chrome 会话，但仍需要真实登录态报告。
 - 默认隐私上下文已收窄到 host/origin/tool/inputKind/pathKind；后续如果要上传 URL、页面标题或页面内容，必须做成显式用户开关和可见范围提示。
 - 当前 Chrome/Edge 环境未接受命令行 unpacked extension 加载；已改用 browser-level CDP `Extensions.loadUnpacked` 获取正式扩展加载证据。
 
@@ -31,7 +31,7 @@
 ## 待回顾
 
 - 真实 Chrome/Edge 扩展在 ChatGPT、Claude、Gemini 等站点的逐站点兼容性。
-- V2 runtime evidence：Claude Insert 和真实 LLM 三模式；当前已提供持久 profile 辅助脚本、CDP attach 模式、独立 Claude 报告路径和真实 LLM 报告路径，但还需要登录态/可用 billing 通过报告作为证据。
+- V2 runtime evidence：Claude Insert 和真实 LLM 三模式；当前已提供 Claude CDP 登录准备脚本、CDP attach 模式、独立 Claude 报告路径和真实 LLM 报告路径，但还需要登录态/可用 billing 通过报告作为证据。
 - live-site probe 当前失败原因：Claude 跳到登录/登出页；Perplexity challenge；Replit/DeepSeek/Doubao 登录或区域限制。
 
 ## 已解决

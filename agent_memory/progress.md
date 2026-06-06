@@ -48,23 +48,24 @@
 - 已补强 auto LLM provider：auto 模式现在按实际 provider 使用各自默认 baseUrl/model，且一个 provider 请求失败时可继续尝试下一个已配置 provider。
 - 已补强 settings 持久化一致性：local-service 默认数据目录固定为 `apps/local-service/.smart-prompt-data`，真实 LLM 验收脚本会读取同一份桌面壳保存的 provider settings。
 - 已补强 Claude 登录态验证路径：live-site probe 支持 `-AttachCdp` 附着到已开启远程调试端口的 Chrome，并用新标签复用现有 Claude 登录态跑 Insert 证据。
+- 已新增 Claude CDP 登录准备脚本：`scripts/start-v2-claude-cdp.ps1` 可打开持久 Chrome profile 到 Claude，并输出后续 `check-v2-claude-insert.ps1 -AttachCdp` 验证命令；`-DryRun` 已验证。
 - 已补强 runtime evidence 严格门：`critic-v2.ps1 -RequireRuntimeEvidence` 现在会读取 Claude Insert 和真实 LLM JSON 报告，避免只靠手写 marker 误判完成。
 - 已补强 live-site/Tauri 机器证据门：strict critic 现在会读取 5 站点正式扩展报告和 Tauri runtime JSON 报告。
 
 ## 正在进行
 
-- 正在推进 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务、全局快捷键触发、5 个真实站点正式扩展显示、ChatGPT/Gemini Insert 已通过，但 Claude Insert 和真实 LLM quota 尚未验证。
+- 正在推进 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务、全局快捷键触发、5 个真实站点正式扩展显示、ChatGPT/Gemini Insert 已通过，Claude CDP 登录准备脚本已补齐，但 Claude Insert 报告和真实 LLM quota 尚未验证。
 
 ## 下一步
 
-- 在 Claude 登录态下手测 Insert 成功且不自动发送，并补充 `INSERT_CLAUDE_PASS` 证据。
+- 运行 `scripts/start-v2-claude-cdp.ps1`，在打开的 Claude 窗口登录并保持开启，然后运行打印出的 `check-v2-claude-insert.ps1 -AttachCdp` 命令补充 `INSERT_CLAUDE_PASS` 证据。
 - 提供可用 LLM billing/key 后复跑三模式真实 LLM 验收。
 
 ## 验证状态
 
-- 已验证：`scripts/critic-v2.ps1` 默认自动化检查 PASS；local-service、browser-extension、desktop-shell 静态测试 PASS；Node 语法检查 PASS；本地服务可启动并响应 `/health` 和 `/generate` fallback；Chrome headless demo 能显示小人和 prompt card，并确认 Insert 只写入不提交；Rust/Cargo 已安装，Tauri `cargo check` PASS；`scripts/check-v2-tauri-runtime.ps1` 已验证 Tauri app 启动、Tauri command、从 Tauri 启动本地服务、全局快捷键触发计数；`scripts/check-v2-live-sites.ps1` 已通过 CDP `Extensions.loadUnpacked` 证明 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 站点正式扩展显示，且 ChatGPT/Gemini Insert 成功。
+- 已验证：`scripts/start-v2-claude-cdp.ps1` 语法解析和 `-DryRun` PASS；`scripts/critic-v2.ps1` 默认自动化检查 PASS；local-service、browser-extension、desktop-shell 静态测试 PASS；Node 语法检查 PASS；本地服务可启动并响应 `/health` 和 `/generate` fallback；Chrome headless demo 能显示小人和 prompt card，并确认 Insert 只写入不提交；Rust/Cargo 已安装，Tauri `cargo check` PASS；`scripts/check-v2-tauri-runtime.ps1` 已验证 Tauri app 启动、Tauri command、从 Tauri 启动本地服务、全局快捷键触发计数；`scripts/check-v2-live-sites.ps1` 已通过 CDP `Extensions.loadUnpacked` 证明 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 站点正式扩展显示，且 ChatGPT/Gemini Insert 成功。
 - 未验证：Claude Insert 生产站点成功；真实 LLM 三模式因当前 OpenAI quota/billing 429 未证明。
-- 验证命令或方式：`npm test` 已在 `prototypes/browser-extension` PASS；`node -c prototypes\browser-extension\tests\live-site-probe.test.js` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` 仅失败在 `INSERT_CLAUDE_PASS`；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runtime.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1` 当前返回 OpenAI 429 quota/billing。
+- 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start-v2-claude-cdp.ps1 -DryRun` PASS；`npm test` 已在 `prototypes/browser-extension` PASS；`node -c prototypes\browser-extension\tests\live-site-probe.test.js` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` 失败在缺少 `REAL_LLM_3_MODES_PASS`、`INSERT_CLAUDE_PASS`、`research/v2-claude-insert.latest.json`，以及当前 `research/v2-real-llm.latest.json` 非 pass；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runtime.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1` 当前返回 OpenAI 429 quota/billing。
 
 ## 最近变化
 
@@ -89,6 +90,7 @@
 - V2 继续补强隐私边界：本轮移除扩展默认 context 中的完整 URL 和页面标题，并用测试/critic 固化不读取整页文本。
 - V2 继续补强验收报告保全：Claude 单站点验证默认写入独立 `research/v2-claude-insert.latest.json`，不覆盖已有 5 站点 live probe 报告。
 - V2 继续补强 Claude runtime 验证：本轮新增 CDP attach 模式，可复用已登录 Chrome 会话而不杀掉用户浏览器，只关闭探针新标签。
+- V2 继续补强 Claude runtime 验证：本轮新增 `scripts/start-v2-claude-cdp.ps1`，一键打开持久 Chrome profile 到 Claude 并打印 attach 验证命令；`-DryRun` 已确认本机 Chrome 路径和 profile 路径。
 - V2 继续补强完成门：本轮新增 `research/v2-real-llm.latest.json` 输出和 strict critic 报告解析；当前严格门会同时卡住 Claude 报告与真实 LLM 429 报告。
 - V2 继续补强完成门：本轮让 `research/v2-live-site-probe.latest.json` 和 `research/v2-tauri-runtime.latest.json` 成为 strict critic 的机器证据来源。
-- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：默认 V2 critic PASS；严格 runtime critic 现在要求 Claude Insert JSON 报告与真实 LLM 三模式 JSON 报告，当前仍缺 Claude 通过证据且真实 LLM 复核为 OpenAI 429 quota/billing。
+- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：新增 Claude CDP 登录准备脚本后默认 V2 critic PASS；严格 runtime critic 现在要求 Claude Insert JSON 报告与真实 LLM 三模式 JSON 报告，当前仍缺 Claude 通过证据且真实 LLM 复核为 OpenAI 429 quota/billing。
