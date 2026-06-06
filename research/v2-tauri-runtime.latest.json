@@ -1,0 +1,20 @@
+{
+  "createdAt": "2026-06-06T17:19:16.222Z",
+  "pass": true,
+  "remotePort": 9228,
+  "servicePort": 17381,
+  "checks": {
+    "webviewTarget": true,
+    "tauriApi": true,
+    "shortcutRegistered": true,
+    "localServiceStarted": true,
+    "globalShortcutTriggered": true
+  },
+  "shortcut": "Ctrl+Alt+P",
+  "service": {
+    "ok": true,
+    "service": "smart-prompt-local-service",
+    "version": "0.2.0"
+  },
+  "shortcutHits": 1
+}

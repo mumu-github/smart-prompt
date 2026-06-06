@@ -172,6 +172,16 @@ if (Test-Path $liveProbePath) {
   }
 }
 
+$tauriRuntimeTestPath = Join-Path $Root "apps/desktop-shell/tests/tauri-runtime.test.js"
+if (Test-Path $tauriRuntimeTestPath) {
+  $tauriRuntimeTest = Get-Content -Raw -Encoding UTF8 $tauriRuntimeTestPath
+  foreach ($token in @("SMART_PROMPT_TAURI_RUNTIME_REPORT", "webviewTarget", "tauriApi", "localServiceStarted", "globalShortcutTriggered")) {
+    if (-not $tauriRuntimeTest.Contains($token)) {
+      Add-Failure "Tauri runtime test missing report token: $token"
+    }
+  }
+}
+
 $claudeProbePath = Join-Path $Root "scripts/check-v2-claude-insert.ps1"
 if (Test-Path $claudeProbePath) {
   $claudeProbe = Get-Content -Raw -Encoding UTF8 $claudeProbePath
@@ -208,6 +218,47 @@ if ($RequireRuntimeEvidence) {
     $pattern = '(?m)^\s*-\s*`?' + [regex]::Escape($marker) + '`?\b'
     if (-not [regex]::IsMatch($verification, $pattern)) {
       Add-Failure "Missing runtime evidence marker: $marker"
+    }
+  }
+
+  $liveReportPath = Join-Path $Root "research/v2-live-site-probe.latest.json"
+  $liveReport = Read-JsonReport $liveReportPath
+  if (-not $liveReport) {
+    Add-Failure "Missing live-site runtime report: research/v2-live-site-probe.latest.json"
+  } else {
+    if (-not $liveReport.extensionLoad.ok) {
+      Add-Failure "Live-site report does not prove unpacked extension load."
+    }
+    if ([int]$liveReport.displayPasses -lt 5) {
+      Add-Failure "Live-site report does not prove display on at least 5 sites."
+    }
+    $formalDisplayPasses = @($liveReport.results) | Where-Object { $_.passedDisplay -and -not $_.injectedProbe }
+    if ($formalDisplayPasses.Count -lt 5) {
+      Add-Failure "Live-site report has fewer than 5 formal extension display passes."
+    }
+    foreach ($insertId in @("chatgpt", "gemini")) {
+      $insertResult = @($liveReport.results) | Where-Object { $_.id -eq $insertId } | Select-Object -First 1
+      if (-not (@($liveReport.insertPasses) -contains $insertId)) {
+        Add-Failure "Live-site report missing $insertId in insertPasses."
+      }
+      if (-not $insertResult -or -not $insertResult.passedInsert -or -not $insertResult.insert.ok -or $insertResult.injectedProbe) {
+        Add-Failure "Live-site report does not prove formal $insertId Insert."
+      }
+    }
+  }
+
+  $tauriReportPath = Join-Path $Root "research/v2-tauri-runtime.latest.json"
+  $tauriReport = Read-JsonReport $tauriReportPath
+  if (-not $tauriReport) {
+    Add-Failure "Missing Tauri runtime report: research/v2-tauri-runtime.latest.json"
+  } else {
+    if (-not $tauriReport.pass) {
+      Add-Failure "Tauri runtime report pass flag is false."
+    }
+    foreach ($check in @("webviewTarget", "tauriApi", "shortcutRegistered", "localServiceStarted", "globalShortcutTriggered")) {
+      if (-not $tauriReport.checks.$check) {
+        Add-Failure "Tauri runtime report missing passing check: $check"
+      }
     }
   }
 

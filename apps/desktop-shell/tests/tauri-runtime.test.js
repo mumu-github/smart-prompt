@@ -1,4 +1,5 @@
 const assert = require("node:assert");
+const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const { spawn, spawnSync } = require("node:child_process");
@@ -164,6 +165,19 @@ function taskkillTree(processId) {
     env,
     stdio: ["ignore", "pipe", "pipe"]
   });
+  const report = {
+    createdAt: new Date().toISOString(),
+    pass: false,
+    remotePort,
+    servicePort,
+    checks: {
+      webviewTarget: false,
+      tauriApi: false,
+      shortcutRegistered: false,
+      localServiceStarted: false,
+      globalShortcutTriggered: false
+    }
+  };
   let output = "";
   let servicePid = null;
   dev.stdout.on("data", (chunk) => { output += chunk.toString(); });
@@ -172,35 +186,48 @@ function taskkillTree(processId) {
   let client;
   try {
     const target = await waitForTarget();
+    report.checks.webviewTarget = true;
     client = await createCdpClient(target.webSocketDebuggerUrl);
     await client.send("Runtime.enable");
-    await waitFor(client, `(() => ({
+    const tauriState = await waitFor(client, `(() => ({
       hasTauri: Boolean(window.__TAURI__?.core?.invoke),
       hasEvents: Boolean(window.__TAURI__?.event?.listen),
       status: document.getElementById("service-status")?.textContent || "",
       title: document.title
     }))()`, (value) => value.hasTauri && value.hasEvents && value.status.length > 0);
+    report.checks.tauriApi = Boolean(tauriState.hasTauri && tauriState.hasEvents);
 
     const registered = await evaluate(client, `window.__TAURI__.core.invoke("set_global_shortcut", { shortcut: "Ctrl+Alt+P" })`);
     assert.equal(registered, "Ctrl+Alt+P");
+    report.shortcut = registered;
+    report.checks.shortcutRegistered = true;
 
     const serviceResult = await evaluate(client, `window.__TAURI__.core.invoke("start_local_service")`);
     assert.equal(serviceResult, "started");
     const health = await waitForService();
     servicePid = findPidOnPort(servicePort);
     assert.equal(health.service, "smart-prompt-local-service");
+    report.service = health;
+    report.checks.localServiceStarted = true;
 
     sendShortcut();
     const hits = await waitFor(client, `window.__TAURI__.core.invoke("get_shortcut_hits")`, (value) => value > 0, 12000);
     assert.ok(hits > 0);
+    report.shortcutHits = hits;
+    report.checks.globalShortcutTriggered = true;
+    report.pass = Object.values(report.checks).every(Boolean);
   } catch (error) {
+    report.error = error.message;
     error.message = `${error.message}\n--- tauri dev output ---\n${output.slice(-4000)}`;
     throw error;
   } finally {
     if (client) client.close();
     if (servicePid) taskkillTree(servicePid);
     taskkillTree(dev.pid);
+    if (process.env.SMART_PROMPT_TAURI_RUNTIME_REPORT) {
+      fs.writeFileSync(process.env.SMART_PROMPT_TAURI_RUNTIME_REPORT, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+    }
   }
 
-  console.log("tauri-runtime tests passed");
+  console.log(JSON.stringify(report, null, 2));
 })();

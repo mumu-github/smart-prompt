@@ -47,6 +47,7 @@
 - 已补强 provider-specific API key 管理：local-service 与桌面壳可分别保存 OpenAI-compatible、Anthropic、Gemini key，`auto` 可选择已保存的 Anthropic/Gemini key。
 - 已补强 Claude 登录态验证路径：live-site probe 支持 `-AttachCdp` 附着到已开启远程调试端口的 Chrome，并用新标签复用现有 Claude 登录态跑 Insert 证据。
 - 已补强 runtime evidence 严格门：`critic-v2.ps1 -RequireRuntimeEvidence` 现在会读取 Claude Insert 和真实 LLM JSON 报告，避免只靠手写 marker 误判完成。
+- 已补强 live-site/Tauri 机器证据门：strict critic 现在会读取 5 站点正式扩展报告和 Tauri runtime JSON 报告。
 
 ## 正在进行
 
@@ -85,4 +86,5 @@
 - V2 继续补强验收报告保全：Claude 单站点验证默认写入独立 `research/v2-claude-insert.latest.json`，不覆盖已有 5 站点 live probe 报告。
 - V2 继续补强 Claude runtime 验证：本轮新增 CDP attach 模式，可复用已登录 Chrome 会话而不杀掉用户浏览器，只关闭探针新标签。
 - V2 继续补强完成门：本轮新增 `research/v2-real-llm.latest.json` 输出和 strict critic 报告解析；当前严格门会同时卡住 Claude 报告与真实 LLM 429 报告。
+- V2 继续补强完成门：本轮让 `research/v2-live-site-probe.latest.json` 和 `research/v2-tauri-runtime.latest.json` 成为 strict critic 的机器证据来源。
 - 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：默认 V2 critic PASS；严格 runtime critic 现在要求 Claude Insert JSON 报告与真实 LLM 三模式 JSON 报告，当前仍缺 Claude 通过证据且真实 LLM 复核为 OpenAI 429 quota/billing。
