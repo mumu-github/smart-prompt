@@ -1,5 +1,10 @@
 param(
-  [string]$Report = "research/v2-real-llm.latest.json"
+  [string]$Report = "research/v2-real-llm.latest.json",
+  [string]$Provider = "",
+  [string]$Model = "",
+  [string]$BaseUrl = "",
+  [string]$DataDir = "",
+  [switch]$DryRun
 )
 
 $ErrorActionPreference = "Stop"
@@ -18,16 +23,44 @@ foreach ($name in @("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GO
   }
 }
 
-if (-not ($env:OPENAI_API_KEY -or $env:ANTHROPIC_API_KEY -or $env:GEMINI_API_KEY -or $env:GOOGLE_API_KEY)) {
-  throw "No LLM API key is set. Configure OPENAI_API_KEY, ANTHROPIC_API_KEY, GEMINI_API_KEY, or GOOGLE_API_KEY."
+if ($DataDir) {
+  if (-not [System.IO.Path]::IsPathRooted($DataDir)) {
+    $DataDir = Join-Path $Root $DataDir
+  }
+  $DataDir = [System.IO.Path]::GetFullPath($DataDir)
+}
+
+$previousEnv = @{}
+function Set-ScopedEnv {
+  param([string]$Name, [string]$Value)
+  if (-not $script:previousEnv.ContainsKey($Name)) {
+    $script:previousEnv[$Name] = [Environment]::GetEnvironmentVariable($Name, "Process")
+  }
+  if ($Value) {
+    [Environment]::SetEnvironmentVariable($Name, $Value, "Process")
+  } else {
+    [Environment]::SetEnvironmentVariable($Name, $null, "Process")
+  }
 }
 
 Push-Location $Root
 try {
-  $env:SMART_PROMPT_REAL_LLM_REPORT = $Report
+  Set-ScopedEnv "SMART_PROMPT_REAL_LLM_REPORT" $Report
+  if ($Provider) { Set-ScopedEnv "SMART_PROMPT_TEST_PROVIDER" $Provider }
+  if ($Model) { Set-ScopedEnv "SMART_PROMPT_TEST_MODEL" $Model }
+  if ($BaseUrl) { Set-ScopedEnv "SMART_PROMPT_TEST_BASE_URL" $BaseUrl }
+  if ($DataDir) { Set-ScopedEnv "SMART_PROMPT_DATA_DIR" $DataDir }
+  if ($DryRun) { Set-ScopedEnv "SMART_PROMPT_REAL_LLM_DRY_RUN" "1" }
   @'
 const fs = require("node:fs");
-const { PROVIDERS, chooseConfiguredProvider, generateWithConfiguredProvider } = require("./packages/shared/llm-gateway");
+const {
+  PROVIDERS,
+  chooseConfiguredProvider,
+  generateWithConfiguredProvider,
+  getConfiguredProviderOrder,
+  getProviderDefaults,
+  getProviderStatuses
+} = require("./packages/shared/llm-gateway");
 const { createStore, defaultDataDir } = require("./apps/local-service/src/store");
 
 function chooseProvider(storedSettings) {
@@ -35,17 +68,34 @@ function chooseProvider(storedSettings) {
   return storedSettings.provider || PROVIDERS.AUTO;
 }
 
-function chooseApiKey(provider) {
-  if (provider === PROVIDERS.ANTHROPIC) return process.env.ANTHROPIC_API_KEY;
-  if (provider === PROVIDERS.GEMINI) return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-  return process.env.OPENAI_API_KEY;
+function chooseModel(provider, storedSettings) {
+  if (process.env.SMART_PROMPT_TEST_MODEL) return process.env.SMART_PROMPT_TEST_MODEL;
+  if (provider && provider !== PROVIDERS.AUTO && provider !== storedSettings.provider) {
+    return getProviderDefaults(provider).model;
+  }
+  return storedSettings.model;
 }
 
-function chooseModel(provider) {
-  if (process.env.SMART_PROMPT_TEST_MODEL) return process.env.SMART_PROMPT_TEST_MODEL;
-  if (provider === PROVIDERS.ANTHROPIC) return "claude-sonnet-4-20250514";
-  if (provider === PROVIDERS.GEMINI) return "gemini-2.5-flash";
-  return "gpt-4o-mini";
+function chooseBaseUrl(provider, storedSettings) {
+  if (process.env.SMART_PROMPT_TEST_BASE_URL) return process.env.SMART_PROMPT_TEST_BASE_URL;
+  if (provider && provider !== PROVIDERS.AUTO && provider !== storedSettings.provider) {
+    return getProviderDefaults(provider).baseUrl;
+  }
+  return storedSettings.baseUrl;
+}
+
+function summarizeSettings(settings) {
+  return {
+    provider: settings.provider,
+    baseUrl: settings.baseUrl,
+    model: settings.model,
+    apiKeyConfigured: Boolean(settings.apiKey),
+    providerKeysAvailable: {
+      "openai-compatible": Boolean(settings.providerKeys?.["openai-compatible"]),
+      anthropic: Boolean(settings.providerKeys?.anthropic),
+      gemini: Boolean(settings.providerKeys?.gemini)
+    }
+  };
 }
 
 const samples = [
@@ -57,50 +107,61 @@ const samples = [
 (async () => {
   const storedSettings = createStore(process.env.SMART_PROMPT_DATA_DIR || undefined).getSettings();
   const provider = chooseProvider(storedSettings);
+  const selectedForDefaults = chooseConfiguredProvider({ ...storedSettings, provider });
   const settings = {
     ...storedSettings,
     provider,
-    baseUrl: process.env.SMART_PROMPT_TEST_BASE_URL || storedSettings.baseUrl,
-    model: process.env.SMART_PROMPT_TEST_PROVIDER ? chooseModel(chooseConfiguredProvider({ provider })) : storedSettings.model,
-    apiKey: process.env.SMART_PROMPT_TEST_PROVIDER ? chooseApiKey(chooseConfiguredProvider({ provider })) : storedSettings.apiKey
+    baseUrl: chooseBaseUrl(selectedForDefaults, storedSettings),
+    model: chooseModel(selectedForDefaults, storedSettings)
   };
   const selectedProvider = chooseConfiguredProvider(settings);
+  const configuredProviders = getConfiguredProviderOrder(settings);
+  const providerStatus = getProviderStatuses(settings);
   const results = [];
-  for (const sample of samples) {
-    try {
-      const card = await generateWithConfiguredProvider({
-        input: sample.input,
-        context: sample.context,
-        skills: [],
-        settings
-      });
-      results.push({
-        name: sample.name,
-        ok: true,
-        provider: card.provider,
-        generatedBy: card.generatedBy,
-        mode: card.mode,
-        promptLength: card.prompt.length
-      });
-    } catch (error) {
-      results.push({
-        name: sample.name,
-        ok: false,
-        provider: selectedProvider,
-        code: error.code || "unknown",
-        status: error.status || null,
-        message: error.message,
-        bodyPreview: error.body ? String(error.body).slice(0, 220) : ""
-      });
-      break;
+
+  if (process.env.SMART_PROMPT_REAL_LLM_DRY_RUN !== "1") {
+    for (const sample of samples) {
+      try {
+        const card = await generateWithConfiguredProvider({
+          input: sample.input,
+          context: sample.context,
+          skills: [],
+          settings
+        });
+        results.push({
+          name: sample.name,
+          ok: true,
+          provider: card.provider,
+          generatedBy: card.generatedBy,
+          mode: card.mode,
+          promptLength: card.prompt.length
+        });
+      } catch (error) {
+        results.push({
+          name: sample.name,
+          ok: false,
+          provider: selectedProvider,
+          code: error.code || "unknown",
+          status: error.status || null,
+          message: error.message,
+          attempts: error.attempts || [],
+          bodyPreview: error.body ? String(error.body).slice(0, 220) : ""
+        });
+        break;
+      }
     }
   }
+
   const report = {
     createdAt: new Date().toISOString(),
     dataDir: process.env.SMART_PROMPT_DATA_DIR || defaultDataDir(),
+    dryRun: process.env.SMART_PROMPT_REAL_LLM_DRY_RUN === "1",
     requestedProvider: provider,
     selectedProvider,
-    pass: results.length === samples.length && results.every((result) => result.ok && result.generatedBy === "llm"),
+    configuredProviders,
+    settingsSummary: summarizeSettings(settings),
+    providerStatus,
+    pass: process.env.SMART_PROMPT_REAL_LLM_DRY_RUN !== "1" && results.length === samples.length && results.every((result) => result.ok && result.generatedBy === "llm"),
     results
   };
   if (process.env.SMART_PROMPT_REAL_LLM_REPORT) {
@@ -110,6 +171,8 @@ const samples = [
 })();
 '@ | node -
 } finally {
-  Remove-Item Env:\SMART_PROMPT_REAL_LLM_REPORT -ErrorAction SilentlyContinue
+  foreach ($entry in $previousEnv.GetEnumerator()) {
+    [Environment]::SetEnvironmentVariable($entry.Key, $entry.Value, "Process")
+  }
   Pop-Location
 }

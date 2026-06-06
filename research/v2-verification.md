@@ -30,13 +30,14 @@ Status: in progress
 
 ## Runtime Evidence Attempted But Not Passing
 
-- Real LLM: `scripts/check-v2-real-llm.ps1` now supports auto-selection across OpenAI-compatible, Anthropic, and Gemini provider keys and writes `research/v2-real-llm.latest.json`. The current User environment only exposes `OPENAI_API_KEY`, and that OpenAI-compatible request still returns HTTP 429 quota/billing failure on the first `idea` mode request, so the three-mode real LLM acceptance is not proven.
+- Real LLM: `scripts/check-v2-real-llm.ps1` now supports auto-selection across OpenAI-compatible, Anthropic, and Gemini provider keys and writes `research/v2-real-llm.latest.json`. It can read provider-specific keys saved by the desktop shell from the local-service data directory, can be pointed at a custom `-DataDir`, and supports `-Provider`, `-Model`, `-BaseUrl`, and `-DryRun` for checking configuration without sending a request. The current User environment only exposes `OPENAI_API_KEY`, and that OpenAI-compatible request still returns HTTP 429 quota/billing failure on the first `idea` mode request, so the three-mode real LLM acceptance is not proven.
 - Live sites: Claude Insert is still not proven because Claude redirects to sign-in/logout in the temporary browser profile. Perplexity is behind a challenge page, and Replit/DeepSeek/Doubao are login/region limited in this environment.
 
 ## Manual / Runtime Evidence Still Required
 
 - Insert succeeds on Claude without auto-send.
 - To produce Claude evidence: run `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start-v2-claude-cdp.ps1`, log in to Claude in that Chrome window, keep it open, then run the printed `scripts\check-v2-claude-insert.ps1 -AttachCdp` command.
+- To preflight real LLM settings without spending quota: run `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1 -DryRun`. To force a saved provider path, add `-Provider anthropic`, `-Provider gemini`, or `-DataDir <local-service-data-dir>`.
 
 Do not mark V2 complete until these runtime checks are replaced with concrete pass evidence.
 

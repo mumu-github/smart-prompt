@@ -229,7 +229,7 @@ if (Test-Path $claudeCdpStartPath) {
 $realLlmProbePath = Join-Path $Root "scripts/check-v2-real-llm.ps1"
 if (Test-Path $realLlmProbePath) {
   $realLlmProbe = Get-Content -Raw -Encoding UTF8 $realLlmProbePath
-  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "createStore", "defaultDataDir", "idea", "continue", "polish")) {
+  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "SMART_PROMPT_REAL_LLM_DRY_RUN", "SMART_PROMPT_TEST_PROVIDER", "SMART_PROMPT_TEST_MODEL", "SMART_PROMPT_TEST_BASE_URL", "createStore", "defaultDataDir", "getProviderStatuses", "getConfiguredProviderOrder", "configuredProviders", "providerKeysAvailable", "idea", "continue", "polish")) {
     if (-not $realLlmProbe.Contains($token)) {
       Add-Failure "Real LLM probe missing report or three-mode token: $token"
     }

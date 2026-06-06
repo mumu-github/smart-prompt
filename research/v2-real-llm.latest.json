@@ -1,8 +1,71 @@
 {
-  "createdAt": "2026-06-06T17:40:37.258Z",
+  "createdAt": "2026-06-06T18:19:18.695Z",
   "dataDir": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\apps\\local-service\\.smart-prompt-data",
+  "dryRun": false,
   "requestedProvider": "auto",
   "selectedProvider": "openai-compatible",
+  "configuredProviders": [
+    "openai-compatible"
+  ],
+  "settingsSummary": {
+    "provider": "auto",
+    "baseUrl": "https://api.openai.com/v1",
+    "model": "gpt-4o-mini",
+    "apiKeyConfigured": false,
+    "providerKeysAvailable": {
+      "openai-compatible": false,
+      "anthropic": false,
+      "gemini": false
+    }
+  },
+  "providerStatus": {
+    "selected": "auto",
+    "auto": {
+      "provider": "openai-compatible"
+    },
+    "providers": [
+      {
+        "provider": "anthropic",
+        "label": "Anthropic",
+        "baseUrl": "https://api.anthropic.com/v1",
+        "model": "claude-sonnet-4-20250514",
+        "envKeys": [
+          "ANTHROPIC_API_KEY"
+        ],
+        "selected": false,
+        "keyAvailable": false,
+        "keySource": "",
+        "usesStoredKey": false
+      },
+      {
+        "provider": "gemini",
+        "label": "Gemini",
+        "baseUrl": "https://generativelanguage.googleapis.com/v1beta",
+        "model": "gemini-2.5-flash",
+        "envKeys": [
+          "GEMINI_API_KEY",
+          "GOOGLE_API_KEY"
+        ],
+        "selected": false,
+        "keyAvailable": false,
+        "keySource": "",
+        "usesStoredKey": false
+      },
+      {
+        "provider": "openai-compatible",
+        "label": "OpenAI-compatible",
+        "baseUrl": "https://api.openai.com/v1",
+        "model": "gpt-4o-mini",
+        "envKeys": [
+          "OPENAI_API_KEY"
+        ],
+        "selected": false,
+        "keyAvailable": true,
+        "keySource": "OPENAI_API_KEY",
+        "usesStoredKey": false
+      }
+    ]
+  },
   "pass": false,
   "results": [
     {
@@ -12,6 +75,14 @@
       "code": "llm_request_failed",
       "status": 429,
       "message": "LLM request failed with 429.",
+      "attempts": [
+        {
+          "provider": "openai-compatible",
+          "code": "llm_request_failed",
+          "status": 429,
+          "message": "LLM request failed with 429."
+        }
+      ],
       "bodyPreview": "{\n    \"error\": {\n        \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api"
     }
   ]
