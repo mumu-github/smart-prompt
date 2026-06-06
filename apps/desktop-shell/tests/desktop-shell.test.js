@@ -20,12 +20,19 @@ for (const file of required) {
 const app = fs.readFileSync(path.join(root, "src/app.js"), "utf8");
 assert.ok(app.includes("/settings"));
 assert.ok(app.includes("/skills/import-folder"));
+assert.ok(app.includes("/prompts"));
 assert.ok(app.includes("set_global_shortcut"));
 assert.ok(app.includes("start_local_service"));
 assert.ok(app.includes("api-key"));
 assert.ok(app.includes("smart-prompt-shortcut"));
 assert.ok(app.includes("__smartPromptShortcutHits"));
 assert.ok(app.includes("__smartPromptEventsReady"));
+
+const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
+assert.ok(html.includes("Prompt Library"));
+assert.ok(html.includes("prompt-title"));
+assert.ok(html.includes("prompt-body"));
+assert.ok(html.includes("save-prompt"));
 
 const rust = fs.readFileSync(path.join(root, "src-tauri/src/main.rs"), "utf8");
 assert.ok(rust.includes("TrayIconBuilder"));

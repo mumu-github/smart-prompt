@@ -41,5 +41,6 @@
 - 本地 critic 已按更新目标通过，OMX 已记录 pass verdict。
 - 已开始第一版实现：新增 Chrome/Edge MV3 浏览器扩展 MVP 原型和基础验证脚本。
 - 已接入 V2 本地服务、LLM gateway 代码路径、站点适配器、Tauri scaffold 和 V2 critic 自动化检查。
+- 已接入本地 prompt/skill 库：skill 文件夹导入/推荐与 prompt 保存/列表/删除 API，并在桌面壳暴露管理 UI。
 - 已安装 Rustup/Cargo，并通过 Tauri `cargo check`；当前剩余的是运行态 app 启动和全局快捷键验证，不是 Rust 编译环境缺失。
 - 已通过 `scripts/check-v2-tauri-runtime.ps1` 验证 Tauri 运行态启动、Tauri command、从 Tauri 启动本地服务和全局快捷键触发；Tauri runtime 不再是当前缺口。

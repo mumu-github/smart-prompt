@@ -97,9 +97,29 @@ if (Test-Path $siteAdapterTestPath) {
 $localServiceReadmePath = Join-Path $Root "apps/local-service/README.md"
 if (Test-Path $localServiceReadmePath) {
   $localServiceReadme = Get-Content -Raw -Encoding UTF8 $localServiceReadmePath
-  foreach ($token in @("## API Contract", "GET /settings", "PUT /settings", "POST /skills/import-folder", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit")) {
+  foreach ($token in @("## API Contract", "GET /settings", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit")) {
     if (-not $localServiceReadme.Contains($token)) {
       Add-Failure "Local-service API contract missing token: $token"
+    }
+  }
+}
+
+$localServiceServerPath = Join-Path $Root "apps/local-service/src/server.js"
+if (Test-Path $localServiceServerPath) {
+  $localServiceServer = Get-Content -Raw -Encoding UTF8 $localServiceServerPath
+  foreach ($token in @('GET" && url.pathname === "/prompts', 'POST" && url.pathname === "/prompts', 'DELETE" && url.pathname.startsWith("/prompts/')) {
+    if (-not $localServiceServer.Contains($token)) {
+      Add-Failure "Local-service prompt library route missing token: $token"
+    }
+  }
+}
+
+$desktopAppPath = Join-Path $Root "apps/desktop-shell/src/app.js"
+if (Test-Path $desktopAppPath) {
+  $desktopApp = Get-Content -Raw -Encoding UTF8 $desktopAppPath
+  foreach ($token in @("/prompts", "renderPrompts", "savePrompt")) {
+    if (-not $desktopApp.Contains($token)) {
+      Add-Failure "Desktop shell prompt library UI missing token: $token"
     }
   }
 }

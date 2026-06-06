@@ -6,6 +6,7 @@ Status: in progress
 
 - Local service tests: `apps/local-service npm test` passed in the latest automated V2 critic run.
 - Local service API contract: `apps/local-service/README.md` defines JSON request/response contracts for health, settings, skill import, skill recommendation, and generation. The V2 critic checks that the contract includes the privacy invariants `uploadWholePage: false` and `autoSubmit: false`.
+- Local prompt library: `apps/local-service/tests/local-service.test.js` verifies `POST /prompts`, `GET /prompts`, and `DELETE /prompts/:id`; `apps/desktop-shell/tests/desktop-shell.test.js` verifies the Tauri shell exposes a Prompt Library UI wired to `/prompts`.
 - Three-mode LLM gateway test double: `apps/local-service/tests/local-service.test.js` injects `generateWithLlm` into the local service and verifies `/generate` returns `generatedBy: "llm"` for `idea`, `continue`, and `polish` with `allowTemplateFallback: false`.
 - Browser extension tests: `prototypes/browser-extension npm test` passed in the latest automated V2 critic run.
 - Insert strategy tests: `prototypes/browser-extension/tests/site-adapters.test.js` verifies ChatGPT, Claude, and Gemini adapter insert strategies and checks the content script does not call submit/requestSubmit, form submit paths, or Enter key auto-send behavior.

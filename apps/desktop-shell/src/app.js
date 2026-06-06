@@ -10,6 +10,10 @@ const els = {
   skillFolder: document.getElementById("skill-folder"),
   importFolder: document.getElementById("import-folder"),
   skillList: document.getElementById("skill-list"),
+  promptTitle: document.getElementById("prompt-title"),
+  promptBody: document.getElementById("prompt-body"),
+  savePrompt: document.getElementById("save-prompt"),
+  promptList: document.getElementById("prompt-list"),
   shortcut: document.getElementById("shortcut"),
   saveShortcut: document.getElementById("save-shortcut")
 };
@@ -51,6 +55,17 @@ function renderSkills(skills) {
   }).join("");
 }
 
+function renderPrompts(prompts) {
+  if (!prompts?.length) {
+    els.promptList.innerHTML = '<div class="skill-row">No saved prompts yet.</div>';
+    return;
+  }
+  els.promptList.innerHTML = prompts.slice(0, 20).map((prompt) => {
+    const body = String(prompt.body || "").slice(0, 180);
+    return `<div class="skill-row"><strong>${escapeHtml(prompt.title)}</strong><br>${escapeHtml(body)}</div>`;
+  }).join("");
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -65,9 +80,11 @@ async function loadServiceState() {
     await serviceRequest("/health", { method: "GET" });
     const settings = await serviceRequest("/settings", { method: "GET" });
     const skills = await serviceRequest("/skills", { method: "GET" });
+    const prompts = await serviceRequest("/prompts", { method: "GET" });
     els.baseUrl.value = settings.settings.baseUrl || els.baseUrl.value;
     els.model.value = settings.settings.model || els.model.value;
     renderSkills(skills.skills);
+    renderPrompts(prompts.prompts);
     setStatus("service online", true);
   } catch {
     setStatus("service offline", false);
@@ -93,6 +110,20 @@ async function importFolder() {
     body: JSON.stringify({ path: els.skillFolder.value })
   });
   renderSkills(result.skills);
+}
+
+async function savePrompt() {
+  const result = await serviceRequest("/prompts", {
+    method: "POST",
+    body: JSON.stringify({
+      title: els.promptTitle.value,
+      body: els.promptBody.value,
+      source: "desktop-shell"
+    })
+  });
+  els.promptTitle.value = "";
+  els.promptBody.value = "";
+  renderPrompts(result.prompts);
 }
 
 async function saveShortcut() {
@@ -123,6 +154,7 @@ async function startLocalService() {
 els.saveSettings.addEventListener("click", () => saveSettings().catch((error) => setStatus(error.message, false)));
 els.startService.addEventListener("click", () => startLocalService().catch((error) => setStatus(error.message, false)));
 els.importFolder.addEventListener("click", () => importFolder().catch((error) => setStatus(error.message, false)));
+els.savePrompt.addEventListener("click", () => savePrompt().catch((error) => setStatus(error.message, false)));
 els.saveShortcut.addEventListener("click", () => saveShortcut().catch((error) => setStatus(error.message, false)));
 els.shortcut.value = localStorage.getItem("smartPromptShortcut") || els.shortcut.value;
 window.__smartPromptShortcutHits = 0;

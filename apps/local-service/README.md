@@ -72,6 +72,42 @@ Response:
 { "ok": true, "skills": [] }
 ```
 
+### `GET /prompts`
+
+Returns the local prompt library.
+
+Response:
+
+```json
+{ "ok": true, "prompts": [] }
+```
+
+### `POST /prompts`
+
+Request:
+
+```json
+{
+  "title": "CRM prompt",
+  "body": "Build a CRM prompt with acceptance criteria.",
+  "mode": "continue",
+  "tags": ["crm", "acceptance"],
+  "context": { "tool": "ChatGPT" }
+}
+```
+
+Response includes the saved `prompt` and full `prompts` library.
+
+### `DELETE /prompts/:id`
+
+Deletes a saved prompt by id.
+
+Response:
+
+```json
+{ "ok": true, "prompts": [] }
+```
+
 ### `POST /skills/import-folder`
 
 Request:

@@ -127,6 +127,33 @@ Use for login, auth, and privacy-sensitive flows.
     assert.equal(rec.status, 200);
     assert.ok(rec.body.skills.length >= 1 && rec.body.skills.length <= 3);
 
+    const emptyPrompt = await request(port, "POST", "/prompts", {
+      title: "Empty",
+      body: ""
+    });
+    assert.equal(emptyPrompt.status, 400);
+    assert.equal(emptyPrompt.body.error.code, "empty_prompt");
+
+    const savedPrompt = await request(port, "POST", "/prompts", {
+      title: "CRM prompt",
+      body: "Build a CRM prompt with acceptance criteria.",
+      mode: MODE.CONTINUE,
+      tags: ["crm", "acceptance"],
+      context: { tool: "ChatGPT" }
+    });
+    assert.equal(savedPrompt.status, 200);
+    assert.equal(savedPrompt.body.prompt.title, "CRM prompt");
+    assert.equal(savedPrompt.body.prompt.mode, MODE.CONTINUE);
+
+    const promptList = await request(port, "GET", "/prompts");
+    assert.equal(promptList.status, 200);
+    assert.equal(promptList.body.prompts.length, 1);
+    assert.equal(promptList.body.prompts[0].body, "Build a CRM prompt with acceptance criteria.");
+
+    const deletedPrompt = await request(port, "DELETE", `/prompts/${encodeURIComponent(savedPrompt.body.prompt.id)}`);
+    assert.equal(deletedPrompt.status, 200);
+    assert.equal(deletedPrompt.body.prompts.length, 0);
+
     const modeSamples = [
       { mode: MODE.IDEA, input: "" },
       { mode: MODE.CONTINUE, input: "Build a CRM with customer list and follow-up notes." },

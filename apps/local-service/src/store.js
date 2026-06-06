@@ -37,6 +37,7 @@ function createStore(dataDir = defaultDataDir()) {
   ensureDir(dataDir);
   const settingsFile = path.join(dataDir, "settings.json");
   const skillsFile = path.join(dataDir, "skills.json");
+  const promptsFile = path.join(dataDir, "prompts.json");
   const historyFile = path.join(dataDir, "prompt-history.json");
 
   function getSettings() {
@@ -71,6 +72,39 @@ function createStore(dataDir = defaultDataDir()) {
     return saveSkills(merged);
   }
 
+  function getPrompts() {
+    return readJson(promptsFile, []);
+  }
+
+  function savePrompts(prompts) {
+    writeJson(promptsFile, Array.isArray(prompts) ? prompts : []);
+    return getPrompts();
+  }
+
+  function addPrompt(prompt) {
+    const now = new Date().toISOString();
+    const safe = {
+      id: prompt.id || `prompt-${Date.now()}`,
+      title: String(prompt.title || "Untitled prompt").slice(0, 120),
+      body: String(prompt.body || prompt.prompt || ""),
+      mode: prompt.mode || "custom",
+      tags: Array.isArray(prompt.tags) ? prompt.tags.slice(0, 12) : [],
+      context: prompt.context || {},
+      created_at: prompt.created_at || now,
+      updated_at: now,
+      source: prompt.source || "local-service"
+    };
+    const next = [safe, ...getPrompts().filter((item) => item.id !== safe.id)].slice(0, 200);
+    return savePrompts(next);
+  }
+
+  function deletePrompt(id) {
+    const before = getPrompts();
+    const next = before.filter((prompt) => prompt.id !== id);
+    savePrompts(next);
+    return before.length !== next.length;
+  }
+
   function addPromptHistory(entry) {
     const current = readJson(historyFile, []);
     const next = [entry, ...current].slice(0, 100);
@@ -85,6 +119,10 @@ function createStore(dataDir = defaultDataDir()) {
     getSkills,
     saveSkills,
     addSkills,
+    getPrompts,
+    savePrompts,
+    addPrompt,
+    deletePrompt,
     addPromptHistory
   };
 }

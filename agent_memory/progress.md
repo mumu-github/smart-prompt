@@ -39,6 +39,7 @@
 - 已新增 Claude 登录态验证辅助脚本：`scripts/check-v2-claude-insert.ps1`，使用持久 Chrome profile、只跑 Claude、并提供登录等待窗口。
 - 已增强 Claude 登录态验证辅助脚本：默认写入 `research/v2-claude-insert.latest.json`，避免覆盖 `research/v2-live-site-probe.latest.json` 的 5 站点证据。
 - 已将 `apps/local-service/README.md` 补强为本地服务 API contract，并让 V2 critic 检查 settings、skill import/recommend、generate 和隐私 invariant。
+- 已新增本地 prompt 库管理：local-service 支持 `GET /prompts`、`POST /prompts`、`DELETE /prompts/:id`，桌面壳新增 Prompt Library 区块并连接 `/prompts`。
 - 已补强本地服务 V2 测试：通过注入 `generateWithLlm` test double，经由 `/generate` 覆盖 `idea`、`continue`、`polish` 三模式且 `allowTemplateFallback: false`。
 - 已补强浏览器扩展测试：显式检查 ChatGPT、Claude、Gemini insert strategy，并扩大“不自动发送”静态禁区到 `submit`、`requestSubmit`、form submit path 和 Enter key。
 
@@ -72,5 +73,6 @@
 - V2 继续补强真实站点探针：改用 browser-level CDP `Extensions.loadUnpacked` 正式加载扩展，补 `v0.app` 域名，扩展输入扫描支持 open shadow DOM。当前正式扩展证据达到 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 个显示和 ChatGPT/Gemini Insert；Claude 仍因登录页未过。
 - V2 继续补强 Claude 验证路径：`check-v2-live-sites.ps1` 现支持 `-Report`、`-ProfileDir`、`-SiteIds`、`-LoginWaitSeconds`，可用持久 profile 复用 Claude 登录态后跑正式扩展 Insert 验收，并可独立保存 Claude 报告。
 - V2 继续补强本地 rubric 证据：local-service API 现在有三模式 LLM gateway test double 覆盖；browser-extension 测试显式覆盖 ChatGPT/Claude/Gemini insert strategy 与更严禁自动发送检查。
+- V2 继续补强本地 prompt/skill 库：本轮增加 prompt library API、桌面壳 Prompt Library UI、local-service/desktop-shell 测试和 critic 检查。
 - V2 继续补强验收报告保全：Claude 单站点验证默认写入独立 `research/v2-claude-insert.latest.json`，不覆盖已有 5 站点 live probe 报告。
-- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：API contract 和 Claude 独立报告路径已补强，默认 V2 critic PASS，严格 runtime critic 仅缺 `INSERT_CLAUDE_PASS`；真实 LLM 复核仍为 OpenAI 429 quota/billing。
+- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：prompt library API/UI 已补强，默认 V2 critic PASS，严格 runtime critic 仅缺 `INSERT_CLAUDE_PASS`；真实 LLM 复核仍为 OpenAI 429 quota/billing。

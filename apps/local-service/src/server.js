@@ -64,6 +64,32 @@ function createApp(store = createStore(), options = {}) {
         return;
       }
 
+      if (req.method === "GET" && url.pathname === "/prompts") {
+        sendJson(res, 200, { ok: true, prompts: store.getPrompts() });
+        return;
+      }
+
+      if (req.method === "POST" && url.pathname === "/prompts") {
+        const body = await readJson(req);
+        const promptBody = body.body || body.prompt || "";
+        if (!String(promptBody).trim()) {
+          sendJson(res, 400, { ok: false, error: { code: "empty_prompt", message: "Prompt body is required." } });
+          return;
+        }
+        const prompts = store.addPrompt({ ...body, body: promptBody });
+        sendJson(res, 200, { ok: true, prompt: prompts[0], prompts });
+        return;
+      }
+
+      if (req.method === "DELETE" && url.pathname.startsWith("/prompts/")) {
+        const id = decodeURIComponent(url.pathname.slice("/prompts/".length));
+        const deleted = store.deletePrompt(id);
+        sendJson(res, deleted ? 200 : 404, deleted
+          ? { ok: true, prompts: store.getPrompts() }
+          : { ok: false, error: { code: "prompt_not_found", message: "Prompt not found." } });
+        return;
+      }
+
       if (req.method === "POST" && url.pathname === "/skills/import-folder") {
         const body = await readJson(req);
         const imported = importSkillFolder(body.path);
