@@ -2,7 +2,7 @@
 
 ## 当前问题
 
-- 真实 LLM 三模式仍未通过：当前 `research/v2-real-llm.latest.json` 记录 OpenAI quota/billing 失败，需可用 API key/billing 后重新运行三模式验收。
+- 真实 LLM 三模式仍未通过：本轮 `scripts/check-v2-real-llm.ps1 -DryRun` 只发现 `OPENAI_API_KEY`，未发现 Anthropic/Gemini 环境变量或桌面壳保存的 provider key；真实运行仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing，需可用 API key/billing 后重新运行三模式验收。
 
 - 当前无阻塞 V2 自动化代码路径推进的问题；完整验收只缺真实 LLM quota 可用性。
 - 本地 prompt/skill 库已支持导入、推荐、保存、列表和删除；当前不再是主要缺口。
