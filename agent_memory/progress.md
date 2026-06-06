@@ -69,6 +69,7 @@
 
 ## 验证状态
 
+- 本轮绝对路径复跑：`powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\lhy10\Documents\Smart Prompt\scripts\check-v2-real-llm.ps1" -DryRun` 证明脚本路径可达，但仍只发现 `OPENAI_API_KEY`；真实运行同一绝对路径脚本仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing。该条件已多轮重复，当前无法在没有可用 API key/billing 或 Anthropic/Gemini 替代 key 的情况下继续证明 `REAL_LLM_3_MODES_PASS`。
 - 本轮复跑：`scripts/check-v2-real-llm.ps1 -DryRun` 只发现 `OPENAI_API_KEY`，未发现 Anthropic/Gemini 环境变量或桌面壳保存的 provider key；真实运行 `scripts/check-v2-real-llm.ps1` 仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing；`scripts/critic-v2.ps1 -RequireRuntimeEvidence` 当前只失败在缺少 `REAL_LLM_3_MODES_PASS` 和三模式真实 LLM 机器证据。
 - 本轮新增并验证桌面壳交互测试：`apps/desktop-shell/tests/desktop-shell-interaction.test.js` 通过 fake DOM/fetch/Tauri 执行真实 `src/app.js`，覆盖 provider/API key 保存、skill 导入/删除、prompt 保存/删除、本地服务启动和全局快捷键事件；`npm test` in `apps/desktop-shell` PASS，`scripts/critic-v2.ps1` 默认 PASS。
 - 严格 runtime evidence critic 仍未通过：`INSERT_CLAUDE_PASS` 已补齐，当前缺口只剩 `REAL_LLM_3_MODES_PASS`；真实 LLM 报告仍是 OpenAI quota/billing 429。
