@@ -23,6 +23,7 @@
 - 新增显式 `gpt-image-2` 复跑脚本：`scripts/generate-uiux-gpt-image-2.ps1`。
 - 已 dry-run 验证复跑参数：endpoint `/v1/images/edits`，input image `assets/ui-ux/mascot-token-run.png`，model `gpt-image-2`，quality `high`，size `2048x1152`，目标输出 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
 - 按用户要求用内置 `image_gen` 生成一版当前项目 UI/UX 图，并通过本地合成贴入原始小人 PNG：`assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png`。
+- 按用户要求补齐小人状态动作资产：`normal`、`resting`、`thinking`、`suggesting`、`success`、`clapping`，并保存为 `assets/ui-ux/mascot-states/*.png` 透明图。
 - 补充 `README.md` 与 `assets/ui-ux/README.md`。
 - 本地 critic 已通过：`PASS: autoresearch artifacts meet local critic checks.`
 - OMX 已记录 professor-critic `pass` verdict。
@@ -30,16 +31,16 @@
 
 ## 正在进行
 
-- 用户接受先用内置 `image_gen` 生成一版；当前内置版已保存并视觉检查通过。严格 `gpt-image-2` API 目标图仍因 OpenAI 账户/项目触发 `Billing hard limit has been reached` 尚未生成。
+- 用户接受先用内置 `image_gen` 生成一版；当前内置 UI/UX 图和六种小人状态动作资产已保存并视觉检查通过。严格 `gpt-image-2` API 目标图仍因 OpenAI 账户/项目触发 `Billing hard limit has been reached` 尚未生成。
 
 ## 下一步
 
 - 若用户调整 OpenAI billing/额度后，用 `gpt-image-2` CLI/API 复跑 UI/UX 图生成并更新资产：`$env:OPENAI_API_KEY = [Environment]::GetEnvironmentVariable('OPENAI_API_KEY','User'); uv run --with openai python $env:USERPROFILE\.codex\skills\.system\imagegen\scripts\image_gen.py edit --model gpt-image-2 --image assets\ui-ux\mascot-token-run.png --prompt-file assets\ui-ux\gpt-image-2-uiux.prompt.txt --quality high --size 2048x1152 --out assets\ui-ux\prompt-copilot-uiux-gpt-image-2.png --force`。
-- 在修复 API billing 前，可将当前内置 `image_gen` + 原始小人合成版作为概念图版本继续进入原型设计/开发。
+- 在修复 API billing 前，可将当前内置 `image_gen` + 原始小人合成版 UI/UX 图，以及六种透明小人状态图作为概念图版本继续进入原型设计/开发。
 
 ## 验证状态
 
-- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；初始提交已成功；User 级环境变量存在 `OPENAI_API_KEY`；`gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目且本次复查仍存在；真实 API 调用到达 OpenAI 后返回 billing hard limit 错误；内置 `image_gen` 版已保存并视觉检查通过。
+- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；初始提交已成功；User 级环境变量存在 `OPENAI_API_KEY`；`gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目且本次复查仍存在；真实 API 调用到达 OpenAI 后返回 billing hard limit 错误；内置 `image_gen` 版已保存并视觉检查通过；六种状态 PNG 均为透明角落且无可见洋红背景残留。
 - 未验证：显式 fallback CLI/API `gpt-image-2` 成功输出图；OMX completion 是否完成。
 - 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-autoresearch.ps1` 当前应失败在缺少 `prompt-copilot-uiux-gpt-image-2.png`；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun` 当前通过。
 
@@ -47,3 +48,4 @@
 
 - 用户重新要求用该小人原型生成 UI/UX 图后，复查确认 User 级环境变量已有 `OPENAI_API_KEY`。使用 `uv run --with openai` 临时环境调用 `gpt-image-2` edit，API 返回 `Billing hard limit has been reached`，输出文件 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png` 仍不存在。
 - 随后用户要求先用内置 `image_gen` 生成一版；已生成不含小人的 UI 底图，并把原始 `mascot-token-run.png` 贴入界面，最终图为 `assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png`。
+- 用户追问缺少 thinking/suggesting/success 状态后，已生成三态板与单独透明 PNG；随后补齐 normal、resting、clapping，生成六态总览板 `assets/ui-ux/mascot-states/assistant-states-six-board-builtin-v2.png`。

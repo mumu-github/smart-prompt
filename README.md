@@ -9,6 +9,8 @@
 - `docs/open-source-skills-analysis.md`：GitHub、SkillHub、ClawHub 与 agent skills 实现方式分析。
 - `docs/prd.md`：产品需求文档 v0.1。
 - `assets/ui-ux/prompt-copilot-uiux-v1.png`：第一版 UI/UX 概念图。
+- `assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png`：内置生成并贴入原始小人的当前 UI/UX 概念图。
+- `assets/ui-ux/mascot-states/`：normal、resting、thinking、suggesting、success、clapping 六种小人状态透明 PNG。
 - `assets/ui-ux/README.md`：图像生成说明与提示词。
 - `research/autoresearch-rubric.md`：autoresearch-goal 验收 rubric。
 - `scripts/critic-autoresearch.ps1`：本地完成门槛检查脚本。
