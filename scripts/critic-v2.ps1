@@ -77,7 +77,7 @@ if (Test-Path $contentPath) {
 $localServiceTestPath = Join-Path $Root "apps/local-service/tests/local-service.test.js"
 if (Test-Path $localServiceTestPath) {
   $localServiceTest = Get-Content -Raw -Encoding UTF8 $localServiceTestPath
-  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false")) {
+  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false", "PROVIDERS.ANTHROPIC", "PROVIDERS.GEMINI", "generateWithConfiguredProvider")) {
     if (-not $localServiceTest.Contains($token)) {
       Add-Failure "Local-service tests missing three-mode LLM gateway coverage token: $token"
     }
@@ -97,9 +97,19 @@ if (Test-Path $siteAdapterTestPath) {
 $localServiceReadmePath = Join-Path $Root "apps/local-service/README.md"
 if (Test-Path $localServiceReadmePath) {
   $localServiceReadme = Get-Content -Raw -Encoding UTF8 $localServiceReadmePath
-  foreach ($token in @("## API Contract", "GET /settings", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit")) {
+  foreach ($token in @("## API Contract", "GET /settings", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit", "openai-compatible", "anthropic", "gemini")) {
     if (-not $localServiceReadme.Contains($token)) {
       Add-Failure "Local-service API contract missing token: $token"
+    }
+  }
+}
+
+$llmGatewayPath = Join-Path $Root "packages/shared/llm-gateway.js"
+if (Test-Path $llmGatewayPath) {
+  $llmGateway = Get-Content -Raw -Encoding UTF8 $llmGatewayPath
+  foreach ($token in @("PROVIDERS", "createAnthropicMessagesRequest", "createGeminiGenerateContentRequest", "generateWithConfiguredProvider", "anthropic-version", "x-goog-api-key")) {
+    if (-not $llmGateway.Contains($token)) {
+      Add-Failure "LLM gateway missing provider support token: $token"
     }
   }
 }
@@ -117,7 +127,7 @@ if (Test-Path $localServiceServerPath) {
 $desktopAppPath = Join-Path $Root "apps/desktop-shell/src/app.js"
 if (Test-Path $desktopAppPath) {
   $desktopApp = Get-Content -Raw -Encoding UTF8 $desktopAppPath
-  foreach ($token in @("/prompts", "renderPrompts", "savePrompt")) {
+  foreach ($token in @("/prompts", "renderPrompts", "savePrompt", "provider", "PROVIDER_DEFAULTS", "applyProviderDefaults")) {
     if (-not $desktopApp.Contains($token)) {
       Add-Failure "Desktop shell prompt library UI missing token: $token"
     }

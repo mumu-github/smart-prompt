@@ -1,7 +1,23 @@
 const SERVICE_URL = "http://127.0.0.1:17371";
 
+const PROVIDER_DEFAULTS = {
+  "openai-compatible": {
+    baseUrl: "https://api.openai.com/v1",
+    model: "gpt-4o-mini"
+  },
+  anthropic: {
+    baseUrl: "https://api.anthropic.com/v1",
+    model: "claude-sonnet-4-20250514"
+  },
+  gemini: {
+    baseUrl: "https://generativelanguage.googleapis.com/v1beta",
+    model: "gemini-2.5-flash"
+  }
+};
+
 const els = {
   status: document.getElementById("service-status"),
+  provider: document.getElementById("provider"),
   baseUrl: document.getElementById("base-url"),
   model: document.getElementById("model"),
   apiKey: document.getElementById("api-key"),
@@ -75,12 +91,19 @@ function escapeHtml(value) {
     .replace(/'/g, "&#039;");
 }
 
+function applyProviderDefaults() {
+  const defaults = PROVIDER_DEFAULTS[els.provider.value] || PROVIDER_DEFAULTS["openai-compatible"];
+  els.baseUrl.value = defaults.baseUrl;
+  els.model.value = defaults.model;
+}
+
 async function loadServiceState() {
   try {
     await serviceRequest("/health", { method: "GET" });
     const settings = await serviceRequest("/settings", { method: "GET" });
     const skills = await serviceRequest("/skills", { method: "GET" });
     const prompts = await serviceRequest("/prompts", { method: "GET" });
+    els.provider.value = settings.settings.provider || els.provider.value;
     els.baseUrl.value = settings.settings.baseUrl || els.baseUrl.value;
     els.model.value = settings.settings.model || els.model.value;
     renderSkills(skills.skills);
@@ -95,6 +118,7 @@ async function saveSettings() {
   await serviceRequest("/settings", {
     method: "PUT",
     body: JSON.stringify({
+      provider: els.provider.value,
       baseUrl: els.baseUrl.value,
       model: els.model.value,
       apiKey: els.apiKey.value
@@ -155,6 +179,7 @@ els.saveSettings.addEventListener("click", () => saveSettings().catch((error) =>
 els.startService.addEventListener("click", () => startLocalService().catch((error) => setStatus(error.message, false)));
 els.importFolder.addEventListener("click", () => importFolder().catch((error) => setStatus(error.message, false)));
 els.savePrompt.addEventListener("click", () => savePrompt().catch((error) => setStatus(error.message, false)));
+els.provider.addEventListener("change", applyProviderDefaults);
 els.saveShortcut.addEventListener("click", () => saveShortcut().catch((error) => setStatus(error.message, false)));
 els.shortcut.value = localStorage.getItem("smartPromptShortcut") || els.shortcut.value;
 window.__smartPromptShortcutHits = 0;

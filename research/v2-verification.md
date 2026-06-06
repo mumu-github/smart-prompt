@@ -8,6 +8,7 @@ Status: in progress
 - Local service API contract: `apps/local-service/README.md` defines JSON request/response contracts for health, settings, skill import, skill recommendation, and generation. The V2 critic checks that the contract includes the privacy invariants `uploadWholePage: false` and `autoSubmit: false`.
 - Local prompt library: `apps/local-service/tests/local-service.test.js` verifies `POST /prompts`, `GET /prompts`, and `DELETE /prompts/:id`; `apps/desktop-shell/tests/desktop-shell.test.js` verifies the Tauri shell exposes a Prompt Library UI wired to `/prompts`.
 - Three-mode LLM gateway test double: `apps/local-service/tests/local-service.test.js` injects `generateWithLlm` into the local service and verifies `/generate` returns `generatedBy: "llm"` for `idea`, `continue`, and `polish` with `allowTemplateFallback: false`.
+- Multi-provider LLM gateway: `packages/shared/llm-gateway.js` now routes `openai-compatible`, `anthropic`, and `gemini` providers. The local-service tests verify Anthropic Messages and Gemini generateContent request/response adapters with provider-specific headers and fake responses.
 - Browser extension tests: `prototypes/browser-extension npm test` passed in the latest automated V2 critic run.
 - Insert strategy tests: `prototypes/browser-extension/tests/site-adapters.test.js` verifies ChatGPT, Claude, and Gemini adapter insert strategies and checks the content script does not call submit/requestSubmit, form submit paths, or Enter key auto-send behavior.
 - Desktop shell static tests: `apps/desktop-shell npm test` passed in the latest automated V2 critic run.
@@ -24,7 +25,7 @@ Status: in progress
 
 ## Runtime Evidence Attempted But Not Passing
 
-- Real LLM: `scripts/check-v2-real-llm.ps1` reaches the OpenAI-compatible gateway but current `OPENAI_API_KEY` returns HTTP 429 quota/billing failure on the first `idea` mode request, so the three-mode real LLM acceptance is not proven.
+- Real LLM: `scripts/check-v2-real-llm.ps1` now supports OpenAI-compatible, Anthropic, and Gemini provider keys. The current User environment only exposes `OPENAI_API_KEY`, and that OpenAI-compatible request still returns HTTP 429 quota/billing failure on the first `idea` mode request, so the three-mode real LLM acceptance is not proven.
 - Live sites: Claude Insert is still not proven because Claude redirects to sign-in/logout in the temporary browser profile. Perplexity is behind a challenge page, and Replit/DeepSeek/Doubao are login/region limited in this environment.
 
 ## Manual / Runtime Evidence Still Required

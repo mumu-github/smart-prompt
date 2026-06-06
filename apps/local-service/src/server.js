@@ -1,7 +1,7 @@
 const http = require("node:http");
 const { URL } = require("node:url");
 const { buildCard, detectMode, rankSkills } = require("../../../packages/shared/smart-prompt-core");
-const { generateWithOpenAICompatible, redactKey } = require("../../../packages/shared/llm-gateway");
+const { generateWithConfiguredProvider, redactKey } = require("../../../packages/shared/llm-gateway");
 const { createStore, DEFAULT_PORT } = require("./store");
 const { importSkillFolder } = require("./skill-library");
 
@@ -32,7 +32,7 @@ function publicSettings(settings) {
 }
 
 function createApp(store = createStore(), options = {}) {
-  const generateWithLlm = options.generateWithLlm || generateWithOpenAICompatible;
+  const generateWithLlm = options.generateWithLlm || generateWithConfiguredProvider;
 
   return async function app(req, res) {
     if (req.method === "OPTIONS") {

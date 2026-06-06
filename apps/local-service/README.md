@@ -54,6 +54,7 @@ Request:
 ```json
 {
   "settings": {
+    "provider": "openai-compatible",
     "apiKey": "sk-test",
     "baseUrl": "https://api.openai.com/v1",
     "model": "gpt-4o-mini",
@@ -63,6 +64,12 @@ Request:
 ```
 
 Response: same shape as `GET /settings`. The service forces `uploadWholePage` and `autoSubmit` to `false` even if the request tries to set them.
+
+Supported `provider` values:
+
+- `openai-compatible`: OpenAI-compatible chat completions with `OPENAI_API_KEY`.
+- `anthropic`: Anthropic Messages API with `ANTHROPIC_API_KEY`.
+- `gemini`: Gemini `generateContent` API with `GEMINI_API_KEY` or `GOOGLE_API_KEY`.
 
 ### `GET /skills`
 
@@ -164,6 +171,7 @@ Response:
 ```
 
 `/generate` uses an OpenAI-compatible chat completions gateway when `apiKey` or `OPENAI_API_KEY` is available. If the caller passes `allowTemplateFallback: true`, it falls back to local template generation when the LLM gateway is unavailable.
+The gateway also supports Anthropic and Gemini through the `provider` setting.
 
 The service keeps `uploadWholePage` and `autoSubmit` forced to `false`.
 

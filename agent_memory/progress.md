@@ -32,6 +32,7 @@
 - 已新增 `scripts/critic-browser-extension.ps1` 浏览器 MVP 验收脚本。
 - 已创建 V2 OMX mission：`smart-prompt-v2`，并创建 Codex goal。
 - 已新增 V2 共享核心：`packages/shared/smart-prompt-core.js` 和 `packages/shared/llm-gateway.js`。
+- 已将真实 LLM gateway 从单一 OpenAI-compatible 扩展为 `openai-compatible`、`anthropic`、`gemini` 三种 provider 路径，并补了 provider request/response test double。
 - 已新增 V2 本地服务：`apps/local-service/`，含 settings、skill 文件夹扫描、skill 推荐、LLM gateway、`/generate` API 和测试。
 - 已强化浏览器扩展：新增 `site-adapters.js`、`local-service-client.js`，manifest 允许本地服务，content script 优先调用本地服务，服务离线时回退模板。
 - 已新增 Tauri 桌面壳 scaffold：`apps/desktop-shell/`，含设置页、skill 管理 UI、服务启动入口、tray/global-shortcut Rust 代码和静态测试。
@@ -74,5 +75,6 @@
 - V2 继续补强 Claude 验证路径：`check-v2-live-sites.ps1` 现支持 `-Report`、`-ProfileDir`、`-SiteIds`、`-LoginWaitSeconds`，可用持久 profile 复用 Claude 登录态后跑正式扩展 Insert 验收，并可独立保存 Claude 报告。
 - V2 继续补强本地 rubric 证据：local-service API 现在有三模式 LLM gateway test double 覆盖；browser-extension 测试显式覆盖 ChatGPT/Claude/Gemini insert strategy 与更严禁自动发送检查。
 - V2 继续补强本地 prompt/skill 库：本轮增加 prompt library API、桌面壳 Prompt Library UI、local-service/desktop-shell 测试和 critic 检查。
+- V2 继续补强真实 LLM 可用性：本轮新增 Anthropic 和 Gemini provider adapter，`check-v2-real-llm.ps1` 可按现有 key 自动选择 provider；当前 User 环境只发现 `OPENAI_API_KEY`，复核仍为 OpenAI 429。
 - V2 继续补强验收报告保全：Claude 单站点验证默认写入独立 `research/v2-claude-insert.latest.json`，不覆盖已有 5 站点 live probe 报告。
-- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：prompt library API/UI 已补强，默认 V2 critic PASS，严格 runtime critic 仅缺 `INSERT_CLAUDE_PASS`；真实 LLM 复核仍为 OpenAI 429 quota/billing。
+- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：多 provider LLM gateway 已补强，默认 V2 critic PASS，严格 runtime critic 仅缺 `INSERT_CLAUDE_PASS`；真实 LLM 复核仍为 OpenAI 429 quota/billing。

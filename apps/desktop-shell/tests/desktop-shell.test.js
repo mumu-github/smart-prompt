@@ -19,6 +19,11 @@ for (const file of required) {
 
 const app = fs.readFileSync(path.join(root, "src/app.js"), "utf8");
 assert.ok(app.includes("/settings"));
+assert.ok(app.includes("provider"));
+assert.ok(app.includes("PROVIDER_DEFAULTS"));
+assert.ok(app.includes("applyProviderDefaults"));
+assert.ok(app.includes("claude-sonnet-4-20250514"));
+assert.ok(app.includes("gemini-2.5-flash"));
 assert.ok(app.includes("/skills/import-folder"));
 assert.ok(app.includes("/prompts"));
 assert.ok(app.includes("set_global_shortcut"));
@@ -30,6 +35,10 @@ assert.ok(app.includes("__smartPromptEventsReady"));
 
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 assert.ok(html.includes("Prompt Library"));
+assert.ok(html.includes('id="provider"'));
+assert.ok(html.includes("openai-compatible"));
+assert.ok(html.includes("anthropic"));
+assert.ok(html.includes("gemini"));
 assert.ok(html.includes("prompt-title"));
 assert.ok(html.includes("prompt-body"));
 assert.ok(html.includes("save-prompt"));

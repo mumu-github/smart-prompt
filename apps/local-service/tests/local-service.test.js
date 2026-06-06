@@ -6,7 +6,14 @@ const http = require("node:http");
 const { createStore } = require("../src/store");
 const { importSkillFolder } = require("../src/skill-library");
 const { startServer } = require("../src/server");
-const { createOpenAIChatRequest, generateWithOpenAICompatible } = require("../../../packages/shared/llm-gateway");
+const {
+  PROVIDERS,
+  createAnthropicMessagesRequest,
+  createGeminiGenerateContentRequest,
+  createOpenAIChatRequest,
+  generateWithConfiguredProvider,
+  generateWithOpenAICompatible
+} = require("../../../packages/shared/llm-gateway");
 const { MODE, buildCard } = require("../../../packages/shared/smart-prompt-core");
 
 function tempDir(name) {
@@ -94,7 +101,67 @@ Use for login, auth, and privacy-sensitive flows.
   assert.equal(generated.generatedBy, "llm");
   assert.equal(generated.prompt, "LLM generated prompt");
 
+  const anthropicShape = createAnthropicMessagesRequest({
+    input: "Build a privacy review prompt",
+    context: { host: "claude.ai", tool: "Claude", inputKind: "contenteditable" },
+    skills: imported,
+    settings: { provider: PROVIDERS.ANTHROPIC, apiKey: "sk-ant-test", model: "claude-test" }
+  });
+  assert.ok(anthropicShape.endpoint.endsWith("/messages"));
+  assert.equal(anthropicShape.body.model, "claude-test");
+  assert.equal(anthropicShape.body.messages[0].role, "user");
+  assert.ok(anthropicShape.body.max_tokens > 0);
+
+  const geminiShape = createGeminiGenerateContentRequest({
+    input: "Build a product spec prompt",
+    context: { host: "gemini.google.com", tool: "Gemini", inputKind: "contenteditable" },
+    skills: imported,
+    settings: { provider: PROVIDERS.GEMINI, apiKey: "gemini-test", model: "gemini-test" }
+  });
+  assert.ok(geminiShape.endpoint.includes("/models/gemini-test:generateContent"));
+  assert.ok(geminiShape.body.contents[0].parts[0].text.includes("Smart Prompt Copilot"));
+
+  const anthropicGenerated = await generateWithConfiguredProvider({
+    input: "Build a privacy review prompt",
+    context: { host: "claude.ai", tool: "Claude", inputKind: "contenteditable" },
+    skills: imported,
+    settings: { provider: PROVIDERS.ANTHROPIC, apiKey: "sk-ant-test", model: "claude-test" },
+    fetchImpl: async (url, options) => {
+      assert.ok(url.endsWith("/messages"));
+      assert.equal(options.headers["x-api-key"], "sk-ant-test");
+      assert.ok(options.headers["anthropic-version"]);
+      return {
+        ok: true,
+        async json() {
+          return { content: [{ type: "text", text: "Anthropic generated prompt" }] };
+        }
+      };
+    }
+  });
+  assert.equal(anthropicGenerated.provider, PROVIDERS.ANTHROPIC);
+  assert.equal(anthropicGenerated.prompt, "Anthropic generated prompt");
+
+  const geminiGenerated = await generateWithConfiguredProvider({
+    input: "Build a product spec prompt",
+    context: { host: "gemini.google.com", tool: "Gemini", inputKind: "contenteditable" },
+    skills: imported,
+    settings: { provider: PROVIDERS.GEMINI, apiKey: "gemini-test", model: "gemini-test" },
+    fetchImpl: async (url, options) => {
+      assert.ok(url.includes(":generateContent"));
+      assert.equal(options.headers["x-goog-api-key"], "gemini-test");
+      return {
+        ok: true,
+        async json() {
+          return { candidates: [{ content: { parts: [{ text: "Gemini generated prompt" }] } }] };
+        }
+      };
+    }
+  });
+  assert.equal(geminiGenerated.provider, PROVIDERS.GEMINI);
+  assert.equal(geminiGenerated.prompt, "Gemini generated prompt");
+
   const gatewayCalls = [];
+  store.saveSettings({ provider: PROVIDERS.GEMINI, apiKey: "provider-secret", model: "gemini-test" });
   const server = startServer({
     port: 0,
     store,
@@ -103,6 +170,7 @@ Use for login, auth, and privacy-sensitive flows.
         input,
         mode: context.mode,
         skillCount: skills.length,
+        provider: settings.provider,
         model: settings.model,
         hasApiKey: Boolean(settings.apiKey)
       });
@@ -173,7 +241,7 @@ Use for login, auth, and privacy-sensitive flows.
       assert.ok(generatedResponse.body.card.prompt.includes(sample.mode));
     }
     assert.deepEqual(gatewayCalls.map((call) => call.mode), [MODE.IDEA, MODE.CONTINUE, MODE.POLISH]);
-    assert.ok(gatewayCalls.every((call) => call.model === "gpt-test" && call.hasApiKey));
+    assert.ok(gatewayCalls.every((call) => call.provider === PROVIDERS.GEMINI && call.model === "gemini-test" && call.hasApiKey));
   } finally {
     server.close();
   }

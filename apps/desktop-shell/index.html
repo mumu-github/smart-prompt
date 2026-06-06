@@ -22,6 +22,14 @@
       <section class="panel">
         <h2>LLM Settings</h2>
         <label>
+          Provider
+          <select id="provider">
+            <option value="openai-compatible">OpenAI-compatible</option>
+            <option value="anthropic">Anthropic</option>
+            <option value="gemini">Gemini</option>
+          </select>
+        </label>
+        <label>
           Base URL
           <input id="base-url" value="https://api.openai.com/v1">
         </label>

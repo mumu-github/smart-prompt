@@ -46,9 +46,13 @@ function createStore(dataDir = defaultDataDir()) {
 
   function saveSettings(next) {
     const current = getSettings();
+    const provider = ["openai-compatible", "anthropic", "gemini"].includes(next?.provider)
+      ? next.provider
+      : current.provider;
     const safe = {
       ...current,
       ...next,
+      provider,
       uploadWholePage: false,
       autoSubmit: false
     };
