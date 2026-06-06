@@ -2,12 +2,9 @@
 
 ## 当前问题
 
-- Claude Insert 仍未通过：用户当前 Chrome 有 Claude 登录态并能看到 `https://claude.ai/new` 输入框，但该页签没有 `#smart-prompt-mascot` 或 `window.__smartPromptCopilotReady`，说明 Smart Prompt 扩展未加载；专用 CDP profile 的 `research/v2-claude-insert.latest.json` 是失败报告，不可作为通过证据。
-- 不能在未确认情况下关闭/重启用户当前 Chrome 或安装/加载浏览器扩展，因为会改变浏览器状态并可能丢失未保存输入；需要用户确认后才能用同一登录态启动 CDP 并生成正式 Claude Insert 机器报告。
-- 用户已确认重启 Chrome 后，默认 Chrome profile 的 Claude 登录态可恢复，但 Chrome 默认 profile 没有可用 CDP 端口，且 Browser Use 策略禁止访问 `chrome://extensions` 并禁止绕行加载扩展；因此不能自动在默认登录态里加载 Smart Prompt unpacked 扩展。当前可行路径是让用户在已打开的专用 CDP Chrome profile 登录 Claude，再运行 `scripts/check-v2-claude-insert.ps1 -AttachCdp -CdpPort 9232`。
 - 真实 LLM 三模式仍未通过：当前 `research/v2-real-llm.latest.json` 记录 OpenAI quota/billing 失败，需可用 API key/billing 后重新运行三模式验收。
 
-- 当前无阻塞 V2 自动化代码路径推进的问题；完整验收缺少 Claude Insert 验证和真实 LLM quota 可用性。
+- 当前无阻塞 V2 自动化代码路径推进的问题；完整验收只缺真实 LLM quota 可用性。
 - 本地 prompt/skill 库已支持导入、推荐、保存、列表和删除；当前不再是主要缺口。
 - 浏览器扩展 Prompt Card 的 Save 已接入本地 prompt 库；当前不再只保存到扩展本地收藏。
 - 浏览器扩展本地服务离线 fallback 已有 headless runtime 覆盖；当前不再只靠静态检查证明。
@@ -57,3 +54,4 @@
 - 已补浏览器扩展离线 fallback runtime demo：不可达 `serviceUrl` 时生成回退模板、Save 写入 `smartPromptFavorites`、Insert 不提交。
 - 已安装 Rustup/Cargo，并通过 Tauri `cargo check`；当前剩余的是运行态 app 启动和全局快捷键验证，不是 Rust 编译环境缺失。
 - 已通过 `scripts/check-v2-tauri-runtime.ps1` 验证 Tauri 运行态启动、Tauri command、从 Tauri 启动本地服务和全局快捷键触发；Tauri runtime 不再是当前缺口。
+- 已通过 `scripts/check-v2-claude-insert.ps1 -AttachCdp -CdpPort 9232` 验证 Claude 生产站点正式扩展显示和 Insert：`research/v2-claude-insert.latest.json` 包含 `extensionLoad.ok: true`、`insertPasses: ["claude"]`、`passedDisplay: true`、`passedInsert: true`、`injectedProbe: false`。

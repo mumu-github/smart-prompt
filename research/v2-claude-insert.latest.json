@@ -1,0 +1,107 @@
+{
+  "createdAt": "2026-06-06T19:51:52.094Z",
+  "attachCdp": true,
+  "remotePort": 9232,
+  "headless": false,
+  "injectFallback": true,
+  "loginWaitMs": 30000,
+  "siteFilter": [
+    "claude"
+  ],
+  "profilePersistent": true,
+  "profileDir": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\.runtime\\v2-live-chrome-profile",
+  "extensionLoad": {
+    "ok": true,
+    "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
+    "matchedExtension": {
+      "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
+      "name": "Smart Prompt Copilot",
+      "version": "0.1.0",
+      "path": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\prototypes\\browser-extension",
+      "enabled": true
+    }
+  },
+  "displayPasses": 1,
+  "displayRequired": 1,
+  "requiredInsertIds": [
+    "claude"
+  ],
+  "insertPasses": [
+    "claude"
+  ],
+  "results": [
+    {
+      "id": "claude",
+      "name": "Claude",
+      "url": "https://claude.ai/new",
+      "requireInsert": true,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": true,
+      "initial": {
+        "url": "https://claude.ai/new",
+        "title": "New chat - Claude",
+        "injectedProbe": false,
+        "mascot": true,
+        "card": false,
+        "inputSelectors": [
+          "[data-testid=\"chat-input\"] div[contenteditable=\"true\"]",
+          "div[contenteditable=\"true\"][role=\"textbox\"]",
+          "div[contenteditable=\"true\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])",
+          "[contenteditable=\"true\"]"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Write your prompt to Claude",
+            "visible": true,
+            "width": 638,
+            "height": 22
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "state": "normal",
+        "transform": "translate(792px, 317px)",
+        "debug": null
+      },
+      "insert": {
+        "opened": true,
+        "card": {
+          "card": true,
+          "outputLength": 229,
+          "context": "Claude / claude.ai / div / template"
+        },
+        "afterInsert": {
+          "output": "你是熟悉 Claude 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "value": "你是熟悉 Claude 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "outputLength": 229,
+          "valueLength": 229,
+          "cardClosed": true,
+          "url": "https://claude.ai/new"
+        },
+        "ok": true
+      }
+    }
+  ]
+}

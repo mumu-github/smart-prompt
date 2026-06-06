@@ -27,18 +27,17 @@ Status: in progress
 - `LIVE_5_SITES_PASS`: latest formal extension-loaded probe shows mascot display on ChatGPT, Gemini, Bolt, v0.app, and Lovable with `injectedProbe: false`.
 - `INSERT_CHATGPT_PASS`: latest formal extension-loaded probe inserts into ChatGPT without auto-send and closes the card.
 - `INSERT_GEMINI_PASS`: latest formal extension-loaded probe inserts into Gemini without auto-send and closes the card.
+- `INSERT_CLAUDE_PASS`: latest authenticated Claude probe at `research/v2-claude-insert.latest.json` loads the unpacked extension, shows the mascot on `https://claude.ai/new`, and inserts into Claude with `injectedProbe: false`, `passedDisplay: true`, and `passedInsert: true`.
 
 ## Runtime Evidence Attempted But Not Passing
 
 - Real LLM: `scripts/check-v2-real-llm.ps1` now supports auto-selection across OpenAI-compatible, Anthropic, and Gemini provider keys and writes `research/v2-real-llm.latest.json`. It can read provider-specific keys saved by the desktop shell from the local-service data directory, can be pointed at a custom `-DataDir`, and supports `-Provider`, `-Model`, `-BaseUrl`, and `-DryRun` for checking configuration without sending a request. The current User environment only exposes `OPENAI_API_KEY`, and that OpenAI-compatible request still returns HTTP 429 quota/billing failure on the first `idea` mode request, so the three-mode real LLM acceptance is not proven.
-- Live sites: Claude Insert is still not proven because Claude redirects to sign-in/logout in the temporary browser profile. Perplexity is behind a challenge page, and Replit/DeepSeek/Doubao are login/region limited in this environment.
+- Live sites: Perplexity is behind a challenge page, and Replit/DeepSeek/Doubao are login/region limited in this environment.
 
 ## Manual / Runtime Evidence Still Required
 
-- Insert succeeds on Claude without auto-send.
-- To produce Claude evidence: run `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start-v2-claude-cdp.ps1`, log in to Claude in that Chrome window, keep it open, then run the printed `scripts\check-v2-claude-insert.ps1 -AttachCdp` command.
 - To preflight real LLM settings without spending quota: run `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1 -DryRun`. To force a saved provider path, add `-Provider anthropic`, `-Provider gemini`, or `-DataDir <local-service-data-dir>`.
 
 Do not mark V2 complete until these runtime checks are replaced with concrete pass evidence.
 
-Latest live-site probe proves formal extension display on 5 sites plus ChatGPT/Gemini Insert, and the Tauri runtime report proves app startup, service launch, and global shortcut. Default `scripts/critic-v2.ps1` still passes. Strict `scripts/critic-v2.ps1 -RequireRuntimeEvidence` must remain failing until `research/v2-claude-insert.latest.json` proves Claude Insert and `research/v2-real-llm.latest.json` proves all three real LLM modes; the current real LLM report still reaches the gateway but returns OpenAI HTTP 429 quota/billing failure.
+Latest live-site probe proves formal extension display on 5 sites plus ChatGPT/Gemini Insert, the authenticated Claude probe proves Claude Insert, and the Tauri runtime report proves app startup, service launch, and global shortcut. Default `scripts/critic-v2.ps1` still passes. Strict `scripts/critic-v2.ps1 -RequireRuntimeEvidence` must remain failing until `research/v2-real-llm.latest.json` proves all three real LLM modes; the current real LLM report still reaches the gateway but returns OpenAI HTTP 429 quota/billing failure.
