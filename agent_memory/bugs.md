@@ -2,13 +2,15 @@
 
 ## 当前问题
 
-- 当前无阻塞当前目标完成的问题。用户已确认不需要严格 `gpt-image-2` API 产物。
+- 当前无阻塞第一版浏览器 MVP 继续推进的问题。
 
 ## 已知风险
 
 - “全网深度调研”无法证明穷尽全网；当前采用多源、多社区、多关键词检索并保留来源链接。
 - SkillHub/ClawHub 命名和生态边界不唯一；文档已标注不确定性。
 - 自动识别并写入任意桌面/网页输入框涉及权限、隐私和平台安全限制；PRD 已限定 MVP 从 allowlist 网页输入框开始。
+- 当前浏览器 MVP 使用 DOM 写入；复杂 contenteditable/富文本编辑器可能需要站点适配器，否则一键填入可能不稳定。
+- 当前 prompt 生成使用本地模板和 skill routing；尚未接入 LLM gateway，因此生成质量受模板限制。
 
 ## 失败尝试
 
@@ -22,7 +24,7 @@
 
 ## 待回顾
 
-- 是否继续进入原型开发阶段。
+- 真实 Chrome/Edge 扩展在 ChatGPT、Claude、Gemini 等站点的逐站点兼容性。
 
 ## 已解决
 
@@ -32,3 +34,4 @@
 - 已完成六种小人状态动作资产并抠成透明 PNG：normal、resting、thinking、suggesting、success、clapping。
 - 已完成 Remotion 轻量动画原型和两个 MP4 渲染资产。
 - 本地 critic 已按更新目标通过，OMX 已记录 pass verdict。
+- 已开始第一版实现：新增 Chrome/Edge MV3 浏览器扩展 MVP 原型和基础验证脚本。

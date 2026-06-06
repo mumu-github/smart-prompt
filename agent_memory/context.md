@@ -4,13 +4,13 @@
 
 - 当前项目要解决的问题：为 Windows 和 macOS 通用的“提示词自动化生成小工具”做深度调研、竞品/开源实现分析、可行性方案、PRD 和 UI/UX 概念图。
 - 主要用户或使用场景：vibe coding 工具用户、网页 LLM/Agent 对话用户；用户可能不会写提示词、缺少提示习惯、缺少可复用 skills 或经常忘记调用已有 skills。
-- 不应偏离的边界：本阶段以研究、产品方案和视觉概念为主；不做未经用户确认的大规模产品实现。
+- 不应偏离的边界：当前已进入第一版实现；优先按 PRD M1 做浏览器 MVP，不先扩大到桌面 OS 级输入框识别。
 
 ## 系统概览
 
-- 技术栈：尚未确定；预计涉及跨平台桌面悬浮层、输入框识别、LLM API、提示词 skill 库、轻量动画和一键填入能力。
-- 关键入口：待由 PRD 明确。
-- 关键模块：环境识别、三种提示词模式、悬浮小人入口、提示词生成/续写/优化、刷新与编辑、一键填入、skill 推荐与自动调用提醒。
+- 技术栈：第一版为 Chrome/Edge Manifest V3 浏览器扩展原型，静态 JS/CSS/HTML，无打包依赖；后续再进入 Tauri/Electron 桌面壳。
+- 关键入口：`prototypes/browser-extension/manifest.json`，content script 为 `src/prompt-engine.js` + `src/content.js`。
+- 关键模块：环境识别、三种提示词模式、悬浮小人入口、提示词生成/续写/优化、刷新/编辑/复制/收藏/填入、skill 推荐与导入。
 - 外部依赖或服务：可能包括 OpenAI 图像生成 API、LLM API、Remotion 或类似动画渲染方案、浏览器/桌面自动化能力。
 
 ## 重要约定
@@ -22,9 +22,9 @@
 
 ## 决策记录
 
-- 尚在生效的关键决策：使用 `oh-my-codex:autoresearch-goal` 工作流推进；当前 Codex goal 已激活。
+- 尚在生效的关键决策：使用 `oh-my-codex:autoresearch-goal` 工作流推进；第一版实现选择 PRD M1 浏览器 MVP，而不是先做桌面壳。
 - 已确认的用户偏好：默认中文沟通；信息按需提供；最小改动；先读再改；非简单任务维护 `agent_memory/`。
-- 需要避免重复讨论的结论：仓库已在 `codex/prompt-automation-research` 分支提交研究/PRD/视觉资产；本阶段尚未开发应用原型。
+- 需要避免重复讨论的结论：仓库已在 `codex/prompt-automation-research` 分支提交研究/PRD/视觉资产；当前新增 `prototypes/browser-extension/` 作为第一版应用原型。
 
 ## 待澄清
 

@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Prompt Copilot Settings</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="settings-shell">
+      <header class="settings-header">
+        <div>
+          <h1>Smart Prompt Copilot</h1>
+          <p>本地 prompt / skill 库</p>
+        </div>
+        <span id="skill-count" class="count-pill">0 skills</span>
+      </header>
+
+      <section class="panel">
+        <label for="skill-text">导入文本</label>
+        <textarea id="skill-text" spellcheck="false" placeholder="粘贴 SKILL.md、AGENTS.md、CLAUDE.md 或 .cursorrules 内容"></textarea>
+        <div class="row">
+          <input id="skill-file" type="file" multiple accept=".md,.txt,.rules">
+          <button id="import-button" type="button">Import</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-title">已导入</div>
+        <div id="skill-list" class="skill-list"></div>
+      </section>
+    </main>
+    <script src="../src/prompt-engine.js"></script>
+    <script src="options.js"></script>
+  </body>
+</html>

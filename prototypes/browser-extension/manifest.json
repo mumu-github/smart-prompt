@@ -1,0 +1,66 @@
+{
+  "manifest_version": 3,
+  "name": "Smart Prompt Copilot",
+  "description": "A floating prompt assistant for vibe coding and web LLM input boxes.",
+  "version": "0.1.0",
+  "minimum_chrome_version": "116",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*",
+    "https://claude.ai/*",
+    "https://gemini.google.com/*",
+    "https://www.perplexity.ai/*",
+    "https://perplexity.ai/*",
+    "https://lovable.dev/*",
+    "https://bolt.new/*",
+    "https://v0.dev/*",
+    "https://replit.com/*",
+    "https://www.doubao.com/*",
+    "https://chat.deepseek.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*",
+        "https://claude.ai/*",
+        "https://gemini.google.com/*",
+        "https://www.perplexity.ai/*",
+        "https://perplexity.ai/*",
+        "https://lovable.dev/*",
+        "https://bolt.new/*",
+        "https://v0.dev/*",
+        "https://replit.com/*",
+        "https://www.doubao.com/*",
+        "https://chat.deepseek.com/*"
+      ],
+      "js": [
+        "src/prompt-engine.js",
+        "src/content.js"
+      ],
+      "css": [
+        "src/content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options/options.html",
+  "action": {
+    "default_title": "Smart Prompt Copilot",
+    "default_popup": "popup/popup.html"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "assets/mascot-states/*.png"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
+  ]
+}

@@ -2,9 +2,9 @@
 
 ## 当前任务
 
-- 任务目标：完成提示词自动化生成小工具的全网/社区调研、竞品分析、GitHub/skillhub/clawhub 开源与 skills 实现分析、最终整合方案、PRD、UI/UX 概念图，并引入/核对 git 管理。
-- 成功标准：产出有来源支撑的研究文档、竞品与开源实现分析、可执行 PRD、基于内置 `image_gen` 的 UI/UX 图、小人状态资产、Remotion 轻量动画；git 仓库可追踪相关产物；autoresearch-goal 完成门禁通过。用户已确认不需要严格 `gpt-image-2` API 产物。
-- 范围边界：本阶段不默认开发完整应用；若需要实现原型，应另行确认。
+- 任务目标：根据 `docs/prd.md` 开始实现第一版提示词自动化生成小工具。
+- 成功标准：先交付 PRD M1 的 Chrome/Edge 浏览器 MVP：输入框识别、悬浮小人、三模式判断、prompt card、刷新/编辑/复制/收藏/填入、本地 skill 导入、基础验证。
+- 范围边界：第一版不先做 Tauri/Electron 桌面壳，不做 Windows UIA/macOS AXUIElement，不默认调用 LLM；prompt 生成先使用本地模板和 skill routing。
 
 ## 已完成
 
@@ -28,21 +28,23 @@
 - 当前本地 critic 已按更新目标通过：`PASS: autoresearch artifacts meet local critic checks.`
 - OMX 已记录 professor-critic `pass` verdict。
 - 已创建 git 分支：`codex/prompt-automation-research`。
+- 已新增 `prototypes/browser-extension/` MV3 原型：manifest、content script、prompt engine、options 页、popup、demo 页、六态小人资产副本和无依赖测试。
+- 已新增 `scripts/critic-browser-extension.ps1` 浏览器 MVP 验收脚本。
 
 ## 正在进行
 
-- 正在做最终收尾：按更新目标，研究、PRD、内置 UI/UX 图、六种小人状态动作资产、Remotion 动画、critic 和 OMX pass 均已完成；待 git 提交并完成 Codex goal/OMX reconciliation。
+- 正在验证并收尾第一版浏览器 MVP 原型；`docs/prd.md` 存在用户未提交改动，当前实现不覆盖该改动。
 
 ## 下一步
 
-- 完成 git 提交、Codex `update_goal(complete)` 和 `omx autoresearch-goal complete` reconciliation。
-- 可选项：若用户未来调整 OpenAI API billing/额度，可继续用 `scripts/generate-uiux-gpt-image-2.ps1 -Force` 复跑显式 `gpt-image-2` 版本，但这已不是当前验收门槛。
+- 运行 `scripts/critic-browser-extension.ps1`、视觉检查 demo，并根据结果修正。
+- 需要提交时只提交本轮实现相关文件，避免混入用户对 `docs/prd.md` 的未提交改动。
 
 ## 验证状态
 
-- 已验证：UI/UX 概念图可打开并视觉检查通过；当前 git 仓库存在；User 级环境变量存在 `OPENAI_API_KEY`；可选 `gpt-image-2` edit dry-run 参数正确；用户指定小人原型已复制入项目且本次复查仍存在；内置 `image_gen` 版已保存并视觉检查通过；六种状态 PNG 均为透明角落且无可见洋红背景残留；Remotion `npm run lint` 通过，still 和两个 MP4 渲染通过，`ffprobe` 验证 MP4 为 12s/30fps；本地 critic PASS；OMX verdict pass。
-- 未验证：Codex goal completion reconciliation 尚未执行。
-- 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-autoresearch.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun` 已通过；`npm run lint` 已通过；`ffprobe` 已验证两个 MP4。
+- 已验证：浏览器 MVP `npm test` 通过；`node --check` 检查 content/options/popup/prompt-engine 通过；Chrome headless demo 截图视觉检查通过，小人和 prompt card 可渲染。
+- 未验证：真实加载 Chrome/Edge 扩展后在 ChatGPT/Claude 等生产站点逐站点手测；复杂 contenteditable 编辑器的一键填入兼容性。
+- 验证命令或方式：`npm test` in `prototypes/browser-extension` 已通过；Chrome headless 打开 `demo/demo.html?open=1` 已生成并人工检查截图。
 
 ## 最近变化
 
@@ -52,3 +54,4 @@
 - Goal 续跑审计发现 Remotion 动画未形成项目资产；已新增 Remotion 原型并渲染两个轻量 MP4。
 - OMX autoresearch-goal verdict 已更新为 blocked，证据改为当前准确的 OpenAI API billing hard limit；当前不调用 Codex `update_goal(blocked)`，因为这是 resumed run 的首次 blocked audit。
 - 用户更新目标，明确“不需要严格 gpt-image-2”；已移除显式 API 输出图作为 critic 门槛，critic 和 OMX verdict 均已 PASS。
+- 用户新目标为“根据这个 prd.md 文档开始实现第一版”；当前已按 PRD M1 开始实现浏览器扩展 MVP。

@@ -13,9 +13,11 @@
 - `assets/ui-ux/mascot-states/`：normal、resting、thinking、suggesting、success、clapping 六种小人状态透明 PNG。
 - `assets/ui-ux/mascot-animations/`：Remotion 渲染的轻量小人状态动画。
 - `prototypes/remotion-mascot/`：Remotion 动画原型源码。
+- `prototypes/browser-extension/`：按 PRD M1 实现的 Chrome/Edge MV3 浏览器 MVP 原型。
 - `assets/ui-ux/README.md`：图像生成说明与提示词。
 - `research/autoresearch-rubric.md`：autoresearch-goal 验收 rubric。
 - `scripts/critic-autoresearch.ps1`：本地完成门槛检查脚本。
+- `scripts/critic-browser-extension.ps1`：浏览器 MVP 原型检查脚本。
 
 ## 验证
 
@@ -33,4 +35,10 @@ PASS: autoresearch artifacts meet local critic checks.
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun
+```
+
+浏览器 MVP 原型验证：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-browser-extension.ps1
 ```
