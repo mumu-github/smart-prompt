@@ -11,8 +11,10 @@ const {
   createAnthropicMessagesRequest,
   createGeminiGenerateContentRequest,
   createOpenAIChatRequest,
+  chooseConfiguredProvider,
   generateWithConfiguredProvider,
-  generateWithOpenAICompatible
+  generateWithOpenAICompatible,
+  getProviderStatuses
 } = require("../../../packages/shared/llm-gateway");
 const { MODE, buildCard } = require("../../../packages/shared/smart-prompt-core");
 
@@ -68,6 +70,16 @@ Use for login, auth, and privacy-sensitive flows.
   const settings = store.saveSettings({ apiKey: "sk-test-secret", model: "gpt-test" });
   assert.equal(settings.uploadWholePage, false);
   assert.equal(settings.autoSubmit, false);
+  assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AUTO);
+
+  assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { ANTHROPIC_API_KEY: "ant" }), PROVIDERS.ANTHROPIC);
+  assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { GEMINI_API_KEY: "gem" }), PROVIDERS.GEMINI);
+  assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { OPENAI_API_KEY: "openai" }), PROVIDERS.OPENAI_COMPATIBLE);
+  assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, apiKey: "stored-openai" }, {}), PROVIDERS.OPENAI_COMPATIBLE);
+  const providerStatus = getProviderStatuses({ provider: PROVIDERS.AUTO }, { ANTHROPIC_API_KEY: "ant" });
+  assert.equal(providerStatus.selected, PROVIDERS.AUTO);
+  assert.equal(providerStatus.auto.provider, PROVIDERS.ANTHROPIC);
+  assert.ok(providerStatus.providers.some((provider) => provider.provider === PROVIDERS.ANTHROPIC && provider.keyAvailable));
 
   const requestShape = createOpenAIChatRequest({
     input: "帮我重构登录模块，需要注意权限、隐私、测试和回归风险",
@@ -187,6 +199,11 @@ Use for login, auth, and privacy-sensitive flows.
   try {
     const health = await request(port, "GET", "/health");
     assert.equal(health.status, 200);
+
+    const providers = await request(port, "GET", "/llm/providers");
+    assert.equal(providers.status, 200);
+    assert.ok(providers.body.providers.length >= 3);
+    assert.ok(providers.body.providers.some((provider) => provider.provider === PROVIDERS.GEMINI && provider.usesStoredKey));
 
     const rec = await request(port, "POST", "/skills/recommend", {
       input: "登录权限和隐私检查",

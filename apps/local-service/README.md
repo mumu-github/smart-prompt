@@ -47,6 +47,23 @@ Response:
 }
 ```
 
+### `GET /llm/providers`
+
+Returns provider readiness without exposing API keys.
+
+Response:
+
+```json
+{
+  "ok": true,
+  "selected": "auto",
+  "auto": { "provider": "anthropic" },
+  "providers": [
+    { "provider": "anthropic", "keyAvailable": true, "keySource": "ANTHROPIC_API_KEY" }
+  ]
+}
+```
+
 ### `PUT /settings`
 
 Request:
@@ -67,6 +84,7 @@ Response: same shape as `GET /settings`. The service forces `uploadWholePage` an
 
 Supported `provider` values:
 
+- `auto`: choose the first available provider key from Anthropic, Gemini, then OpenAI-compatible.
 - `openai-compatible`: OpenAI-compatible chat completions with `OPENAI_API_KEY`.
 - `anthropic`: Anthropic Messages API with `ANTHROPIC_API_KEY`.
 - `gemini`: Gemini `generateContent` API with `GEMINI_API_KEY` or `GOOGLE_API_KEY`.

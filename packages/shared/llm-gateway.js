@@ -1,10 +1,17 @@
 const { buildLlmMessages } = require("./smart-prompt-core");
 
 const PROVIDERS = Object.freeze({
+  AUTO: "auto",
   OPENAI_COMPATIBLE: "openai-compatible",
   ANTHROPIC: "anthropic",
   GEMINI: "gemini"
 });
+
+const PROVIDER_ORDER = Object.freeze([
+  PROVIDERS.ANTHROPIC,
+  PROVIDERS.GEMINI,
+  PROVIDERS.OPENAI_COMPATIBLE
+]);
 
 const DEFAULT_MODEL = "gpt-4o-mini";
 const DEFAULT_BASE_URL = "https://api.openai.com/v1";
@@ -81,11 +88,72 @@ function createGeminiGenerateContentRequest({ input, context, skills, variantInd
   };
 }
 
-function getApiKey(provider, settings = {}) {
+function getProviderDefaults(provider) {
+  if (provider === PROVIDERS.ANTHROPIC) {
+    return {
+      provider,
+      label: "Anthropic",
+      baseUrl: DEFAULT_ANTHROPIC_BASE_URL,
+      model: DEFAULT_ANTHROPIC_MODEL,
+      envKeys: ["ANTHROPIC_API_KEY"]
+    };
+  }
+  if (provider === PROVIDERS.GEMINI) {
+    return {
+      provider,
+      label: "Gemini",
+      baseUrl: DEFAULT_GEMINI_BASE_URL,
+      model: DEFAULT_GEMINI_MODEL,
+      envKeys: ["GEMINI_API_KEY", "GOOGLE_API_KEY"]
+    };
+  }
+  return {
+    provider: PROVIDERS.OPENAI_COMPATIBLE,
+    label: "OpenAI-compatible",
+    baseUrl: DEFAULT_BASE_URL,
+    model: DEFAULT_MODEL,
+    envKeys: ["OPENAI_API_KEY"]
+  };
+}
+
+function getEnvKey(provider, env = process.env) {
+  const defaults = getProviderDefaults(provider);
+  return defaults.envKeys.find((name) => env[name]) || "";
+}
+
+function getApiKey(provider, settings = {}, env = process.env) {
   if (settings.apiKey) return settings.apiKey;
-  if (provider === PROVIDERS.ANTHROPIC) return process.env.ANTHROPIC_API_KEY;
-  if (provider === PROVIDERS.GEMINI) return process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY;
-  return process.env.OPENAI_API_KEY;
+  const envKey = getEnvKey(provider, env);
+  return envKey ? env[envKey] : "";
+}
+
+function normalizeProvider(provider) {
+  return Object.values(PROVIDERS).includes(provider) ? provider : PROVIDERS.OPENAI_COMPATIBLE;
+}
+
+function getProviderStatuses(settings = {}, env = process.env) {
+  const selected = normalizeProvider(settings.provider);
+  const statuses = PROVIDER_ORDER.map((provider) => {
+    const defaults = getProviderDefaults(provider);
+    const selectedWithStoredKey = selected === provider && Boolean(settings.apiKey);
+    const autoOpenAIStoredKey = selected === PROVIDERS.AUTO && provider === PROVIDERS.OPENAI_COMPATIBLE && Boolean(settings.apiKey);
+    const configuredKeyAvailable = selectedWithStoredKey || autoOpenAIStoredKey;
+    const envKey = getEnvKey(provider, env);
+    return {
+      ...defaults,
+      selected: selected === provider,
+      keyAvailable: configuredKeyAvailable || Boolean(envKey),
+      keySource: configuredKeyAvailable ? "settings" : envKey || "",
+      usesStoredKey: configuredKeyAvailable
+    };
+  });
+  return {
+    selected,
+    auto: {
+      provider: chooseConfiguredProvider({ ...settings, provider: PROVIDERS.AUTO }, env)
+    },
+    providers: statuses
+  };
 }
 
 function getFetcher(fetchImpl) {
@@ -216,19 +284,36 @@ async function generateWithGemini({ input, context, skills, variantIndex, settin
   return { ...card, provider };
 }
 
-function normalizeProvider(provider) {
-  return Object.values(PROVIDERS).includes(provider) ? provider : PROVIDERS.OPENAI_COMPATIBLE;
+function chooseConfiguredProvider(settings = {}, env = process.env) {
+  const provider = normalizeProvider(settings.provider);
+  if (provider !== PROVIDERS.AUTO) return provider;
+  const statuses = PROVIDER_ORDER.map((item) => ({
+    provider: item,
+    envKey: getEnvKey(item, env),
+    settingsKey: item === PROVIDERS.OPENAI_COMPATIBLE && Boolean(settings.apiKey)
+  }));
+  return statuses.find((status) => status.envKey || status.settingsKey)?.provider || PROVIDERS.OPENAI_COMPATIBLE;
 }
 
 async function generateWithConfiguredProvider(args) {
-  const provider = normalizeProvider(args.settings?.provider);
-  if (provider === PROVIDERS.ANTHROPIC) return generateWithAnthropic(args);
-  if (provider === PROVIDERS.GEMINI) return generateWithGemini(args);
-  return generateWithOpenAICompatible(args);
+  const requestedProvider = normalizeProvider(args.settings?.provider);
+  const provider = chooseConfiguredProvider(args.settings);
+  const settings = {
+    ...(args.settings || {}),
+    provider,
+    apiKey: requestedProvider === PROVIDERS.AUTO && provider !== PROVIDERS.OPENAI_COMPATIBLE
+      ? ""
+      : args.settings?.apiKey
+  };
+  const nextArgs = { ...args, settings };
+  if (provider === PROVIDERS.ANTHROPIC) return generateWithAnthropic(nextArgs);
+  if (provider === PROVIDERS.GEMINI) return generateWithGemini(nextArgs);
+  return generateWithOpenAICompatible(nextArgs);
 }
 
 module.exports = {
   PROVIDERS,
+  PROVIDER_ORDER,
   DEFAULT_BASE_URL,
   DEFAULT_MODEL,
   DEFAULT_ANTHROPIC_BASE_URL,
@@ -238,9 +323,12 @@ module.exports = {
   createAnthropicMessagesRequest,
   createGeminiGenerateContentRequest,
   createOpenAIChatRequest,
+  chooseConfiguredProvider,
   generateWithAnthropic,
   generateWithConfiguredProvider,
   generateWithGemini,
   generateWithOpenAICompatible,
+  getProviderDefaults,
+  getProviderStatuses,
   redactKey
 };

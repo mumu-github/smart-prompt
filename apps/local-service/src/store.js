@@ -3,7 +3,7 @@ const path = require("node:path");
 
 const DEFAULT_PORT = 17371;
 const DEFAULT_SETTINGS = Object.freeze({
-  provider: "openai-compatible",
+  provider: "auto",
   baseUrl: "https://api.openai.com/v1",
   model: "gpt-4o-mini",
   temperature: 0.35,
@@ -46,7 +46,7 @@ function createStore(dataDir = defaultDataDir()) {
 
   function saveSettings(next) {
     const current = getSettings();
-    const provider = ["openai-compatible", "anthropic", "gemini"].includes(next?.provider)
+    const provider = ["auto", "openai-compatible", "anthropic", "gemini"].includes(next?.provider)
       ? next.provider
       : current.provider;
     const safe = {

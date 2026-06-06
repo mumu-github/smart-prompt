@@ -1,7 +1,7 @@
 const http = require("node:http");
 const { URL } = require("node:url");
 const { buildCard, detectMode, rankSkills } = require("../../../packages/shared/smart-prompt-core");
-const { generateWithConfiguredProvider, redactKey } = require("../../../packages/shared/llm-gateway");
+const { generateWithConfiguredProvider, getProviderStatuses, redactKey } = require("../../../packages/shared/llm-gateway");
 const { createStore, DEFAULT_PORT } = require("./store");
 const { importSkillFolder } = require("./skill-library");
 
@@ -49,6 +49,11 @@ function createApp(store = createStore(), options = {}) {
 
       if (req.method === "GET" && url.pathname === "/settings") {
         sendJson(res, 200, { ok: true, settings: publicSettings(store.getSettings()) });
+        return;
+      }
+
+      if (req.method === "GET" && url.pathname === "/llm/providers") {
+        sendJson(res, 200, { ok: true, ...getProviderStatuses(store.getSettings()) });
         return;
       }
 
@@ -120,10 +125,7 @@ function createApp(store = createStore(), options = {}) {
             context,
             skills,
             variantIndex: body.variantIndex || 0,
-            settings: {
-              ...settings,
-              apiKey: settings.apiKey || process.env.OPENAI_API_KEY
-            }
+            settings
           });
         } catch (error) {
           if (body.allowTemplateFallback === true) {

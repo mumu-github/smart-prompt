@@ -1,6 +1,10 @@
 const SERVICE_URL = "http://127.0.0.1:17371";
 
 const PROVIDER_DEFAULTS = {
+  auto: {
+    baseUrl: "https://api.openai.com/v1",
+    model: "gpt-4o-mini"
+  },
   "openai-compatible": {
     baseUrl: "https://api.openai.com/v1",
     model: "gpt-4o-mini"
@@ -18,6 +22,7 @@ const PROVIDER_DEFAULTS = {
 const els = {
   status: document.getElementById("service-status"),
   provider: document.getElementById("provider"),
+  providerStatus: document.getElementById("provider-status"),
   baseUrl: document.getElementById("base-url"),
   model: document.getElementById("model"),
   apiKey: document.getElementById("api-key"),
@@ -82,6 +87,18 @@ function renderPrompts(prompts) {
   }).join("");
 }
 
+function renderProviderStatus(status) {
+  if (!status?.providers) {
+    els.providerStatus.textContent = "Provider status unavailable.";
+    return;
+  }
+  const ready = status.providers
+    .filter((provider) => provider.keyAvailable)
+    .map((provider) => provider.label)
+    .join(", ") || "none";
+  els.providerStatus.textContent = `Selected: ${status.selected}; auto: ${status.auto?.provider || "n/a"}; ready: ${ready}`;
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -101,6 +118,7 @@ async function loadServiceState() {
   try {
     await serviceRequest("/health", { method: "GET" });
     const settings = await serviceRequest("/settings", { method: "GET" });
+    const providerStatus = await serviceRequest("/llm/providers", { method: "GET" });
     const skills = await serviceRequest("/skills", { method: "GET" });
     const prompts = await serviceRequest("/prompts", { method: "GET" });
     els.provider.value = settings.settings.provider || els.provider.value;
@@ -108,6 +126,7 @@ async function loadServiceState() {
     els.model.value = settings.settings.model || els.model.value;
     renderSkills(skills.skills);
     renderPrompts(prompts.prompts);
+    renderProviderStatus(providerStatus);
     setStatus("service online", true);
   } catch {
     setStatus("service offline", false);

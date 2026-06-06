@@ -24,11 +24,13 @@
         <label>
           Provider
           <select id="provider">
+            <option value="auto">Auto</option>
             <option value="openai-compatible">OpenAI-compatible</option>
             <option value="anthropic">Anthropic</option>
             <option value="gemini">Gemini</option>
           </select>
         </label>
+        <div id="provider-status" class="skill-row">Provider status unavailable.</div>
         <label>
           Base URL
           <input id="base-url" value="https://api.openai.com/v1">

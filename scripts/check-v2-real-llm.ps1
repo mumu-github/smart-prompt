@@ -17,13 +17,11 @@ if (-not ($env:OPENAI_API_KEY -or $env:ANTHROPIC_API_KEY -or $env:GEMINI_API_KEY
 Push-Location $Root
 try {
   @'
-const { PROVIDERS, generateWithConfiguredProvider } = require("./packages/shared/llm-gateway");
+const { PROVIDERS, chooseConfiguredProvider, generateWithConfiguredProvider } = require("./packages/shared/llm-gateway");
 
 function chooseProvider() {
   if (process.env.SMART_PROMPT_TEST_PROVIDER) return process.env.SMART_PROMPT_TEST_PROVIDER;
-  if (process.env.ANTHROPIC_API_KEY) return PROVIDERS.ANTHROPIC;
-  if (process.env.GEMINI_API_KEY || process.env.GOOGLE_API_KEY) return PROVIDERS.GEMINI;
-  return PROVIDERS.OPENAI_COMPATIBLE;
+  return PROVIDERS.AUTO;
 }
 
 function chooseApiKey(provider) {
@@ -47,6 +45,13 @@ const samples = [
 
 (async () => {
   const provider = chooseProvider();
+  const settings = {
+    provider,
+    baseUrl: process.env.SMART_PROMPT_TEST_BASE_URL || undefined,
+    model: chooseModel(chooseConfiguredProvider({ provider })),
+    apiKey: chooseApiKey(chooseConfiguredProvider({ provider }))
+  };
+  const selectedProvider = chooseConfiguredProvider(settings);
   const results = [];
   for (const sample of samples) {
     try {
@@ -54,17 +59,12 @@ const samples = [
         input: sample.input,
         context: sample.context,
         skills: [],
-        settings: {
-          provider,
-          baseUrl: process.env.SMART_PROMPT_TEST_BASE_URL || undefined,
-          model: chooseModel(provider),
-          apiKey: chooseApiKey(provider)
-        }
+        settings
       });
       results.push({
         name: sample.name,
         ok: true,
-        provider,
+        provider: card.provider,
         generatedBy: card.generatedBy,
         mode: card.mode,
         promptLength: card.prompt.length
@@ -73,7 +73,7 @@ const samples = [
       results.push({
         name: sample.name,
         ok: false,
-        provider,
+        provider: selectedProvider,
         code: error.code || "unknown",
         status: error.status || null,
         message: error.message,
