@@ -123,7 +123,24 @@
       id: "replit",
       tool: "Replit",
       hostnames: ["replit.com"],
-      inputSelectors: ['textarea[placeholder*="Replit"]', 'textarea[placeholder*="Ask"]', 'textarea[aria-label*="Ask"]', '[data-cy*="ai"] textarea', '[data-testid*="ai"] textarea', '[contenteditable="true"][role="textbox"]', '[role="textbox"]', 'textarea'],
+      inputSelectors: [
+        'textarea[placeholder*="Replit"]',
+        'textarea[placeholder*="Ask"]',
+        'textarea[placeholder*="Describe"]',
+        'textarea[placeholder*="Build"]',
+        'textarea[aria-label*="Ask"]',
+        'textarea[aria-label*="prompt"]',
+        '[data-cy*="ai"] textarea',
+        '[data-testid*="ai"] textarea',
+        '[data-testid*="prompt"] textarea',
+        '[aria-label*="prompt"][contenteditable="true"]',
+        '[aria-label*="Ask"][contenteditable="true"]',
+        '[contenteditable="plaintext-only"]',
+        '[contenteditable="true"][role="textbox"]',
+        '[role="textbox"]',
+        'textarea',
+        '[contenteditable="true"]'
+      ],
       insertStrategy: "textarea-first"
     }
   ]);
@@ -231,10 +248,19 @@
     const ranked = skills
       .map((skill) => {
         const skillTokens = tokenize(`${skill.name || ""} ${skill.description || ""} ${(skill.tags || []).join(" ")}`);
-        const overlap = skillTokens.filter((token) => inputTokens.has(token)).length;
+        const matchedTokens = [...new Set(skillTokens.filter((token) => inputTokens.has(token)))];
+        const overlap = matchedTokens.length;
         const toolBoost = skill.allowed_tools?.some((tool) => String(context?.tool || "").toLowerCase().includes(String(tool).toLowerCase())) ? 2 : 0;
         const importedBoost = skill.source_type === "builtin" ? 0.3 : 0.8;
-        return { ...skill, score: overlap + toolBoost + importedBoost };
+        return {
+          ...skill,
+          score: overlap + toolBoost + importedBoost,
+          reason: {
+            matchedTokens: matchedTokens.slice(0, 8),
+            toolBoost,
+            sourceBoost: importedBoost
+          }
+        };
       })
       .sort((a, b) => b.score - a.score || a.name.localeCompare(b.name));
     return ranked.slice(0, limit || 3);

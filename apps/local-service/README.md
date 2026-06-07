@@ -1,6 +1,6 @@
 # Smart Prompt Local Service
 
-V2 local service for settings, skill folder import, skill recommendation, and real LLM prompt generation.
+V3 local service for settings, skill folder import, skill recommendation, prompt library management, and real LLM prompt generation.
 
 ## Start
 
@@ -22,23 +22,63 @@ apps/local-service/.smart-prompt-data
 
 Set `SMART_PROMPT_DATA_DIR` to override it. The Tauri shell, manual local service runs, and V2 real LLM verification use the same default directory.
 
+## Credential Storage
+
+Provider API keys are not persisted in `settings.json`. The service stores provider/model/base URL settings in `settings.json`, and moves provider keys into `provider-keys.json` through the local credential vault.
+
+On Windows the vault uses CurrentUser DPAPI. On other platforms, or if DPAPI is unavailable, it uses AES-256-GCM with a local install fallback secret; set `SMART_PROMPT_KEY_ENCRYPTION_SECRET` to provide an explicit encryption secret. `GET /settings` returns only redacted key summaries, while internal LLM generation reads decrypted keys in memory.
+
+If an older `settings.json` contains `apiKey` or `providerKeys`, the next `getSettings()` call migrates those values into the vault and rewrites `settings.json` without plaintext keys.
+
 ## API Contract
 
 All responses are JSON. Successful responses include `ok: true`; failures include `ok: false` and an `error` object with `code` and `message`.
 
-CORS allows `GET`, `POST`, `PUT`, `DELETE`, and `OPTIONS` for the desktop shell and browser extension local bridge. The emitted method header is `GET,POST,PUT,DELETE,OPTIONS`.
+CORS allows `GET`, `POST`, `PUT`, `DELETE`, and `OPTIONS` only for trusted local clients such as the desktop shell, localhost development origins, and browser extension origins. The emitted method header remains `GET,POST,PUT,DELETE,OPTIONS`. Protected APIs do not emit `Access-Control-Allow-Origin: *`.
+
+Protected APIs require the per-install local auth token. Clients should first call `GET /auth/bootstrap` from a trusted origin, then pass the token as either:
+
+```text
+Authorization: Bearer <token>
+```
+
+or:
+
+```text
+X-Smart-Prompt-Token: <token>
+```
 
 ### `GET /health`
+
+Public health check. It does not return the auth token.
 
 Response:
 
 ```json
-{ "ok": true, "service": "smart-prompt-local-service", "version": "0.2.0" }
+{ "ok": true, "service": "smart-prompt-local-service", "version": "0.3.0", "authRequired": true }
+```
+
+### `GET /auth/bootstrap`
+
+Returns the per-install token only to trusted origins. This is used by the browser extension and desktop shell local bridge.
+
+Response:
+
+```json
+{
+  "ok": true,
+  "auth": {
+    "scheme": "Bearer",
+    "header": "Authorization",
+    "tokenHeader": "X-Smart-Prompt-Token",
+    "token": "<per-install-token>"
+  }
+}
 ```
 
 ### `GET /settings`
 
-Returns redacted settings. `apiKey` is never returned in full.
+Protected. Returns redacted settings. `apiKey` is never returned in full.
 
 Response:
 
@@ -50,12 +90,18 @@ Response:
     "baseUrl": "https://api.openai.com/v1",
     "model": "gpt-4o-mini",
     "temperature": 0.35,
-    "apiKey": "sk-...abcd",
-      "providerKeys": {
+    "apiKey": "",
+    "providerKeys": {
       "agnes": "",
       "openai-compatible": "sk-...abcd",
       "anthropic": "",
       "gemini": ""
+    },
+    "credentialStorage": {
+      "encrypted": true,
+      "storage": "windows-dpapi",
+      "file": "provider-keys.json",
+      "plaintextSettings": false
     },
     "uploadWholePage": false,
     "autoSubmit": false
@@ -89,7 +135,7 @@ Request:
   "settings": {
     "provider": "openai-compatible",
     "apiKey": "sk-test",
-      "providerKeys": {
+    "providerKeys": {
       "agnes": "sk-agnes-test",
       "anthropic": "sk-ant-test",
       "gemini": "gemini-test"
@@ -101,7 +147,7 @@ Request:
 }
 ```
 
-Response: same shape as `GET /settings`. The service forces `uploadWholePage` and `autoSubmit` to `false` even if the request tries to set them.
+Response: same shape as `GET /settings`. The service forces `uploadWholePage` and `autoSubmit` to `false` even if the request tries to set them. Submitted keys are saved through the credential vault and are not written back to `settings.json` as plaintext.
 
 Supported `provider` values:
 

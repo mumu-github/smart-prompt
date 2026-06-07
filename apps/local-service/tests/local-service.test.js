@@ -3,7 +3,7 @@ const fs = require("node:fs");
 const os = require("node:os");
 const path = require("node:path");
 const http = require("node:http");
-const { createStore, defaultDataDir } = require("../src/store");
+const { DATA_SCHEMA_VERSION, createStore, defaultDataDir } = require("../src/store");
 const { importSkillFolder } = require("../src/skill-library");
 const { startServer } = require("../src/server");
 const {
@@ -25,7 +25,10 @@ function tempDir(name) {
   return fs.mkdtempSync(path.join(os.tmpdir(), name));
 }
 
-async function request(port, method, route, body) {
+const TRUSTED_EXTENSION_ORIGIN = "chrome-extension://abcdefghijklmnopqrstuvwxyzabcdef";
+const EVIL_ORIGIN = "https://evil.example";
+
+async function request(port, method, route, body, token = "", extraHeaders = {}) {
   return new Promise((resolve, reject) => {
     const req = http.request({
       hostname: "127.0.0.1",
@@ -33,7 +36,9 @@ async function request(port, method, route, body) {
       path: route,
       method,
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...extraHeaders
       }
     }, (res) => {
       const chunks = [];
@@ -41,6 +46,7 @@ async function request(port, method, route, body) {
       res.on("end", () => {
         resolve({
           status: res.statusCode,
+          headers: res.headers,
           body: chunks.length ? JSON.parse(Buffer.concat(chunks).toString("utf8")) : null
         });
       });
@@ -51,13 +57,14 @@ async function request(port, method, route, body) {
   });
 }
 
-async function rawRequest(port, method, route) {
+async function rawRequest(port, method, route, extraHeaders = {}) {
   return new Promise((resolve, reject) => {
     const req = http.request({
       hostname: "127.0.0.1",
       port,
       path: route,
-      method
+      method,
+      headers: extraHeaders
     }, (res) => {
       const chunks = [];
       res.on("data", (chunk) => chunks.push(chunk));
@@ -96,15 +103,22 @@ Use for login, auth, and privacy-sensitive flows.
   assert.equal(imported.length, 2);
   assert.ok(imported.some((skill) => skill.name === "security-review"));
 
-  const store = createStore(tempDir("smart-prompt-store-"));
-  store.addSkills(imported);
-  const settings = store.saveSettings({ apiKey: "sk-test-secret", model: "gpt-test" });
-  assert.equal(settings.uploadWholePage, false);
-  assert.equal(settings.autoSubmit, false);
-  assert.equal(settings.apiKey, "");
-  assert.equal(settings.providerKeys[PROVIDERS.AGNES], "");
-  assert.equal(settings.providerKeys[PROVIDERS.OPENAI_COMPATIBLE], "sk-test-secret");
-  assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AUTO);
+const store = createStore(tempDir("smart-prompt-store-"));
+assert.equal(store.schemaVersion, DATA_SCHEMA_VERSION);
+assert.equal(store.getMetadata().schemaVersion, DATA_SCHEMA_VERSION);
+store.addSkills(imported);
+const settings = store.saveSettings({ apiKey: "sk-test-secret", model: "gpt-test" });
+assert.equal(settings.uploadWholePage, false);
+assert.equal(settings.autoSubmit, false);
+assert.equal(settings.apiKey, "");
+assert.equal(settings.providerKeys[PROVIDERS.AGNES], "");
+assert.equal(settings.providerKeys[PROVIDERS.OPENAI_COMPATIBLE], "sk-test-secret");
+assert.ok(settings.credentialStorage.encrypted);
+const settingsText = fs.readFileSync(path.join(store.dataDir, "settings.json"), "utf8");
+const vaultText = fs.readFileSync(path.join(store.dataDir, "provider-keys.json"), "utf8");
+assert.ok(!settingsText.includes("sk-test-secret"));
+assert.ok(!vaultText.includes("sk-test-secret"));
+assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AUTO);
 
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { AGNES_API_KEY: "agnes", ANTHROPIC_API_KEY: "ant" }), PROVIDERS.AGNES);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { ANTHROPIC_API_KEY: "ant" }), PROVIDERS.ANTHROPIC);
@@ -286,6 +300,8 @@ Use for login, auth, and privacy-sensitive flows.
       gatewayCalls.push({
         input,
         mode: context.mode,
+        host: context.host,
+        inputKind: context.inputKind,
         skillCount: skills.length,
         provider: settings.provider,
         model: settings.model,
@@ -304,39 +320,83 @@ Use for login, auth, and privacy-sensitive flows.
   try {
     const health = await request(port, "GET", "/health");
     assert.equal(health.status, 200);
+    assert.equal(health.body.authRequired, true);
 
-    const options = await rawRequest(port, "OPTIONS", "/skills");
+    const unauthSettings = await request(port, "GET", "/settings");
+    assert.equal(unauthSettings.status, 401);
+    assert.equal(unauthSettings.body.error.code, "auth_required");
+
+    const evilOptions = await rawRequest(port, "OPTIONS", "/settings", { Origin: EVIL_ORIGIN });
+    assert.equal(evilOptions.status, 403);
+    assert.notEqual(evilOptions.headers["access-control-allow-origin"], "*");
+
+    const evilSettings = await request(port, "GET", "/settings", null, "bad-token", { Origin: EVIL_ORIGIN });
+    assert.equal(evilSettings.status, 403);
+    assert.notEqual(evilSettings.headers?.["access-control-allow-origin"], "*");
+
+    const bootstrap = await request(port, "GET", "/auth/bootstrap", null, "", { Origin: TRUSTED_EXTENSION_ORIGIN });
+    assert.equal(bootstrap.status, 200);
+    assert.ok(/^[a-f0-9]{64}$/.test(bootstrap.body.auth.token));
+    assert.equal(bootstrap.body.auth.header, "Authorization");
+    const authToken = bootstrap.body.auth.token;
+
+    const options = await rawRequest(port, "OPTIONS", "/skills", { Origin: TRUSTED_EXTENSION_ORIGIN });
     assert.equal(options.status, 200);
     assert.ok(options.headers["access-control-allow-methods"].includes("DELETE"));
+    assert.ok(options.headers["access-control-allow-headers"].includes("Authorization"));
+    assert.ok(options.headers["access-control-allow-headers"].includes("X-Smart-Prompt-Token"));
+    assert.equal(options.headers["access-control-allow-origin"], TRUSTED_EXTENSION_ORIGIN);
+    assert.notEqual(options.headers["access-control-allow-origin"], "*");
 
-    const providers = await request(port, "GET", "/llm/providers");
+    const authed = (method, route, body) => request(port, method, route, body, authToken);
+
+    const providers = await authed("GET", "/llm/providers");
     assert.equal(providers.status, 200);
     assert.ok(providers.body.providers.length >= 4);
     assert.ok(providers.body.providers.some((provider) => provider.provider === PROVIDERS.GEMINI && provider.usesStoredKey));
 
-    const rec = await request(port, "POST", "/skills/recommend", {
+    const providerTest = await authed("POST", "/llm/test", { mode: MODE.IDEA });
+    assert.equal(providerTest.status, 200);
+    assert.equal(providerTest.body.generatedBy, "llm");
+    assert.equal(providerTest.body.provider, PROVIDERS.GEMINI);
+    assert.equal(providerTest.body.model, "gemini-test");
+    assert.equal(providerTest.body.mode, MODE.IDEA);
+    assert.ok(providerTest.body.promptLength > 0);
+    assert.equal(providerTest.body.uploadWholePage, false);
+    assert.equal(providerTest.body.autoSubmit, false);
+    assert.ok(!Object.hasOwn(providerTest.body, "prompt"));
+    assert.ok(!Object.hasOwn(providerTest.body, "card"));
+    assert.equal(gatewayCalls[0].host, "local");
+    assert.equal(gatewayCalls[0].inputKind, "first-run-provider-test");
+
+    const rec = await authed("POST", "/skills/recommend", {
       input: "登录权限和隐私检查",
       context: { tool: "ChatGPT", host: "chatgpt.com" }
     });
     assert.equal(rec.status, 200);
     assert.ok(rec.body.skills.length >= 1 && rec.body.skills.length <= 3);
 
-    const deletedSkill = await request(port, "DELETE", `/skills/${encodeURIComponent(imported[0].id)}`);
+    const searchSkills = await authed("GET", "/search?kind=skills&q=privacy");
+    assert.equal(searchSkills.status, 200);
+    assert.equal(searchSkills.body.prompts.length, 0);
+    assert.ok(searchSkills.body.skills.some((skill) => skill.name === "security-review"));
+
+    const deletedSkill = await authed("DELETE", `/skills/${encodeURIComponent(imported[0].id)}`);
     assert.equal(deletedSkill.status, 200);
     assert.ok(!deletedSkill.body.skills.some((skill) => skill.id === imported[0].id));
 
-    const missingSkill = await request(port, "DELETE", "/skills/not-found");
+    const missingSkill = await authed("DELETE", "/skills/not-found");
     assert.equal(missingSkill.status, 404);
     assert.equal(missingSkill.body.error.code, "skill_not_found");
 
-    const emptyPrompt = await request(port, "POST", "/prompts", {
+    const emptyPrompt = await authed("POST", "/prompts", {
       title: "Empty",
       body: ""
     });
     assert.equal(emptyPrompt.status, 400);
     assert.equal(emptyPrompt.body.error.code, "empty_prompt");
 
-    const savedPrompt = await request(port, "POST", "/prompts", {
+    const savedPrompt = await authed("POST", "/prompts", {
       title: "CRM prompt",
       body: "Build a CRM prompt with acceptance criteria.",
       mode: MODE.CONTINUE,
@@ -346,15 +406,64 @@ Use for login, auth, and privacy-sensitive flows.
     assert.equal(savedPrompt.status, 200);
     assert.equal(savedPrompt.body.prompt.title, "CRM prompt");
     assert.equal(savedPrompt.body.prompt.mode, MODE.CONTINUE);
+    assert.ok(savedPrompt.body.prompt.bodyHash);
 
-    const promptList = await request(port, "GET", "/prompts");
+    const duplicatePrompt = await authed("POST", "/prompts", {
+      title: "CRM prompt duplicate",
+      body: "Build a CRM prompt with acceptance criteria.",
+      mode: MODE.CONTINUE
+    });
+    assert.equal(duplicatePrompt.status, 200);
+    assert.equal(duplicatePrompt.body.prompts.length, 1);
+    assert.equal(duplicatePrompt.body.prompt.id, savedPrompt.body.prompt.id);
+
+    const promptList = await authed("GET", "/prompts");
     assert.equal(promptList.status, 200);
     assert.equal(promptList.body.prompts.length, 1);
     assert.equal(promptList.body.prompts[0].body, "Build a CRM prompt with acceptance criteria.");
 
-    const deletedPrompt = await request(port, "DELETE", `/prompts/${encodeURIComponent(savedPrompt.body.prompt.id)}`);
+    const searchAll = await authed("GET", "/search?q=crm");
+    assert.equal(searchAll.status, 200);
+    assert.equal(searchAll.body.prompts.length, 1);
+    assert.ok(Array.isArray(searchAll.body.skills));
+
+    const searchPromptsOnly = await authed("GET", "/search?kind=prompts&q=acceptance");
+    assert.equal(searchPromptsOnly.body.prompts.length, 1);
+    assert.equal(searchPromptsOnly.body.skills.length, 0);
+
+    const metric = await authed("POST", "/metrics", {
+      action: "insert",
+      mode: MODE.CONTINUE,
+      tool: "ChatGPT",
+      ok: true,
+      adopted: true,
+      promptLength: 42,
+      prompt: "should not be persisted"
+    });
+    assert.equal(metric.status, 200);
+    assert.equal(metric.body.metric.action, "insert");
+    assert.equal(metric.body.metrics.insertSuccessRate, 1);
+    assert.ok(!JSON.stringify(metric.body.metrics).includes("should not be persisted"));
+
+    const backup = await authed("GET", "/data/backup");
+    assert.equal(backup.status, 200);
+    assert.equal(backup.body.backup.schemaVersion, DATA_SCHEMA_VERSION);
+    assert.equal(backup.body.backup.prompts.length, 1);
+    assert.equal(backup.body.backup.metrics.length, 1);
+    assert.ok(!JSON.stringify(backup.body.backup.settings).includes("provider-secret"));
+
+    const deletedPrompt = await authed("DELETE", `/prompts/${encodeURIComponent(savedPrompt.body.prompt.id)}`);
     assert.equal(deletedPrompt.status, 200);
     assert.equal(deletedPrompt.body.prompts.length, 0);
+
+    const restored = await authed("POST", "/data/restore", { backup: backup.body.backup });
+    assert.equal(restored.status, 200);
+    assert.equal(restored.body.restored.schemaVersion, DATA_SCHEMA_VERSION);
+    assert.equal(restored.body.restored.prompts, 1);
+
+    const restoredPromptList = await authed("GET", "/prompts");
+    assert.equal(restoredPromptList.body.prompts.length, 1);
+    assert.equal(restoredPromptList.body.prompts[0].bodyHash, savedPrompt.body.prompt.bodyHash);
 
     const modeSamples = [
       { mode: MODE.IDEA, input: "" },
@@ -363,7 +472,7 @@ Use for login, auth, and privacy-sensitive flows.
     ];
 
     for (const sample of modeSamples) {
-      const generatedResponse = await request(port, "POST", "/generate", {
+      const generatedResponse = await authed("POST", "/generate", {
         input: sample.input,
         mode: sample.mode,
         context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea" },
@@ -374,7 +483,7 @@ Use for login, auth, and privacy-sensitive flows.
       assert.equal(generatedResponse.body.card.mode, sample.mode);
       assert.ok(generatedResponse.body.card.prompt.includes(sample.mode));
     }
-    assert.deepEqual(gatewayCalls.map((call) => call.mode), [MODE.IDEA, MODE.CONTINUE, MODE.POLISH]);
+    assert.deepEqual(gatewayCalls.slice(1).map((call) => call.mode), [MODE.IDEA, MODE.CONTINUE, MODE.POLISH]);
     assert.ok(gatewayCalls.every((call) => call.provider === PROVIDERS.GEMINI && call.model === "gemini-test" && call.hasApiKey));
   } finally {
     server.close();

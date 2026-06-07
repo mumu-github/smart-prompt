@@ -1,7 +1,10 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const crypto = require("node:crypto");
+const { createCredentialVault } = require("./credential-vault");
 
 const DEFAULT_PORT = 17371;
+const DATA_SCHEMA_VERSION = 1;
 const DEFAULT_SETTINGS = Object.freeze({
   provider: "auto",
   baseUrl: "https://api.openai.com/v1",
@@ -39,6 +42,24 @@ function writeJson(file, value) {
   fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, "utf8");
 }
 
+function createAuthToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
+
+function hashText(value) {
+  return crypto.createHash("sha256").update(String(value || "")).digest("hex").slice(0, 16);
+}
+
+function normalizeSearchText(value) {
+  return String(value || "").toLowerCase();
+}
+
+function matchesQuery(parts, query) {
+  const needle = normalizeSearchText(query).trim();
+  if (!needle) return true;
+  return parts.map(normalizeSearchText).join(" ").includes(needle);
+}
+
 function normalizeProvider(value, fallback = "auto") {
   return ["auto", "agnes", "openai-compatible", "anthropic", "gemini"].includes(value) ? value : fallback;
 }
@@ -67,31 +88,133 @@ function normalizeProviderKeys(current, incoming, provider, legacyApiKey) {
   return merged;
 }
 
-function createStore(dataDir = defaultDataDir()) {
+function hasProviderKeys(settings = {}) {
+  return Object.values(settings.providerKeys || {}).some(Boolean) || Boolean(settings.apiKey);
+}
+
+function emptyProviderKeys() {
+  return { ...DEFAULT_SETTINGS.providerKeys };
+}
+
+function createStore(dataDir = defaultDataDir(), options = {}) {
   ensureDir(dataDir);
   const settingsFile = path.join(dataDir, "settings.json");
   const skillsFile = path.join(dataDir, "skills.json");
   const promptsFile = path.join(dataDir, "prompts.json");
   const historyFile = path.join(dataDir, "prompt-history.json");
+  const metricsFile = path.join(dataDir, "metrics.json");
+  const metadataFile = path.join(dataDir, "metadata.json");
+  const securityFile = path.join(dataDir, "security.json");
+  const credentialVault = options.credentialVault || createCredentialVault(dataDir);
+
+  function getMetadata() {
+    const metadata = readJson(metadataFile, {});
+    return {
+      schemaVersion: DATA_SCHEMA_VERSION,
+      migrated_at: metadata.migrated_at || new Date().toISOString(),
+      ...metadata
+    };
+  }
+
+  function migrateData() {
+    const metadata = getMetadata();
+    if (metadata.schemaVersion !== DATA_SCHEMA_VERSION) {
+      metadata.schemaVersion = DATA_SCHEMA_VERSION;
+      metadata.migrated_at = new Date().toISOString();
+    }
+    writeJson(metadataFile, metadata);
+    return metadata;
+  }
+
+  function readSettingsFile() {
+    return { ...DEFAULT_SETTINGS, ...readJson(settingsFile, {}) };
+  }
+
+  function sanitizeSettingsFile(settings) {
+    return {
+      ...settings,
+      apiKey: "",
+      providerKeys: emptyProviderKeys(),
+      uploadWholePage: false,
+      autoSubmit: false
+    };
+  }
 
   function getSettings() {
-    return { ...DEFAULT_SETTINGS, ...readJson(settingsFile, {}) };
+    const persisted = readSettingsFile();
+    const encryptedProviderKeys = {
+      ...DEFAULT_SETTINGS.providerKeys,
+      ...credentialVault.loadProviderKeys()
+    };
+    if (hasProviderKeys(persisted)) {
+      const provider = normalizeProvider(persisted.provider, "openai-compatible");
+      const migrated = normalizeProviderKeys({
+        provider: persisted.provider,
+        apiKey: persisted.apiKey,
+        providerKeys: encryptedProviderKeys
+      }, persisted.providerKeys, provider, persisted.apiKey);
+      credentialVault.saveProviderKeys(migrated);
+      writeJson(settingsFile, sanitizeSettingsFile(persisted));
+      return {
+        ...sanitizeSettingsFile(persisted),
+        providerKeys: {
+          ...DEFAULT_SETTINGS.providerKeys,
+          ...migrated
+        },
+        credentialStorage: credentialVault.getStorageSummary()
+      };
+    }
+    return {
+      ...persisted,
+      apiKey: "",
+      providerKeys: encryptedProviderKeys,
+      uploadWholePage: false,
+      autoSubmit: false,
+      credentialStorage: credentialVault.getStorageSummary()
+    };
   }
 
   function saveSettings(next) {
     const current = getSettings();
     const provider = normalizeProvider(next?.provider, current.provider);
+    const providerKeys = normalizeProviderKeys(current, next?.providerKeys, provider, next?.apiKey);
+    credentialVault.saveProviderKeys(providerKeys);
     const safe = {
       ...current,
       ...next,
       provider,
       apiKey: "",
-      providerKeys: normalizeProviderKeys(current, next?.providerKeys, provider, next?.apiKey),
+      providerKeys: emptyProviderKeys(),
       uploadWholePage: false,
-      autoSubmit: false
+      autoSubmit: false,
+      credentialStorage: credentialVault.getStorageSummary()
     };
     writeJson(settingsFile, safe);
-    return safe;
+    return getSettings();
+  }
+
+  function getSecurity() {
+    const envToken = process.env.SMART_PROMPT_AUTH_TOKEN;
+    if (envToken) {
+      return {
+        ...readJson(securityFile, {}),
+        authToken: String(envToken)
+      };
+    }
+
+    const current = readJson(securityFile, {});
+    if (current.authToken) return current;
+
+    const next = {
+      authToken: createAuthToken(),
+      created_at: new Date().toISOString()
+    };
+    writeJson(securityFile, next);
+    return next;
+  }
+
+  function getAuthToken() {
+    return getSecurity().authToken;
   }
 
   function getSkills() {
@@ -128,18 +251,22 @@ function createStore(dataDir = defaultDataDir()) {
 
   function addPrompt(prompt) {
     const now = new Date().toISOString();
+    const body = String(prompt.body || prompt.prompt || "");
+    const bodyHash = prompt.bodyHash || hashText(body);
+    const existing = getPrompts().find((item) => item.bodyHash === bodyHash);
     const safe = {
-      id: prompt.id || `prompt-${Date.now()}`,
+      id: prompt.id || existing?.id || `prompt-${Date.now()}`,
       title: String(prompt.title || "Untitled prompt").slice(0, 120),
-      body: String(prompt.body || prompt.prompt || ""),
+      body,
+      bodyHash,
       mode: prompt.mode || "custom",
       tags: Array.isArray(prompt.tags) ? prompt.tags.slice(0, 12) : [],
       context: prompt.context || {},
-      created_at: prompt.created_at || now,
+      created_at: prompt.created_at || existing?.created_at || now,
       updated_at: now,
       source: prompt.source || "local-service"
     };
-    const next = [safe, ...getPrompts().filter((item) => item.id !== safe.id)].slice(0, 200);
+    const next = [safe, ...getPrompts().filter((item) => item.id !== safe.id && item.bodyHash !== bodyHash)].slice(0, 200);
     return savePrompts(next);
   }
 
@@ -152,15 +279,122 @@ function createStore(dataDir = defaultDataDir()) {
 
   function addPromptHistory(entry) {
     const current = readJson(historyFile, []);
-    const next = [entry, ...current].slice(0, 100);
+    const next = [{
+      id: entry.id || `history-${Date.now()}`,
+      created_at: entry.created_at || new Date().toISOString(),
+      mode: entry.mode || "",
+      tool: entry.tool || "",
+      generatedBy: entry.generatedBy || "",
+      context: entry.context || {}
+    }, ...current].slice(0, 100);
     writeJson(historyFile, next);
     return next;
   }
 
+  function getPromptHistory() {
+    return readJson(historyFile, []);
+  }
+
+  function searchPrompts(query) {
+    return getPrompts().filter((prompt) => matchesQuery([
+      prompt.title,
+      prompt.body,
+      prompt.mode,
+      prompt.source,
+      ...(prompt.tags || [])
+    ], query));
+  }
+
+  function searchSkills(query) {
+    return getSkills().filter((skill) => matchesQuery([
+      skill.name,
+      skill.description,
+      skill.id,
+      ...(skill.tags || [])
+    ], query));
+  }
+
+  function recordMetric(event = {}) {
+    const current = readJson(metricsFile, []);
+    const safe = {
+      id: event.id || `metric-${Date.now()}`,
+      created_at: event.created_at || new Date().toISOString(),
+      action: String(event.action || "unknown").slice(0, 40),
+      mode: String(event.mode || "").slice(0, 40),
+      tool: String(event.tool || "").slice(0, 80),
+      generatedBy: String(event.generatedBy || "").slice(0, 40),
+      ok: Boolean(event.ok),
+      adopted: Boolean(event.adopted),
+      promptLength: Number(event.promptLength || 0)
+    };
+    const next = [safe, ...current].slice(0, 500);
+    writeJson(metricsFile, next);
+    return next;
+  }
+
+  function getMetrics() {
+    const events = readJson(metricsFile, []);
+    const byAction = {};
+    for (const event of events) {
+      byAction[event.action] = (byAction[event.action] || 0) + 1;
+    }
+    const insertEvents = events.filter((event) => event.action === "insert");
+    const adoptedInsertEvents = insertEvents.filter((event) => event.adopted);
+    return {
+      schemaVersion: DATA_SCHEMA_VERSION,
+      eventCount: events.length,
+      byAction,
+      insertSuccessRate: insertEvents.length ? adoptedInsertEvents.length / insertEvents.length : 0,
+      savedPromptCount: getPrompts().length,
+      skillCount: getSkills().length,
+      promptHistoryCount: getPromptHistory().length,
+      events
+    };
+  }
+
+  function exportData() {
+    return {
+      schemaVersion: DATA_SCHEMA_VERSION,
+      exported_at: new Date().toISOString(),
+      settings: sanitizeSettingsFile(readSettingsFile()),
+      skills: getSkills(),
+      prompts: getPrompts(),
+      promptHistory: getPromptHistory(),
+      metrics: readJson(metricsFile, [])
+    };
+  }
+
+  function restoreData(bundle = {}) {
+    if (Number(bundle.schemaVersion || 0) > DATA_SCHEMA_VERSION) {
+      const error = new Error(`Unsupported data schema version: ${bundle.schemaVersion}`);
+      error.code = "unsupported_schema_version";
+      throw error;
+    }
+    if (Array.isArray(bundle.skills)) saveSkills(bundle.skills);
+    if (Array.isArray(bundle.prompts)) savePrompts(bundle.prompts);
+    if (Array.isArray(bundle.promptHistory)) writeJson(historyFile, bundle.promptHistory.slice(0, 100));
+    if (Array.isArray(bundle.metrics)) writeJson(metricsFile, bundle.metrics.slice(0, 500));
+    migrateData();
+    return {
+      schemaVersion: DATA_SCHEMA_VERSION,
+      skills: getSkills().length,
+      prompts: getPrompts().length,
+      promptHistory: getPromptHistory().length,
+      metrics: readJson(metricsFile, []).length
+    };
+  }
+
+  migrateData();
+
   return {
     dataDir,
+    schemaVersion: DATA_SCHEMA_VERSION,
+    getMetadata,
+    migrateData,
     getSettings,
     saveSettings,
+    getAuthToken,
+    getSecurity,
     getSkills,
     saveSkills,
     addSkills,
@@ -169,13 +403,22 @@ function createStore(dataDir = defaultDataDir()) {
     savePrompts,
     addPrompt,
     deletePrompt,
-    addPromptHistory
+    addPromptHistory,
+    getPromptHistory,
+    searchPrompts,
+    searchSkills,
+    recordMetric,
+    getMetrics,
+    exportData,
+    restoreData
   };
 }
 
 module.exports = {
+  DATA_SCHEMA_VERSION,
   DEFAULT_PORT,
   DEFAULT_SETTINGS,
+  createAuthToken,
   createStore,
   defaultDataDir
 };

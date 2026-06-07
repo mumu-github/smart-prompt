@@ -1,16 +1,59 @@
 const http = require("node:http");
 const { URL } = require("node:url");
+const crypto = require("node:crypto");
 const { buildCard, detectMode, rankSkills } = require("../../../packages/shared/smart-prompt-core");
 const { generateWithConfiguredProvider, getProviderStatuses, redactKey } = require("../../../packages/shared/llm-gateway");
 const { createStore, DEFAULT_PORT } = require("./store");
 const { importSkillFolder } = require("./skill-library");
 
-function sendJson(res, status, value) {
-  res.writeHead(status, {
+const DEFAULT_ALLOWED_ORIGINS = Object.freeze([
+  /^chrome-extension:\/\/[a-z]{32}$/i,
+  /^moz-extension:\/\/[a-f0-9-]+$/i,
+  /^safari-web-extension:\/\/[a-z0-9.-]+$/i,
+  "tauri://localhost",
+  "http://tauri.localhost",
+  "https://tauri.localhost",
+  /^http:\/\/127\.0\.0\.1(?::\d+)?$/i,
+  /^http:\/\/localhost(?::\d+)?$/i
+]);
+
+const AUTH_HEADER = "Authorization";
+const TOKEN_HEADER = "X-Smart-Prompt-Token";
+const PUBLIC_ROUTES = new Set([
+  "GET /health",
+  "GET /auth/bootstrap"
+]);
+
+function normalizeAllowedOrigins(allowedOrigins = []) {
+  return [...DEFAULT_ALLOWED_ORIGINS, ...allowedOrigins];
+}
+
+function isTrustedOrigin(origin, allowedOrigins = []) {
+  if (!origin) return true;
+  return normalizeAllowedOrigins(allowedOrigins).some((allowed) => {
+    if (typeof allowed === "string") return allowed === origin;
+    if (allowed instanceof RegExp) return allowed.test(origin);
+    return false;
+  });
+}
+
+function createCorsHeaders(req, options = {}) {
+  const origin = req?.headers?.origin || "";
+  const headers = {
     "Content-Type": "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
+    "Access-Control-Allow-Headers": `Content-Type,${AUTH_HEADER},${TOKEN_HEADER}`,
+    "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+    "Vary": "Origin"
+  };
+  if (origin && isTrustedOrigin(origin, options.allowedOrigins)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+  return headers;
+}
+
+function sendJson(req, res, status, value, options = {}) {
+  res.writeHead(status, {
+    ...createCorsHeaders(req, options)
   });
   res.end(JSON.stringify(value));
 }
@@ -36,46 +79,169 @@ function publicSettings(settings) {
   };
 }
 
+function routeKey(req, url) {
+  return `${req.method} ${url.pathname}`;
+}
+
+function extractAuthToken(req) {
+  const explicit = req.headers[TOKEN_HEADER.toLowerCase()];
+  if (explicit) return String(explicit);
+  const auth = req.headers[AUTH_HEADER.toLowerCase()] || "";
+  const match = String(auth).match(/^Bearer\s+(.+)$/i);
+  return match ? match[1] : "";
+}
+
+function secureEqual(left, right) {
+  const leftBuffer = Buffer.from(String(left || ""));
+  const rightBuffer = Buffer.from(String(right || ""));
+  if (leftBuffer.length !== rightBuffer.length) return false;
+  return crypto.timingSafeEqual(leftBuffer, rightBuffer);
+}
+
+function isAuthorized(req, store, options = {}) {
+  if (options.disableAuth) return true;
+  const expected = store.getAuthToken();
+  const actual = extractAuthToken(req);
+  return Boolean(expected && actual && secureEqual(actual, expected));
+}
+
 function createApp(store = createStore(), options = {}) {
   const generateWithLlm = options.generateWithLlm || generateWithConfiguredProvider;
 
   return async function app(req, res) {
-    if (req.method === "OPTIONS") {
-      sendJson(res, 200, { ok: true });
+    const url = new URL(req.url, "http://127.0.0.1");
+
+    if (!isTrustedOrigin(req.headers.origin || "", options.allowedOrigins)) {
+      sendJson(req, res, 403, {
+        ok: false,
+        error: {
+          code: "origin_not_allowed",
+          message: "Origin is not allowed for Smart Prompt local service."
+        }
+      }, options);
       return;
     }
 
-    const url = new URL(req.url, "http://127.0.0.1");
+    if (req.method === "OPTIONS") {
+      sendJson(req, res, 200, { ok: true }, options);
+      return;
+    }
+
     try {
       if (req.method === "GET" && url.pathname === "/health") {
-        sendJson(res, 200, { ok: true, service: "smart-prompt-local-service", version: "0.2.0" });
+        sendJson(req, res, 200, {
+          ok: true,
+          service: "smart-prompt-local-service",
+          version: "0.3.0",
+          authRequired: true
+        }, options);
+        return;
+      }
+
+      if (req.method === "GET" && url.pathname === "/auth/bootstrap") {
+        sendJson(req, res, 200, {
+          ok: true,
+          auth: {
+            scheme: "Bearer",
+            header: AUTH_HEADER,
+            tokenHeader: TOKEN_HEADER,
+            token: store.getAuthToken()
+          }
+        }, options);
+        return;
+      }
+
+      if (!PUBLIC_ROUTES.has(routeKey(req, url)) && !isAuthorized(req, store, options)) {
+        sendJson(req, res, 401, {
+          ok: false,
+          error: {
+            code: "auth_required",
+            message: "Smart Prompt local service auth token is required."
+          }
+        }, options);
         return;
       }
 
       if (req.method === "GET" && url.pathname === "/settings") {
-        sendJson(res, 200, { ok: true, settings: publicSettings(store.getSettings()) });
+        sendJson(req, res, 200, { ok: true, settings: publicSettings(store.getSettings()) }, options);
         return;
       }
 
       if (req.method === "GET" && url.pathname === "/llm/providers") {
-        sendJson(res, 200, { ok: true, ...getProviderStatuses(store.getSettings()) });
+        sendJson(req, res, 200, { ok: true, ...getProviderStatuses(store.getSettings()) }, options);
+        return;
+      }
+
+      if (req.method === "POST" && url.pathname === "/llm/test") {
+        const body = await readJson(req);
+        const context = {
+          host: "local",
+          tool: "Smart Prompt",
+          inputKind: "first-run-provider-test",
+          pathKind: "local",
+          mode: body.mode || "idea"
+        };
+        const input = "Generate a short Smart Prompt provider connectivity check.";
+        const skills = rankSkills(input, context, store.getSkills(), 3);
+        const settings = store.getSettings();
+        try {
+          const card = await generateWithLlm({
+            input,
+            context,
+            skills,
+            variantIndex: 0,
+            settings
+          });
+          sendJson(req, res, 200, {
+            ok: true,
+            provider: card.provider || settings.provider,
+            model: card.model || settings.model,
+            mode: card.mode || context.mode,
+            generatedBy: card.generatedBy || "llm",
+            promptLength: String(card.prompt || "").length,
+            skillCount: skills.length,
+            uploadWholePage: false,
+            autoSubmit: false,
+            testedAt: new Date().toISOString()
+          }, options);
+        } catch (error) {
+          sendJson(req, res, 502, {
+            ok: false,
+            error: {
+              code: error.code || "llm_test_failed",
+              message: error.message
+            }
+          }, options);
+        }
         return;
       }
 
       if (req.method === "PUT" && url.pathname === "/settings") {
         const body = await readJson(req);
         const settings = store.saveSettings(body.settings || body);
-        sendJson(res, 200, { ok: true, settings: publicSettings(settings) });
+        sendJson(req, res, 200, { ok: true, settings: publicSettings(settings) }, options);
         return;
       }
 
       if (req.method === "GET" && url.pathname === "/skills") {
-        sendJson(res, 200, { ok: true, skills: store.getSkills() });
+        sendJson(req, res, 200, { ok: true, skills: store.getSkills() }, options);
         return;
       }
 
       if (req.method === "GET" && url.pathname === "/prompts") {
-        sendJson(res, 200, { ok: true, prompts: store.getPrompts() });
+        sendJson(req, res, 200, { ok: true, prompts: store.getPrompts() }, options);
+        return;
+      }
+
+      if (req.method === "GET" && url.pathname === "/search") {
+        const query = url.searchParams.get("q") || "";
+        const kind = url.searchParams.get("kind") || "all";
+        sendJson(req, res, 200, {
+          ok: true,
+          queryLength: query.length,
+          prompts: kind === "skills" ? [] : store.searchPrompts(query),
+          skills: kind === "prompts" ? [] : store.searchSkills(query)
+        }, options);
         return;
       }
 
@@ -83,20 +249,20 @@ function createApp(store = createStore(), options = {}) {
         const body = await readJson(req);
         const promptBody = body.body || body.prompt || "";
         if (!String(promptBody).trim()) {
-          sendJson(res, 400, { ok: false, error: { code: "empty_prompt", message: "Prompt body is required." } });
+          sendJson(req, res, 400, { ok: false, error: { code: "empty_prompt", message: "Prompt body is required." } }, options);
           return;
         }
         const prompts = store.addPrompt({ ...body, body: promptBody });
-        sendJson(res, 200, { ok: true, prompt: prompts[0], prompts });
+        sendJson(req, res, 200, { ok: true, prompt: prompts[0], prompts }, options);
         return;
       }
 
       if (req.method === "DELETE" && url.pathname.startsWith("/prompts/")) {
         const id = decodeURIComponent(url.pathname.slice("/prompts/".length));
         const deleted = store.deletePrompt(id);
-        sendJson(res, deleted ? 200 : 404, deleted
+        sendJson(req, res, deleted ? 200 : 404, deleted
           ? { ok: true, prompts: store.getPrompts() }
-          : { ok: false, error: { code: "prompt_not_found", message: "Prompt not found." } });
+          : { ok: false, error: { code: "prompt_not_found", message: "Prompt not found." } }, options);
         return;
       }
 
@@ -104,23 +270,47 @@ function createApp(store = createStore(), options = {}) {
         const body = await readJson(req);
         const imported = importSkillFolder(body.path);
         const skills = store.addSkills(imported);
-        sendJson(res, 200, { ok: true, imported, skills });
+        sendJson(req, res, 200, { ok: true, imported, skills }, options);
         return;
       }
 
       if (req.method === "DELETE" && url.pathname.startsWith("/skills/")) {
         const id = decodeURIComponent(url.pathname.slice("/skills/".length));
         const deleted = store.deleteSkill(id);
-        sendJson(res, deleted ? 200 : 404, deleted
+        sendJson(req, res, deleted ? 200 : 404, deleted
           ? { ok: true, skills: store.getSkills() }
-          : { ok: false, error: { code: "skill_not_found", message: "Skill not found." } });
+          : { ok: false, error: { code: "skill_not_found", message: "Skill not found." } }, options);
         return;
       }
 
       if (req.method === "POST" && url.pathname === "/skills/recommend") {
         const body = await readJson(req);
         const skills = rankSkills(body.input || "", body.context || {}, store.getSkills(), 3);
-        sendJson(res, 200, { ok: true, skills });
+        sendJson(req, res, 200, { ok: true, skills }, options);
+        return;
+      }
+
+      if (req.method === "GET" && url.pathname === "/data/backup") {
+        sendJson(req, res, 200, { ok: true, backup: store.exportData() }, options);
+        return;
+      }
+
+      if (req.method === "POST" && url.pathname === "/data/restore") {
+        const body = await readJson(req);
+        const restored = store.restoreData(body.backup || body);
+        sendJson(req, res, 200, { ok: true, restored }, options);
+        return;
+      }
+
+      if (req.method === "GET" && url.pathname === "/metrics") {
+        sendJson(req, res, 200, { ok: true, metrics: store.getMetrics() }, options);
+        return;
+      }
+
+      if (req.method === "POST" && url.pathname === "/metrics") {
+        const body = await readJson(req);
+        const metrics = store.recordMetric(body.event || body);
+        sendJson(req, res, 200, { ok: true, metric: metrics[0], metrics: store.getMetrics() }, options);
         return;
       }
 
@@ -152,13 +342,13 @@ function createApp(store = createStore(), options = {}) {
               }
             };
           } else {
-            sendJson(res, 502, {
+            sendJson(req, res, 502, {
               ok: false,
               error: {
                 code: error.code || "llm_error",
                 message: error.message
               }
-            });
+            }, options);
             return;
           }
         }
@@ -174,13 +364,13 @@ function createApp(store = createStore(), options = {}) {
             inputKind: context.inputKind
           }
         });
-        sendJson(res, 200, { ok: true, card });
+        sendJson(req, res, 200, { ok: true, card }, options);
         return;
       }
 
-      sendJson(res, 404, { ok: false, error: { code: "not_found", message: `${req.method} ${url.pathname}` } });
+      sendJson(req, res, 404, { ok: false, error: { code: "not_found", message: `${req.method} ${url.pathname}` } }, options);
     } catch (error) {
-      sendJson(res, 500, { ok: false, error: { code: error.code || "server_error", message: error.message } });
+      sendJson(req, res, 500, { ok: false, error: { code: error.code || "server_error", message: error.message } }, options);
     }
   };
 }
@@ -188,9 +378,11 @@ function createApp(store = createStore(), options = {}) {
 function startServer({
   port = Number(process.env.SMART_PROMPT_PORT || DEFAULT_PORT),
   store = createStore(),
-  generateWithLlm
+  generateWithLlm,
+  allowedOrigins = [],
+  disableAuth = false
 } = {}) {
-  const server = http.createServer(createApp(store, { generateWithLlm }));
+  const server = http.createServer(createApp(store, { generateWithLlm, allowedOrigins, disableAuth }));
   server.listen(port, "127.0.0.1");
   return server;
 }
@@ -204,7 +396,12 @@ if (require.main === module) {
 }
 
 module.exports = {
+  AUTH_HEADER,
+  DEFAULT_ALLOWED_ORIGINS,
+  TOKEN_HEADER,
   createApp,
+  extractAuthToken,
+  isTrustedOrigin,
   readJson,
   sendJson,
   startServer
