@@ -1,4 +1,5 @@
 const SERVICE_URL = "http://127.0.0.1:17371";
+let serviceAuthToken = "";
 
 const PROVIDER_DEFAULTS = {
   auto: {
@@ -35,6 +36,11 @@ const els = {
   anthropicApiKey: document.getElementById("anthropic-api-key"),
   geminiApiKey: document.getElementById("gemini-api-key"),
   startService: document.getElementById("start-service"),
+  stopService: document.getElementById("stop-service"),
+  firstRunProgress: document.getElementById("first-run-progress"),
+  privacyBoundary: document.getElementById("privacy-boundary"),
+  testProvider: document.getElementById("test-provider"),
+  providerTestStatus: document.getElementById("provider-test-status"),
   saveSettings: document.getElementById("save-settings"),
   skillFolder: document.getElementById("skill-folder"),
   importFolder: document.getElementById("import-folder"),
@@ -47,24 +53,66 @@ const els = {
   saveShortcut: document.getElementById("save-shortcut")
 };
 
-async function serviceRequest(path, options) {
+const firstRunState = {
+  settings: null,
+  providerStatus: null,
+  skills: []
+};
+
+async function serviceRequest(path, options, retrying = false) {
+  const token = await getServiceAuthToken(path);
   const response = await fetch(`${SERVICE_URL}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options?.headers || {})
     }
   });
   const body = await response.json();
+  if (response.status === 401 && path !== "/auth/bootstrap" && !retrying) {
+    serviceAuthToken = "";
+    return serviceRequest(path, options, true);
+  }
   if (!response.ok || body.ok === false) {
     throw new Error(body?.error?.message || `Service failed: ${response.status}`);
   }
   return body;
 }
 
+async function getServiceAuthToken(path) {
+  if (path === "/health" || path === "/auth/bootstrap") return "";
+  if (serviceAuthToken) return serviceAuthToken;
+  const response = await fetch(`${SERVICE_URL}/auth/bootstrap`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
+    }
+  });
+  const body = await response.json();
+  if (!response.ok || body.ok === false || !body.auth?.token) {
+    throw new Error(body?.error?.message || `Service auth failed: ${response.status}`);
+  }
+  serviceAuthToken = body.auth.token;
+  return serviceAuthToken;
+}
+
 function setStatus(text, ok) {
   els.status.textContent = text;
-  els.status.style.color = ok ? "#166d69" : "#8b312d";
+  els.status.classList.toggle("is-online", Boolean(ok));
+  els.status.classList.toggle("is-offline", !ok);
+}
+
+async function refreshLocalServiceStatus() {
+  if (window.__TAURI__?.core?.invoke) {
+    const status = await window.__TAURI__.core.invoke("get_local_service_status");
+    document.documentElement.dataset.localServiceStatus = status;
+    if (status === "running") setStatus("service process running", true);
+    if (status === "stopped") setStatus("service process stopped", false);
+    if (status.startsWith("exited:")) setStatus(`service ${status}`, false);
+    return status;
+  }
+  return "";
 }
 
 function recordShortcutTrigger(shortcut) {
@@ -107,6 +155,37 @@ function renderProviderStatus(status) {
     .map((provider) => provider.label)
     .join(", ") || "none";
   els.providerStatus.textContent = `Selected: ${status.selected}; auto: ${status.auto?.provider || "n/a"}; ready: ${ready}`;
+}
+
+function renderFirstRunProgress(nextState = {}) {
+  firstRunState.settings = nextState.settings || firstRunState.settings;
+  firstRunState.providerStatus = nextState.providerStatus || firstRunState.providerStatus;
+  firstRunState.skills = Array.isArray(nextState.skills) ? nextState.skills : firstRunState.skills;
+
+  const settings = firstRunState.settings || {};
+  const providerStatus = firstRunState.providerStatus || {};
+  const providerConfigured = Boolean(settings.provider && settings.model);
+  const providerKeyReady = Boolean(providerStatus.providers?.some((provider) => provider.keyAvailable));
+  const providerTested = localStorage.getItem("smartPromptProviderTestPass") === "true";
+  const skillImported = firstRunState.skills.length > 0;
+  const privacyVisible = Boolean(els.privacyBoundary);
+  const steps = [
+    ["provider", providerConfigured],
+    ["key", providerKeyReady],
+    ["test", providerTested],
+    ["skill", skillImported],
+    ["privacy", privacyVisible]
+  ];
+  const readyCount = steps.filter(([, ready]) => ready).length;
+  const missing = steps.filter(([, ready]) => !ready).map(([label]) => label).join(", ") || "complete";
+
+  els.firstRunProgress.textContent = `${readyCount}/${steps.length} ready; missing: ${missing}`;
+  els.firstRunProgress.dataset.providerConfigured = String(providerConfigured);
+  els.firstRunProgress.dataset.providerKeyReady = String(providerKeyReady);
+  els.firstRunProgress.dataset.providerTested = String(providerTested);
+  els.firstRunProgress.dataset.skillImported = String(skillImported);
+  els.firstRunProgress.dataset.privacyVisible = String(privacyVisible);
+  els.firstRunProgress.dataset.firstRunReady = String(readyCount === steps.length);
 }
 
 function setKeyPlaceholder(element, redacted, label) {
@@ -156,6 +235,7 @@ async function loadServiceState() {
     renderSkills(skills.skills);
     renderPrompts(prompts.prompts);
     renderProviderStatus(providerStatus);
+    renderFirstRunProgress({ settings: settings.settings, providerStatus, skills: skills.skills });
     setStatus("service online", true);
   } catch {
     setStatus("service offline", false);
@@ -163,6 +243,7 @@ async function loadServiceState() {
 }
 
 async function saveSettings() {
+  localStorage.setItem("smartPromptProviderTestPass", "false");
   const providerKeys = collectProviderKeys();
   const payload = {
     provider: els.provider.value,
@@ -183,12 +264,38 @@ async function saveSettings() {
   await loadServiceState();
 }
 
+async function testProvider() {
+  els.providerTestStatus.textContent = "testing provider";
+  els.providerTestStatus.dataset.providerTestPass = "pending";
+  try {
+    const result = await serviceRequest("/llm/test", {
+      method: "POST",
+      body: JSON.stringify({ mode: "idea" })
+    });
+    localStorage.setItem("smartPromptProviderTestPass", "true");
+    localStorage.setItem("smartPromptProviderTestedAt", result.testedAt || new Date().toISOString());
+    els.providerTestStatus.textContent = `${result.provider || els.provider.value} ${result.model || els.model.value} ready (${result.generatedBy}, ${result.promptLength} chars)`;
+    els.providerTestStatus.dataset.providerTestPass = "true";
+    els.providerTestStatus.dataset.promptLength = String(result.promptLength || 0);
+    const providerStatus = await serviceRequest("/llm/providers", { method: "GET" });
+    renderProviderStatus(providerStatus);
+    renderFirstRunProgress({ providerStatus });
+  } catch (error) {
+    localStorage.setItem("smartPromptProviderTestPass", "false");
+    els.providerTestStatus.textContent = `provider test failed: ${error.message}`;
+    els.providerTestStatus.dataset.providerTestPass = "false";
+    renderFirstRunProgress();
+    throw error;
+  }
+}
+
 async function importFolder() {
   const result = await serviceRequest("/skills/import-folder", {
     method: "POST",
     body: JSON.stringify({ path: els.skillFolder.value })
   });
   renderSkills(result.skills);
+  renderFirstRunProgress({ skills: result.skills });
 }
 
 async function deleteSkill(id) {
@@ -197,6 +304,7 @@ async function deleteSkill(id) {
     method: "DELETE"
   });
   renderSkills(result.skills);
+  renderFirstRunProgress({ skills: result.skills });
 }
 
 async function savePrompt() {
@@ -251,15 +359,28 @@ async function bindTauriEvents() {
 
 async function startLocalService() {
   if (window.__TAURI__?.core?.invoke) {
-    await window.__TAURI__.core.invoke("start_local_service");
+    const status = await window.__TAURI__.core.invoke("start_local_service");
+    document.documentElement.dataset.localServiceStatus = status;
     await loadServiceState();
     return;
   }
   setStatus("run local service manually", false);
 }
 
+async function stopLocalService() {
+  if (window.__TAURI__?.core?.invoke) {
+    const status = await window.__TAURI__.core.invoke("stop_local_service");
+    document.documentElement.dataset.localServiceStatus = status;
+    setStatus("service process stopped", false);
+    return;
+  }
+  setStatus("stop local service from terminal", false);
+}
+
 els.saveSettings.addEventListener("click", () => saveSettings().catch((error) => setStatus(error.message, false)));
 els.startService.addEventListener("click", () => startLocalService().catch((error) => setStatus(error.message, false)));
+els.stopService.addEventListener("click", () => stopLocalService().catch((error) => setStatus(error.message, false)));
+els.testProvider.addEventListener("click", () => testProvider().catch((error) => setStatus(error.message, false)));
 els.importFolder.addEventListener("click", () => importFolder().catch((error) => setStatus(error.message, false)));
 els.savePrompt.addEventListener("click", () => savePrompt().catch((error) => setStatus(error.message, false)));
 els.skillList.addEventListener("click", handleSkillListAction);
@@ -270,4 +391,5 @@ els.shortcut.value = localStorage.getItem("smartPromptShortcut") || els.shortcut
 window.__smartPromptShortcutHits = 0;
 window.__smartPromptEventsReady = false;
 bindTauriEvents().catch((error) => setStatus(error.message, false));
+refreshLocalServiceStatus().catch(() => {});
 loadServiceState();

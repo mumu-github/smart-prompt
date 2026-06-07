@@ -69,6 +69,14 @@ p {
   font-weight: 800;
 }
 
+.status-pill.is-online {
+  color: #166d69;
+}
+
+.status-pill.is-offline {
+  color: #8b312d;
+}
+
 .status-actions {
   display: flex;
   align-items: center;
@@ -81,6 +89,40 @@ p {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel);
+}
+
+.setup-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.setup-progress {
+  min-height: 34px;
+  padding: 9px 10px;
+  border: 1px solid rgba(46, 143, 140, 0.28);
+  border-radius: 6px;
+  background: #eef8f6;
+  color: #1b6764;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.privacy-boundary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.privacy-boundary span {
+  min-height: 30px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
 }
 
 label {
@@ -161,4 +203,16 @@ button {
   border-color: rgba(139, 49, 45, 0.35);
   background: #ffffff;
   color: #8b312d;
+}
+
+@media (max-width: 640px) {
+  .topbar,
+  .status-actions {
+    display: grid;
+    justify-items: start;
+  }
+
+  .privacy-boundary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

@@ -18,6 +18,11 @@ const elementIds = [
   "anthropic-api-key",
   "gemini-api-key",
   "start-service",
+  "stop-service",
+  "first-run-progress",
+  "privacy-boundary",
+  "test-provider",
+  "provider-test-status",
   "save-settings",
   "skill-folder",
   "import-folder",
@@ -40,6 +45,14 @@ class FakeElement {
     this.style = {};
     this.dataset = {};
     this.listeners = {};
+    this.classList = {
+      values: new Set(),
+      toggle: (name, force) => {
+        if (force) this.classList.values.add(name);
+        else this.classList.values.delete(name);
+      },
+      contains: (name) => this.classList.values.has(name)
+    };
   }
 
   addEventListener(type, handler) {
@@ -107,16 +120,24 @@ const serviceState = {
 const serviceRequests = [];
 const tauriInvokes = [];
 const localStorageValues = {};
+const serviceAuthToken = "desktop-test-token";
 let shortcutListener;
 
 async function fakeFetch(url, options = {}) {
   const parsed = new URL(url);
   const method = options.method || "GET";
   const body = options.body ? JSON.parse(options.body) : null;
-  serviceRequests.push({ method, path: parsed.pathname, body });
+  const headers = options.headers || {};
+  serviceRequests.push({ method, path: parsed.pathname, body, headers });
 
   if (method === "GET" && parsed.pathname === "/health") {
-    return createResponse({ ok: true, service: "smart-prompt-local-service" });
+    return createResponse({ ok: true, service: "smart-prompt-local-service", authRequired: true });
+  }
+  if (method === "GET" && parsed.pathname === "/auth/bootstrap") {
+    return createResponse({ ok: true, auth: { scheme: "Bearer", header: "Authorization", token: serviceAuthToken } });
+  }
+  if (headers.Authorization !== `Bearer ${serviceAuthToken}`) {
+    return createResponse({ ok: false, error: { code: "auth_required", message: "Auth token required." } }, 401);
   }
   if (method === "GET" && parsed.pathname === "/settings") {
     return createResponse({ ok: true, settings: serviceState.settings });
@@ -146,6 +167,20 @@ async function fakeFetch(url, options = {}) {
         { provider: "anthropic", label: "Anthropic", keyAvailable: Boolean(serviceState.settings.providerKeys.anthropic) },
         { provider: "gemini", label: "Gemini", keyAvailable: Boolean(serviceState.settings.providerKeys.gemini) }
       ]
+    });
+  }
+  if (method === "POST" && parsed.pathname === "/llm/test") {
+    return createResponse({
+      ok: true,
+      provider: serviceState.settings.provider,
+      model: serviceState.settings.model,
+      mode: body.mode,
+      generatedBy: "llm",
+      promptLength: 72,
+      skillCount: serviceState.skills.length,
+      uploadWholePage: false,
+      autoSubmit: false,
+      testedAt: "2026-06-07T00:00:00.000Z"
     });
   }
   if (method === "GET" && parsed.pathname === "/skills") {
@@ -218,6 +253,8 @@ context.window = {
         tauriInvokes.push({ command, payload });
         if (command === "set_global_shortcut") return payload.shortcut;
         if (command === "start_local_service") return "started";
+        if (command === "stop_local_service") return "stopped";
+        if (command === "get_local_service_status") return "stopped";
         throw new Error(`Unhandled Tauri command ${command}`);
       }
     },
@@ -236,9 +273,13 @@ context.window = {
   vm.runInContext(appSource, context, { filename: "src/app.js" });
 
   await waitFor(() => elements["service-status"].textContent === "service online", "initial service load");
+  assert.ok(serviceRequests.some((request) => request.method === "GET" && request.path === "/auth/bootstrap"));
+  assert.ok(serviceRequests.some((request) => request.path === "/settings" && request.headers.Authorization === `Bearer ${serviceAuthToken}`));
   assert.ok(elements["provider-status"].textContent.includes("Selected: auto"));
   assert.ok(elements["skill-list"].innerHTML.includes("No imported skills"));
   assert.ok(elements["prompt-list"].innerHTML.includes("No saved prompts"));
+  assert.equal(elements["first-run-progress"].dataset.firstRunReady, "false");
+  assert.equal(elements["first-run-progress"].dataset.privacyVisible, "true");
 
   elements.provider.value = "agnes";
   elements.provider.trigger("change");
@@ -262,17 +303,29 @@ context.window = {
   assert.equal(settingsRequest.body.providerKeys.anthropic, "sk-ant-test");
   assert.equal(elements["agnes-api-key"].value, "");
   assert.equal(elements["gemini-api-key"].value, "");
+  assert.equal(localStorageValues.smartPromptProviderTestPass, "false");
 
   elements["skill-folder"].value = "C:\\Users\\you\\.codex\\skills";
   await elements["import-folder"].trigger("click");
   await waitFor(() => elements["skill-list"].innerHTML.includes("imported-skill"), "skill import");
   assert.ok(serviceRequests.some((request) => request.method === "POST" && request.path === "/skills/import-folder" && request.body.path.includes(".codex")));
 
+  await elements["test-provider"].trigger("click");
+  await waitFor(() => localStorageValues.smartPromptProviderTestPass === "true", "provider test");
+  const providerTestRequest = serviceRequests.find((request) => request.method === "POST" && request.path === "/llm/test");
+  assert.equal(providerTestRequest.headers.Authorization, `Bearer ${serviceAuthToken}`);
+  assert.equal(providerTestRequest.body.mode, "idea");
+  assert.ok(elements["provider-test-status"].textContent.includes("ready"));
+  assert.equal(elements["provider-test-status"].dataset.providerTestPass, "true");
+  assert.equal(elements["provider-test-status"].dataset.promptLength, "72");
+  assert.equal(elements["first-run-progress"].dataset.firstRunReady, "true");
+
   await elements["skill-list"].trigger("click", {
     target: createDeleteButton("delete-skill", "skillId", "skill-imported")
   });
   await waitFor(() => elements["skill-list"].innerHTML.includes("No imported skills"), "skill delete");
   assert.ok(serviceRequests.some((request) => request.method === "DELETE" && request.path === "/skills/skill-imported"));
+  assert.equal(elements["first-run-progress"].dataset.skillImported, "false");
 
   elements["prompt-title"].value = "Reusable V2 prompt";
   elements["prompt-body"].value = "Build a careful V2 prompt with acceptance criteria.";
@@ -293,6 +346,10 @@ context.window = {
 
   await elements["start-service"].trigger("click");
   assert.ok(tauriInvokes.some((invoke) => invoke.command === "start_local_service"));
+
+  await elements["stop-service"].trigger("click");
+  assert.ok(tauriInvokes.some((invoke) => invoke.command === "stop_local_service"));
+  assert.equal(context.document.documentElement.dataset.localServiceStatus, "stopped");
 
   assert.equal(context.window.__smartPromptEventsReady, true);
   shortcutListener({ payload: "Ctrl+Alt+P" });

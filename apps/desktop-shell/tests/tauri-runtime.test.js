@@ -175,6 +175,7 @@ function taskkillTree(processId) {
       tauriApi: false,
       shortcutRegistered: false,
       localServiceStarted: false,
+      localServiceStopped: false,
       globalShortcutTriggered: false
     }
   };
@@ -203,18 +204,28 @@ function taskkillTree(processId) {
     report.checks.shortcutRegistered = true;
 
     const serviceResult = await evaluate(client, `window.__TAURI__.core.invoke("start_local_service")`);
-    assert.equal(serviceResult, "started");
+    assert.ok(["started", "running"].includes(serviceResult));
     const health = await waitForService();
     servicePid = findPidOnPort(servicePort);
     assert.equal(health.service, "smart-prompt-local-service");
     report.service = health;
     report.checks.localServiceStarted = true;
 
+    const runningStatus = await evaluate(client, `window.__TAURI__.core.invoke("get_local_service_status")`);
+    assert.equal(runningStatus, "running");
+    report.serviceStatus = runningStatus;
+
     sendShortcut();
     const hits = await waitFor(client, `window.__TAURI__.core.invoke("get_shortcut_hits")`, (value) => value > 0, 12000);
     assert.ok(hits > 0);
     report.shortcutHits = hits;
     report.checks.globalShortcutTriggered = true;
+
+    const stoppedStatus = await evaluate(client, `window.__TAURI__.core.invoke("stop_local_service")`);
+    assert.equal(stoppedStatus, "stopped");
+    servicePid = null;
+    report.serviceStopStatus = stoppedStatus;
+    report.checks.localServiceStopped = true;
     report.pass = Object.values(report.checks).every(Boolean);
   } catch (error) {
     report.error = error.message;

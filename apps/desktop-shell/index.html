@@ -16,8 +16,22 @@
         <div class="status-actions">
           <span id="service-status" class="status-pill">checking</span>
           <button id="start-service" type="button">Start Service</button>
+          <button id="stop-service" type="button">Stop Service</button>
         </div>
       </header>
+
+      <section id="first-run-panel" class="panel setup-panel">
+        <h2>First Run</h2>
+        <div id="first-run-progress" class="setup-progress">0/5 ready</div>
+        <div id="privacy-boundary" class="privacy-boundary">
+          <span>No full page body</span>
+          <span>No page title</span>
+          <span>No auto-submit</span>
+          <span>Keys encrypted</span>
+        </div>
+        <div id="provider-test-status" class="skill-row">Provider test not run.</div>
+        <button id="test-provider" type="button">Test Provider</button>
+      </section>
 
       <section class="panel">
         <h2>LLM Settings</h2>
