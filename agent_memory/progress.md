@@ -1,10 +1,78 @@
 # 当前进度
 
+## V4 可安装内测版完成进度 2026-06-07
+
+- 已补强发布链路：新增 `apps/desktop-shell/scripts/prepare-sidecar.js`，并把 Tauri `beforeBuildCommand` 改为 `npm run prepare-release`；build 会同时准备 frontend dist 和包内 local-service sidecar resources。
+- 已补强 Tauri local-service 启动：`apps/desktop-shell/src-tauri/src/main.rs` 新增 `get_local_service_source`，`start_local_service` 优先使用包内 `server.js` 与 `node.exe`，并注入 local data dir。
+- 已补强 installer smoke：`scripts/check-v4-installer-smoke.ps1` 现在会静默安装 NSIS 包，启动安装后的 `smart-prompt-desktop.exe`，通过 CDP 调 Tauri command 启停 local-service，确认包内 sidecar/Node/health，再关闭和卸载。
+- 已刷新 `research/v4-installer-smoke.latest.json`：`pass:true`，其中 `bundledSidecarResource`、`bundledNodeRuntime`、`sourceCommandBundled`、`localServiceStartedFromInstalledApp`、`serviceHealthFromInstalledApp`、`localServiceStoppedFromInstalledApp` 均为 true。
+- 已刷新 `research/v4-release-manifest.latest.json`：`pass:true`、`releaseReady:true`，所有 V4 验收门均为 PASS。
+- 已验证：`cargo check` PASS；`npm run build` in `apps/desktop-shell` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v4-installer-smoke.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v4.ps1` PASS；`git diff --check` 无空白错误。
+- 已记录 OMX autoresearch-goal verdict `pass`，并通过 Codex `update_goal(status=complete)` 完成 V4 goal；`omx autoresearch-goal complete` 因 mission handoff objective 与用户直接创建的中文 Codex goal objective 文本不一致被拒绝，未写 `completion.json`。
+
+## V4 Prompt Card UX 进度 2026-06-07
+
+- 已实现浏览器扩展 Prompt Card 完整体验：卡片内新增 `spc-mode-selector` 手动切换 `idea/continue/polish`，保留生成中/失败/ready 状态，新增 `Retry`，新增 LLM/template `spc-source-badge`，Insert 失败时留在卡片并标记失败，Insert 成功后显示 `smart-prompt-undo` toast。
+- 已实现 Undo：Insert 前保存原输入，Undo 只把原输入写回当前输入框，不发送消息；同时写入 `smartPromptUndo*` DOM evidence 并记录 `undo` feedback。
+- 已补 runtime evidence：`prototypes/browser-extension/tests/runtime-demo.test.js` 在 headless Chrome 中覆盖手动模式切换到 polish、Retry、Insert 不自动发送、Undo 恢复原输入、在线 Save 和离线 fallback。
+- 已强化 V4 critic：`scripts/critic-v4.ps1` 现在依次跑 local-service、desktop-shell、browser-extension 三套测试，再生成 V4 manifest。
+- 已刷新 `research/v4-release-manifest.latest.json`：`PROMPT_CARD_UX_PASS` 现在为 PASS；整体仍 `releaseReady:false`，剩余缺口是 `INSTALLER_PASS` 和 `LIVE_SITE_STABILITY_PASS`。
+- 已验证：`npm test` in `prototypes/browser-extension` PASS；`scripts/critic-v4.ps1` 中三套测试均 PASS，最终按预期失败在 release-ready 未满足。
+
+## V4 首启向导进度 2026-06-07
+
+- 已新增 local-service `POST /llm/test`：该接口受 auth 保护，调用现有真实 LLM provider gateway，只返回 provider、model、mode、generatedBy、promptLength、skillCount、隐私固定项和 testedAt，不返回 prompt/card 正文。
+- 已新增桌面壳首启面板：`first-run-panel`、`first-run-progress`、`privacy-boundary`、`test-provider`、`provider-test-status`；首启进度会跟踪 provider 配置、provider key、provider test、skill import 和 privacy visibility。
+- 已补测试：`apps/local-service/tests/local-service.test.js` 覆盖 `/llm/test` auth/gateway/无正文泄露；`apps/desktop-shell/tests/desktop-shell-interaction.test.js` 覆盖保存 provider key、导入 skill、测试 provider 和 first-run ready 状态；`apps/desktop-shell/tests/desktop-shell.test.js` 覆盖静态 token。
+- 已刷新 `research/v4-release-manifest.latest.json`：`FIRST_RUN_PASS` 现在为 PASS；后续 Prompt Card UX 也已提升为 PASS；整体 `releaseReady:false`，剩余缺口是 `INSTALLER_PASS`、`LIVE_SITE_STABILITY_PASS`。
+- 已记录 OMX autoresearch-goal verdict `fail`，证据为最新 V4 manifest；该 fail 是阶段性验收结果，Codex goal 仍保持 active。
+- 已验证：`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`scripts/critic-v4.ps1` 按预期失败在 release-ready 未满足。
+
+## V4 进度 2026-06-07
+
+- 已按 V4 目标创建 OMX autoresearch-goal mission：`smart-prompt-v4-installable-beta-turn-v3-validat`。
+- 已补 V4 sidecar 生命周期：Tauri 新增 `get_local_service_status`、`start_local_service`、`stop_local_service`；desktop shell 增加 Stop Service；退出托盘菜单会尝试停止本地服务。
+- 已更新桌面壳测试：静态/交互测试覆盖 start/stop/status Tauri command；runtime test 覆盖 Tauri WebView、快捷键、本地服务启动和停止。
+- 已新增 V4 证据脚本：`scripts/check-v4-sidecar-service.ps1`、`scripts/write-v4-release-manifest.js`、`scripts/critic-v4.ps1`。
+- 已验证：`npm test` in `apps/desktop-shell` PASS；`cargo check` in `apps/desktop-shell/src-tauri` PASS；`scripts/check-v4-sidecar-service.ps1` PASS，生成 `research/v4-sidecar-service.latest.json`。
+- 已补 V4 本地数据闭环：local-service/store 新增 `schemaVersion` metadata、prompt body hash 去重、prompt/skill 搜索、`/data/backup`、`/data/restore`、`/metrics`，指标不保存 prompt 正文。
+- 已验证：`npm test` in `apps/local-service` PASS；`research/v4-release-manifest.latest.json` 现在 `LOCAL_DATA_PASS: PASS`。
+- 已生成 `research/v4-release-manifest.latest.json`：当前 `releaseReady:false`；`SIDECAR_SERVICE_PASS: PASS`、`FIRST_RUN_PASS: PASS`、`KEYCHAIN_PASS: PASS`、`PROMPT_CARD_UX_PASS: PASS`、`LOCAL_DATA_PASS: PASS`，其余门仍未全部满足。
+- 已记录 OMX professor-critic verdict `fail`，证据为当前 V4 manifest；这是正常的阶段性 fail，不是 blocked。
+
+## V3 release-ready 更新 2026-06-07
+
+- 按用户要求继续调用 multi-agent 执行 V3；Boole 作为只读验收/探查 agent 指出 Replit `/agent4` 比根页更适合作为 formal evidence，且不能放宽断言或使用 fallback。
+- 已将 `prototypes/browser-extension/tests/live-site-probe.test.js` 中 Replit formal URL 从 `/ai` 改为 `/agent4`。
+- 已验证 Replit 单站底层 formal probe PASS：正式扩展加载、`injectFallback:false`、`injectedProbe:false`、`focus.ok:true`、`visibleInputCount:1`、mascot 可见。
+- 已用 `.runtime/v2-live-chrome-profile` 跑通完整 V3 formal：8/8 display；ChatGPT/Claude/Gemini insert 与 no-auto-send 全通过；无 injected probe failures；无 redaction leaks。
+- 已更新 `research/v3-release-manifest.latest.json`：`pass:true`、`releaseReady:true`、`LIVE_SITE_FORMAL_PASS: PASS`。
+- 已验证：`npm test` in `prototypes/browser-extension` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v3-security.ps1` PASS。
+
+## V3 live-site formal 更新 2026-06-07
+
+- 本轮按用户要求调用 multi-agent 执行 V3；Pascal 作为专门验收 agent 做只读审查，结论是 `LIVE_SITE_FORMAL_PASS` 不能用 V2 5 站证据和 Claude 单站证据拼成 PASS。
+- 已新增/收紧 V3 live-site formal 证据链：`scripts/check-v3-live-sites.ps1`、`scripts/assert-v3-live-formal-evidence.js`、`prototypes/browser-extension/tests/live-site-probe.test.js` 的 `schemaVersion=v3-live-site-formal@1`、`formalExtensionOnly`、`injectFallback:false`、`noAutoSend`、`sites[]`、`summary` 字段。
+- `scripts/write-v3-release-manifest.js` 现在优先读取 `research/v3-live-site-formal.latest.json`；没有 V3 formal 报告或断言不通过时，`LIVE_SITE_FORMAL_PASS` 只能是 `PARTIAL`，不能从 legacy V2 evidence 升级为 PASS。
+- 已按验收 agent Dirac 的审查修掉过宽 Insert 依据：内容脚本现在通过 `documentElement.dataset.smartPromptInsert*` 发布只含状态/长度/策略的 DOM evidence；assertion 不再接受 `card-close` 作为 after-write 依据，只接受 `content-debug` 或 `dom-evidence`。
+- 最新 V3 formal 探针已生成 `research/v3-live-site-formal.latest.json`：正式扩展加载成功、`injectedProbe:false`、无 redaction leaks；8/8 display 通过；ChatGPT/Claude/Gemini 三站 insert 和 no-auto-send 均通过。
+- 已验证：`npm test` in `prototypes/browser-extension` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v3-security.ps1` PASS；release manifest 为 `releaseReady:true`。
+
+## 当前 V3 快照
+
+- 任务目标：按用户 V3 goal 调用多 agent 执行“高频 AI 输入工作流 Beta”，继续推进 P0/P1 验收链路。
+- 本轮多 agent 分工：Dewey 只读审查 Tauri 发布安全；Cicero 只读审查站点矩阵/Insert 加固；Sartre 作为专门验收 agent 输出 V3 acceptance matrix。
+- 已完成：provider keys 迁出 `settings.json` 到 credential vault；Tauri 配置 CSP、main-window capability 并移除未用 shell plugin；浏览器扩展收敛 8 站 Beta 矩阵；Insert 新增 `ok/verified/strategy/kind/reason` after-write 校验、`composed:true` 事件、失败不关卡片；Prompt Card 展示 skill basis 和 privacy summary；Insert/Save/Copy 记录反馈事件；新增 V3 skill routing 20 fixture 和 release manifest。
+- 验证通过：`scripts/critic-v3-security.ps1` PASS；`scripts/critic-v2.ps1 -RequireRuntimeEvidence` PASS；`cargo check` PASS；`scripts/check-v2-tauri-runtime.ps1` PASS。
+- 当前 reports：`research/v3-security-privacy.latest.json` PASS；`research/v3-tauri-security.latest.json` PASS；`research/v3-skill-routing.latest.json` PASS，20 fixtures hit rate = 1.0；`research/v3-live-site-formal.latest.json` PASS；`research/v3-release-manifest.latest.json` PASS 且 `releaseReady:true`。
+- 当前首要缺口已清空：`LIVE_SITE_FORMAL_PASS` 为 PASS；后续复验需注意 Claude 登录态和 Replit `/agent4` route 稳定性。
+- 边界：`docs/prd.md` 是用户已有未确认改动，本轮继续不触碰/不纳入提交范围。
+
 ## 当前任务
 
-- 任务目标：将当前 Smart Prompt 仓库发布到 GitHub 私有仓库 `mumu-github/smart-prompt`，刷新 README，并推送当前提交历史。
-- 成功标准：GitHub 私有仓库已创建；`README.md` 已提交；当前 HEAD 已推送到远程 `main`；不误提交用户未确认的 `docs/prd.md` 本地改动。
-- 范围边界：不创建 PR；不修改仓库可见性；不纳入 `docs/prd.md` 当前未确认改动。
+- 任务目标：实现 V3 P0-1：本地服务鉴权、CORS 收窄、evidence 脱敏和 V3 security critic。
+- 成功标准：受保护本地 API 需要 per-install token；恶意 Origin 不能访问；浏览器扩展和桌面壳能 bootstrap token 并带 auth 调用；V2/V3 evidence 文件脱敏；`scripts/critic-v3-security.ps1` 通过；V2 严格 critic 仍通过。
+- 范围边界：不处理 Tauri CSP/keychain/sidecar 发布化；不创建 PR；不纳入 `docs/prd.md` 当前未确认改动。
 
 ## 已完成
 
@@ -59,15 +127,20 @@
 
 ## 正在进行
 
-- GitHub 发布任务已完成：私有仓库 `https://github.com/mumu-github/smart-prompt` 已创建，当前 HEAD 已推送到远程 `main`。
-- 当前仍有用户本地改动 `docs/prd.md` 未提交，本次按范围保留不动。
+- V3 P0-1 已实现并验证：local-service 生成并保存 per-install token，`/auth/bootstrap` 只对可信 origin 暴露；`/settings`、`/generate`、`/prompts`、`/skills/*` 等受保护 API 需要 `Authorization: Bearer <token>` 或 `X-Smart-Prompt-Token`；CORS 不再 wildcard；浏览器扩展和桌面壳都会先 bootstrap token；新增 evidence redaction 模块、V3 security runtime check、V3 critic 和 `research/v3-security-privacy.latest.json`。
+- 已对现有 `research/v2-*.latest.json` runtime evidence 做机械脱敏，并确认 V2 strict critic 仍可读取通过。
+- 当前仍有用户本地改动 `docs/prd.md` 未提交，本轮继续保留不动。
 
 ## 下一步
 
-- 如需继续协作，可基于远程 `main` 做分支、邀请协作者或补充仓库设置。
+- V3 下一步建议做 P0-2：Tauri CSP/capability 收窄、provider key 从 JSON 迁移到 OS keychain 或加密存储，并补对应 security critic。
 
 ## 验证状态
 
+- 本轮 V3 P0-1 验证通过：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v3-security.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` PASS。
+- 本轮 V3 security report：`research/v3-security-privacy.latest.json` 为 `pass: true`，checks 包含 `healthPublic`、`unauthSettingsBlocked`、`evilOriginBlocked`、`trustedBootstrap`、`protectedBearerAccepted`、`protectedTokenHeaderAccepted`、`corsNoWildcard`、`redactionNoLeaks` 全部为 true。
+- 本轮 OMX autoresearch-goal `smart-prompt-v3-p0-1-local-service-auth-narrowed` 已记录 professor-critic `pass` verdict；`complete` reconciliation 因 active Codex goal 是用户直接创建的短 objective、不是 handoff 生成的长 objective 而拒绝 objective mismatch。未伪造快照；Codex goal 已通过 `update_goal(status=complete)` 完成。
+- 本轮有一次并行运行 V2 strict critic 和 V3 security critic 超时；原因是两个套件都包含浏览器 runtime/local-service 测试并争用本地端口。分开运行后两者均 PASS，不作为产品失败。
 - 本轮新版 Agnes 报告已通过：`research/v2-real-llm.latest.json` 为 `pass: true`，`dryRun: false`，provider/model 为 `agnes`/`agnes-2.0-flash`，`idea`、`continue`、`polish` 三项均 `ok: true`、`generatedBy: "llm"`、`mode` 与样本名一致，promptLength 分别大于 40。
 - 本轮校验用户 Agnes 报告时发现：用户运行的旧报告 `pass: true` 且三项均 `generatedBy: "llm"`，但 `polish` 样本返回的 `mode` 为 `continue`，不足以证明严格三模式。已补严 `check-v2-real-llm.ps1` 和 `critic-v2.ps1`，默认 `scripts/critic-v2.ps1` PASS；当前 Codex 进程没有 `AGNES_API_KEY`，无法代跑新版真实报告，需用户在有 key 的 PowerShell 中重新运行。
 - 本轮新增 Agnes provider：共享 LLM gateway 支持 `agnes`、`AGNES_API_KEY`、默认 `https://apihub.agnes-ai.com/v1` 和 `agnes-2.0-flash`；桌面壳暴露 Agnes Key；local-service/desktop-shell 测试和默认 `scripts/critic-v2.ps1` PASS；`scripts/check-v2-real-llm.ps1 -DryRun -Provider agnes` PASS；新版真实 Agnes 三模式报告已通过。

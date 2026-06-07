@@ -1,0 +1,114 @@
+{
+  "createdAt": "2026-06-07T12:01:25.727Z",
+  "pass": false,
+  "releaseReady": false,
+  "tagName": "v0.2.0-beta.1",
+  "acceptance": {
+    "CLEAN_GROUPED_COMMITS": {
+      "status": "PASS",
+      "evidence": [
+        "git log --format=%s -30",
+        "git diff --name-only --cached"
+      ],
+      "groupedCommitHits": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "docsPrdDirty": true,
+      "docsPrdStaged": false,
+      "recentSubjects": [
+        "Record V3 V4 evidence and release critics",
+        "Harden extension prompt card and adapters",
+        "Package desktop shell sidecar lifecycle",
+        "Harden local-service auth and data APIs",
+        "chore: record github publish",
+        "docs: refresh readme for v2",
+        "test(v2): record agnes runtime pass",
+        "test(v2): require explicit llm modes",
+        "feat(v2): add agnes llm provider",
+        "chore(v2): record real llm blocked audit",
+        "chore(v2): record llm quota retry",
+        "test(v2): record claude insert runtime evidence",
+        "chore(v2): record claude verification boundary",
+        "test(v2): exercise desktop shell service interactions",
+        "test(v2): prove extension offline fallback",
+        "feat(v2): bridge extension save to prompt library",
+        "feat(v2): add local library delete management",
+        "test(v2): make real llm verification configurable",
+        "test(v2): drive live probes from site adapters",
+        "test(v2): harden eight-site adapter coverage",
+        "test(v2): add claude cdp login helper",
+        "fix(v2): share local service settings for llm checks",
+        "feat(v2): harden auto llm provider fallback",
+        "test(v2): verify live and tauri runtime reports",
+        "test(v2): require runtime evidence reports",
+        "test(v2): support cdp attach for claude evidence",
+        "feat(v2): support provider-specific llm keys",
+        "test(v2): harden extension privacy context",
+        "feat(v2): add auto llm provider readiness",
+        "feat(v2): add multi-provider llm gateway"
+      ]
+    },
+    "BETA_RELEASE_PACKAGE": {
+      "status": "PARTIAL",
+      "evidence": [
+        "docs/releases/v0.2.0-beta.1.md",
+        "research/v5-beta-checksums.sha256",
+        "apps/desktop-shell/src-tauri/target/release/bundle"
+      ],
+      "tagName": "v0.2.0-beta.1",
+      "tagExists": false,
+      "installerArtifacts": [
+        "apps/desktop-shell/src-tauri/target/release/bundle/msi/Smart Prompt_0.2.0_x64_en-US.msi",
+        "apps/desktop-shell/src-tauri/target/release/bundle/nsis/Smart Prompt_0.2.0_x64-setup.exe"
+      ],
+      "checksumLines": 0,
+      "checksumsCoverInstallers": false
+    },
+    "NATIVE_SIDECAR_PASS": {
+      "status": "FAIL",
+      "evidence": [
+        "apps/local-service-sidecar",
+        "apps/desktop-shell/src-tauri/src/main.rs"
+      ]
+    },
+    "DIAGNOSTICS_PASS": {
+      "status": "FAIL",
+      "evidence": [
+        "apps/desktop-shell/src/app.js",
+        "apps/local-service/src/server.js"
+      ]
+    },
+    "PILOT_LOOP_PASS": {
+      "status": "FAIL",
+      "evidence": [
+        "research/v5-pilot-loop.md"
+      ]
+    }
+  },
+  "worktree": {
+    "dirtyFiles": [
+      "agent_memory/bugs.md",
+      "agent_memory/context.md",
+      "agent_memory/progress.md",
+      "docs/prd.md"
+    ],
+    "untrackedFiles": [
+      "research/v5-beta-manifest.latest.json",
+      "scripts/critic-v5.ps1",
+      "scripts/write-v5-beta-manifest.js"
+    ],
+    "stagedFiles": []
+  },
+  "evidenceHashes": {
+    "docs/releases/v0.2.0-beta.1.md": null,
+    "research/v5-beta-checksums.sha256": null,
+    "research/v5-pilot-loop.md": null,
+    "scripts/write-v5-beta-manifest.js": "10d3b676811a5e92f2aa77bded7a7b39adbfaa70a3c50846546caf38c2d949a8",
+    "scripts/critic-v5.ps1": "7b6dfebed2ae85957ab816aa1c2a674ffcb2a895dfbe882c5870ef002c7b1e9f"
+  }
+}

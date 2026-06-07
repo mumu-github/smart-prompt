@@ -1,8 +1,59 @@
 # 问题与风险
 
+## V4 完成后剩余风险 2026-06-07
+
+- 已解决：`INSTALLER_PASS` 现在有安装包 artifact 和安装后 runtime smoke 证据；安装后的桌面壳能从包内 `resources/smart-prompt-sidecar` 使用包内 `node.exe` 启动/停止 local-service，并通过 `/health`。
+- 已解决：旧 smoke 曾误把包内 `node.exe` 当成安装后的 app 启动；`scripts/check-v4-installer-smoke.ps1` 已改为优先选择 `smart-prompt-desktop.exe` 并排除 `node.exe`。
+- 已解决：V4 release manifest 已为 `releaseReady:true`，当前不再因安装包或 sidecar 源码路径阻塞。
+- 仍需作为后续 Beta 风险关注：`LIVE_SITE_STABILITY_PASS` 的 V4 通过方式是 `LOGIN_ROUTE_RECOVERY_PASS`，不是三次连续 full run；Claude 依赖 `.runtime/v2-live-chrome-profile` 登录态，Replit formal route 固定为 `https://replit.com/agent4`，站点改版时要重跑 formal evidence。
+- 仍需作为后续发布风险关注：当前 sidecar 打包了 Node runtime 和 JS service resources，已满足本机安装 smoke；后续若要更专业的发行形态，可再把 local-service 编成独立原生 sidecar executable。
+- 工具对账风险：OMX mission 和 ledger 已 `passed`，Codex goal 已 `complete`；但 `omx autoresearch-goal complete` 无 allow-mismatch 参数，因英文 handoff objective 与用户中文 Codex goal objective 不一致拒绝写 `completion.json`。这不是 V4 代码或证据门失败。
+
+## V4 剩余风险更新 2026-06-07
+
+- 已解决：`FIRST_RUN_PASS` 现在有机器证据，桌面壳能完成 provider key 保存、provider 测试、skill 导入、隐私边界展示与首启 ready 状态。
+- 已解决：`PROMPT_CARD_UX_PASS` 现在有机器证据，浏览器扩展 runtime demo 覆盖手动三模式、Retry、Insert、Copy/Save 既有路径、Undo 和反馈记录。
+- 仍未完成：`INSTALLER_PASS` 为 FAIL，因为没有 installer artifact，也没有安装/启动/退出/卸载 smoke evidence。
+- 仍未完成：`LIVE_SITE_STABILITY_PASS` 为 PARTIAL，目前只有 V3 单次 8 站 formal PASS，还缺连续 3 次或明确的登录态/route 恢复策略证据。
+- 当前不要标记 V4 Codex goal complete，因为 `research/v4-release-manifest.latest.json` 仍是 `releaseReady:false`。
+
+## V4 风险 2026-06-07
+
+- 当前 V4 未完成，不能标记 Codex goal complete：`research/v4-release-manifest.latest.json` 为 `releaseReady:false`。
+- 已解决一项：`SIDECAR_SERVICE_PASS` 已有机器证据，Tauri runtime 能启动并停止 local-service；后续仍需把该服务做成真正可发布 sidecar/安装包内资源，而不仅是 dev profile 中通过 `node` 启动脚本。
+- 主要缺口：`INSTALLER_PASS` 仍为 FAIL，当前没有 installer artifact，也没有安装/启动/退出/卸载 smoke evidence。
+- `FIRST_RUN_PASS` 仍为 PARTIAL：已有 provider key、provider status、skill import 和真实 LLM 报告证据，但缺完整首次启动向导、真实 provider 测试按钮和隐私边界验收。
+- `LIVE_SITE_STABILITY_PASS` 仍为 PARTIAL：已有 V3 单次 8 站 formal PASS，缺连续 3 次或登录态恢复策略证据。
+- 已解决：`PROMPT_CARD_UX_PASS` 已为 PASS；Prompt Card 具备手动三模式、Retry、Undo、LLM/template badge、Insert 状态和 feedback runtime evidence。
+- 已解决：`LOCAL_DATA_PASS` 已为 PASS；local-service 具备搜索、去重、备份、恢复、versioned metadata 和本地 metrics，且测试覆盖指标不保存 prompt 正文。
+
+## V3 release-ready 风险 2026-06-07
+
+- 已解决：`LIVE_SITE_FORMAL_PASS` 不再是 `PARTIAL`；当前 `research/v3-live-site-formal.latest.json` 为 `pass:true`，`research/v3-release-manifest.latest.json` 为 `releaseReady:true`。
+- 已解决：Replit `/ai` 无 visible input/display 的缺口；正式矩阵改用 `/agent4` 后 Replit display PASS，且没有放宽 required list、assertion、fallback 或 injected probe 规则。
+- 剩余运行环境风险：完整 formal 对 Claude 登录态有依赖；fresh profile 会失败在 Claude，复验时应使用 `.runtime/v2-live-chrome-profile` 或先完成 Claude 登录。
+- 剩余稳定性风险：`/agent4` route 的长期稳定性未长期观察；如果 Replit 改版，需要重新只读探查真实 Agent composer，而不是把普通营销输入框算作 PASS。
+
+## V3 live-site formal 风险 2026-06-07
+
+- 历史风险已解决：`LIVE_SITE_FORMAL_PASS` 曾为 `PARTIAL`，缺口是 Replit visible input/display；当前已通过 `/agent4` 和持久 Claude profile 跑到 PASS。
+- Insert strict evidence 已从 `card-close` 代理改为 DOM evidence；ChatGPT/Claude/Gemini 已进入 `insertPasses` 和 `noAutoSendPasses`。后续不要回退到“卡片关闭即 verified”的宽松口径。
+- 第三次 formal 探针出现 Windows 进程码 `-1073740791`，疑似 Chrome/CDP/profile 锁或浏览器崩溃；未覆盖上一份有效 partial report。不要把这次崩溃当产品 PASS/FAIL，只作为运行环境风险。
+- 机器上存在多个 Chrome 进程；后续跑 `-AttachCdp` 前需要确认 9232 CDP 可用，或使用干净 profile，避免 profile/port 冲突。
+- Replit `/ai` 页面在持久 profile 下仍无 visible input candidate；当前正式验收不要回退到 `/ai`，使用已验证的 `/agent4`。
+
+## 当前 V3 风险快照
+
+- 主要缺口已解决：`LIVE_SITE_FORMAL_PASS` 为 PASS，release manifest 已记录 8 站 display 和 3 站 insert/no-auto-send。
+- Tauri 风险：`withGlobalTauri` 仍为 `true`，但已用 main window capability 和 CSP 收窄；完全关闭需要引入 `@tauri-apps/api` bundler/import 路径。`start_local_service` 当前仍是 Rust custom command 调 Node 脚本，发布版建议改 sidecar 或安装路径服务。
+- 凭据风险：provider keys 已不再明文写入 `settings.json`，Windows 优先 DPAPI；非 Windows 或 DPAPI 不可用时走 AES-256-GCM fallback。未配置 `SMART_PROMPT_KEY_ENCRYPTION_SECRET` 时，fallback 仍弱于真正 OS keychain。
+- 浏览器 Insert 风险：已新增 strategy-based write、after-write verification、composed input/change events、失败不关卡片和反馈记录；生产站点 composer 仍可能变化，需要持续复跑 live-site formal。
+- 已解决：V3 Tauri/security 当前 critic 通过；V3 skill routing 20 fixtures hit rate = 1.0；V3 release manifest 已生成并为 `releaseReady:true`。
+
 ## 当前问题
 
-- 当前没有已知阻塞 V2 完成的 runtime 问题；Agnes 最新报告已严格证明真实 LLM 三模式。后续只需跑 strict critic 和 OMX/Codex goal 收尾。
+- V3 发布化前仍可继续收紧 Tauri：`withGlobalTauri` 仍为 `true`，但当前已有 CSP、main-window capability allowlist 和 IPC 命令最小化证据。
+- V3 发布化前仍可继续强化凭据：provider keys 已迁出明文 settings JSON，Windows 走 DPAPI；非 Windows fallback 仍弱于真正 OS keychain。
 
 - 当前无阻塞 V2 自动化代码路径推进的问题；完整 runtime 验收已经具备机器证据。
 - 本地 prompt/skill 库已支持导入、推荐、保存、列表和删除；当前不再是主要缺口。
@@ -41,6 +92,8 @@
 
 ## 已解决
 
+- V3 P0-1 已解决：本地服务不再使用 wildcard CORS 暴露受保护 API，受保护 API 需要 per-install auth token；浏览器扩展和桌面壳会 bootstrap token 并带 auth 调用；V3 security critic 已覆盖恶意 origin、无 token、Bearer token、`X-Smart-Prompt-Token` 和 no-wildcard CORS。
+- V3 P0-1 已解决：新增 evidence redaction 模块与 runtime check，V2/V3 runtime evidence 已机械脱敏，`research/v3-security-privacy.latest.json` 不保存 API key、token、完整 URL、profile path 或 prompt/value 正文。
 - 已补齐项目记忆文件。
 - 已完成研究文档、PRD、UI/UX 概念图。
 - 已完成一版不依赖 API billing 的内置 `image_gen` UI/UX 图，并本地贴入原始小人以避免模型重绘角色。
