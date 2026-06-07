@@ -6,7 +6,7 @@
 
 ## 0. 当前 Beta 状态
 
-v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；下一阶段重点是真实内测数据闭环和更多工具适配。
+v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA/source-dev 竖切验证阶段，下一阶段重点是真实内测数据闭环、桌面输入框实机写回和更多工具适配。
 
 ### 已完成证据
 
@@ -24,7 +24,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 - 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因。
 - 补 workBuddy、Trae、Doubao、DeepSeek 等新网页站点适配。
-- 补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案。
+- 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test 与 native sidecar snapshot 已通过，macOS AX 和真实桌面写回仍待完成。
 
 ## 1. 背景
 
@@ -335,7 +335,9 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 ### M3：桌面输入框
 
-- 状态：下一阶段。
+- 状态：进行中。
+- 已完成：Windows UIA self-test、开发路径 `GET /desktop/input-snapshot`、native sidecar `GET /desktop/input-snapshot`、Codex/Claude Code/Hermes 首批工具画像与隐私脱敏报告。
+- 待完成：安装包内 native sidecar 重新打包复验、macOS AX 初步支持、Codex/Claude Code/Hermes 真实桌面输入框写回、剪贴板 fallback 的安全提示。
 - 范围：Windows UIA 与 macOS AX 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 的安全提示。
 
 ### M4：评估与团队
@@ -367,6 +369,6 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 ## 16. 开放问题
 
 - workBuddy、Trae、Doubao、DeepSeek 的真实输入框 selector 需要通过内测验证，不能只靠静态假设。
-- Codex、Claude Code、Hermes 属于桌面/CLI 工具画像，是否进入 M3 UIA/AX 首批验收范围需要确认。
+- Codex、Claude Code、Hermes 已进入 M3 首批桌面/CLI 工具画像；仍需真实桌面输入框写回和 macOS AX 验收。
 - `gpt-image-2` 在用户实际 API 环境中的可用性仍受 billing/key 限制；项目内小人资产已可先用内置 image_gen 版本推进 UI。
 - 是否允许团队同步 prompts/skills，需要后续商业模式判断。

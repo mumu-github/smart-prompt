@@ -22,6 +22,13 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 
 该接口返回当前桌面输入快照，仍需要 per-install auth token。
 
+已新增 native sidecar 受保护接口：
+
+- `GET /desktop/input-snapshot`
+- `GET /desktop/input-snapshot?selfTest=1`
+
+当前 Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1`，并由 `scripts/check-m3-sidecar-desktop-input.ps1` 启动 native sidecar 做端到端 smoke。发布安装包如需声明 M3 完成，还要重新打包并用安装后 sidecar 复验。
+
 ## 工具画像
 
 当前 M3 首批桌面/CLI 工具画像：

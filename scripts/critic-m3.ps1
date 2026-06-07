@@ -40,6 +40,10 @@ Invoke-Step "M3 Windows UIA self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-input.ps1") -SelfTest -Report (Join-Path $Root "research/m3-desktop-input.latest.json")
 }
 
+Invoke-Step "M3 native sidecar desktop input self-test" {
+  powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-sidecar-desktop-input.ps1") -Report (Join-Path $Root "research/m3-sidecar-desktop-input.latest.json")
+}
+
 Invoke-Step "M3 beta adapter pilot" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-pilot-adapters.ps1") -Headless -LoginWaitSeconds 1 -NoAutoSendWaitMs 500 -Report (Join-Path $Root "research/m3-pilot-adapters.latest.json")
 }
@@ -54,6 +58,19 @@ if (-not $desktopReport.privacy.titleRedacted) { throw "desktop report title is 
 if (-not $desktopReport.privacy.elementValuesNotRead) { throw "desktop report may read element values" }
 if (($desktopReport | ConvertTo-Json -Depth 8).Contains("M3 UIA self test input")) { throw "desktop report leaked self-test input text" }
 
+$sidecarReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-sidecar-desktop-input.latest.json") | ConvertFrom-Json
+if ($sidecarReport.schemaVersion -ne "m3-sidecar-desktop-input@1") { throw "sidecar desktop report schema mismatch" }
+if (-not $sidecarReport.pass) { throw "sidecar desktop report did not pass" }
+if (-not $sidecarReport.checks.sidecarHealthy) { throw "sidecar desktop report did not prove sidecar health" }
+if (-not $sidecarReport.checks.snapshotOk) { throw "sidecar desktop report missing snapshot ok" }
+if (-not $sidecarReport.checks.codexProfile) { throw "sidecar desktop report missing codex profile" }
+if (-not $sidecarReport.checks.claudeCodeProfile) { throw "sidecar desktop report missing claude-code profile" }
+if (-not $sidecarReport.checks.hermesProfile) { throw "sidecar desktop report missing hermes profile" }
+if (-not $sidecarReport.checks.privacyTitleRedacted) { throw "sidecar desktop report title is not redacted" }
+if (-not $sidecarReport.checks.privacyValuesNotRead) { throw "sidecar desktop report may read element values" }
+if (($sidecarReport | ConvertTo-Json -Depth 10).Contains("M3 UIA self test input")) { throw "sidecar desktop report leaked self-test input text" }
+if (($sidecarReport | ConvertTo-Json -Depth 10).Contains("AppData\\Local\\Temp\\smart-prompt-m3-sidecar")) { throw "sidecar desktop report leaked temp data dir" }
+
 $pilotReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-pilot-adapters.latest.json") | ConvertFrom-Json
 if ($pilotReport.schemaVersion -ne "m3-pilot-adapters@1") { throw "pilot report schema mismatch" }
 foreach ($site in @("workbuddy", "trae", "doubao", "deepseek")) {
@@ -67,5 +84,7 @@ Assert-Text "docs/m3-desktop-input.md" "macOS AX"
 Assert-Text "docs/m3-desktop-input.md" "workBuddy"
 Assert-Text "packages/shared/desktop-tool-profiles.js" "claude-code"
 Assert-Text "apps/local-service/src/server.js" "/desktop/input-snapshot"
+Assert-Text "apps/local-service-sidecar/src/main.rs" "/desktop/input-snapshot"
+Assert-Text "scripts/check-m3-sidecar-desktop-input.ps1" "m3-sidecar-desktop-input@1"
 
 Write-Host "PASS: M3 pilot and desktop input critic checks passed."

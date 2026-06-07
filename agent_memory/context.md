@@ -6,7 +6,8 @@
 - 已创建 OMX mission：`smart-prompt-m3-pilot-metrics-and-desktop-input-`；critic 命令为 `scripts\critic-m3.ps1`。
 - M3 pilot 证据入口：`research/m3-pilot-adapters.latest.json`。当前四个 beta 站点均有真实 headless Chrome 探针数据，正式扩展加载成功，但 visible input 为 0，Insert 成功率为 0，失败原因是 `no visible input candidate`。
 - M3 Windows UIA 证据入口：`research/m3-desktop-input.latest.json`。当前 self-test 通过，Windows UIA 能枚举临时 TextBox 候选，并匹配 Codex 工具画像；报告不保存 raw title、raw element name 或 input value。
-- 新增 local-service 开发接口：`GET /desktop/input-snapshot`，受 auth 保护；native sidecar 尚未同步该能力。
+- 新增 local-service 开发接口与 native sidecar source/dev 接口：`GET /desktop/input-snapshot`，受 auth 保护；native sidecar 通过 Windows PowerShell UIA bridge 返回同一契约。
+- M3 native sidecar 证据入口：`research/m3-sidecar-desktop-input.latest.json`。当前 sidecar smoke 通过，证明 native sidecar health/auth 后可调用 `desktop/input-snapshot?selfTest=1` 并返回 1 个 UIA 输入候选。
 - macOS AX 当前只定义契约和 pending guard，未实现；不要把 M3 goal 标记 complete。
 
 ## V5 Beta 发布上下文 2026-06-07

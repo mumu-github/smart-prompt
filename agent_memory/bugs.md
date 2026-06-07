@@ -3,7 +3,8 @@
 ## M3 Pilot 与桌面输入识别风险 2026-06-07
 
 - 仍需内测修复：`research/m3-pilot-adapters.latest.json` 当前证明 workBuddy、Trae、Doubao、DeepSeek 四站正式扩展加载成功，但 Insert 成功率为 0；统一失败原因为 `no visible input candidate`，需要用登录态/正确 composer 路由继续定位。
-- 仍需产品化：Windows UIA 目前已有 self-test 和 JS local-service 开发路径接口，但 native sidecar 尚未实现等价桌面输入识别能力；安装包运行时仍不能算 M3 完成。
+- 已解决一项：Windows UIA 目前已有 self-test、JS local-service 开发路径接口，以及 native sidecar source/dev 等价 `/desktop/input-snapshot`；`research/m3-sidecar-desktop-input.latest.json` 为 `pass:true`。
+- 仍需产品化：安装包内 native sidecar 尚未重新打包复验 M3 `/desktop/input-snapshot`，因此安装版运行时仍不能算 M3 完成。
 - 仍需平台实现：macOS AX 仅在 `docs/m3-desktop-input.md` 中定义数据契约和 guarded pending 状态，未在 macOS 上实现或验证。
 - 仍需工具实测：Codex、Claude Code、Hermes 已有工具画像和 synthetic/self-test 覆盖，但还没有在真实这些工具窗口中做 UIA/AX Insert 或填入验证。
 - 隐私约束：UIA 报告不得保存窗口标题原文、元素名称原文、输入值、prompt 正文或整屏内容；当前 self-test 报告只保存长度/hash/候选能力。

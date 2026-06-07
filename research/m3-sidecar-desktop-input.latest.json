@@ -1,0 +1,76 @@
+﻿{
+    "schemaVersion":  "m3-sidecar-desktop-input@1",
+    "createdAt":  "2026-06-07T14:34:15.1751855Z",
+    "pass":  true,
+    "port":  17441,
+    "dataDir":  {
+                    "redacted":  "REDACTED_PATH",
+                    "length":  90,
+                    "sha256":  "3ceccf5dac5bed9a"
+                },
+    "checks":  {
+                   "sidecarHealthy":  true,
+                   "authRequired":  true,
+                   "snapshotOk":  true,
+                   "schema":  "m3-windows-uia@1",
+                   "pass":  true,
+                   "candidateCount":  1,
+                   "codexProfile":  true,
+                   "claudeCodeProfile":  true,
+                   "hermesProfile":  true,
+                   "privacyTitleRedacted":  true,
+                   "privacyValuesNotRead":  true
+               },
+    "snapshot":  {
+                     "candidates":  [
+                                        {
+                                            "automationIdHash":  "f2dc7a468a230f20",
+                                            "boundingRect":  {
+                                                                 "height":  72,
+                                                                 "width":  470,
+                                                                 "x":  154,
+                                                                 "y":  177
+                                                             },
+                                            "classNameHash":  "6fc5943e83514f41",
+                                            "controlType":  "ControlType.Pane",
+                                            "hasTextPattern":  false,
+                                            "hasValuePattern":  false,
+                                            "index":  0,
+                                            "isEnabled":  true,
+                                            "isKeyboardFocusable":  false,
+                                            "nameHash":  ""
+                                        }
+                                    ],
+                     "createdAt":  "2026-06-07T14:34:14.7694762Z",
+                     "foreground":  {
+                                        "detectedToolProfile":  "codex",
+                                        "pidPresent":  true,
+                                        "processName":  "powershell",
+                                        "titleHash":  "1ce2043d4a53175b",
+                                        "titleLength":  32
+                                    },
+                     "pass":  true,
+                     "platform":  "win32",
+                     "privacy":  {
+                                     "elementNamesHashed":  true,
+                                     "elementValuesNotRead":  true,
+                                     "promptTextNotRead":  true,
+                                     "titleRedacted":  true
+                                 },
+                     "probeOk":  true,
+                     "schemaVersion":  "m3-windows-uia@1",
+                     "selfTest":  true,
+                     "summary":  {
+                                     "candidateCount":  1,
+                                     "detectedToolProfile":  "codex",
+                                     "focusableCandidates":  0,
+                                     "textPatternCandidates":  0,
+                                     "valuePatternCandidates":  0
+                                 },
+                     "supportedToolProfiles":  [
+                                                   "codex",
+                                                   "claude-code",
+                                                   "hermes"
+                                               ]
+                 }
+}

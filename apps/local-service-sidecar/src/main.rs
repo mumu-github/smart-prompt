@@ -6,6 +6,7 @@ use std::{
     io::Write,
     net::TcpListener,
     path::{Path, PathBuf},
+    process::Command,
     time::{SystemTime, UNIX_EPOCH},
 };
 use tiny_http::{Header, Method, Request, Response, Server, StatusCode};
@@ -273,6 +274,10 @@ fn route(
         (Method::Get, "/diagnostics/export") => Ok((200, json!({
             "ok": true,
             "diagnostics": export_diagnostics(data_dir, port)?
+        }))),
+        (Method::Get, "/desktop/input-snapshot") => Ok((200, json!({
+            "ok": true,
+            "snapshot": desktop_input_snapshot(url)?
         }))),
         _ => Ok((404, json!({ "ok": false, "error": { "code": "not_found", "message": format!("{path}") } }))),
     }
@@ -772,6 +777,79 @@ fn clear_all_local_data(data_dir: &Path) -> Result<(), String> {
     fs::create_dir_all(data_dir).map_err(|error| error.to_string())?;
     let _ = get_auth_token(data_dir)?;
     Ok(())
+}
+
+fn desktop_input_snapshot(url: &str) -> Result<Value, String> {
+    if !cfg!(target_os = "windows") {
+        return Ok(json!({
+            "schemaVersion": "m3-desktop-input@1",
+            "createdAt": now(),
+            "platform": std::env::consts::OS,
+            "selfTest": url.contains("selfTest=1"),
+            "probeOk": false,
+            "pass": false,
+            "reason": "macos_ax_pending_or_unsupported_platform",
+            "supportedToolProfiles": ["codex", "claude-code", "hermes"],
+            "candidates": [],
+            "privacy": desktop_input_privacy()
+        }));
+    }
+
+    let script = find_m3_desktop_input_script()
+        .ok_or_else(|| "M3 desktop input probe script not found near native sidecar.".to_string())?;
+    let mut command = Command::new("powershell");
+    command
+        .arg("-NoProfile")
+        .arg("-ExecutionPolicy")
+        .arg("Bypass")
+        .arg("-File")
+        .arg(script)
+        .arg("-JsonOnly");
+    if url.contains("selfTest=1") {
+        command.arg("-SelfTest");
+    }
+    let output = command.output().map_err(|error| error.to_string())?;
+    if !output.status.success() {
+        return Err(format!(
+            "M3 desktop input probe failed: {}",
+            String::from_utf8_lossy(&output.stderr)
+        ));
+    }
+    let text = String::from_utf8_lossy(&output.stdout).trim_start_matches('\u{feff}').trim().to_string();
+    let mut value: Value = serde_json::from_str(&text).map_err(|error| format!("Invalid desktop input JSON: {error}"))?;
+    ensure_desktop_input_privacy(&mut value);
+    Ok(value)
+}
+
+fn desktop_input_privacy() -> Value {
+    json!({
+        "titleRedacted": true,
+        "elementNamesHashed": true,
+        "elementValuesNotRead": true,
+        "promptTextNotRead": true
+    })
+}
+
+fn ensure_desktop_input_privacy(value: &mut Value) {
+    if let Some(object) = value.as_object_mut() {
+        object.insert("privacy".to_string(), desktop_input_privacy());
+        object.entry("supportedToolProfiles".to_string()).or_insert_with(|| json!(["codex", "claude-code", "hermes"]));
+    }
+}
+
+fn find_m3_desktop_input_script() -> Option<PathBuf> {
+    let mut roots = Vec::new();
+    if let Ok(current_exe) = std::env::current_exe() {
+        roots.extend(current_exe.ancestors().map(Path::to_path_buf));
+    }
+    if let Ok(current_dir) = std::env::current_dir() {
+        roots.extend(current_dir.ancestors().map(Path::to_path_buf));
+    }
+    let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+    roots.extend(manifest_dir.ancestors().map(Path::to_path_buf));
+    roots.into_iter()
+        .map(|root| root.join("scripts").join("check-m3-desktop-input.ps1"))
+        .find(|candidate| candidate.exists())
 }
 
 fn record_prompt_history(data_dir: &Path, mode: &str, generated_by: &str) -> Result<(), String> {

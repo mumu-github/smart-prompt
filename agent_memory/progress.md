@@ -7,11 +7,15 @@
 - 已跑真实 beta pilot：正式扩展加载成功，4 个新站点均尝试 Insert；当前 Insert 成功率为 0，失败原因均为 `no visible input candidate`。这不是 M3 完成，只是明确了下一步需要登录态/路由/selector 修复。
 - 已新增 Windows UIA 桌面输入识别 self-test：`scripts/check-m3-desktop-input.ps1 -SelfTest` 会创建临时 TextBox 并用 UIA 枚举候选，生成 `research/m3-desktop-input.latest.json`；当前报告 `pass:true`，候选数 1，检测到 Codex 工具画像。
 - 已新增开发路径 local-service 接口：`GET /desktop/input-snapshot` 和 `?selfTest=1`，受 auth 保护；返回窗口 title hash/length、UIA 候选和工具画像，不返回标题原文、元素原文或输入值。
+- 已新增 native sidecar 等价接口：`GET /desktop/input-snapshot` 和 `?selfTest=1`；Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1`，非 Windows 返回 guarded pending。
+- 已新增 sidecar smoke：`scripts/check-m3-sidecar-desktop-input.ps1`，生成 `research/m3-sidecar-desktop-input.latest.json`；当前报告 `pass:true`，证明 native sidecar health/auth/snapshot 全链路可用且 dataDir 已脱敏。
+- 已同步 `docs/prd.md` 的 M3 状态：从“下一阶段”改为“进行中”，明确 Windows UIA/source-dev 与 native sidecar snapshot 已通过，macOS AX、安装包复验和真实桌面写回仍待完成。
 - 已新增 `packages/shared/desktop-tool-profiles.js`，覆盖 Codex、Claude Code、Hermes；VS Code/Windows Terminal/PowerShell/cmd 仅作为宿主，不会单独误报。
 - 已新增文档：`docs/m3-desktop-input.md`，明确 Windows UIA 已有可运行竖切，macOS AX 仍是 guarded/pending，不伪装完成。
-- 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`scripts/check-m3-desktop-input.ps1 -SelfTest` PASS；`scripts/check-m3-pilot-adapters.ps1 -Headless` PASS；`scripts/critic-m3.ps1` PASS。
-- 待提交：当前 M3 pilot/UIA/critic 改动尚未提交。
-- 仍未完成：native sidecar 尚未提供等价 `/desktop/input-snapshot`；macOS AX 未实现；新 beta 站点尚未在登录态/真实 composer 中拿到成功 Insert。
+- 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`scripts/check-m3-desktop-input.ps1 -SelfTest` PASS；`scripts/check-m3-sidecar-desktop-input.ps1` PASS；`scripts/check-m3-pilot-adapters.ps1 -Headless` PASS；`scripts/critic-m3.ps1` PASS。
+- 已记录 OMX professor-critic verdict `pass`，证据为 `research/m3-pilot-adapters.latest.json`、`research/m3-desktop-input.latest.json`、`research/m3-sidecar-desktop-input.latest.json`；Codex goal 仍保持 active，因为 M3 总目标尚未完成。
+- 本批收口范围：native sidecar M3 input snapshot、sidecar smoke、M3 critic/report、M3 文档与 PRD 状态同步。
+- 仍未完成：安装包内 native sidecar 尚未重新打包复验；macOS AX 未实现；新 beta 站点尚未在登录态/真实 composer 中拿到成功 Insert。
 
 ## V5 PRD 与发布资产收尾 2026-06-07
 
