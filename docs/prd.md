@@ -6,7 +6,7 @@
 
 ## 0. 当前 Beta 状态
 
-v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA 竖切验证阶段，源码/dev sidecar、安装包内 bundled sidecar snapshot、Windows 写回 self-test 与受控前台窗口写回协议均已通过。下一阶段重点是真实内测数据闭环、真实桌面工具窗口写回验收和更多工具适配。
+v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA 竖切验证阶段，源码/dev sidecar、安装包内 bundled sidecar snapshot、Windows 写回 self-test、三工具画像 self-test 与受控前台窗口写回协议均已通过。下一阶段重点是真实内测数据闭环、真实桌面工具窗口写回验收和更多工具适配。
 
 ### 已完成证据
 
@@ -24,7 +24,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 - 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因。
 - 补 workBuddy、Trae、Doubao、DeepSeek 等新网页站点适配。
-- 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test、Windows 写回 self-test、受控前台窗口写回 guard、source/dev sidecar snapshot/fill 和安装包 bundled sidecar snapshot/fill smoke 已通过，macOS AX 和真实工具窗口写回验收仍待完成。
+- 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test、三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回 guard、source/dev sidecar snapshot/fill 和安装包 bundled sidecar snapshot/fill smoke 已通过，真实工具窗口写回验收仍待完成；macOS AX 暂缓到后续跨平台阶段。
 
 ## 1. 背景
 
@@ -97,7 +97,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 ### P1
 
-- Windows UI Automation 与 macOS AXUIElement 桌面输入框识别。
+- Windows UI Automation 桌面输入框识别；macOS AXUIElement 暂缓到后续跨平台阶段。
 - skill embedding 匹配。
 - 针对 Cursor/Codex/Claude Code/Windsurf/Hermes 的专用 prompt 模板。
 - prompt 版本历史与收藏。
@@ -117,7 +117,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 - 识别当前浏览器 tab host、页面标题、输入框类型和位置。
 - 正式 allowlist：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit。
 - Beta 扩展 allowlist：workBuddy、Trae、Doubao、DeepSeek；进入真实内测后按失败原因调整 selector 和写入策略。
-- 桌面/CLI 工具画像：Codex、Claude Code、Hermes；M3 通过 Windows UIA/macOS AX 接入真实输入框。
+- 桌面/CLI 工具画像：Codex、Claude Code、Hermes；M3 当前通过 Windows UIA 接入真实输入框。
 - 对未知网页回退通用 `textarea/input/contenteditable/role=textbox` 检测。
 - 在桌面 app 中记录当前前台应用名称和窗口标题。
 
@@ -192,7 +192,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 - Native Sidecar：发布版使用 Rust executable 承载本地服务能力，负责启动恢复、端口占用恢复、健康检查和诊断出口。
 - Context Detector：输入框识别、状态判断、站点/app 画像。
 - Prompt Orchestrator：生成最终 prompt 请求。
-- Fill Engine：浏览器 DOM、UIA、AXUIElement、剪贴板 fallback。
+- Fill Engine：浏览器 DOM、UIA、剪贴板 fallback；AXUIElement 留作后续跨平台扩展。
 - Asset Pipeline：GPT Image 系列 + Remotion。
 
 ### v0.2 beta 运行链路
@@ -336,9 +336,9 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 ### M3：桌面输入框
 
 - 状态：进行中。
-- 已完成：Windows UIA self-test、Windows 写回 self-test、受控前台窗口写回协议、开发路径 `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、native sidecar `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、安装包 bundled native sidecar snapshot/fill smoke、Codex/Claude Code/Hermes 首批工具画像与隐私脱敏报告。
-- 待完成：macOS AX 初步支持、Codex/Claude Code/Hermes 真实工具窗口写回验收报告、剪贴板 fallback 的安全提示。
-- 范围：Windows UIA 与 macOS AX 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 的安全提示。
+- 已完成：Windows UIA self-test、Codex/Claude Code/Hermes 三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回协议、开发路径 `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、native sidecar `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、安装包 bundled native sidecar snapshot/fill smoke、隐私脱敏报告。
+- 待完成：Codex/Claude Code/Hermes 真实工具窗口写回验收报告、剪贴板 fallback 的安全提示。
+- 范围：Windows UIA 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 的安全提示。macOS AX 暂缓到后续跨平台阶段。
 
 ### M4：评估与团队
 
@@ -363,12 +363,12 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 | 竞品快速跟进 | 差异化变弱 | 把环境识别、skill routing 和填入路径做成核心能力 |
 | 新增站点改版频繁 | Insert 失败率上升 | 用 adapter 级 metrics 记录失败原因，优先修复高频失败 selector |
 | provider key 配置失败 | 三模式无法调用真实 LLM | 设置页明确 key 状态，保留 dry-run 降级但不计入真实 LLM 验收 |
-| 桌面输入框权限复杂 | M3 验收延迟 | 先做 Windows UIA/macOS AX POC，再按工具画像逐个收敛 |
+| 桌面输入框权限复杂 | M3 验收延迟 | 当前先做 Windows UIA POC 和真实工具窗口验收，macOS AX 暂缓到后续跨平台阶段 |
 | 发布资产分发不完整 | 内测用户安装成本高 | GitHub Release 上传 MSI/NSIS/checksum，并在 release notes 写清安装与诊断方式 |
 
 ## 16. 开放问题
 
 - workBuddy、Trae、Doubao、DeepSeek 的真实输入框 selector 需要通过内测验证，不能只靠静态假设。
-- Codex、Claude Code、Hermes 已进入 M3 首批桌面/CLI 工具画像；Windows self-test 写回链路和受控前台窗口写回协议已通过，仍需真实工具窗口写回报告和 macOS AX 验收。
+- Codex、Claude Code、Hermes 已进入 M3 首批桌面/CLI 工具画像；Windows 三工具画像 self-test、写回链路和受控前台窗口写回协议已通过，仍需真实工具窗口写回报告。
 - `gpt-image-2` 在用户实际 API 环境中的可用性仍受 billing/key 限制；项目内小人资产已可先用内置 image_gen 版本推进 UI。
 - 是否允许团队同步 prompts/skills，需要后续商业模式判断。

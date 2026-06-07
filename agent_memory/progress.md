@@ -2,13 +2,15 @@
 
 ## M3 桌面写回与 PRD 状态 2026-06-07
 
+- 用户已更新当前 M3 范围：先不做 macOS AX，本阶段只追 Windows UIA 桌面输入框识别与真实 adapter pilot 数据。
+- 本轮已新增三工具画像 self-test：`scripts/check-m3-desktop-input.ps1` 支持 `-SelfTestProfile codex|claude-code|hermes`；`scripts/check-m3-desktop-tool-profiles.ps1` 生成 `research/m3-desktop-tool-profiles.latest.json`，当前 `pass:true`，Codex/Claude Code/Hermes 三项均检测到正确工具画像、至少 1 个 UIA 候选，且不保存 raw title/raw input。
 - 本轮已补齐受控前台窗口写回协议：真实窗口写入必须显式传 `confirmForeground:true`，并同时匹配 `expectedTitleHash` 与 `expectedToolProfile`；不满足时返回 `writeAttempted:false`，避免误写当前前台窗口。
 - 已新增 guard evidence：`research/m3-desktop-fill-guard.latest.json` 当前按预期 `pass:false`、`reason:"foreground_title_hash_mismatch"`、`writeAttempted:false`，证明 title hash 不匹配时不会写入，也不会保存 raw text。
 - 本轮已补齐 Windows 桌面写回 self-test：`scripts/check-m3-desktop-fill.ps1` 生成 `research/m3-desktop-fill.latest.json`，当前 `pass:true`；写入策略为 `win32_set_window_text_fallback`，已验证写入和回读 hash/length，不保存写入文本原文，不自动提交。
 - 已补齐 local-service `POST /desktop/fill`，并在 `apps/local-service/tests/local-service.test.js` 覆盖 auth、工具画像、隐私脱敏和“不泄露 raw text”。
 - 已补齐 native sidecar `POST /desktop/fill`，并新增 `scripts/check-m3-sidecar-desktop-fill.ps1`；`research/m3-sidecar-desktop-fill.latest.json` 当前 `pass:true`。
 - 已补齐安装包 bundled sidecar fill smoke：`prepare-sidecar.js` 会打包 `check-m3-desktop-fill.ps1`，`research/m3-installed-sidecar-desktop-input.latest.json` 当前 `pass:true`，包含 `desktopFillFromInstalledSidecar`、`desktopFillSelfTestPass`、`desktopFillPrivacyRedacted`。
-- 已同步 `docs/prd.md` 与 `docs/m3-desktop-input.md`：PRD 当前是 v0.2 beta 收口版；M3 标记为进行中，Windows self-test/snapshot/fill、受控前台写回 guard 和 sidecar 链路已通过，但真实 Codex/Claude Code/Hermes 工具窗口写回和 macOS AX 仍待完成。
+- 已同步 `docs/prd.md` 与 `docs/m3-desktop-input.md`：PRD 当前是 v0.2 beta 收口版；M3 标记为进行中，Windows self-test/snapshot/fill、三工具画像 self-test、受控前台写回 guard 和 sidecar 链路已通过；真实 Codex/Claude Code/Hermes 工具窗口写回仍待完成，macOS AX 暂缓到后续跨平台阶段。
 - 已验证：`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`cargo check` in `apps/local-service-sidecar` PASS；`scripts/check-m3-desktop-fill.ps1 -SelfTest` PASS；`scripts/check-m3-sidecar-desktop-fill.ps1` PASS；`scripts/check-m3-installed-sidecar-desktop-input.ps1` PASS；`scripts/critic-m3.ps1` PASS；`git diff --check` PASS。
 - 当前 beta adapter pilot 仍是 4 次 Insert attempts、0 次成功；失败原因保持为 `no_input_candidates_on_loaded_page: 3` 和 `public_or_marketing_page_no_visible_composer: 1`，后续需要真实登录态/正确 composer 路由继续修 selector。
 
@@ -22,13 +24,13 @@
 - 已新增 native sidecar 等价接口：`GET /desktop/input-snapshot` 和 `?selfTest=1`；Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1`，非 Windows 返回 guarded pending。
 - 已新增 sidecar smoke：`scripts/check-m3-sidecar-desktop-input.ps1`，生成 `research/m3-sidecar-desktop-input.latest.json`；当前报告 `pass:true`，证明 native sidecar health/auth/snapshot 全链路可用且 dataDir 已脱敏。
 - 已补安装包内 M3 sidecar 复验：`apps/desktop-shell/scripts/prepare-sidecar.js` 会把 `check-m3-desktop-input.ps1` 打入 sidecar resources；`scripts/check-m3-installed-sidecar-desktop-input.ps1` 生成 `research/m3-installed-sidecar-desktop-input.latest.json`，当前 `pass:true`，证明安装后 app 能启动 bundled native sidecar 并调用 `desktop/input-snapshot?selfTest=1`。
-- 已同步 `docs/prd.md` 的 M3 状态：从“下一阶段”改为“进行中”，明确 Windows UIA/source-dev、native sidecar snapshot 和安装包 bundled sidecar snapshot 已通过，macOS AX 和真实桌面写回仍待完成。
+- 已同步 `docs/prd.md` 的 M3 状态：从“下一阶段”改为“进行中”，明确 Windows UIA/source-dev、native sidecar snapshot、安装包 bundled sidecar snapshot 和三工具画像 self-test 已通过；真实桌面写回仍待完成，macOS AX 暂缓。
 - 已新增 `packages/shared/desktop-tool-profiles.js`，覆盖 Codex、Claude Code、Hermes；VS Code/Windows Terminal/PowerShell/cmd 仅作为宿主，不会单独误报。
 - 已新增文档：`docs/m3-desktop-input.md`，明确 Windows UIA 已有可运行竖切，macOS AX 仍是 guarded/pending，不伪装完成。
-- 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`scripts/check-m3-desktop-input.ps1 -SelfTest` PASS；`scripts/check-m3-sidecar-desktop-input.ps1` PASS；`scripts/check-m3-installed-sidecar-desktop-input.ps1` PASS；`scripts/check-m3-pilot-adapters.ps1 -Headless` PASS；`scripts/critic-m3.ps1` PASS。
+- 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`scripts/check-m3-desktop-input.ps1 -SelfTest` PASS；`scripts/check-m3-desktop-tool-profiles.ps1` PASS；`scripts/check-m3-sidecar-desktop-input.ps1` PASS；`scripts/check-m3-installed-sidecar-desktop-input.ps1` PASS；`scripts/check-m3-pilot-adapters.ps1 -Headless` PASS；`scripts/critic-m3.ps1` PASS。
 - 已记录 OMX professor-critic verdict `pass`，证据为 `research/m3-pilot-adapters.latest.json`、`research/m3-desktop-input.latest.json`、`research/m3-sidecar-desktop-input.latest.json`、`research/m3-installed-sidecar-desktop-input.latest.json`；Codex goal 仍保持 active，因为 M3 总目标尚未完成。
 - 本批收口范围：安装包内 M3 desktop snapshot resource 打包、installed sidecar smoke、M3 critic/report、M3 文档与 PRD 状态同步。
-- 仍未完成：macOS AX 未实现；Codex/Claude Code/Hermes 真实桌面输入框写回未验收；新 beta 站点尚未在登录态/真实 composer 中拿到成功 Insert。
+- 仍未完成：Codex/Claude Code/Hermes 真实桌面输入框写回未验收；新 beta 站点尚未在登录态/真实 composer 中拿到成功 Insert；macOS AX 已按用户要求移出当前阶段。
 
 ## V5 PRD 与发布资产收尾 2026-06-07
 

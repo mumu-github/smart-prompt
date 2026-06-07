@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-fill@1",
-    "createdAt":  "2026-06-07T15:46:05.4159418Z",
+    "createdAt":  "2026-06-07T16:03:18.9444115Z",
     "pass":  true,
     "port":  17442,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  95,
-                    "sha256":  "57344d2d9c94af35"
+                    "sha256":  "c097d9abe37a0da8"
                 },
     "requestedText":  {
                           "length":  33,
@@ -32,7 +32,7 @@
                },
     "fill":  {
                  "confirmForeground":  false,
-                 "createdAt":  "2026-06-07T15:46:05.1179613Z",
+                 "createdAt":  "2026-06-07T16:03:18.5896893Z",
                  "pass":  true,
                  "platform":  "win32",
                  "privacy":  {

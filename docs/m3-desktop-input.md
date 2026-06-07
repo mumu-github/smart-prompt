@@ -4,16 +4,23 @@
 
 ## 当前范围
 
-M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输入框。当前第一条可验证竖切是 Windows UI Automation；macOS AXUIElement 仍是后续平台实现，不在 Windows 本机验收中伪装通过。
+M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输入框。当前可验证竖切只做 Windows UI Automation；macOS AXUIElement 暂缓，不作为当前 M3 验收门槛。
 
 ## Windows UIA
 
 已新增 `scripts/check-m3-desktop-input.ps1`：
 
 - `-SelfTest` 会创建临时 WinForms TextBox，并用 UI Automation 枚举输入候选。
+- `-SelfTestProfile codex|claude-code|hermes` 会用对应工具画像标题跑 self-test。
 - 默认模式会扫描当前前台窗口。
 - 输出 `research/m3-desktop-input.latest.json`。
 - 报告不保存窗口标题原文、元素名称原文或输入值，只保存长度、hash、候选数量和 UIA pattern 能力。
+
+已新增 `scripts/check-m3-desktop-tool-profiles.ps1`：
+
+- 依次验证 Codex、Claude Code、Hermes 三个 Windows UIA self-test 窗口。
+- 输出 `research/m3-desktop-tool-profiles.latest.json`。
+- 每个工具画像都必须检测到正确 `detectedToolProfile`、至少 1 个 UIA 输入候选，并且不能保存 raw title 或 raw input。
 
 已新增 `scripts/check-m3-desktop-fill.ps1`：
 
@@ -57,7 +64,7 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - `scripts/check-m3-installed-sidecar-desktop-input.ps1` 会构建桌面壳、静默安装 NSIS 包、从安装后的 app 启动 bundled native sidecar，再调用 `GET /desktop/input-snapshot?selfTest=1` 与 `POST /desktop/fill?selfTest=1`。
 - 证据文件：`research/m3-installed-sidecar-desktop-input.latest.json`，当前 `pass:true`。
 
-这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用，并且前台窗口写回已有受控确认协议；M3 仍未完成，因为还缺 macOS AX 和 Codex/Claude Code/Hermes 真实工具窗口写回验收报告。
+这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用，并且前台窗口写回已有受控确认协议；M3 仍未完成，因为还缺 Codex/Claude Code/Hermes 真实工具窗口写回验收报告。
 
 ## 工具画像
 
@@ -69,19 +76,9 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 
 VS Code、Windows Terminal、PowerShell、cmd 这类宿主进程不会单独触发工具画像，必须结合窗口标题或工具进程名，避免误报。
 
-## macOS AX
+## 暂缓项
 
-后续实现应复用同一数据契约：
-
-- `schemaVersion`
-- `platform`
-- `foreground`
-- `supportedToolProfiles`
-- `candidates`
-- `summary`
-- `privacy`
-
-macOS 侧需要通过 AXUIElement 获取当前前台应用、窗口和可编辑元素。未完成前，非 Windows 平台返回 guarded unsupported 状态，不作为 M3 完成证据。
+macOS AXUIElement 仍是后续跨平台方向，但本轮先不做识别实现，也不把 macOS 作为当前 M3 完成门槛。当前非 Windows 平台仍返回 guarded unsupported 状态。
 
 ## Pilot 数据
 

@@ -1,0 +1,81 @@
+﻿{
+    "schemaVersion":  "m3-desktop-tool-profiles@1",
+    "createdAt":  "2026-06-07T16:03:02.1983041Z",
+    "platform":  "win32",
+    "pass":  true,
+    "requiredProfiles":  [
+                             "codex",
+                             "claude-code",
+                             "hermes"
+                         ],
+    "summary":  {
+                    "profileCount":  3,
+                    "passedProfiles":  3,
+                    "rawLeakCount":  0
+                },
+    "profiles":  [
+                     {
+                         "id":  "codex",
+                         "ok":  true,
+                         "schemaVersion":  "m3-windows-uia@1",
+                         "detectedToolProfile":  "codex",
+                         "expectedToolProfileMatched":  true,
+                         "candidateCount":  1,
+                         "valuePatternCandidates":  0,
+                         "textPatternCandidates":  0,
+                         "focusableCandidates":  0,
+                         "titleHash":  "1ce2043d4a53175b",
+                         "titleLength":  32,
+                         "privacy":  {
+                                         "titleRedacted":  true,
+                                         "elementNamesHashed":  true,
+                                         "elementValuesNotRead":  true,
+                                         "rawTitleLeak":  false
+                                     }
+                     },
+                     {
+                         "id":  "claude-code",
+                         "ok":  true,
+                         "schemaVersion":  "m3-windows-uia@1",
+                         "detectedToolProfile":  "claude-code",
+                         "expectedToolProfileMatched":  true,
+                         "candidateCount":  1,
+                         "valuePatternCandidates":  0,
+                         "textPatternCandidates":  0,
+                         "focusableCandidates":  0,
+                         "titleHash":  "2e4fc3753f1434f5",
+                         "titleLength":  38,
+                         "privacy":  {
+                                         "titleRedacted":  true,
+                                         "elementNamesHashed":  true,
+                                         "elementValuesNotRead":  true,
+                                         "rawTitleLeak":  false
+                                     }
+                     },
+                     {
+                         "id":  "hermes",
+                         "ok":  true,
+                         "schemaVersion":  "m3-windows-uia@1",
+                         "detectedToolProfile":  "hermes",
+                         "expectedToolProfileMatched":  true,
+                         "candidateCount":  1,
+                         "valuePatternCandidates":  0,
+                         "textPatternCandidates":  0,
+                         "focusableCandidates":  0,
+                         "titleHash":  "cb687f6e770f2321",
+                         "titleLength":  33,
+                         "privacy":  {
+                                         "titleRedacted":  true,
+                                         "elementNamesHashed":  true,
+                                         "elementValuesNotRead":  true,
+                                         "rawTitleLeak":  false
+                                     }
+                     }
+                 ],
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "rawTitlesNotStored":  true
+                }
+}

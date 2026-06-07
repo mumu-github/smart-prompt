@@ -1,8 +1,9 @@
 ﻿{
     "schemaVersion":  "m3-windows-uia@1",
-    "createdAt":  "2026-06-07T15:45:48.8331229Z",
+    "createdAt":  "2026-06-07T16:02:50.9147885Z",
     "platform":  "win32",
     "selfTest":  true,
+    "selfTestProfile":  "codex",
     "probeOk":  true,
     "pass":  true,
     "foreground":  {
@@ -10,7 +11,9 @@
                        "pidPresent":  true,
                        "titleLength":  32,
                        "titleHash":  "1ce2043d4a53175b",
-                       "detectedToolProfile":  "codex"
+                       "detectedToolProfile":  "codex",
+                       "expectedToolProfile":  "codex",
+                       "expectedToolProfileMatched":  true
                    },
     "supportedToolProfiles":  [
                                   "codex",
@@ -22,15 +25,15 @@
                            "index":  0,
                            "controlType":  "ControlType.Pane",
                            "nameHash":  "",
-                           "automationIdHash":  "17eb535236c2eb53",
-                           "classNameHash":  "260b4ac818345a09",
+                           "automationIdHash":  "d8bfafcdbbdd275b",
+                           "classNameHash":  "796703c6b06e3656",
                            "isKeyboardFocusable":  false,
                            "isEnabled":  true,
                            "hasValuePattern":  false,
                            "hasTextPattern":  false,
                            "boundingRect":  {
-                                                "x":  128,
-                                                "y":  151,
+                                                "x":  50,
+                                                "y":  73,
                                                 "width":  470,
                                                 "height":  72
                                             }

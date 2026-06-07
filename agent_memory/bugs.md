@@ -2,11 +2,12 @@
 
 ## 当前 M3/V5 剩余风险 2026-06-07
 
-- 已解决：Windows snapshot/fill self-test、受控前台窗口写回 guard、local-service 接口、native sidecar 接口、安装包 bundled sidecar smoke 均已通过 M3 critic；报告只保留长度、hash、策略和布尔校验，不保存 raw prompt 或写入文本。
+- 已解决：Windows snapshot/fill self-test、Codex/Claude Code/Hermes 三工具画像 self-test、受控前台窗口写回 guard、local-service 接口、native sidecar 接口、安装包 bundled sidecar smoke 均已通过 M3 critic；报告只保留长度、hash、策略和布尔校验，不保存 raw prompt、窗口标题原文或写入文本。
 - 已解决一项安全边界：真实前台窗口写回现在必须显式确认前台窗口，并匹配 title hash 与工具画像；hash/profile 不匹配时不会写入，避免误填当前 Codex/Claude/Hermes 以外的窗口。
 - 仍需验证：Codex、Claude Code、Hermes 真实工具窗口写回尚未通过实机验收；当前 fill 证据来自临时 WinForms TextBox self-test，写入策略实际为 `win32_set_window_text_fallback`，不是目标工具的真实输入框成功。
-- 仍需实现：macOS AX 只有 PRD/文档中的契约与 guarded pending 方向，尚未实现或验收。
+- 当前不做：用户已明确先不做 macOS AX；不要把 macOS AX 作为当前 M3 完成门槛。
 - 仍需内测：workBuddy、Trae、Doubao、DeepSeek 当前 pilot Insert 成功率为 0；失败原因已经细化，但需要登录态和正确 composer 路由继续修 adapter selector。
+- 运行环境注意：本轮完整 M3 critic 曾在 beta adapter pilot 处出现一次 Chrome/CDP 崩溃码 `-1073740791`，单独复跑和第二次完整 critic 均通过；不要把这次 transient crash 当作 adapter 成功或失败结论。
 - 发布注意：本轮改动已重新构建本地安装包用于 M3 smoke，但不代表 GitHub 上 `v0.2.0-beta.1` release assets 已随之更新；若要对外发布这些 M3 fill 改动，应新建后续 beta tag/release 或显式替换 release assets。
 
 ## M3 Pilot 与桌面输入识别风险 2026-06-07
@@ -15,8 +16,8 @@
 - 已解决一项：Windows UIA 目前已有 self-test、JS local-service 开发路径接口，以及 native sidecar source/dev 等价 `/desktop/input-snapshot`；`research/m3-sidecar-desktop-input.latest.json` 为 `pass:true`。
 - 已解决一项：安装包内 native sidecar 已重新打包复验 M3 `/desktop/input-snapshot`；`research/m3-installed-sidecar-desktop-input.latest.json` 为 `pass:true`，且证明 bundled UIA probe 已进入 `resources/smart-prompt-sidecar/scripts/`。
 - 仍需产品化：当前只证明安装包 self-test snapshot，可识别 UIA 输入候选；真实 Codex/Claude Code/Hermes 桌面输入框写回和剪贴板 fallback 仍未验收。
-- 仍需平台实现：macOS AX 仅在 `docs/m3-desktop-input.md` 中定义数据契约和 guarded pending 状态，未在 macOS 上实现或验证。
-- 仍需工具实测：Codex、Claude Code、Hermes 已有工具画像和 synthetic/self-test 覆盖，但还没有在真实这些工具窗口中做 UIA/AX Insert 或填入验证。
+- 当前平台范围：macOS AX 暂缓，当前只推进 Windows UIA。
+- 仍需工具实测：Codex、Claude Code、Hermes 已有工具画像和 synthetic/self-test 覆盖，但还没有在真实这些工具窗口中做 UIA Insert 或填入验证。
 - 隐私约束：UIA 报告不得保存窗口标题原文、元素名称原文、输入值、prompt 正文或整屏内容；当前 self-test 报告只保存长度/hash/候选能力。
 
 ## V5 Beta 发布后剩余风险 2026-06-07

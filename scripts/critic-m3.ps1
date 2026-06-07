@@ -40,6 +40,10 @@ Invoke-Step "M3 Windows UIA self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-input.ps1") -SelfTest -Report (Join-Path $Root "research/m3-desktop-input.latest.json")
 }
 
+Invoke-Step "M3 Windows tool profile self-tests" {
+  powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-tool-profiles.ps1") -Report (Join-Path $Root "research/m3-desktop-tool-profiles.latest.json")
+}
+
 Invoke-Step "M3 Windows desktop fill self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -SelfTest -Report (Join-Path $Root "research/m3-desktop-fill.latest.json")
 }
@@ -73,6 +77,25 @@ if (-not ($desktopReport.supportedToolProfiles -contains "hermes")) { throw "des
 if (-not $desktopReport.privacy.titleRedacted) { throw "desktop report title is not redacted" }
 if (-not $desktopReport.privacy.elementValuesNotRead) { throw "desktop report may read element values" }
 if (($desktopReport | ConvertTo-Json -Depth 8).Contains("M3 UIA self test input")) { throw "desktop report leaked self-test input text" }
+
+$toolProfileReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-desktop-tool-profiles.latest.json") | ConvertFrom-Json
+if ($toolProfileReport.schemaVersion -ne "m3-desktop-tool-profiles@1") { throw "tool profile report schema mismatch" }
+if (-not $toolProfileReport.pass) { throw "tool profile report did not pass" }
+foreach ($profile in @("codex", "claude-code", "hermes")) {
+  if (-not ($toolProfileReport.requiredProfiles -contains $profile)) { throw "tool profile report missing required profile $profile" }
+  $profileResult = @($toolProfileReport.profiles | Where-Object { $_.id -eq $profile })[0]
+  if (-not $profileResult) { throw "tool profile report missing result for $profile" }
+  if (-not $profileResult.ok) { throw "tool profile self-test failed for $profile" }
+  if ($profileResult.detectedToolProfile -ne $profile) { throw "tool profile detection mismatch for $profile" }
+  if (-not $profileResult.expectedToolProfileMatched) { throw "tool profile expected match missing for $profile" }
+  if ([int]$profileResult.candidateCount -le 0) { throw "tool profile self-test has no UIA candidates for $profile" }
+  if (-not $profileResult.privacy.titleRedacted) { throw "tool profile title is not redacted for $profile" }
+  if (-not $profileResult.privacy.elementValuesNotRead) { throw "tool profile may read element values for $profile" }
+  if ($profileResult.privacy.rawTitleLeak) { throw "tool profile leaked raw title for $profile" }
+}
+if (-not $toolProfileReport.privacy.rawTitlesNotStored) { throw "tool profile report stores raw titles" }
+if (($toolProfileReport | ConvertTo-Json -Depth 10).Contains("Smart Prompt Claude Code UIA Self Test")) { throw "tool profile report leaked Claude Code raw title" }
+if (($toolProfileReport | ConvertTo-Json -Depth 10).Contains("Smart Prompt Hermes UIA Self Test")) { throw "tool profile report leaked Hermes raw title" }
 
 $desktopFillReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-desktop-fill.latest.json") | ConvertFrom-Json
 if ($desktopFillReport.schemaVersion -ne "m3-windows-fill@1") { throw "desktop fill report schema mismatch" }
@@ -164,9 +187,11 @@ if ($pilotReport.pilot.failureReasons.PSObject.Properties.Name.Count -eq 1 -and 
 }
 
 Assert-Text "docs/m3-desktop-input.md" "Windows UIA"
-Assert-Text "docs/m3-desktop-input.md" "macOS AX"
 Assert-Text "docs/m3-desktop-input.md" "workBuddy"
 Assert-Text "packages/shared/desktop-tool-profiles.js" "claude-code"
+Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "m3-desktop-tool-profiles@1"
+Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "claude-code"
+Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "hermes"
 Assert-Text "apps/local-service/src/server.js" "/desktop/input-snapshot"
 Assert-Text "apps/local-service/src/server.js" "/desktop/fill"
 Assert-Text "apps/local-service/src/server.js" "confirmForeground"

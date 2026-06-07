@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T15:46:00.1003150Z",
+    "createdAt":  "2026-06-07T16:03:13.3416656Z",
     "pass":  true,
     "port":  17441,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  90,
-                    "sha256":  "54be72b8e296238a"
+                    "sha256":  "03bae04c63ed554e"
                 },
     "checks":  {
                    "sidecarHealthy":  true,
@@ -24,14 +24,14 @@
     "snapshot":  {
                      "candidates":  [
                                         {
-                                            "automationIdHash":  "2b096ca1024607c5",
+                                            "automationIdHash":  "88abaaff024e4014",
                                             "boundingRect":  {
                                                                  "height":  72,
                                                                  "width":  470,
-                                                                 "x":  180,
-                                                                 "y":  203
+                                                                 "x":  206,
+                                                                 "y":  229
                                                              },
-                                            "classNameHash":  "6fc5943e83514f41",
+                                            "classNameHash":  "3c90891ab8e92fe6",
                                             "controlType":  "ControlType.Pane",
                                             "hasTextPattern":  false,
                                             "hasValuePattern":  false,
@@ -41,9 +41,11 @@
                                             "nameHash":  ""
                                         }
                                     ],
-                     "createdAt":  "2026-06-07T15:45:59.7787538Z",
+                     "createdAt":  "2026-06-07T16:03:13.0744877Z",
                      "foreground":  {
                                         "detectedToolProfile":  "codex",
+                                        "expectedToolProfile":  "codex",
+                                        "expectedToolProfileMatched":  true,
                                         "pidPresent":  true,
                                         "processName":  "powershell",
                                         "titleHash":  "1ce2043d4a53175b",
@@ -60,6 +62,7 @@
                      "probeOk":  true,
                      "schemaVersion":  "m3-windows-uia@1",
                      "selfTest":  true,
+                     "selfTestProfile":  "codex",
                      "summary":  {
                                      "candidateCount":  1,
                                      "detectedToolProfile":  "codex",

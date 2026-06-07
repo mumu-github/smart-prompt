@@ -1,7 +1,9 @@
 param(
   [string]$Report = "",
   [switch]$JsonOnly,
-  [switch]$SelfTest
+  [switch]$SelfTest,
+  [ValidateSet("codex", "claude-code", "hermes")]
+  [string]$SelfTestProfile = "codex"
 )
 
 $ErrorActionPreference = "Stop"
@@ -36,6 +38,15 @@ function Get-ToolProfile {
   return "unknown"
 }
 
+function Get-SelfTestTitle {
+  param([string]$Profile)
+  switch ($Profile) {
+    "claude-code" { return "Smart Prompt Claude Code UIA Self Test" }
+    "hermes" { return "Smart Prompt Hermes UIA Self Test" }
+    default { return "Smart Prompt Codex UIA Self Test" }
+  }
+}
+
 function Get-WindowTextSafe {
   param([IntPtr]$Handle)
   $builder = New-Object System.Text.StringBuilder 512
@@ -44,7 +55,7 @@ function Get-WindowTextSafe {
 }
 
 function Get-UiaSnapshot {
-  param([IntPtr]$Handle, [bool]$IsSelfTest)
+  param([IntPtr]$Handle, [bool]$IsSelfTest, [string]$ExpectedToolProfile = "")
 
   Add-Type -AssemblyName UIAutomationClient
   Add-Type -AssemblyName UIAutomationTypes
@@ -108,19 +119,23 @@ function Get-UiaSnapshot {
 
   $toolProfile = Get-ToolProfile -ProcessName $processName -WindowTitle $title
   $candidateCount = $elements.Count
+  $toolProfileMatched = -not $ExpectedToolProfile -or $toolProfile -eq $ExpectedToolProfile
   return [pscustomobject]@{
     schemaVersion = "m3-windows-uia@1"
     createdAt = (Get-Date).ToUniversalTime().ToString("o")
     platform = "win32"
     selfTest = $IsSelfTest
+    selfTestProfile = if ($IsSelfTest) { $ExpectedToolProfile } else { "" }
     probeOk = [bool]$rootElement
-    pass = [bool]($rootElement -and (-not $IsSelfTest -or $candidateCount -gt 0))
+    pass = [bool]($rootElement -and (-not $IsSelfTest -or ($candidateCount -gt 0 -and $toolProfileMatched)))
     foreground = [pscustomobject]@{
       processName = $processName
       pidPresent = $processId -gt 0
       titleLength = $title.Length
       titleHash = Get-HashText $title
       detectedToolProfile = $toolProfile
+      expectedToolProfile = $ExpectedToolProfile
+      expectedToolProfileMatched = [bool]$toolProfileMatched
     }
     supportedToolProfiles = @("codex", "claude-code", "hermes")
     candidates = $elements
@@ -178,7 +193,7 @@ public static class Win32Native {
     if ($SelfTest) {
       Add-Type -AssemblyName System.Windows.Forms
       $form = New-Object System.Windows.Forms.Form
-      $form.Text = "Smart Prompt Codex UIA Self Test"
+      $form.Text = Get-SelfTestTitle -Profile $SelfTestProfile
       $form.Width = 520
       $form.Height = 160
       $textbox = New-Object System.Windows.Forms.TextBox
@@ -196,7 +211,7 @@ public static class Win32Native {
       Start-Sleep -Milliseconds 250
       [void][System.Windows.Forms.Application]::DoEvents()
       $handle = $form.Handle
-      $reportObject = Get-UiaSnapshot -Handle $handle -IsSelfTest $true
+      $reportObject = Get-UiaSnapshot -Handle $handle -IsSelfTest $true -ExpectedToolProfile $SelfTestProfile
     } else {
       $handle = [Win32Native]::GetForegroundWindow()
       $reportObject = Get-UiaSnapshot -Handle $handle -IsSelfTest $false
