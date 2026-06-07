@@ -20,8 +20,6 @@
     "https://v0.dev/*",
     "https://v0.app/*",
     "https://replit.com/*",
-    "https://www.doubao.com/*",
-    "https://chat.deepseek.com/*",
     "http://127.0.0.1:17371/*",
     "http://localhost:17371/*"
   ],
@@ -38,9 +36,7 @@
         "https://bolt.new/*",
         "https://v0.dev/*",
         "https://v0.app/*",
-        "https://replit.com/*",
-        "https://www.doubao.com/*",
-        "https://chat.deepseek.com/*"
+        "https://replit.com/*"
       ],
       "js": [
         "src/site-adapters.js",

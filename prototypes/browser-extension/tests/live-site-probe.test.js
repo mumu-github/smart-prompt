@@ -5,6 +5,7 @@ const path = require("node:path");
 const { spawn } = require("node:child_process");
 const { startServer } = require("../../../apps/local-service/src/server");
 const { createStore } = require("../../../apps/local-service/src/store");
+const { collectRedactionLeaks, redactEvidence } = require("../../../packages/shared/evidence-redaction");
 const siteAdapters = require("../src/site-adapters.js");
 
 const chromePath = process.env.CHROME_PATH || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -14,6 +15,9 @@ const headless = process.env.SMART_PROMPT_LIVE_HEADLESS === "1";
 const extensionDir = path.resolve(__dirname, "..");
 const reportPath = process.env.SMART_PROMPT_LIVE_REPORT || "";
 const injectFallback = process.env.SMART_PROMPT_LIVE_INJECT_FALLBACK !== "0";
+const schemaVersion = process.env.SMART_PROMPT_LIVE_SCHEMA_VERSION || "v2-live-site-probe@1";
+const formalMode = schemaVersion === "v3-live-site-formal@1";
+const noAutoSendWaitMs = Number(process.env.SMART_PROMPT_LIVE_NO_AUTO_SEND_WAIT_MS || 2000);
 const profileDirOverride = process.env.SMART_PROMPT_LIVE_PROFILE_DIR
   ? path.resolve(process.env.SMART_PROMPT_LIVE_PROFILE_DIR)
   : "";
@@ -78,7 +82,7 @@ const sites = [
   { id: "bolt", name: "Bolt", url: "https://bolt.new/", requireInsert: false },
   { id: "v0", name: "v0", url: "https://v0.dev/chat", requireInsert: false },
   { id: "lovable", name: "Lovable", url: "https://lovable.dev/", requireInsert: false },
-  { id: "replit", name: "Replit", url: "https://replit.com/ai", requireInsert: false }
+  { id: "replit", name: "Replit", url: "https://replit.com/agent4", requireInsert: false }
 ];
 const activeSites = siteFilter.size
   ? sites.filter((site) => siteFilter.has(site.id))
@@ -207,6 +211,215 @@ async function waitFor(client, expression, predicate, timeout = 12000) {
   throw new Error(`Condition not met: ${expression}\nLast value: ${JSON.stringify(lastValue)}`);
 }
 
+function createNoAutoSendSource() {
+  return `
+function smartPromptProbeMessageCount() {
+  const selectors = [
+    "[data-message-author-role]",
+    "[data-testid*='conversation-turn']",
+    "[data-testid*='message']",
+    "article",
+    "[class*='message']"
+  ];
+  const seen = new Set();
+  for (const selector of selectors) {
+    for (const element of document.querySelectorAll(selector)) seen.add(element);
+  }
+  return seen.size;
+}
+function smartPromptProbeGenerationStarted() {
+  const selectors = [
+    "button[aria-label*='Stop']",
+    "button[aria-label*='stop']",
+    "button[aria-label*='停止']",
+    "[data-testid*='stop']",
+    "[data-testid*='Stop']"
+  ];
+  return selectors.some((selector) => document.querySelector(selector));
+}
+function smartPromptProbeVisibleInputTarget() {
+  const inputs = smartPromptProbeInputs()
+    .filter((element) => {
+      const rect = element.getBoundingClientRect();
+      const style = getComputedStyle(element);
+      const insideExtensionUi = Boolean(element.closest?.("#smart-prompt-card, #smart-prompt-mascot"));
+      return !insideExtensionUi && rect.width > 24 && rect.height > 18 && style.visibility !== "hidden" && style.display !== "none";
+    });
+  const active = document.activeElement;
+  if (window.__smartPromptDebugProbeFocus && inputs.includes(window.__smartPromptDebugProbeFocus)) {
+    return window.__smartPromptDebugProbeFocus;
+  }
+  if (active && inputs.includes(active)) return active;
+  return inputs[0] || null;
+}
+function smartPromptProbeInputValue(element) {
+  if (!element) return "";
+  return "value" in element ? element.value || "" : element.innerText || element.textContent || "";
+}
+function smartPromptProbeInsertEvidence() {
+  const data = document.documentElement.dataset || {};
+  return {
+    ok: data.smartPromptInsertOk === "true",
+    verified: data.smartPromptInsertVerified === "true",
+    kind: data.smartPromptInsertKind || "",
+    strategy: data.smartPromptInsertStrategy || "",
+    reason: data.smartPromptInsertReason || "",
+    valueLength: Number(data.smartPromptInsertValueLength || 0),
+    createdAt: Number(data.smartPromptInsertCreatedAt || 0)
+  };
+}
+`;
+}
+
+async function performInsertProbe(client, collectInputsSource) {
+  await waitFor(client, `(() => {
+    const mascot = document.getElementById("smart-prompt-mascot");
+    if (!mascot) return { ready: false, reason: "missing mascot" };
+    mascot.click();
+    return { ready: true };
+  })()`, (value) => value.ready, 2000);
+
+  const card = await waitFor(client, `(() => {
+    const output = document.querySelector("#smart-prompt-card .spc-output")?.value || "";
+    return {
+      card: Boolean(document.getElementById("smart-prompt-card")),
+      outputLength: output.length,
+      context: document.querySelector("#smart-prompt-card .spc-context")?.textContent || ""
+    };
+  })()`, (value) => value.card && value.outputLength > 80, 12000);
+
+  const started = await evaluate(client, `(() => {
+    ${collectInputsSource}
+    ${createNoAutoSendSource()}
+    const output = document.querySelector("#smart-prompt-card .spc-output")?.value || "";
+    const target = smartPromptProbeVisibleInputTarget();
+    const probe = {
+      submitEvents: 0,
+      requestSubmitCalls: 0,
+      formSubmitCalls: 0,
+      beforeUrl: location.href,
+      beforeMessageCount: smartPromptProbeMessageCount(),
+      beforeInputLength: smartPromptProbeInputValue(target).length
+    };
+    window.__smartPromptNoAutoSendProbe = probe;
+    window.__smartPromptNoAutoSendOutputPrefix = output.slice(0, 40);
+    window.__smartPromptNoAutoSendOutputLength = output.length;
+    if (!window.__smartPromptNoAutoSendSubmitListener) {
+      document.addEventListener("submit", () => {
+        if (window.__smartPromptNoAutoSendProbe) window.__smartPromptNoAutoSendProbe.submitEvents += 1;
+      }, true);
+      window.__smartPromptNoAutoSendSubmitListener = true;
+    }
+    if (!window.__smartPromptNoAutoSendPatched && typeof HTMLFormElement !== "undefined") {
+      const originalRequestSubmit = HTMLFormElement.prototype.requestSubmit;
+      const originalSubmit = HTMLFormElement.prototype.submit;
+      HTMLFormElement.prototype.requestSubmit = function smartPromptObservedRequestSubmit(...args) {
+        if (window.__smartPromptNoAutoSendProbe) window.__smartPromptNoAutoSendProbe.requestSubmitCalls += 1;
+        return originalRequestSubmit.apply(this, args);
+      };
+      HTMLFormElement.prototype.submit = function smartPromptObservedSubmit(...args) {
+        if (window.__smartPromptNoAutoSendProbe) window.__smartPromptNoAutoSendProbe.formSubmitCalls += 1;
+        return originalSubmit.apply(this, args);
+      };
+      window.__smartPromptNoAutoSendPatched = true;
+    }
+    document.querySelector('#smart-prompt-card button[data-action="insert"]')?.click();
+    const insertEvidence = smartPromptProbeInsertEvidence();
+    return {
+      opened: true,
+      cardOpened: Boolean(document.getElementById("smart-prompt-card")),
+      outputLength: output.length,
+      beforeMessageCount: probe.beforeMessageCount,
+      beforeInputLength: probe.beforeInputLength,
+      insertEvidence,
+      url: location.href
+    };
+  })()`);
+
+  const afterInsert = await waitFor(client, `(() => {
+    ${collectInputsSource}
+    ${createNoAutoSendSource()}
+    const target = smartPromptProbeVisibleInputTarget();
+    const value = smartPromptProbeInputValue(target);
+    const writerResult = window.__smartPromptDebug?.lastInsertResult || null;
+    const outputLength = window.__smartPromptNoAutoSendOutputLength || 0;
+    const outputPrefix = window.__smartPromptNoAutoSendOutputPrefix || "";
+    const outputPrefixContained = Boolean(outputPrefix && value.includes(outputPrefix));
+    const cardClosed = !document.getElementById("smart-prompt-card");
+    const insertEvidence = smartPromptProbeInsertEvidence();
+    const afterWriteVerified = Boolean(writerResult?.verified || insertEvidence.verified);
+    return {
+      outputLength,
+      valueLength: value.length,
+      outputPrefixContained,
+      cardClosed,
+      afterWriteVerified,
+      verifiedBy: writerResult?.verified ? "content-debug" : insertEvidence.verified ? "dom-evidence" : "",
+      writerResult,
+      insertEvidence,
+      url: location.href
+    };
+  })()`, (value) => value.cardClosed || value.afterWriteVerified || value.outputPrefixContained, 5000);
+
+  await sleep(noAutoSendWaitMs);
+
+  const noAutoSend = await evaluate(client, `(() => {
+    ${collectInputsSource}
+    ${createNoAutoSendSource()}
+    const probe = window.__smartPromptNoAutoSendProbe || {};
+    const target = smartPromptProbeVisibleInputTarget();
+    const value = smartPromptProbeInputValue(target);
+    const outputPrefix = window.__smartPromptNoAutoSendOutputPrefix || "";
+    const outputLength = window.__smartPromptNoAutoSendOutputLength || 0;
+    const cardClosed = !document.getElementById("smart-prompt-card");
+    const outputPrefixContained = Boolean(outputPrefix && value.includes(outputPrefix));
+    const insertEvidence = smartPromptProbeInsertEvidence();
+    const verifiedWriteRetained = Boolean(insertEvidence.verified && insertEvidence.valueLength > 0 && value.length >= insertEvidence.valueLength);
+    const inputRetained = outputPrefixContained || verifiedWriteRetained;
+    const navigationChanged = location.href !== probe.beforeUrl;
+    const messageCount = smartPromptProbeMessageCount();
+    const messageCountChanged = Number.isFinite(probe.beforeMessageCount) && messageCount !== probe.beforeMessageCount;
+    const nativeSubmitEventCount = probe.submitEvents || 0;
+    const requestSubmitCallCount = probe.requestSubmitCalls || 0;
+    const formSubmitCallCount = probe.formSubmitCalls || 0;
+    const assistantGenerationStarted = smartPromptProbeGenerationStarted();
+    const submitted = nativeSubmitEventCount > 0 || requestSubmitCallCount > 0 || formSubmitCallCount > 0;
+    return {
+      waitMs: ${JSON.stringify(noAutoSendWaitMs)},
+      outputLength,
+      valueLength: value.length,
+      outputPrefixContained,
+      insertEvidence,
+      cardClosed,
+      inputRetained,
+      retainedBy: outputPrefixContained ? "external-prefix" : verifiedWriteRetained ? "dom-evidence-length" : "",
+      navigationChanged,
+      messageCountChanged,
+      assistantGenerationStarted,
+      nativeSubmitEventCount,
+      requestSubmitCallCount,
+      formSubmitCallCount,
+      submitted,
+      passed: inputRetained && !navigationChanged && !messageCountChanged && !assistantGenerationStarted && !submitted
+    };
+  })()`);
+
+  return {
+    opened: true,
+    card,
+    started,
+    afterInsert,
+    noAutoSend,
+    filledOnly: Boolean(afterInsert.afterWriteVerified && noAutoSend.inputRetained && !noAutoSend.submitted),
+    ok: Boolean(
+      (afterInsert.cardClosed || noAutoSend.cardClosed)
+        && afterInsert.outputLength > 80
+        && afterInsert.afterWriteVerified
+        && noAutoSend.passed
+    )
+  };
+}
+
 async function probeSite(client, site) {
   await client.send("Page.navigate", { url: site.url });
   await client.send("Page.loadEventFired").catch(() => {});
@@ -300,6 +513,7 @@ async function probeSite(client, site) {
       return {
         mascot: Boolean(mascot),
         visible: Boolean(mascot && rect && rect.width > 20 && rect.height > 20),
+        rect: rect ? { width: Math.round(rect.width), height: Math.round(rect.height) } : null,
         state: mascot?.dataset?.state || "",
         transform: mascot?.style?.transform || "",
         debug: window.__smartPromptDebug || null
@@ -320,56 +534,22 @@ async function probeSite(client, site) {
 
   let insert;
   try {
-    insert = await waitFor(client, `(() => {
-      const mascot = document.getElementById("smart-prompt-mascot");
-      if (!mascot) return { ready: false, reason: "missing mascot" };
-      mascot.click();
-      return { ready: true };
-    })()`, (value) => value.ready, 2000);
-
-    const card = await waitFor(client, `(() => {
-      const output = document.querySelector("#smart-prompt-card .spc-output")?.value || "";
-      return {
-        card: Boolean(document.getElementById("smart-prompt-card")),
-        outputLength: output.length,
-        context: document.querySelector("#smart-prompt-card .spc-context")?.textContent || ""
-      };
-    })()`, (value) => value.card && value.outputLength > 80, 12000);
-
-    const afterInsert = await evaluate(client, `(() => {
-      const output = document.querySelector("#smart-prompt-card .spc-output")?.value || "";
-      document.querySelector('#smart-prompt-card button[data-action="insert"]')?.click();
-      const active = document.activeElement;
-      ${collectInputsSource}
-      const inputs = smartPromptProbeInputs()
-        .filter((element) => {
-          const rect = element.getBoundingClientRect();
-          const style = getComputedStyle(element);
-          return rect.width > 24 && rect.height > 18 && style.visibility !== "hidden" && style.display !== "none";
-        });
-      const target = active && inputs.includes(active) ? active : inputs[0];
-      const value = target ? ("value" in target ? target.value : target.textContent || "") : "";
-      return {
-        output,
-        value,
-        outputLength: output.length,
-        valueLength: value.length,
-        cardClosed: !document.getElementById("smart-prompt-card"),
-        url: location.href
-      };
-    })()`);
-
-    insert = {
-      opened: true,
-      card,
-      afterInsert,
-      ok: afterInsert.cardClosed && afterInsert.outputLength > 80 && afterInsert.value.includes(afterInsert.output.slice(0, 40))
-    };
+    insert = await performInsertProbe(client, collectInputsSource);
   } catch (error) {
     insert = { opened: false, ok: false, error: error.message };
   }
 
-  return { ...site, injectedProbe, passedDisplay: true, passedInsert: Boolean(insert.ok), initial, focusResult, display, insert };
+  return {
+    ...site,
+    injectedProbe,
+    passedDisplay: true,
+    passedInsert: Boolean(insert.ok),
+    initial,
+    focusResult,
+    display,
+    insert,
+    noAutoSend: insert.noAutoSend || null
+  };
 }
 
 async function probeSiteAfterInjection(client, site, initialBeforeInjection, focusBeforeInjection) {
@@ -420,6 +600,7 @@ async function probeSiteAfterInjection(client, site, initialBeforeInjection, foc
       return {
         mascot: Boolean(mascot),
         visible: Boolean(mascot && rect && rect.width > 20 && rect.height > 20),
+        rect: rect ? { width: Math.round(rect.width), height: Math.round(rect.height) } : null,
         state: mascot?.dataset?.state || "",
         transform: mascot?.style?.transform || "",
         debug: window.__smartPromptDebug || null
@@ -453,42 +634,7 @@ async function probeSiteAfterInjection(client, site, initialBeforeInjection, foc
 
   let insert;
   try {
-    await evaluate(client, `document.getElementById("smart-prompt-mascot")?.click()`);
-    const card = await waitFor(client, `(() => {
-      const output = document.querySelector("#smart-prompt-card .spc-output")?.value || "";
-      return {
-        card: Boolean(document.getElementById("smart-prompt-card")),
-        outputLength: output.length,
-        context: document.querySelector("#smart-prompt-card .spc-context")?.textContent || ""
-      };
-    })()`, (value) => value.card && value.outputLength > 80, 12000);
-    const afterInsert = await evaluate(client, `(() => {
-      const output = document.querySelector("#smart-prompt-card .spc-output")?.value || "";
-      document.querySelector('#smart-prompt-card button[data-action="insert"]')?.click();
-      ${collectInputsSource}
-      const inputs = smartPromptProbeInputs()
-        .filter((element) => {
-          const rect = element.getBoundingClientRect();
-          const style = getComputedStyle(element);
-          return rect.width > 24 && rect.height > 18 && style.visibility !== "hidden" && style.display !== "none";
-        });
-      const target = inputs[0];
-      const value = target ? ("value" in target ? target.value : target.textContent || "") : "";
-      return {
-        output,
-        value,
-        outputLength: output.length,
-        valueLength: value.length,
-        cardClosed: !document.getElementById("smart-prompt-card"),
-        url: location.href
-      };
-    })()`);
-    insert = {
-      opened: true,
-      card,
-      afterInsert,
-      ok: afterInsert.cardClosed && afterInsert.outputLength > 80 && afterInsert.value.includes(afterInsert.output.slice(0, 40))
-    };
+    insert = await performInsertProbe(client, collectInputsSource);
   } catch (error) {
     insert = { opened: false, ok: false, error: error.message };
   }
@@ -502,7 +648,8 @@ async function probeSiteAfterInjection(client, site, initialBeforeInjection, foc
     focusResult: focusBeforeInjection,
     injectedFocusResult: refocused,
     display,
-    insert
+    insert,
+    noAutoSend: insert.noAutoSend || null
   };
 }
 
@@ -529,6 +676,110 @@ async function injectProbeRuntime(client) {
 
   await evaluate(client, "window.__smartPromptProbeInjected = true");
   return true;
+}
+
+function getVisibleInputCount(result) {
+  return (result.initial?.candidates || []).filter((candidate) => candidate.visible).length;
+}
+
+function getFocusResult(result) {
+  return result.focusResult?.ok ? result.focusResult : result.injectedFocusResult || result.focusResult || {};
+}
+
+function getInputKind(focus) {
+  if (focus.contentEditable) return "contenteditable";
+  const tag = String(focus.tag || "").toLowerCase();
+  return tag || "unknown";
+}
+
+function toFormalSite(result, extensionLoad) {
+  const focus = getFocusResult(result);
+  const insert = result.insert || {};
+  const afterInsert = insert.afterInsert || {};
+  const noAutoSend = result.noAutoSend || insert.noAutoSend || null;
+  const requiredInsert = Boolean(result.requireInsert);
+  const formalExtensionLoaded = Boolean(extensionLoad.ok && !result.injectedProbe);
+  const displayPassed = Boolean(result.passedDisplay && formalExtensionLoaded);
+  const insertPassed = Boolean(requiredInsert && result.passedInsert && formalExtensionLoaded && insert.ok);
+
+  return {
+    id: result.id,
+    required: {
+      display: true,
+      insert: requiredInsert,
+      noAutoSend: requiredInsert
+    },
+    requiredDisplay: true,
+    requiredInsert,
+    formalExtensionLoaded,
+    injectedProbe: Boolean(result.injectedProbe),
+    focus: {
+      ok: Boolean(focus.ok),
+      visibleInputCount: getVisibleInputCount(result),
+      inputKind: getInputKind(focus)
+    },
+    display: {
+      passed: displayPassed,
+      mascot: Boolean(result.display?.mascot),
+      visible: Boolean(result.display?.visible),
+      rect: result.display?.rect || null,
+      adapterIdMatched: !result.display?.debug?.lastAdapterId || result.display.debug.lastAdapterId === result.id
+    },
+    insert: requiredInsert
+      ? {
+          required: true,
+          passed: insertPassed,
+          opened: Boolean(insert.opened),
+          cardOpened: Boolean(insert.card?.card || insert.started?.cardOpened),
+          outputLength: afterInsert.outputLength || insert.started?.outputLength || insert.card?.outputLength || 0,
+          afterValueLength: afterInsert.valueLength || 0,
+          outputPrefixContained: Boolean(afterInsert.outputPrefixContained),
+          cardClosed: Boolean(afterInsert.cardClosed || noAutoSend?.cardClosed),
+          afterWriteVerified: Boolean(afterInsert.afterWriteVerified),
+          verifiedBy: afterInsert.verifiedBy || "",
+          strategy: afterInsert.insertEvidence?.strategy || afterInsert.writerResult?.strategy || "",
+          kind: afterInsert.insertEvidence?.kind || afterInsert.writerResult?.kind || "",
+          reason: afterInsert.insertEvidence?.reason || afterInsert.writerResult?.reason || "",
+          filledOnly: Boolean(insert.filledOnly),
+          submitted: Boolean(noAutoSend?.submitted)
+        }
+      : {
+          required: false,
+          passed: null
+        },
+    noAutoSend: requiredInsert
+      ? {
+          required: true,
+          passed: Boolean(noAutoSend?.passed),
+          waitMs: noAutoSend?.waitMs || 0,
+          outputLength: noAutoSend?.outputLength || 0,
+          valueLength: noAutoSend?.valueLength || 0,
+          outputPrefixContained: Boolean(noAutoSend?.outputPrefixContained),
+          inputRetained: Boolean(noAutoSend?.inputRetained),
+          retainedBy: noAutoSend?.retainedBy || "",
+          navigationChanged: Boolean(noAutoSend?.navigationChanged),
+          messageCountChanged: Boolean(noAutoSend?.messageCountChanged),
+          assistantGenerationStarted: Boolean(noAutoSend?.assistantGenerationStarted),
+          nativeSubmitEventCount: noAutoSend?.nativeSubmitEventCount || 0,
+          requestSubmitCallCount: noAutoSend?.requestSubmitCallCount || 0,
+          formSubmitCallCount: noAutoSend?.formSubmitCallCount || 0,
+          submitted: Boolean(noAutoSend?.submitted)
+        }
+      : {
+          required: false,
+          passed: null
+        },
+    privacy: {
+      urlRedacted: true,
+      profilePathRedacted: true,
+      promptTextRedacted: true,
+      tokenRedacted: true
+    },
+    evidence: {
+      sourceReport: reportPath ? path.basename(reportPath) : "stdout",
+      createdAt: result.createdAt || ""
+    }
+  };
 }
 
 (async () => {
@@ -607,13 +858,34 @@ async function injectProbeRuntime(client) {
   const insertPasses = results.filter((item) => item.requireInsert && item.passedInsert).map((item) => item.id);
   const displayRequired = siteFilter.size ? activeSites.length : 5;
   const requiredInsertIds = activeSites.filter((site) => site.requireInsert).map((site) => site.id);
+  const requiredDisplayIds = activeSites.map((site) => site.id);
+  const formalSites = results.map((result) => toFormalSite(result, extensionLoad));
+  const formalDisplayPasses = formalSites.filter((site) => site.display.passed).map((site) => site.id);
+  const formalInsertPasses = formalSites.filter((site) => site.required.insert && site.insert.passed).map((site) => site.id);
+  const noAutoSendPasses = formalSites.filter((site) => site.required.noAutoSend && site.noAutoSend.passed).map((site) => site.id);
+  const displayMissing = requiredDisplayIds.filter((id) => !formalDisplayPasses.includes(id));
+  const insertMissing = requiredInsertIds.filter((id) => !formalInsertPasses.includes(id));
+  const noAutoSendMissing = requiredInsertIds.filter((id) => !noAutoSendPasses.includes(id));
+  const injectedProbeFailures = formalSites.filter((site) => site.injectedProbe).map((site) => site.id);
+  const formalPass = Boolean(
+    extensionLoad.ok
+      && displayMissing.length === 0
+      && insertMissing.length === 0
+      && noAutoSendMissing.length === 0
+      && injectedProbeFailures.length === 0
+  );
   const report = {
+    schemaVersion,
     createdAt: new Date().toISOString(),
+    mode: formalMode ? "LIVE_SITE_FORMAL_PASS" : "LIVE_SITE_PROBE",
+    pass: formalMode ? formalPass : displayPasses >= displayRequired && requiredInsertIds.every((id) => insertPasses.includes(id)),
+    formalExtensionOnly: formalMode,
     attachCdp,
     remotePort,
     headless,
     injectFallback,
     loginWaitMs,
+    noAutoSendWaitMs,
     siteFilter: Array.from(siteFilter),
     profilePersistent: Boolean(profileDirOverride),
     profileDir: profileDirOverride || "",
@@ -622,15 +894,40 @@ async function injectProbeRuntime(client) {
     displayRequired,
     requiredInsertIds,
     insertPasses,
+    requirements: {
+      displaySiteIds: requiredDisplayIds,
+      insertSiteIds: requiredInsertIds,
+      noAutoSendSiteIds: requiredInsertIds,
+      requireFormalExtension: formalMode,
+      requireInjectedProbeFalse: formalMode,
+      insertMustNotSubmit: true,
+      redactionRequired: true
+    },
+    summary: {
+      displayPasses: formalDisplayPasses,
+      insertPasses: formalInsertPasses,
+      noAutoSendPasses,
+      displayMissing,
+      insertMissing,
+      noAutoSendMissing,
+      injectedProbeFailures,
+      anyInjectedProbe: injectedProbeFailures.length > 0,
+      redactionLeaks: []
+    },
+    sites: formalSites,
     results
   };
+  const safeReport = redactEvidence(report);
+  const redactionLeaks = collectRedactionLeaks(safeReport);
+  safeReport.summary.redactionLeaks = redactionLeaks;
+  safeReport.pass = Boolean(safeReport.pass && redactionLeaks.length === 0);
   if (reportPath) {
-    fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+    fs.writeFileSync(reportPath, JSON.stringify(safeReport, null, 2));
   }
-  console.log(JSON.stringify(report, null, 2));
+  console.log(JSON.stringify(safeReport, null, 2));
 
   const missingInsert = requiredInsertIds.filter((id) => !insertPasses.includes(id));
-  if (displayPasses < displayRequired || missingInsert.length > 0) {
+  if ((formalMode && !safeReport.pass) || (!formalMode && (displayPasses < displayRequired || missingInsert.length > 0))) {
     process.exitCode = 1;
   }
 })();

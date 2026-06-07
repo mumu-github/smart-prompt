@@ -53,7 +53,24 @@
       id: "replit",
       tool: "Replit",
       hostnames: ["replit.com"],
-      inputSelectors: ['textarea[placeholder*="Replit"]', 'textarea[placeholder*="Ask"]', 'textarea[aria-label*="Ask"]', '[data-cy*="ai"] textarea', '[data-testid*="ai"] textarea', '[contenteditable="true"][role="textbox"]', '[role="textbox"]', 'textarea'],
+      inputSelectors: [
+        'textarea[placeholder*="Replit"]',
+        'textarea[placeholder*="Ask"]',
+        'textarea[placeholder*="Describe"]',
+        'textarea[placeholder*="Build"]',
+        'textarea[aria-label*="Ask"]',
+        'textarea[aria-label*="prompt"]',
+        '[data-cy*="ai"] textarea',
+        '[data-testid*="ai"] textarea',
+        '[data-testid*="prompt"] textarea',
+        '[aria-label*="prompt"][contenteditable="true"]',
+        '[aria-label*="Ask"][contenteditable="true"]',
+        '[contenteditable="plaintext-only"]',
+        '[contenteditable="true"][role="textbox"]',
+        '[role="textbox"]',
+        'textarea',
+        '[contenteditable="true"]'
+      ],
       insertStrategy: "textarea-first"
     }
   ]);
@@ -82,37 +99,102 @@
   function setNativeValue(element, value) {
     if (!element || !("value" in element)) return false;
     const tag = element.tagName.toLowerCase();
-    const prototype = tag === "textarea" ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype;
+    const prototype = tag === "textarea" && typeof HTMLTextAreaElement !== "undefined"
+      ? HTMLTextAreaElement.prototype
+      : typeof HTMLInputElement !== "undefined"
+        ? HTMLInputElement.prototype
+        : element.constructor?.prototype;
     const setter = Object.getOwnPropertyDescriptor(prototype, "value")?.set;
     if (setter) setter.call(element, value);
     else element.value = value;
-    element.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertText", data: value }));
-    element.dispatchEvent(new Event("change", { bubbles: true }));
+    dispatchInputEvents(element, value);
     return true;
   }
 
   function setContentEditableValue(element, value) {
-    if (!element || !element.isContentEditable) return false;
-    element.focus();
+    if (!isEditableElement(element)) return false;
+    element.focus?.();
     element.textContent = value;
-    const selection = window.getSelection();
-    if (selection) {
+    const selection = typeof window !== "undefined" && window.getSelection ? window.getSelection() : null;
+    if (selection && typeof document !== "undefined" && document.createRange) {
       const range = document.createRange();
       range.selectNodeContents(element);
       range.collapse(false);
       selection.removeAllRanges();
       selection.addRange(range);
     }
-    element.dispatchEvent(new InputEvent("input", { bubbles: true, inputType: "insertText", data: value }));
-    element.dispatchEvent(new Event("change", { bubbles: true }));
+    dispatchInputEvents(element, value);
     return true;
   }
 
-  function writeInput(element, value) {
-    element?.focus();
-    if (setNativeValue(element, value)) return true;
-    if (setContentEditableValue(element, value)) return true;
-    return false;
+  function createEvent(type, value) {
+    if (type === "input" && typeof InputEvent !== "undefined") {
+      return new InputEvent("input", { bubbles: true, composed: true, inputType: "insertText", data: value });
+    }
+    if (typeof Event !== "undefined") {
+      return new Event(type, { bubbles: true, composed: true });
+    }
+    return { type, bubbles: true, composed: true, inputType: type === "input" ? "insertText" : undefined, data: value };
+  }
+
+  function dispatchInputEvents(element, value) {
+    element.dispatchEvent?.(createEvent("input", value));
+    element.dispatchEvent?.(createEvent("change", value));
+  }
+
+  function isEditableElement(element) {
+    return Boolean(element && (element.isContentEditable || element.getAttribute?.("contenteditable") === "true"));
+  }
+
+  function readInputValue(element) {
+    if (!element) return "";
+    const tag = element.tagName?.toLowerCase?.() || "";
+    if (isEditableElement(element) && tag !== "textarea" && tag !== "input") {
+      return element.innerText || element.textContent || "";
+    }
+    if ("value" in element) return element.value || "";
+    return element.innerText || element.textContent || "";
+  }
+
+  function attemptWrite(kind, element, value) {
+    const wrote = kind === "native"
+      ? setNativeValue(element, value)
+      : setContentEditableValue(element, value);
+    if (!wrote) return { ok: false, verified: false, kind, reason: "unsupported_target" };
+    const actual = readInputValue(element);
+    const verified = actual === String(value);
+    return {
+      ok: verified,
+      verified,
+      kind,
+      reason: verified ? "after_write_verified" : "after_write_mismatch",
+      valueLength: String(value).length
+    };
+  }
+
+  function getWritePlan(adapter, element) {
+    const strategy = adapter?.insertStrategy || "contenteditable-or-textarea";
+    if (strategy === "contenteditable") return ["contenteditable", "native"];
+    if (strategy === "textarea-first") return ["native", "contenteditable"];
+    if (isEditableElement(element)) return ["contenteditable", "native"];
+    return ["native", "contenteditable"];
+  }
+
+  function writeInput(element, value, adapter) {
+    element?.focus?.();
+    const strategy = adapter?.insertStrategy || "contenteditable-or-textarea";
+    for (const kind of getWritePlan(adapter, element)) {
+      const result = attemptWrite(kind, element, value);
+      if (result.verified) return { ...result, strategy };
+    }
+    return {
+      ok: false,
+      verified: false,
+      kind: "",
+      strategy,
+      reason: "no_supported_write_strategy",
+      valueLength: String(value || "").length
+    };
   }
 
   const api = {
@@ -120,6 +202,7 @@
     detectSiteAdapter,
     queryInputCandidates,
     querySelectorAllDeep,
+    readInputValue,
     writeInput
   };
 

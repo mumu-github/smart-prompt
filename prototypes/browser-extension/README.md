@@ -4,13 +4,13 @@
 
 ## 已实现
 
-- allowlist 网页 LLM/Agent 输入框检测：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit、Doubao、DeepSeek。
+- allowlist 网页 LLM/Agent 输入框检测：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit。
 - 悬浮小人入口：使用项目内既有小人六态 PNG，不重新设计角色。
 - 三模式判断：空输入求思路、半成品续写、完整输入优化。
 - Prompt card：Refresh、Edit、Copy、Save、Insert。
 - 一键填入：DOM 写入并触发 `input` / `change`，不自动发送。
 - 本地 skill 导入：options 页支持粘贴或选择 Markdown / rules 文本，默认只作为文本建议引用。
-- V2 本地服务桥接：优先请求 `http://127.0.0.1:17371/generate`，服务不可用时回退本地模板。
+- V3 本地服务桥接：先向可信本地服务执行 `/auth/bootstrap`，再带 `Authorization: Bearer <token>` 请求 `http://127.0.0.1:17371/generate`；服务不可用时回退本地模板。
 - 站点适配器：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit。
 - 无依赖测试：prompt engine 和 manifest 结构校验。
 
@@ -40,10 +40,13 @@ npm start
 
 再加载扩展。Prompt Card 会优先走真实 LLM gateway；若未配置 API key，则本地服务会按 `allowTemplateFallback` 返回模板结果。
 
-V2 bridge behavior:
+V3 bridge behavior:
 - Generate calls `POST /generate` first and falls back to the extension template when the desktop/local service is unavailable.
 - Save calls `POST /prompts` first so saved prompts enter the local prompt library; if the service is offline, it falls back to `chrome.storage.local`.
 - Insert only writes into the active input box. It does not submit, press Enter, or upload whole-page text by default.
+- The local bridge bootstraps a per-install auth token and does not rely on wildcard CORS.
+- Insert records an after-write verification result with strategy, input kind, and reason. A failed verification leaves the card open.
+- Prompt cards show a skill basis line and a privacy summary based on origin/pathKind only, without page title or page body.
 
 ## 当前边界
 

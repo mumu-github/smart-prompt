@@ -25,10 +25,18 @@ async function removeDirWithRetry(dir) {
   }
 }
 
-async function getJson(url) {
-  const response = await fetch(url);
+async function getJson(url, authToken = "") {
+  const response = await fetch(url, {
+    headers: authToken ? { Authorization: `Bearer ${authToken}` } : {}
+  });
   if (!response.ok) throw new Error(`GET ${url} failed: ${response.status}`);
   return response.json();
+}
+
+async function getServiceToken(serviceUrl = "http://127.0.0.1:17371") {
+  const body = await getJson(`${serviceUrl}/auth/bootstrap`);
+  assert.ok(body.auth?.token, "local service should provide a bootstrap auth token");
+  return body.auth.token;
 }
 
 async function waitForLocalService() {
@@ -45,11 +53,11 @@ async function waitForLocalService() {
   return false;
 }
 
-async function waitForPromptCount(count) {
+async function waitForPromptCount(count, authToken) {
   const deadline = Date.now() + 5000;
   while (Date.now() < deadline) {
     try {
-      const prompts = await getJson("http://127.0.0.1:17371/prompts");
+      const prompts = await getJson("http://127.0.0.1:17371/prompts", authToken);
       if (prompts.ok && prompts.prompts.length >= count) return prompts;
     } catch {
       // Save is still crossing the extension-to-service bridge.
@@ -61,7 +69,7 @@ async function waitForPromptCount(count) {
 
 function startServiceForTest(dataDir) {
   return new Promise((resolve, reject) => {
-    const server = startServer({ port: 17371, store: createStore(dataDir) });
+    const server = startServer({ port: 17371, store: createStore(dataDir), allowedOrigins: ["null", "file://"] });
     server.once("listening", () => resolve({ server, external: false }));
     server.once("error", async (error) => {
       if (error.code === "EADDRINUSE" && await waitForLocalService()) {
@@ -138,12 +146,14 @@ async function evaluate(client, expression) {
 
 async function waitFor(client, expression, predicate, timeout = 10000) {
   const deadline = Date.now() + timeout;
+  let lastValue;
   while (Date.now() < deadline) {
     const value = await evaluate(client, expression);
+    lastValue = value;
     if (predicate(value)) return value;
     await sleep(250);
   }
-  throw new Error(`Condition not met: ${expression}`);
+  throw new Error(`Condition not met: ${expression}\nLast value: ${JSON.stringify(lastValue)}`);
 }
 
 (async () => {
@@ -151,6 +161,7 @@ async function waitFor(client, expression, predicate, timeout = 10000) {
   const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-service-"));
   const profileDir = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-chrome-"));
   const service = await startServiceForTest(dataDir);
+  const serviceToken = await getServiceToken();
 
   const demoPath = path.resolve(__dirname, "../demo/demo.html").replace(/\\/g, "/");
   const demoUrl = `file:///${demoPath}?open=1`;
@@ -180,35 +191,106 @@ async function waitFor(client, expression, predicate, timeout = 10000) {
 
     assert.ok(ready.context.includes("ChatGPT"));
     assert.ok(/template-fallback|llm/.test(ready.context));
+    assert.ok(await evaluate(client, `Boolean(document.querySelector(".spc-mode-selector"))`));
+    assert.ok(await evaluate(client, `Boolean(document.querySelector('button[data-action="retry"]'))`));
+
+    await evaluate(client, `(() => {
+      const selector = document.querySelector(".spc-mode-selector");
+      selector.value = "polish";
+      selector.dispatchEvent(new Event("change", { bubbles: true }));
+      return true;
+    })()`);
+    const modeSwitch = await waitFor(client, `(() => ({
+      mode: document.querySelector(".spc-mode-selector")?.value || "",
+      labelClass: document.querySelector(".spc-mode")?.className || "",
+      output: document.querySelector(".spc-output")?.value || "",
+      status: document.getElementById("smart-prompt-card")?.dataset.status || ""
+    }))()`, (value) => value.mode === "polish" && value.labelClass.includes("mode-polish") && value.output.includes("优化") && value.status !== "loading");
+    assert.equal(modeSwitch.mode, "polish");
+
+    await evaluate(client, `(() => {
+      document.querySelector('button[data-action="retry"]').click();
+      return true;
+    })()`);
+    const retryState = await waitFor(client, `(() => ({
+      status: document.getElementById("smart-prompt-card")?.dataset.status || "",
+      output: document.querySelector(".spc-output")?.value || "",
+      source: document.querySelector(".spc-source-badge")?.dataset.generatedBy || ""
+    }))()`, (value) => value.status === "ready" && value.output.length > 80 && /template-fallback|llm/.test(value.source));
+    assert.ok(retryState.output.includes("优化"));
 
     if (!service.external) {
-      const beforePrompts = await getJson("http://127.0.0.1:17371/prompts");
+      const beforePrompts = await getJson("http://127.0.0.1:17371/prompts", serviceToken);
       await evaluate(client, `(() => {
         document.querySelector('button[data-action="favorite"]').click();
         return true;
       })()`);
-      const savedPrompts = await waitForPromptCount(beforePrompts.prompts.length + 1);
+      const savedPrompts = await waitForPromptCount(beforePrompts.prompts.length + 1, serviceToken);
       assert.equal(savedPrompts.prompts[0].source, "browser-extension");
       assert.ok(savedPrompts.prompts[0].body.length > 80);
       assert.equal(savedPrompts.prompts[0].context.tool, "ChatGPT");
       assert.equal(savedPrompts.prompts[0].context.inputKind, "textarea");
     }
 
-    const afterInsert = await evaluate(client, `(() => {
+    const insertOutput = await evaluate(client, `(() => {
+      window.__smartPromptOriginalInput = document.querySelector("textarea:not(.spc-output)")?.value || "";
       const output = document.querySelector(".spc-output").value;
+      window.__smartPromptLastOutput = output;
       document.querySelector('button[data-action="insert"]').click();
+      return output;
+    })()`);
+    const afterInsert = await waitFor(client, `(() => {
+      const output = window.__smartPromptLastOutput || "";
       const input = document.querySelector("textarea").value;
       return {
         output,
         input,
         submitCount: window.__demoSubmitCount,
-        cardClosed: !document.getElementById("smart-prompt-card")
+        cardClosed: !document.getElementById("smart-prompt-card"),
+        lastInsertResult: window.__smartPromptDebug?.lastInsertResult || null,
+        insertDataset: {
+          ok: document.documentElement.dataset.smartPromptInsertOk,
+          verified: document.documentElement.dataset.smartPromptInsertVerified,
+          valueLength: document.documentElement.dataset.smartPromptInsertValueLength
+        },
+        undoAvailable: document.documentElement.dataset.smartPromptUndoAvailable,
+        undoVisible: Boolean(document.querySelector('#smart-prompt-undo button[data-action="undo"]')),
+        feedback: window.__demoStorage?.smartPromptFeedback || []
       };
-    })()`);
+    })()`, (value) => value.cardClosed && value.input === insertOutput && value.undoVisible && value.feedback.length >= 1);
 
     assert.equal(afterInsert.input, afterInsert.output);
     assert.equal(afterInsert.submitCount, 0);
     assert.equal(afterInsert.cardClosed, true);
+    assert.equal(afterInsert.lastInsertResult.verified, true);
+    assert.equal(afterInsert.insertDataset.ok, "true");
+    assert.equal(afterInsert.insertDataset.verified, "true");
+    assert.equal(Number(afterInsert.insertDataset.valueLength), afterInsert.output.length);
+    assert.equal(afterInsert.undoAvailable, "true");
+    assert.equal(afterInsert.feedback[0].action, "insert");
+    assert.equal(afterInsert.feedback[0].adopted, true);
+
+    await evaluate(client, `(() => {
+      document.querySelector('#smart-prompt-undo button[data-action="undo"]').click();
+      return true;
+    })()`);
+    const afterUndo = await waitFor(client, `(() => {
+      const input = document.querySelector("textarea").value;
+      return {
+        input,
+        original: window.__smartPromptOriginalInput || "",
+        undoAvailable: document.documentElement.dataset.smartPromptUndoAvailable,
+        undoDataset: {
+          ok: document.documentElement.dataset.smartPromptUndoOk,
+          verified: document.documentElement.dataset.smartPromptUndoVerified,
+          valueLength: document.documentElement.dataset.smartPromptUndoValueLength
+        },
+        feedback: window.__demoStorage?.smartPromptFeedback || []
+      };
+    })()`, (value) => value.input === value.original && value.undoDataset.ok === "true" && value.feedback[0]?.action === "undo");
+    assert.equal(afterUndo.undoAvailable, "false");
+    assert.equal(afterUndo.undoDataset.verified, "true");
+    assert.equal(Number(afterUndo.undoDataset.valueLength), afterUndo.original.length);
 
     await client.send("Page.enable");
     const offlineServiceUrl = "http://127.0.0.1:65534";
@@ -227,6 +309,17 @@ async function waitFor(client, expression, predicate, timeout = 10000) {
     assert.ok(offlineReady.context.includes("service offline"));
 
     await evaluate(client, `(() => {
+      document.querySelector('button[data-action="retry"]').click();
+      return true;
+    })()`);
+    const offlineRetry = await waitFor(client, `(() => ({
+      status: document.getElementById("smart-prompt-card")?.dataset.status || "",
+      context: document.querySelector(".spc-context")?.textContent || "",
+      feedback: window.__demoStorage?.smartPromptFeedback || []
+    }))()`, (value) => value.status === "failed" && value.context.includes("service offline") && value.feedback[0]?.action === "retry");
+    assert.equal(offlineRetry.status, "failed");
+
+    await evaluate(client, `(() => {
       document.querySelector('button[data-action="favorite"]').click();
       return true;
     })()`);
@@ -239,21 +332,31 @@ async function waitFor(client, expression, predicate, timeout = 10000) {
     assert.ok(offlineFavorite.favorites[0].body.length > 80);
     assert.equal(offlineFavorite.favorites[0].context.tool, "ChatGPT");
 
-    const offlineInsert = await evaluate(client, `(() => {
+    const offlineInsertOutput = await evaluate(client, `(() => {
       const output = document.querySelector(".spc-output").value;
+      window.__smartPromptLastOutput = output;
       document.querySelector('button[data-action="insert"]').click();
+      return output;
+    })()`);
+    const offlineInsert = await waitFor(client, `(() => {
+      const output = window.__smartPromptLastOutput || "";
       const input = document.querySelector("textarea").value;
       return {
         output,
         input,
         submitCount: window.__demoSubmitCount,
-        cardClosed: !document.getElementById("smart-prompt-card")
+        cardClosed: !document.getElementById("smart-prompt-card"),
+        lastInsertResult: window.__smartPromptDebug?.lastInsertResult || null,
+        feedback: window.__demoStorage?.smartPromptFeedback || []
       };
-    })()`);
+    })()`, (value) => value.cardClosed && value.input === offlineInsertOutput && value.feedback.length >= 2);
 
     assert.equal(offlineInsert.input, offlineInsert.output);
     assert.equal(offlineInsert.submitCount, 0);
     assert.equal(offlineInsert.cardClosed, true);
+    assert.equal(offlineInsert.lastInsertResult.verified, true);
+    assert.equal(offlineInsert.feedback[0].action, "insert");
+    assert.equal(offlineInsert.feedback[0].adopted, true);
   } finally {
     if (client) client.close();
     if (!chrome.killed) {

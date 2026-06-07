@@ -4,6 +4,7 @@ const path = require("node:path");
 
 const root = path.resolve(__dirname, "..");
 const manifest = JSON.parse(fs.readFileSync(path.join(root, "manifest.json"), "utf8"));
+const { SITE_ADAPTERS } = require("../src/site-adapters.js");
 
 assert.equal(manifest.manifest_version, 3);
 assert.equal(manifest.options_page, "options/options.html");
@@ -11,6 +12,10 @@ assert.ok(manifest.action.default_popup);
 assert.ok(manifest.host_permissions.includes("http://127.0.0.1:17371/*"));
 assert.ok(manifest.host_permissions.includes("http://localhost:17371/*"));
 assert.ok(manifest.host_permissions.includes("https://v0.app/*"));
+const adapterMatches = SITE_ADAPTERS.flatMap((adapter) => adapter.hostnames.map((host) => `https://${host}/*`)).sort();
+const localServiceMatches = ["http://127.0.0.1:17371/*", "http://localhost:17371/*"];
+assert.deepEqual([...manifest.host_permissions].sort(), [...adapterMatches, ...localServiceMatches].sort());
+assert.deepEqual([...manifest.content_scripts[0].matches].sort(), adapterMatches);
 assert.ok(manifest.content_scripts[0].js.includes("src/site-adapters.js"));
 assert.ok(manifest.content_scripts[0].js.includes("src/local-service-client.js"));
 assert.ok(manifest.content_scripts[0].js.includes("src/prompt-engine.js"));

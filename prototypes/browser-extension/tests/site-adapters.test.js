@@ -6,6 +6,7 @@ const sharedCore = require("../../../packages/shared/smart-prompt-core.js");
 
 assert.ok(adapters.SITE_ADAPTERS.length >= 8);
 const expectedAdapterIds = ["chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit"];
+assert.deepEqual(adapters.SITE_ADAPTERS.map((adapter) => adapter.id), expectedAdapterIds);
 for (const id of expectedAdapterIds) {
   const adapter = adapters.SITE_ADAPTERS.find((item) => item.id === id);
   assert.ok(adapter, `missing adapter ${id}`);
@@ -77,13 +78,71 @@ assert.deepEqual(
   [lightInput, shadowInput]
 );
 
+function createFakeInput(tagName, attrs = {}) {
+  const events = [];
+  return {
+    tagName,
+    value: "",
+    textContent: "",
+    innerText: "",
+    isContentEditable: Boolean(attrs.contenteditable),
+    focused: false,
+    events,
+    focus() {
+      this.focused = true;
+    },
+    getAttribute(name) {
+      return attrs[name] || "";
+    },
+    dispatchEvent(event) {
+      events.push(event);
+      return true;
+    }
+  };
+}
+
+const fakeTextarea = createFakeInput("TEXTAREA");
+const textareaResult = adapters.writeInput(fakeTextarea, "Textarea prompt", { insertStrategy: "textarea-first" });
+assert.equal(textareaResult.ok, true);
+assert.equal(textareaResult.verified, true);
+assert.equal(textareaResult.kind, "native");
+assert.equal(textareaResult.strategy, "textarea-first");
+assert.equal(fakeTextarea.value, "Textarea prompt");
+assert.ok(fakeTextarea.events.some((event) => event.type === "input" && event.composed === true));
+assert.ok(fakeTextarea.events.some((event) => event.type === "change" && event.composed === true));
+
+const fakeContenteditable = createFakeInput("DIV", { contenteditable: "true" });
+const contenteditableResult = adapters.writeInput(fakeContenteditable, "Composer prompt", { insertStrategy: "contenteditable" });
+assert.equal(contenteditableResult.ok, true);
+assert.equal(contenteditableResult.verified, true);
+assert.equal(contenteditableResult.kind, "contenteditable");
+assert.equal(fakeContenteditable.textContent, "Composer prompt");
+assert.ok(fakeContenteditable.events.some((event) => event.type === "input" && event.composed === true));
+
+const fakeUnsupported = { tagName: "DIV", focus() {}, dispatchEvent() {} };
+const failedResult = adapters.writeInput(fakeUnsupported, "Prompt", { insertStrategy: "textarea-first" });
+assert.equal(failedResult.ok, false);
+assert.equal(failedResult.verified, false);
+
 const content = fs.readFileSync(path.join(__dirname, "../src/content.js"), "utf8");
 assert.ok(content.includes("localService.generate"));
 assert.ok(content.includes("localService.savePrompt"));
 assert.ok(content.includes("saveFavoriteLocally"));
 assert.ok(content.includes("source: \"browser-extension\""));
+assert.ok(content.includes("smartPromptFeedback"));
 assert.ok(content.includes("allowTemplateFallback"));
 assert.ok(content.includes("composedPath"));
+assert.ok(content.includes("lastInsertResult"));
+assert.ok(content.includes("smartPromptInsert"));
+assert.ok(content.includes("smartprompt:insert-result"));
+assert.ok(content.includes("spc-mode-selector"));
+assert.ok(content.includes("data-action=\"retry\""));
+assert.ok(content.includes("data-action=\"undo\""));
+assert.ok(content.includes("smartPromptUndo"));
+assert.ok(content.includes("spc-source-badge"));
+assert.ok(content.includes("setCardStatus"));
+assert.ok(content.includes("recordFeedbackEvent"));
+assert.ok(content.includes("spc-evidence"));
 assert.ok(content.includes("lastAdapterId"));
 assert.ok(content.includes("bindShadowRootEvents"));
 assert.ok(content.includes("bindInputElementEvents"));
@@ -103,6 +162,9 @@ assert.ok(!/KeyboardEvent\([^)]*Enter/.test(content));
 const localServiceClient = fs.readFileSync(path.join(__dirname, "../src/local-service-client.js"), "utf8");
 assert.ok(localServiceClient.includes("function savePrompt"));
 assert.ok(localServiceClient.includes("\"/prompts\""));
+assert.ok(localServiceClient.includes("/auth/bootstrap"));
+assert.ok(localServiceClient.includes("Authorization"));
+assert.ok(localServiceClient.includes("authTokens"));
 
 const demo = fs.readFileSync(path.join(__dirname, "../demo/demo.html"), "utf8");
 assert.ok(demo.includes("__demoStorage"));
@@ -116,5 +178,14 @@ assert.ok(liveProbe.includes("getProbeSelectors"));
 assert.ok(liveProbe.includes("createCollectInputsSource"));
 assert.ok(liveProbe.includes("inputSelectors:"));
 assert.ok(liveProbe.includes("genericInputSelectors"));
+assert.ok(liveProbe.includes("v3-live-site-formal@1"));
+assert.ok(liveProbe.includes("noAutoSend"));
+assert.ok(liveProbe.includes("formalExtensionOnly"));
+assert.ok(liveProbe.includes("smartPromptProbeInsertEvidence"));
+assert.ok(liveProbe.includes("dom-evidence"));
+
+const replit = adapters.SITE_ADAPTERS.find((adapter) => adapter.id === "replit");
+assert.ok(replit.inputSelectors.some((selector) => selector.includes("Describe")));
+assert.ok(replit.inputSelectors.some((selector) => selector.includes("plaintext-only")));
 
 console.log("site-adapters tests passed");

@@ -8,7 +8,8 @@
   const STORAGE_KEYS = {
     skills: "smartPromptSkills",
     settings: "smartPromptSettings",
-    favorites: "smartPromptFavorites"
+    favorites: "smartPromptFavorites",
+    feedback: "smartPromptFeedback"
   };
 
   const state = {
@@ -17,6 +18,9 @@
     mascot: null,
     importedSkills: [],
     variant: 0,
+    manualMode: "",
+    generationRequestId: 0,
+    undoSnapshot: null,
     lastPrompt: "",
     lastInputText: "",
     lastContext: null,
@@ -37,7 +41,8 @@
       lastFocusTag: "",
       lastFocusHost: "",
       lastFocusKind: "",
-      lastAdapterId: ""
+      lastAdapterId: "",
+      lastInsertResult: null
     }
   };
 
@@ -108,9 +113,10 @@
   }
 
   function setInputText(element, value) {
-    if (!element) return false;
-    if (siteAdapters?.writeInput) return siteAdapters.writeInput(element, value);
-    return false;
+    if (!element) return { ok: false, verified: false, reason: "missing_input" };
+    const adapter = siteAdapters?.detectSiteAdapter(location.hostname);
+    if (siteAdapters?.writeInput) return siteAdapters.writeInput(element, value, adapter);
+    return { ok: false, verified: false, reason: "missing_adapter_writer" };
   }
 
   function getEventTarget(event) {
@@ -215,6 +221,10 @@
     }
   }
 
+  function closeUndoToast() {
+    document.getElementById("smart-prompt-undo")?.remove();
+  }
+
   function modeClass(mode) {
     return `mode-${mode}`;
   }
@@ -225,23 +235,65 @@
       .join("");
   }
 
+  function renderEvidence(card, context, generatedBy) {
+    const skillReasons = (card.skills || [])
+      .slice(0, 3)
+      .map((skill) => {
+        const tags = Array.isArray(skill.reason?.matchedTokens) && skill.reason.matchedTokens.length
+          ? skill.reason.matchedTokens.slice(0, 3).join(",")
+          : Array.isArray(skill.tags) ? skill.tags.slice(0, 3).join(",") : "";
+        const score = Number.isFinite(skill.score) ? ` score ${skill.score.toFixed(1)}` : "";
+        return `${skill.name}${score}${tags ? ` (${tags})` : ""}`;
+      })
+      .join(" · ") || "none";
+    const privacy = [
+      context.origin || context.host,
+      `path:${context.pathKind || "unknown"}`,
+      "no title",
+      "no page body"
+    ].filter(Boolean).join(" · ");
+    return [
+      `<div><strong>Basis</strong> ${escapeHtml(skillReasons)}</div>`,
+      `<div><strong>Privacy</strong> ${escapeHtml(privacy)}</div>`,
+      `<div><strong>Source</strong> ${escapeHtml(generatedBy || "template")}</div>`
+    ].join("");
+  }
+
   function renderCard(card, context, generatedBy) {
     if (!state.card) return;
     state.lastPrompt = card.prompt;
     state.lastContext = context;
     const label = state.card.querySelector(".spc-mode");
+    const selector = state.card.querySelector(".spc-mode-selector");
     const textarea = state.card.querySelector(".spc-output");
     const skills = state.card.querySelector(".spc-skills");
     const contextLine = state.card.querySelector(".spc-context");
+    const evidence = state.card.querySelector(".spc-evidence");
+    const sourceBadge = state.card.querySelector(".spc-source-badge");
     label.textContent = card.modeLabel;
     label.className = `spc-mode ${modeClass(card.mode)}`;
+    if (selector) selector.value = card.mode;
     textarea.value = card.prompt;
     skills.innerHTML = renderSkillChips(card.skills);
+    evidence.innerHTML = renderEvidence(card, context, generatedBy);
+    if (sourceBadge) {
+      const source = generatedBy || "template";
+      sourceBadge.textContent = source.includes("llm") ? "LLM" : source;
+      sourceBadge.dataset.generatedBy = source;
+    }
     contextLine.textContent = [card.tool, context.host, context.inputKind, generatedBy].filter(Boolean).join(" / ");
+    setCardStatus("ready", "ready");
+  }
+
+  function setCardStatus(text, status) {
+    if (!state.card) return;
+    const statusLine = state.card.querySelector(".spc-status");
+    if (statusLine) statusLine.textContent = text;
+    state.card.dataset.status = status || "";
   }
 
   function createFavoritePrompt(prompt) {
-    const mode = engine.detectMode(state.lastInputText);
+    const mode = state.lastContext?.mode || engine.detectMode(state.lastInputText);
     return {
       id: `prompt-${Date.now()}`,
       title: `${engine.MODE_META[mode].label} prompt`,
@@ -274,12 +326,40 @@
     return saveFavoriteLocally(favorite);
   }
 
+  async function recordFeedbackEvent(action, detail) {
+    const existing = await storageGet([STORAGE_KEYS.feedback]);
+    const events = Array.isArray(existing[STORAGE_KEYS.feedback]) ? existing[STORAGE_KEYS.feedback] : [];
+    events.unshift({
+      id: `feedback-${Date.now()}`,
+      action,
+      created_at: new Date().toISOString(),
+      mode: state.lastContext?.mode || engine.detectMode(state.lastInputText),
+      tool: state.lastContext?.tool || "",
+      adapterId: state.lastContext?.adapterId || "",
+      generatedBy: state.card?.querySelector(".spc-source-badge")?.dataset.generatedBy || "",
+      adopted: action === "insert" && detail?.verified === true,
+      detail: {
+        strategy: detail?.strategy || "",
+        kind: detail?.kind || "",
+        verified: Boolean(detail?.verified),
+        reason: detail?.reason || ""
+      }
+    });
+    await storageSet({ [STORAGE_KEYS.feedback]: events.slice(0, 100) });
+  }
+
   async function refreshCardPreview(advanceVariant) {
     if (!state.card || !state.activeInput) return;
     if (advanceVariant) state.variant += 1;
+    const requestId = state.generationRequestId + 1;
+    state.generationRequestId = requestId;
 
     const inputText = getInputText(state.activeInput);
-    const context = getContext(state.activeInput);
+    const detectedMode = engine.detectMode(inputText);
+    const context = {
+      ...getContext(state.activeInput),
+      mode: state.manualMode || detectedMode
+    };
     const card = engine.buildCard(inputText, context, state.importedSkills, state.variant);
     state.lastInputText = inputText;
     renderCard(card, context, "template");
@@ -287,18 +367,23 @@
     if (!state.settings.preferLocalService || !localService?.generate) return;
 
     try {
+      setCardStatus("generating", "loading");
+      setMascotState("thinking");
       const result = await localService.generate({
         input: inputText,
         context,
         variantIndex: state.variant,
         allowTemplateFallback: true
       }, state.settings.serviceUrl);
-      if (state.activeInput && getInputText(state.activeInput) === inputText) {
+      if (requestId === state.generationRequestId && state.activeInput && getInputText(state.activeInput) === inputText) {
         renderCard(result.card, context, result.card.generatedBy || "service");
+        setMascotState("suggesting");
       }
     } catch (error) {
       const contextLine = state.card?.querySelector(".spc-context");
       if (contextLine) contextLine.textContent = `${contextLine.textContent} / service offline`;
+      setCardStatus("service offline", "failed");
+      setMascotState("suggesting");
     }
   }
 
@@ -310,6 +395,8 @@
     }
 
     closeCard();
+    closeUndoToast();
+    state.manualMode = "";
     setMascotState("thinking");
     const panel = document.createElement("section");
     panel.id = "smart-prompt-card";
@@ -322,13 +409,24 @@
         </div>
         <div class="spc-header-actions">
           <span class="spc-mode"></span>
+          <span class="spc-source-badge" data-generated-by="template">template</span>
           <button type="button" class="spc-icon-button" data-action="close" aria-label="Close">×</button>
         </div>
       </header>
+      <div class="spc-controls">
+        <select class="spc-mode-selector" aria-label="Mode">
+          <option value="${engine.MODE.IDEA}">${escapeHtml(engine.MODE_META[engine.MODE.IDEA].label)}</option>
+          <option value="${engine.MODE.CONTINUE}">${escapeHtml(engine.MODE_META[engine.MODE.CONTINUE].label)}</option>
+          <option value="${engine.MODE.POLISH}">${escapeHtml(engine.MODE_META[engine.MODE.POLISH].label)}</option>
+        </select>
+        <span class="spc-status">ready</span>
+      </div>
       <textarea class="spc-output" spellcheck="false"></textarea>
+      <div class="spc-evidence" aria-label="Basis and privacy summary"></div>
       <div class="spc-skills" aria-label="Recommended skills"></div>
       <footer class="spc-actions">
         <button type="button" data-action="refresh">Refresh</button>
+        <button type="button" data-action="retry">Retry</button>
         <button type="button" data-action="edit">Edit</button>
         <button type="button" data-action="copy">Copy</button>
         <button type="button" data-action="favorite">Save</button>
@@ -336,11 +434,20 @@
       </footer>
     `;
     panel.addEventListener("click", handleCardAction);
+    panel.addEventListener("change", handleCardChange);
     document.documentElement.appendChild(panel);
     state.card = panel;
     placeCard();
     refreshCardPreview(false);
     setMascotState("suggesting");
+  }
+
+  function handleCardChange(event) {
+    const selector = event.target.closest?.(".spc-mode-selector");
+    if (!selector) return;
+    state.manualMode = selector.value;
+    setMascotState("thinking");
+    refreshCardPreview(false);
   }
 
   async function handleCardAction(event) {
@@ -363,6 +470,14 @@
       return;
     }
 
+    if (action === "retry") {
+      setMascotState("thinking");
+      setCardStatus("retrying", "loading");
+      await recordFeedbackEvent("retry", { verified: false, reason: "manual_retry" });
+      refreshCardPreview(false);
+      return;
+    }
+
     if (action === "edit") {
       output?.focus();
       output?.setSelectionRange(output.value.length, output.value.length);
@@ -372,21 +487,89 @@
 
     if (action === "copy") {
       await navigator.clipboard?.writeText(prompt);
+      await recordFeedbackEvent("copy", { verified: true, reason: "clipboard_requested" });
       setMascotState("clapping");
       return;
     }
 
     if (action === "favorite") {
       await saveFavoritePrompt(prompt);
+      await recordFeedbackEvent("save", { verified: true, reason: "favorite_saved" });
       setMascotState("clapping");
       return;
     }
 
     if (action === "insert") {
-      const ok = setInputText(state.activeInput, prompt);
+      const previousValue = getInputText(state.activeInput);
+      const result = await setInputText(state.activeInput, prompt);
+      const ok = Boolean(result?.ok && result?.verified);
+      state.debug.lastInsertResult = result;
+      publishInsertEvidence(result);
+      await recordFeedbackEvent("insert", result);
       setMascotState(ok ? "success" : "resting");
-      if (ok) closeCard();
+      if (ok) {
+        state.undoSnapshot = {
+          input: state.activeInput,
+          previousValue,
+          insertedValue: prompt,
+          createdAt: Date.now()
+        };
+        closeCard();
+        showUndoToast();
+      } else {
+        setCardStatus("insert failed", "failed");
+      }
     }
+  }
+
+  function showUndoToast() {
+    closeUndoToast();
+    const toast = document.createElement("div");
+    toast.id = "smart-prompt-undo";
+    toast.innerHTML = `
+      <span>Inserted</span>
+      <button type="button" data-action="undo">Undo</button>
+    `;
+    toast.querySelector('button[data-action="undo"]').addEventListener("click", handleUndoAction);
+    document.documentElement.dataset.smartPromptUndoAvailable = "true";
+    document.documentElement.appendChild(toast);
+    placeUndoToast();
+  }
+
+  async function handleUndoAction() {
+    if (!state.undoSnapshot?.input) return;
+    const result = setInputText(state.undoSnapshot.input, state.undoSnapshot.previousValue || "");
+    const evidence = {
+      ok: Boolean(result?.ok && result?.verified),
+      verified: Boolean(result?.verified),
+      valueLength: String(state.undoSnapshot.previousValue || "").length,
+      reason: result?.reason || "undo_requested",
+      createdAt: Date.now()
+    };
+    for (const [key, value] of Object.entries(evidence)) {
+      document.documentElement.dataset[`smartPromptUndo${key[0].toUpperCase()}${key.slice(1)}`] = String(value);
+    }
+    document.documentElement.dataset.smartPromptUndoAvailable = "false";
+    await recordFeedbackEvent("undo", result);
+    state.undoSnapshot = null;
+    closeUndoToast();
+    setMascotState("normal");
+  }
+
+  function publishInsertEvidence(result) {
+    const evidence = {
+      ok: Boolean(result?.ok),
+      verified: Boolean(result?.verified),
+      kind: result?.kind || "",
+      strategy: result?.strategy || "",
+      reason: result?.reason || "",
+      valueLength: Number(result?.valueLength || 0),
+      createdAt: Date.now()
+    };
+    for (const [key, value] of Object.entries(evidence)) {
+      document.documentElement.dataset[`smartPromptInsert${key[0].toUpperCase()}${key.slice(1)}`] = String(value);
+    }
+    document.documentElement.dispatchEvent(new CustomEvent("smartprompt:insert-result", { detail: evidence }));
   }
 
   function placeCard() {
@@ -398,6 +581,17 @@
     const top = above ? Math.max(12, rect.top - 390) : Math.min(window.innerHeight - 390, rect.bottom + 14);
     state.card.style.width = `${width}px`;
     state.card.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
+  }
+
+  function placeUndoToast() {
+    const toast = document.getElementById("smart-prompt-undo");
+    if (!toast || !state.activeInput) return;
+    const rect = state.activeInput.getBoundingClientRect();
+    const width = Math.min(240, Math.max(180, window.innerWidth - 24));
+    const left = Math.min(window.innerWidth - width - 12, Math.max(12, rect.right - width));
+    const top = Math.min(window.innerHeight - 52, Math.max(12, rect.bottom + 12));
+    toast.style.width = `${width}px`;
+    toast.style.transform = `translate(${Math.round(left)}px, ${Math.round(top)}px)`;
   }
 
   function escapeHtml(value) {
@@ -432,10 +626,12 @@
     window.addEventListener("resize", () => {
       placeMascot();
       placeCard();
+      placeUndoToast();
     });
     window.addEventListener("scroll", () => {
       placeMascot();
       placeCard();
+      placeUndoToast();
     }, true);
 
     chrome?.storage?.onChanged?.addListener((changes, areaName) => {
