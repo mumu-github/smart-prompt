@@ -1,5 +1,11 @@
 # 问题与风险
 
+## M3 caret/focus 输入信号风险 2026-06-08
+
+- 已解决一项观测缺口：输入候选现在会记录 caret/focus/底部位置/超大 Document 等强信号，便于解释为什么某个候选更像输入区。
+- 仍需谨慎：Codex 真实前台已证明 WebView/终端类工具可能不暴露 Win32 caret；`caretVisible:false` 不等于没有输入框，只能说明 OS 层拿不到真实光标。
+- 仍需谨慎：UIA focus 可能落在整窗 `ControlType.Document` 上；这说明用户正在工具容器内输入，但不能证明已经定位到安全可直写的 composer。直接写入仍必须受超大 Document guard 和显式 clipboard fallback 控制。
+
 ## M3 剪贴板 fallback 风险 2026-06-08
 
 - 已解决一项：当 UIA 只能识别 Terminal/WebView/自绘宿主容器、拿不到可写 `ValuePattern` 时，新增显式 `allowClipboardFallback` 作为受控降级路径；报告不保存剪贴板/写入原文，且会恢复原剪贴板。

@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-real-desktop-tools@1",
-    "createdAt":  "2026-06-07T17:27:01.5520219Z",
+    "createdAt":  "2026-06-07T17:50:28.3238864Z",
     "platform":  "win32",
     "pass":  true,
     "requestedProfiles":  [
@@ -29,7 +29,13 @@
                      "candidateCount":  116,
                      "valuePatternCandidates":  1,
                      "textPatternCandidates":  1,
-                     "focusableCandidates":  115
+                     "focusableCandidates":  115,
+                     "focusedCandidateCount":  1,
+                     "caretCandidateCount":  0,
+                     "bestCandidateIndex":  0,
+                     "bestCandidateScore":  95,
+                     "caretVisible":  false,
+                     "caretWindowPresent":  false
                  },
     "write":  {
                   "allowed":  false,
@@ -95,6 +101,7 @@
                     "titleRedacted":  true,
                     "elementNamesHashed":  true,
                     "elementValuesNotRead":  true,
+                    "caretTextNotRead":  true,
                     "promptTextNotRead":  true,
                     "writtenTextNotStored":  true,
                     "clipboardTextNotStored":  true,

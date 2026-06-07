@@ -54,6 +54,126 @@ function Get-WindowTextSafe {
   return $builder.ToString()
 }
 
+function Get-RuntimeIdKey {
+  param([System.Windows.Automation.AutomationElement]$Element)
+  if (-not $Element) { return "" }
+  try {
+    return (($Element.GetRuntimeId() | ForEach-Object { [string]$_ }) -join ".")
+  } catch {
+    return ""
+  }
+}
+
+function New-RectObject {
+  param([int]$X, [int]$Y, [int]$Width, [int]$Height)
+  return [pscustomobject]@{
+    x = $X
+    y = $Y
+    width = $Width
+    height = $Height
+  }
+}
+
+function Test-RectIntersects {
+  param([object]$A, [object]$B)
+  if (-not $A -or -not $B) { return $false }
+  if ([int]$A.width -le 0 -or [int]$A.height -le 0 -or [int]$B.width -le 0 -or [int]$B.height -le 0) { return $false }
+  $aRight = [int]$A.x + [int]$A.width
+  $aBottom = [int]$A.y + [int]$A.height
+  $bRight = [int]$B.x + [int]$B.width
+  $bBottom = [int]$B.y + [int]$B.height
+  return [bool](([int]$A.x -lt $bRight) -and ($aRight -gt [int]$B.x) -and ([int]$A.y -lt $bBottom) -and ($aBottom -gt [int]$B.y))
+}
+
+function Get-CaretContext {
+  $emptyRect = New-RectObject -X 0 -Y 0 -Width 0 -Height 0
+  $result = [ordered]@{
+    source = "win32_get_gui_thread_info"
+    supported = $false
+    visible = $false
+    windowHandlePresent = $false
+    rect = $emptyRect
+    virtualCaretMayBeHidden = $true
+  }
+  try {
+    $info = New-Object SmartPromptGuiThreadInfo
+    $info.cbSize = [System.Runtime.InteropServices.Marshal]::SizeOf([type][SmartPromptGuiThreadInfo])
+    $ok = [Win32Native]::GetGUIThreadInfo(0, [ref]$info)
+    $result.supported = [bool]$ok
+    if (-not $ok) { return [pscustomobject]$result }
+
+    $hwndCaret = [IntPtr]$info.hwndCaret
+    $result.windowHandlePresent = [bool]($hwndCaret -ne [IntPtr]::Zero)
+    $result.visible = [bool](($info.flags -band 1) -ne 0 -or $result.windowHandlePresent)
+    if ($hwndCaret -ne [IntPtr]::Zero) {
+      $topLeft = New-Object SmartPromptPoint
+      $bottomRight = New-Object SmartPromptPoint
+      $topLeft.X = [int]$info.rcCaret.Left
+      $topLeft.Y = [int]$info.rcCaret.Top
+      $bottomRight.X = [int]$info.rcCaret.Right
+      $bottomRight.Y = [int]$info.rcCaret.Bottom
+      [void][Win32Native]::ClientToScreen($hwndCaret, [ref]$topLeft)
+      [void][Win32Native]::ClientToScreen($hwndCaret, [ref]$bottomRight)
+      $result.rect = New-RectObject -X $topLeft.X -Y $topLeft.Y -Width ([Math]::Max(1, $bottomRight.X - $topLeft.X)) -Height ([Math]::Max(1, $bottomRight.Y - $topLeft.Y))
+    }
+  } catch {
+    $result.supported = $false
+    $result.visible = $false
+  }
+  return [pscustomobject]$result
+}
+
+function Get-InputSignals {
+  param(
+    [System.Windows.Automation.AutomationElement]$Element,
+    [object]$Rect,
+    [object]$RootRect,
+    [string]$FocusedRuntimeId,
+    [object]$Caret,
+    [string]$ControlType,
+    [string]$ClassName,
+    [bool]$HasValuePattern,
+    [bool]$HasTextPattern,
+    [IntPtr]$NativeWindowHandle
+  )
+
+  $runtimeId = Get-RuntimeIdKey $Element
+  $hasKeyboardFocus = $false
+  try { $hasKeyboardFocus = [bool]$Element.Current.HasKeyboardFocus } catch { $hasKeyboardFocus = $false }
+  $focusedElementMatch = [bool]($runtimeId -and $FocusedRuntimeId -and $runtimeId -eq $FocusedRuntimeId)
+  $caretWithinBounds = [bool]($Caret -and $Caret.rect -and (Test-RectIntersects -A $Rect -B $Caret.rect))
+  $caretWindowMatch = [bool]($Caret -and $Caret.windowHandlePresent -and $NativeWindowHandle -ne [IntPtr]::Zero -and $Caret.rect.width -gt 0 -and $caretWithinBounds)
+  $nearWindowBottom = $false
+  if ($RootRect -and [int]$RootRect.height -gt 0) {
+    $rootBottom = [int]$RootRect.y + [int]$RootRect.height
+    $candidateBottom = [int]$Rect.y + [int]$Rect.height
+    $nearWindowBottom = [bool]($candidateBottom -ge ($rootBottom - 360))
+  }
+  $broadDocument = [bool]($ControlType -eq "ControlType.Document" -and ([int]$Rect.width -gt 900 -or [int]$Rect.height -gt 500))
+  $score = 0
+  if ($ControlType -eq "ControlType.Edit") { $score += 45 }
+  if ($HasValuePattern) { $score += 35 }
+  if ($hasKeyboardFocus) { $score += 35 }
+  if ($focusedElementMatch) { $score += 35 }
+  if ($caretWithinBounds) { $score += 45 }
+  if ($caretWindowMatch) { $score += 20 }
+  if ($Element.Current.IsKeyboardFocusable) { $score += 15 }
+  if ($HasTextPattern) { $score += 10 }
+  if ($ClassName -match "(?i)edit|text") { $score += 10 }
+  if ($nearWindowBottom) { $score += 5 }
+  if ($broadDocument) { $score -= 40 }
+
+  return [pscustomobject]@{
+    score = [int]$score
+    hasKeyboardFocus = [bool]$hasKeyboardFocus
+    focusedElementMatch = [bool]$focusedElementMatch
+    caretWithinBounds = [bool]$caretWithinBounds
+    caretWindowMatch = [bool]$caretWindowMatch
+    nearWindowBottom = [bool]$nearWindowBottom
+    broadDocument = [bool]$broadDocument
+  }
+}
+
 function Get-UiaSnapshot {
   param([IntPtr]$Handle, [bool]$IsSelfTest, [string]$ExpectedToolProfile = "")
 
@@ -74,7 +194,16 @@ function Get-UiaSnapshot {
 
   $rootElement = [System.Windows.Automation.AutomationElement]::FromHandle($Handle)
   $elements = @()
+  $caret = Get-CaretContext
+  $focusedRuntimeId = ""
+  try {
+    $focusedRuntimeId = Get-RuntimeIdKey ([System.Windows.Automation.AutomationElement]::FocusedElement)
+  } catch {
+    $focusedRuntimeId = ""
+  }
   if ($rootElement) {
+    $rootBounds = $rootElement.Current.BoundingRectangle
+    $rootRect = New-RectObject -X ([int]$rootBounds.X) -Y ([int]$rootBounds.Y) -Width ([int]$rootBounds.Width) -Height ([int]$rootBounds.Height)
     $toInspect = New-Object System.Collections.ArrayList
     [void]$toInspect.Add($rootElement)
     $all = $rootElement.FindAll(
@@ -97,6 +226,9 @@ function Get-UiaSnapshot {
       $isTextInput = $controlType -in @("ControlType.Edit", "ControlType.Document") -or $hasValue -or $hasText -or $className -match "(?i)edit|text"
       if (-not $isTextInput) { continue }
       $rect = $element.Current.BoundingRectangle
+      $rectObject = New-RectObject -X ([int]$rect.X) -Y ([int]$rect.Y) -Width ([int]$rect.Width) -Height ([int]$rect.Height)
+      $nativeHandle = [IntPtr]$element.Current.NativeWindowHandle
+      $signals = Get-InputSignals -Element $element -Rect $rectObject -RootRect $rootRect -FocusedRuntimeId $focusedRuntimeId -Caret $caret -ControlType $controlType -ClassName $className -HasValuePattern ([bool]$hasValue) -HasTextPattern ([bool]$hasText) -NativeWindowHandle $nativeHandle
       $elements += [pscustomobject]@{
         index = $elements.Count
         controlType = $controlType
@@ -107,12 +239,8 @@ function Get-UiaSnapshot {
         isEnabled = [bool]$element.Current.IsEnabled
         hasValuePattern = [bool]$hasValue
         hasTextPattern = [bool]$hasText
-        boundingRect = [pscustomobject]@{
-          x = [int]$rect.X
-          y = [int]$rect.Y
-          width = [int]$rect.Width
-          height = [int]$rect.Height
-        }
+        boundingRect = $rectObject
+        inputSignals = $signals
       }
     }
   }
@@ -120,6 +248,7 @@ function Get-UiaSnapshot {
   $toolProfile = Get-ToolProfile -ProcessName $processName -WindowTitle $title
   $candidateCount = $elements.Count
   $toolProfileMatched = -not $ExpectedToolProfile -or $toolProfile -eq $ExpectedToolProfile
+  $bestCandidate = @($elements | Sort-Object @{ Expression = { [int]$_.inputSignals.score }; Descending = $true }, @{ Expression = { [int]$_.index }; Ascending = $true } | Select-Object -First 1)
   return [pscustomobject]@{
     schemaVersion = "m3-windows-uia@1"
     createdAt = (Get-Date).ToUniversalTime().ToString("o")
@@ -137,6 +266,7 @@ function Get-UiaSnapshot {
       expectedToolProfile = $ExpectedToolProfile
       expectedToolProfileMatched = [bool]$toolProfileMatched
     }
+    caret = $caret
     supportedToolProfiles = @("codex", "claude-code", "hermes")
     candidates = $elements
     summary = [pscustomobject]@{
@@ -144,12 +274,19 @@ function Get-UiaSnapshot {
       valuePatternCandidates = @($elements | Where-Object { $_.hasValuePattern }).Count
       textPatternCandidates = @($elements | Where-Object { $_.hasTextPattern }).Count
       focusableCandidates = @($elements | Where-Object { $_.isKeyboardFocusable }).Count
+      focusedCandidateCount = @($elements | Where-Object { $_.inputSignals.hasKeyboardFocus -or $_.inputSignals.focusedElementMatch }).Count
+      caretCandidateCount = @($elements | Where-Object { $_.inputSignals.caretWithinBounds -or $_.inputSignals.caretWindowMatch }).Count
+      bestCandidateIndex = if ($bestCandidate.Count -gt 0) { [int]$bestCandidate[0].index } else { -1 }
+      bestCandidateScore = if ($bestCandidate.Count -gt 0) { [int]$bestCandidate[0].inputSignals.score } else { 0 }
+      caretVisible = [bool]$caret.visible
+      caretWindowPresent = [bool]$caret.windowHandlePresent
       detectedToolProfile = $toolProfile
     }
     privacy = [pscustomobject]@{
       titleRedacted = $true
       elementNamesHashed = $true
       elementValuesNotRead = $true
+      caretTextNotRead = $true
       promptTextNotRead = $true
     }
   }
@@ -170,6 +307,7 @@ if ($env:OS -notlike "*Windows*") {
       titleRedacted = $true
       elementNamesHashed = $true
       elementValuesNotRead = $true
+      caretTextNotRead = $true
       promptTextNotRead = $true
     }
   }
@@ -178,6 +316,27 @@ if ($env:OS -notlike "*Windows*") {
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
+public struct SmartPromptRect {
+  public int Left;
+  public int Top;
+  public int Right;
+  public int Bottom;
+}
+public struct SmartPromptPoint {
+  public int X;
+  public int Y;
+}
+public struct SmartPromptGuiThreadInfo {
+  public int cbSize;
+  public int flags;
+  public IntPtr hwndActive;
+  public IntPtr hwndFocus;
+  public IntPtr hwndCapture;
+  public IntPtr hwndMenuOwner;
+  public IntPtr hwndMoveSize;
+  public IntPtr hwndCaret;
+  public SmartPromptRect rcCaret;
+}
 public static class Win32Native {
   [DllImport("user32.dll")]
   public static extern IntPtr GetForegroundWindow();
@@ -185,6 +344,10 @@ public static class Win32Native {
   public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out int processId);
   [DllImport("user32.dll", CharSet = CharSet.Unicode)]
   public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+  [DllImport("user32.dll")]
+  public static extern bool GetGUIThreadInfo(uint idThread, ref SmartPromptGuiThreadInfo pgui);
+  [DllImport("user32.dll")]
+  public static extern bool ClientToScreen(IntPtr hWnd, ref SmartPromptPoint lpPoint);
 }
 "@
 

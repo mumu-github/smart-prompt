@@ -342,19 +342,35 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
           isEnabled: true,
           hasValuePattern: true,
           hasTextPattern: false,
-          boundingRect: { x: 1, y: 2, width: 320, height: 80 }
+          boundingRect: { x: 1, y: 2, width: 320, height: 80 },
+          inputSignals: {
+            score: 145,
+            hasKeyboardFocus: true,
+            focusedElementMatch: true,
+            caretWithinBounds: true,
+            caretWindowMatch: true,
+            nearWindowBottom: true,
+            broadDocument: false
+          }
         }],
         summary: {
           candidateCount: 1,
           valuePatternCandidates: 1,
           textPatternCandidates: 0,
           focusableCandidates: 1,
+          focusedCandidateCount: 1,
+          caretCandidateCount: 1,
+          bestCandidateIndex: 0,
+          bestCandidateScore: 145,
+          caretVisible: true,
+          caretWindowPresent: true,
           detectedToolProfile: "codex"
         },
         privacy: {
           titleRedacted: true,
           elementNamesHashed: true,
           elementValuesNotRead: true,
+          caretTextNotRead: true,
           promptTextNotRead: true
         }
       };
@@ -429,9 +445,23 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
             hasNativeWindowHandle: true,
             titleLength: 32,
             titleHash: "abc123",
-            boundingRect: { x: 1, y: 2, width: 320, height: 80 }
+            boundingRect: { x: 1, y: 2, width: 320, height: 80 },
+            inputSignals: {
+              score: 145,
+              hasKeyboardFocus: true,
+              focusedElementMatch: true,
+              caretWithinBounds: true,
+              caretWindowMatch: true,
+              nearWindowBottom: true,
+              broadDocument: false
+            }
           },
           summary: {
+            candidateCount: 1,
+            focusedCandidateCount: 1,
+            caretCandidateCount: 1,
+            bestCandidateIndex: 0,
+            bestCandidateScore: 145,
             requestedTextLength: text.length,
             requestedTextHash: "real-request-hash",
             verifiedTextLength: text.length,
@@ -548,8 +578,14 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     assert.equal(desktopSnapshot.body.snapshot.foreground.detectedToolProfile, "codex");
     assert.deepEqual(desktopSnapshot.body.snapshot.supportedToolProfiles, ["codex", "claude-code", "hermes"]);
     assert.equal(desktopSnapshot.body.snapshot.summary.candidateCount, 1);
+    assert.equal(desktopSnapshot.body.snapshot.summary.focusedCandidateCount, 1);
+    assert.equal(desktopSnapshot.body.snapshot.summary.caretCandidateCount, 1);
+    assert.equal(desktopSnapshot.body.snapshot.summary.bestCandidateIndex, 0);
+    assert.equal(desktopSnapshot.body.snapshot.candidates[0].inputSignals.caretWithinBounds, true);
+    assert.equal(desktopSnapshot.body.snapshot.candidates[0].inputSignals.focusedElementMatch, true);
     assert.equal(desktopSnapshot.body.snapshot.privacy.titleRedacted, true);
     assert.equal(desktopSnapshot.body.snapshot.privacy.elementValuesNotRead, true);
+    assert.equal(desktopSnapshot.body.snapshot.privacy.caretTextNotRead, true);
     assert.ok(!JSON.stringify(desktopSnapshot.body.snapshot).includes("codex Smart Prompt"));
     assert.ok(!JSON.stringify(desktopSnapshot.body.snapshot).includes("M3 UIA self test input"));
 
@@ -600,6 +636,9 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     assert.equal(confirmedFill.body.fill.foreground.expectedToolProfileMatched, true);
     assert.equal(confirmedFill.body.fill.target.index, 0);
     assert.equal(confirmedFill.body.fill.target.hasNativeWindowHandle, true);
+    assert.equal(confirmedFill.body.fill.target.inputSignals.caretWithinBounds, true);
+    assert.equal(confirmedFill.body.fill.target.inputSignals.focusedElementMatch, true);
+    assert.equal(confirmedFill.body.fill.summary.bestCandidateIndex, 0);
     assert.equal(confirmedFill.body.fill.summary.autoSubmit, false);
     assert.equal(confirmedFill.body.fill.summary.submitSignalCount, 0);
     assert.ok(!JSON.stringify(confirmedFill.body.fill).includes("M3 Real Target Raw Text"));

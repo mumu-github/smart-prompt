@@ -31,6 +31,15 @@ function sanitizeSnapshot(snapshot = {}) {
     processName: foreground.processName,
     windowTitle: foreground.windowTitle || foreground.title
   });
+  const sanitizeSignals = (signals = {}) => ({
+    score: Number(signals.score || 0),
+    hasKeyboardFocus: Boolean(signals.hasKeyboardFocus),
+    focusedElementMatch: Boolean(signals.focusedElementMatch),
+    caretWithinBounds: Boolean(signals.caretWithinBounds),
+    caretWindowMatch: Boolean(signals.caretWindowMatch),
+    nearWindowBottom: Boolean(signals.nearWindowBottom),
+    broadDocument: Boolean(signals.broadDocument)
+  });
   return {
     schemaVersion: snapshot.schemaVersion || "m3-desktop-input@1",
     createdAt: snapshot.createdAt || new Date().toISOString(),
@@ -44,6 +53,19 @@ function sanitizeSnapshot(snapshot = {}) {
       titleLength: Number(foreground.titleLength || 0),
       titleHash: String(foreground.titleHash || "").slice(0, 64),
       detectedToolProfile: foreground.detectedToolProfile || detected?.id || "unknown"
+    },
+    caret: {
+      source: String(snapshot.caret?.source || "win32_get_gui_thread_info").slice(0, 80),
+      supported: Boolean(snapshot.caret?.supported),
+      visible: Boolean(snapshot.caret?.visible),
+      windowHandlePresent: Boolean(snapshot.caret?.windowHandlePresent),
+      rect: {
+        x: Number(snapshot.caret?.rect?.x || 0),
+        y: Number(snapshot.caret?.rect?.y || 0),
+        width: Number(snapshot.caret?.rect?.width || 0),
+        height: Number(snapshot.caret?.rect?.height || 0)
+      },
+      virtualCaretMayBeHidden: true
     },
     supportedToolProfiles: DESKTOP_TOOL_PROFILES.map((profile) => profile.id),
     candidates: Array.isArray(snapshot.candidates) ? snapshot.candidates.slice(0, 50).map((candidate) => ({
@@ -61,19 +83,27 @@ function sanitizeSnapshot(snapshot = {}) {
         y: Number(candidate.boundingRect?.y || 0),
         width: Number(candidate.boundingRect?.width || 0),
         height: Number(candidate.boundingRect?.height || 0)
-      }
+      },
+      inputSignals: sanitizeSignals(candidate.inputSignals)
     })) : [],
     summary: {
       candidateCount: Number(snapshot.summary?.candidateCount || snapshot.candidates?.length || 0),
       valuePatternCandidates: Number(snapshot.summary?.valuePatternCandidates || 0),
       textPatternCandidates: Number(snapshot.summary?.textPatternCandidates || 0),
       focusableCandidates: Number(snapshot.summary?.focusableCandidates || 0),
+      focusedCandidateCount: Number(snapshot.summary?.focusedCandidateCount || 0),
+      caretCandidateCount: Number(snapshot.summary?.caretCandidateCount || 0),
+      bestCandidateIndex: Number(snapshot.summary?.bestCandidateIndex ?? -1),
+      bestCandidateScore: Number(snapshot.summary?.bestCandidateScore || 0),
+      caretVisible: Boolean(snapshot.summary?.caretVisible),
+      caretWindowPresent: Boolean(snapshot.summary?.caretWindowPresent),
       detectedToolProfile: snapshot.summary?.detectedToolProfile || foreground.detectedToolProfile || detected?.id || "unknown"
     },
     privacy: {
       titleRedacted: true,
       elementNamesHashed: true,
       elementValuesNotRead: true,
+      caretTextNotRead: true,
       promptTextNotRead: true
     },
     reason: snapshot.reason || ""
@@ -81,6 +111,15 @@ function sanitizeSnapshot(snapshot = {}) {
 }
 
 function sanitizeFillReport(report = {}) {
+  const sanitizeSignals = (signals = {}) => ({
+    score: Number(signals.score || 0),
+    hasKeyboardFocus: Boolean(signals.hasKeyboardFocus),
+    focusedElementMatch: Boolean(signals.focusedElementMatch),
+    caretWithinBounds: Boolean(signals.caretWithinBounds),
+    caretWindowMatch: Boolean(signals.caretWindowMatch),
+    nearWindowBottom: Boolean(signals.nearWindowBottom),
+    broadDocument: Boolean(signals.broadDocument)
+  });
   return {
     schemaVersion: report.schemaVersion || "m3-windows-fill@1",
     createdAt: report.createdAt || new Date().toISOString(),
@@ -110,7 +149,8 @@ function sanitizeFillReport(report = {}) {
         y: Number(report.target?.boundingRect?.y || 0),
         width: Number(report.target?.boundingRect?.width || 0),
         height: Number(report.target?.boundingRect?.height || 0)
-      }
+      },
+      inputSignals: sanitizeSignals(report.target?.inputSignals)
     },
     foreground: {
       processName: String(report.foreground?.processName || "").slice(0, 80),
@@ -122,6 +162,11 @@ function sanitizeFillReport(report = {}) {
       expectedToolProfileMatched: Boolean(report.foreground?.expectedToolProfileMatched)
     },
     summary: {
+      candidateCount: Number(report.summary?.candidateCount || 0),
+      focusedCandidateCount: Number(report.summary?.focusedCandidateCount || 0),
+      caretCandidateCount: Number(report.summary?.caretCandidateCount || 0),
+      bestCandidateIndex: Number(report.summary?.bestCandidateIndex ?? -1),
+      bestCandidateScore: Number(report.summary?.bestCandidateScore || 0),
       requestedTextLength: Number(report.summary?.requestedTextLength || 0),
       requestedTextHash: String(report.summary?.requestedTextHash || "").slice(0, 64),
       verifiedTextLength: Number(report.summary?.verifiedTextLength || 0),
@@ -138,6 +183,7 @@ function sanitizeFillReport(report = {}) {
       clipboardTextNotStored: true,
       fallbackRequiresExplicitAllow: true,
       verificationUsesLengthAndHash: true,
+      caretTextNotRead: true,
       promptTextNotRead: true,
       autoSubmit: false
     },

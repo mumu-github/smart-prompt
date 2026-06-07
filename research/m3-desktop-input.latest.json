@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-windows-uia@1",
-    "createdAt":  "2026-06-07T16:17:22.5949723Z",
+    "createdAt":  "2026-06-07T17:50:12.2500034Z",
     "platform":  "win32",
     "selfTest":  true,
     "selfTestProfile":  "codex",
@@ -15,6 +15,19 @@
                        "expectedToolProfile":  "codex",
                        "expectedToolProfileMatched":  true
                    },
+    "caret":  {
+                  "source":  "win32_get_gui_thread_info",
+                  "supported":  true,
+                  "visible":  true,
+                  "windowHandlePresent":  true,
+                  "rect":  {
+                               "x":  315,
+                               "y":  206,
+                               "width":  1,
+                               "height":  12
+                           },
+                  "virtualCaretMayBeHidden":  true
+              },
     "supportedToolProfiles":  [
                                   "codex",
                                   "claude-code",
@@ -25,17 +38,26 @@
                            "index":  0,
                            "controlType":  "ControlType.Pane",
                            "nameHash":  "",
-                           "automationIdHash":  "ad9239dc58e28e53",
-                           "classNameHash":  "796703c6b06e3656",
+                           "automationIdHash":  "51bd53d1415d5959",
+                           "classNameHash":  "c82be26548fa0711",
                            "isKeyboardFocusable":  false,
                            "isEnabled":  true,
                            "hasValuePattern":  false,
                            "hasTextPattern":  false,
                            "boundingRect":  {
-                                                "x":  50,
-                                                "y":  73,
+                                                "x":  180,
+                                                "y":  203,
                                                 "width":  470,
                                                 "height":  72
+                                            },
+                           "inputSignals":  {
+                                                "score":  150,
+                                                "hasKeyboardFocus":  true,
+                                                "focusedElementMatch":  true,
+                                                "caretWithinBounds":  true,
+                                                "caretWindowMatch":  true,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false
                                             }
                        }
                    ],
@@ -44,12 +66,19 @@
                     "valuePatternCandidates":  0,
                     "textPatternCandidates":  0,
                     "focusableCandidates":  0,
+                    "focusedCandidateCount":  1,
+                    "caretCandidateCount":  1,
+                    "bestCandidateIndex":  0,
+                    "bestCandidateScore":  150,
+                    "caretVisible":  true,
+                    "caretWindowPresent":  true,
                     "detectedToolProfile":  "codex"
                 },
     "privacy":  {
                     "titleRedacted":  true,
                     "elementNamesHashed":  true,
                     "elementValuesNotRead":  true,
+                    "caretTextNotRead":  true,
                     "promptTextNotRead":  true
                 }
 }

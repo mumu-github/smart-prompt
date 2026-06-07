@@ -1,5 +1,15 @@
 # 当前进度
 
+## M3 caret/focus 输入信号更新 2026-06-08
+
+- 已回答“能否通过光标或输入强关联指标识别”的问题：可以作为候选排序强信号，但不能单独作为真实工具写入许可。
+- 已为 `scripts/check-m3-desktop-input.ps1` 新增 `inputSignals`、`caret`、`bestCandidateIndex`、`bestCandidateScore`、`focusedCandidateCount`、`caretCandidateCount` 等字段；报告仍不读取输入值或 prompt 正文。
+- 已把同类信号穿过 local-service sanitizer，并在 `apps/local-service/tests/local-service.test.js` 与 `scripts/critic-m3.ps1` 中加断言，防止 cursor/focus 证据回归丢失。
+- 已验证最小链路：`check-m3-desktop-input.ps1 -SelfTest -JsonOnly` PASS；`check-m3-desktop-fill.ps1 -SelfTest -JsonOnly` PASS；`node -c apps/local-service/src/desktop-input-detector.js` PASS。
+- 已复跑完整 `scripts/critic-m3.ps1` PASS，并记录 OMX verdict pass；Codex goal 仍保持 active，因为真实三工具写回尚未完成。
+- 真实 Codex 前台 snapshot 显示：候选数 116，`focusedCandidateCount:1`，`caretCandidateCount:0`，`caretVisible:false`，`bestCandidateIndex:0` 仍是超大 `ControlType.Document`；这解释了为什么仍不能直接把它当输入框写入。
+- 仍未完成：Codex/Claude Code/Hermes 真实工具窗口的安全填入成功率和失败原因还没有最终验收。
+
 ## M3 剪贴板 fallback 更新 2026-06-08
 
 - 已解释并修复“工具内输入框一直识别不到”的主要技术缺口：桌面/CLI 工具常把输入区放在 Terminal、WebView 或自绘容器中，Windows UIA 可能只能看到宿主容器，无法暴露标准 `ValuePattern` 或原生 Edit 控件。

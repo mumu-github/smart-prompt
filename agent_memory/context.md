@@ -1,5 +1,12 @@
 # 项目上下文
 
+## 当前 M3 caret/focus 输入信号上下文 2026-06-08
+
+- M3 输入识别已新增跟输入强关联的候选信号：Win32 caret 可见性、caret 是否落在候选区域、UIA focused element 匹配、键盘焦点、窗口底部接近度、超大 `ControlType.Document` 标记，以及 `inputSignals`/`bestCandidateIndex`/`bestCandidateScore`。
+- 临时 TextBox self-test 证明这些信号有效：即使 UIA 把控件暴露成 `ControlType.Pane` 而不是 `Edit`，caret/focus 命中仍能把它排成最佳候选。
+- 真实 Codex 前台 snapshot 证明限制也存在：Win32 caret API 可调用但 `caretVisible:false`、`caretWindowPresent:false`，UIA 焦点落在整窗 `ControlType.Document`；因此 cursor/focus 只能作为强信号，不能单独授权真实写入。
+- 后续真实 Codex/Claude Code/Hermes 写回仍需受 `confirmForeground`、title hash、tool profile 和显式 fallback 控制；不要把 focused/best candidate 视为完成真实填入验收。
+
 ## 当前 M3 fallback 上下文 2026-06-08
 
 - M3 Windows 桌面写回现在同时有直接写回 self-test 和显式剪贴板 fallback self-test。剪贴板 fallback 用于 UIA 无法暴露标准输入控件的桌面/CLI 工具，但必须由调用方显式传 `allowClipboardFallback:true`。

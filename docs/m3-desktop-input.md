@@ -11,6 +11,7 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 2026-06-08 更新：
 
 - 很多桌面/CLI 工具会把输入区渲染在 Terminal、WebView 或自绘容器里。Windows UIA 可能只能看到宿主容器，看不到标准 `ValuePattern` 或原生 Edit 控件，所以会出现“能识别工具窗口，但识别不到可写输入框”的情况。
+- 输入识别现在会额外记录跟输入强关联的信号：Win32 caret 是否可见、caret 是否落在候选区域、候选是否拥有键盘焦点、是否匹配 UIA focused element、是否靠近窗口底部、是否是过大的宿主 `Document`，并输出 `inputSignals`、`bestCandidateIndex` 和 `bestCandidateScore`。这些信号可以帮助排序候选，但不能单独作为写入许可；真实 Codex WebView 已证明 caret 可能完全不暴露，focus 也可能只落在整窗 `Document` 上。
 - `scripts/check-m3-desktop-fill.ps1` 已新增显式 `-AllowClipboardFallback`：使用临时剪贴板文本加 `Ctrl+V` 写入，随后恢复原剪贴板；报告只保存长度/hash，不保存原文，也不会发送 Enter 或 submit 信号。
 - 真实前台窗口使用仍必须同时满足 `-ConfirmForeground`、`-ExpectedTitleHash`、`-ExpectedToolProfile` 和 `-AllowClipboardFallback`。缺少确认字段或窗口身份不匹配时，必须返回 `writeAttempted:false`。
 - `POST /desktop/fill` 和 native sidecar 也支持 `allowClipboardFallback:true`，用于 Codex、Claude Code、Hermes 这类 UIA 写入 pattern 不可用的终端/WebView 输入区。

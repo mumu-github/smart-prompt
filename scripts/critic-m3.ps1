@@ -88,6 +88,12 @@ if (-not ($desktopReport.supportedToolProfiles -contains "claude-code")) { throw
 if (-not ($desktopReport.supportedToolProfiles -contains "hermes")) { throw "desktop report missing hermes profile" }
 if (-not $desktopReport.privacy.titleRedacted) { throw "desktop report title is not redacted" }
 if (-not $desktopReport.privacy.elementValuesNotRead) { throw "desktop report may read element values" }
+if (-not $desktopReport.privacy.caretTextNotRead) { throw "desktop report may read caret/input text" }
+if ($null -eq $desktopReport.summary.bestCandidateIndex) { throw "desktop report missing best candidate index" }
+if ($null -eq $desktopReport.summary.bestCandidateScore) { throw "desktop report missing best candidate score" }
+if ($null -eq $desktopReport.summary.focusedCandidateCount) { throw "desktop report missing focused candidate count" }
+if ($null -eq $desktopReport.summary.caretCandidateCount) { throw "desktop report missing caret candidate count" }
+if ($desktopReport.candidates.Count -gt 0 -and $null -eq $desktopReport.candidates[0].inputSignals) { throw "desktop report missing candidate input signals" }
 if (($desktopReport | ConvertTo-Json -Depth 8).Contains("M3 UIA self test input")) { throw "desktop report leaked self-test input text" }
 
 $toolProfileReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-desktop-tool-profiles.latest.json") | ConvertFrom-Json
@@ -114,6 +120,9 @@ if ($realDesktopReport.schemaVersion -ne "m3-real-desktop-tools@1") { throw "rea
 if (-not $realDesktopReport.pass) { throw "real desktop tools report did not pass" }
 if (-not $realDesktopReport.snapshot.probeOk) { throw "real desktop tools snapshot did not probe foreground" }
 if (-not $realDesktopReport.checks.snapshotOk) { throw "real desktop tools report missing snapshot ok" }
+if ($null -eq $realDesktopReport.snapshot.bestCandidateIndex) { throw "real desktop tools report missing best candidate index" }
+if ($null -eq $realDesktopReport.snapshot.focusedCandidateCount) { throw "real desktop tools report missing focused candidate count" }
+if ($null -eq $realDesktopReport.snapshot.caretCandidateCount) { throw "real desktop tools report missing caret candidate count" }
 if (-not $realDesktopReport.checks.foregroundClassified) { throw "real desktop tools report did not classify foreground" }
 if (-not $realDesktopReport.checks.privacyRedacted) { throw "real desktop tools report privacy redaction missing" }
 if ($realDesktopReport.checks.rawTitleStored) { throw "real desktop tools report stored raw title" }
