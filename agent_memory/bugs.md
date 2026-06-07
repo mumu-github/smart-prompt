@@ -6,6 +6,7 @@
 - 已解决：V5 release-ready manifest 已通过，`v0.2.0-beta.1` tag 已推送到 GitHub；安装包 checksum 和 release notes 已生成。
 - 仍需内测观察：`research/v5-pilot-loop.md` 是 beta pilot 计划与记录入口，后续真实用户使用后需要继续补 Insert 成功率、保存率、Undo/Retry 使用和失败站点 adapter 修复。
 - 仍需发布形态观察：当前满足“至少打 tag”的 GitHub 发布要求，尚未创建 GitHub Release 页面或上传 installer assets；如要面向更多内测用户分发，下一步可补 release asset 上传。
+- 工具对账风险：V5 OMX mission 的 handoff objective 是英文生成文本，但实际 Codex goal objective 是用户中文 V5 目标全文；`omx autoresearch-goal complete` 会严格比对 objective，因此拒绝写 `completion.json`。不要为通过对账伪造 Codex goal objective。
 - 仍需谨慎处理：`docs/prd.md` 仍有用户未确认本地改动，不要在后续提交中默认纳入。
 
 ## V4 完成后剩余风险 2026-06-07

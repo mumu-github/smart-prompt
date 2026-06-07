@@ -8,6 +8,8 @@
 - 已完成内测产品闭环文档：`research/v5-pilot-loop.md` 覆盖 5 个真实使用场景、Insert 成功率、保存率、Undo/Retry 使用情况和 adapter 更新记录。
 - 已验证：`scripts/critic-v5.ps1` PASS；`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`npm test` in `prototypes/browser-extension` PASS；`npm run build` in `apps/desktop-shell` PASS；`scripts/check-v4-installer-smoke.ps1` PASS。
 - 已推送：远程分支 `codex/prompt-automation-research` 和远程 tag `v0.2.0-beta.1` 均已推送到 `origin`。
+- 已记录 OMX professor-critic verdict `pass`，证据为 `research/v5-beta-manifest.latest.json`；Codex goal 已通过 `update_goal(status=complete)` 完成。
+- 未写入 OMX `completion.json`：`omx autoresearch-goal complete` 因 mission handoff 英文 objective 与用户直接创建的中文 Codex goal objective 不一致而拒绝；这是对账文本不匹配，不是 V5 验收失败。
 
 ## V4 可安装内测版完成进度 2026-06-07
 
