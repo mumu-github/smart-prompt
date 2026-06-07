@@ -27,7 +27,15 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - `GET /desktop/input-snapshot`
 - `GET /desktop/input-snapshot?selfTest=1`
 
-当前 Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1`，并由 `scripts/check-m3-sidecar-desktop-input.ps1` 启动 native sidecar 做端到端 smoke。发布安装包如需声明 M3 完成，还要重新打包并用安装后 sidecar 复验。
+当前 Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1`，并由 `scripts/check-m3-sidecar-desktop-input.ps1` 启动 native sidecar 做端到端 smoke。
+
+安装包路径也已新增 M3 smoke：
+
+- `apps/desktop-shell/scripts/prepare-sidecar.js` 会把 `check-m3-desktop-input.ps1` 打入 `resources/smart-prompt-sidecar/scripts/`。
+- `scripts/check-m3-installed-sidecar-desktop-input.ps1` 会构建桌面壳、静默安装 NSIS 包、从安装后的 app 启动 bundled native sidecar，再调用 `GET /desktop/input-snapshot?selfTest=1`。
+- 证据文件：`research/m3-installed-sidecar-desktop-input.latest.json`，当前 `pass:true`。
+
+这证明 Windows 安装包内 sidecar snapshot 路径可用；M3 仍未完成，因为还缺 macOS AX 和 Codex/Claude Code/Hermes 真实桌面输入框写回。
 
 ## 工具画像
 

@@ -1,0 +1,46 @@
+{
+    "schemaVersion":  "m3-installed-sidecar-desktop-input@1",
+    "createdAt":  "2026-06-07T14:54:29.4240023Z",
+    "pass":  true,
+    "remotePort":  9241,
+    "servicePort":  17461,
+    "rawInstallerSmokeReport":  ".runtime/m3-installed-v4-installer-smoke.raw.json",
+    "checks":  {
+                   "desktopShellBuilt":  true,
+                   "installerSmokePass":  true,
+                   "bundledNativeSidecar":  true,
+                   "bundledDesktopInputProbe":  true,
+                   "installedAppStartedSidecar":  true,
+                   "installedServiceHealth":  true,
+                   "desktopSnapshotFromInstalledSidecar":  true,
+                   "desktopSnapshotSelfTestPass":  true,
+                   "desktopSnapshotToolProfiles":  true,
+                   "desktopSnapshotPrivacyRedacted":  true,
+                   "installedAppStoppedSidecar":  true
+               },
+    "installer":  "apps/desktop-shell/src-tauri/target/release/bundle/nsis/Smart Prompt_0.2.0_x64-setup.exe",
+    "installedExeName":  "smart-prompt-desktop.exe",
+    "bundledSidecarExecutable":  "resources/smart-prompt-sidecar/bin/local-service-sidecar.exe",
+    "bundledDesktopInputProbe":  "resources/smart-prompt-sidecar/scripts/check-m3-desktop-input.ps1",
+    "desktopInputSnapshot":  {
+                                 "ok":  true,
+                                 "schemaVersion":  "m3-windows-uia@1",
+                                 "selfTest":  true,
+                                 "pass":  true,
+                                 "candidateCount":  1,
+                                 "supportedToolProfiles":  [
+                                                               "codex",
+                                                               "claude-code",
+                                                               "hermes"
+                                                           ],
+                                 "privacy":  {
+                                                 "elementNamesHashed":  true,
+                                                 "elementValuesNotRead":  true,
+                                                 "promptTextNotRead":  true,
+                                                 "titleRedacted":  true
+                                             }
+                             },
+    "failedChecks":  [
+
+                     ]
+}

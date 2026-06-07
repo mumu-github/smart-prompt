@@ -8,6 +8,7 @@
 - M3 Windows UIA 证据入口：`research/m3-desktop-input.latest.json`。当前 self-test 通过，Windows UIA 能枚举临时 TextBox 候选，并匹配 Codex 工具画像；报告不保存 raw title、raw element name 或 input value。
 - 新增 local-service 开发接口与 native sidecar source/dev 接口：`GET /desktop/input-snapshot`，受 auth 保护；native sidecar 通过 Windows PowerShell UIA bridge 返回同一契约。
 - M3 native sidecar 证据入口：`research/m3-sidecar-desktop-input.latest.json`。当前 sidecar smoke 通过，证明 native sidecar health/auth 后可调用 `desktop/input-snapshot?selfTest=1` 并返回 1 个 UIA 输入候选。
+- M3 安装包 sidecar 证据入口：`research/m3-installed-sidecar-desktop-input.latest.json`。当前安装包 smoke 通过，证明桌面壳安装包会打入 `resources/smart-prompt-sidecar/bin/local-service-sidecar.exe` 与 `resources/smart-prompt-sidecar/scripts/check-m3-desktop-input.ps1`，安装后的 app 能启动 bundled sidecar 并调用 `desktop/input-snapshot?selfTest=1`。
 - macOS AX 当前只定义契约和 pending guard，未实现；不要把 M3 goal 标记 complete。
 
 ## V5 Beta 发布上下文 2026-06-07

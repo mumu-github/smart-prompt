@@ -6,7 +6,7 @@
 
 ## 0. 当前 Beta 状态
 
-v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA/source-dev 竖切验证阶段，下一阶段重点是真实内测数据闭环、桌面输入框实机写回和更多工具适配。
+v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA 竖切验证阶段，源码/dev sidecar 与安装包内 bundled sidecar snapshot 均已通过。下一阶段重点是真实内测数据闭环、桌面输入框实机写回和更多工具适配。
 
 ### 已完成证据
 
@@ -24,7 +24,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 - 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因。
 - 补 workBuddy、Trae、Doubao、DeepSeek 等新网页站点适配。
-- 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test 与 native sidecar snapshot 已通过，macOS AX 和真实桌面写回仍待完成。
+- 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test、source/dev sidecar snapshot 和安装包 bundled sidecar snapshot 已通过，macOS AX 和真实桌面写回仍待完成。
 
 ## 1. 背景
 
@@ -336,8 +336,8 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 ### M3：桌面输入框
 
 - 状态：进行中。
-- 已完成：Windows UIA self-test、开发路径 `GET /desktop/input-snapshot`、native sidecar `GET /desktop/input-snapshot`、Codex/Claude Code/Hermes 首批工具画像与隐私脱敏报告。
-- 待完成：安装包内 native sidecar 重新打包复验、macOS AX 初步支持、Codex/Claude Code/Hermes 真实桌面输入框写回、剪贴板 fallback 的安全提示。
+- 已完成：Windows UIA self-test、开发路径 `GET /desktop/input-snapshot`、native sidecar `GET /desktop/input-snapshot`、安装包 bundled native sidecar snapshot smoke、Codex/Claude Code/Hermes 首批工具画像与隐私脱敏报告。
+- 待完成：macOS AX 初步支持、Codex/Claude Code/Hermes 真实桌面输入框写回、剪贴板 fallback 的安全提示。
 - 范围：Windows UIA 与 macOS AX 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 的安全提示。
 
 ### M4：评估与团队

@@ -18,8 +18,8 @@ function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function getJson(url) {
-  const response = await fetch(url);
+async function getJson(url, headers = {}) {
+  const response = await fetch(url, { headers });
   if (!response.ok) throw new Error(`GET ${url} failed: ${response.status}`);
   return response.json();
 }
@@ -140,14 +140,23 @@ function findRelativeFile(root, predicate) {
       installDir,
       (file) => /smart-prompt-sidecar\/bin\/local-service-sidecar(\.exe)?$/i.test(file.replace(/\\/g, "/"))
     ),
+    bundledDesktopInputProbe: findRelativeFile(
+      installDir,
+      (file) => /smart-prompt-sidecar\/scripts\/check-m3-desktop-input\.ps1$/i.test(file.replace(/\\/g, "/"))
+    ),
     checks: {
       bundledSidecarResource: false,
       bundledNativeSidecar: false,
+      bundledDesktopInputProbe: false,
       webviewTarget: false,
       tauriApi: false,
       sourceCommandBundled: false,
       localServiceStartedFromInstalledApp: false,
       serviceHealthFromInstalledApp: false,
+      desktopSnapshotFromInstalledSidecar: false,
+      desktopSnapshotSelfTestPass: false,
+      desktopSnapshotPrivacyRedacted: false,
+      desktopSnapshotToolProfiles: false,
       localServiceStoppedFromInstalledApp: false
     }
   };
@@ -156,6 +165,7 @@ function findRelativeFile(root, predicate) {
   try {
     report.checks.bundledSidecarResource = Boolean(report.bundledSidecarExecutable);
     report.checks.bundledNativeSidecar = Boolean(report.bundledSidecarExecutable);
+    report.checks.bundledDesktopInputProbe = Boolean(report.bundledDesktopInputProbe);
 
     const target = await waitForTarget(remotePort);
     report.checks.webviewTarget = true;
@@ -184,6 +194,32 @@ function findRelativeFile(root, predicate) {
       service: health.service
     };
     report.checks.serviceHealthFromInstalledApp = true;
+
+    const auth = await getJson(`http://127.0.0.1:${servicePort}/auth/bootstrap`);
+    const snapshotResponse = await getJson(
+      `http://127.0.0.1:${servicePort}/desktop/input-snapshot?selfTest=1`,
+      { Authorization: `Bearer ${auth.auth.token}` }
+    );
+    const snapshot = snapshotResponse.snapshot || {};
+    const profiles = Array.isArray(snapshot.supportedToolProfiles) ? snapshot.supportedToolProfiles : [];
+    const candidateCount = Number(snapshot.summary?.candidateCount || 0);
+    report.desktopInputSnapshot = {
+      ok: Boolean(snapshotResponse.ok),
+      schemaVersion: snapshot.schemaVersion || "",
+      selfTest: Boolean(snapshot.selfTest),
+      pass: Boolean(snapshot.pass),
+      candidateCount,
+      supportedToolProfiles: profiles,
+      privacy: snapshot.privacy || {}
+    };
+    report.checks.desktopSnapshotFromInstalledSidecar = Boolean(snapshotResponse.ok);
+    report.checks.desktopSnapshotSelfTestPass = Boolean(snapshot.pass) && candidateCount > 0;
+    report.checks.desktopSnapshotPrivacyRedacted = Boolean(snapshot.privacy?.titleRedacted)
+      && Boolean(snapshot.privacy?.elementValuesNotRead)
+      && JSON.stringify(snapshot).includes("M3 UIA self test input") === false;
+    report.checks.desktopSnapshotToolProfiles = profiles.includes("codex")
+      && profiles.includes("claude-code")
+      && profiles.includes("hermes");
 
     const runningStatus = await evaluate(client, `window.__TAURI__.core.invoke("get_local_service_status")`);
     assert.equal(runningStatus, "running");

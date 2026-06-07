@@ -7,6 +7,7 @@ const desktopRoot = path.resolve(__dirname, "..");
 const repoRoot = path.resolve(desktopRoot, "..", "..");
 const resourcesRoot = path.join(desktopRoot, "src-tauri", "resources", "smart-prompt-sidecar");
 const sidecarRoot = path.join(repoRoot, "apps", "local-service-sidecar");
+const m3DesktopInputProbe = path.join(repoRoot, "scripts", "check-m3-desktop-input.ps1");
 
 function copyFile(source, target) {
   fs.mkdirSync(path.dirname(target), { recursive: true });
@@ -40,6 +41,10 @@ const executableName = process.platform === "win32" ? "local-service-sidecar.exe
 copyFile(
   path.join(sidecarRoot, "target", "release", executableName),
   path.join(resourcesRoot, "bin", executableName)
+);
+copyFile(
+  m3DesktopInputProbe,
+  path.join(resourcesRoot, "scripts", "check-m3-desktop-input.ps1")
 );
 
 console.log(`Prepared native local-service sidecar executable at ${resourcesRoot}`);

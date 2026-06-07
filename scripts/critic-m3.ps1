@@ -44,6 +44,10 @@ Invoke-Step "M3 native sidecar desktop input self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-sidecar-desktop-input.ps1") -Report (Join-Path $Root "research/m3-sidecar-desktop-input.latest.json")
 }
 
+Invoke-Step "M3 installed sidecar desktop input smoke" {
+  powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-installed-sidecar-desktop-input.ps1") -Report (Join-Path $Root "research/m3-installed-sidecar-desktop-input.latest.json")
+}
+
 Invoke-Step "M3 beta adapter pilot" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-pilot-adapters.ps1") -Headless -LoginWaitSeconds 1 -NoAutoSendWaitMs 500 -Report (Join-Path $Root "research/m3-pilot-adapters.latest.json")
 }
@@ -71,6 +75,19 @@ if (-not $sidecarReport.checks.privacyValuesNotRead) { throw "sidecar desktop re
 if (($sidecarReport | ConvertTo-Json -Depth 10).Contains("M3 UIA self test input")) { throw "sidecar desktop report leaked self-test input text" }
 if (($sidecarReport | ConvertTo-Json -Depth 10).Contains("AppData\\Local\\Temp\\smart-prompt-m3-sidecar")) { throw "sidecar desktop report leaked temp data dir" }
 
+$installedReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-installed-sidecar-desktop-input.latest.json") | ConvertFrom-Json
+if ($installedReport.schemaVersion -ne "m3-installed-sidecar-desktop-input@1") { throw "installed sidecar desktop report schema mismatch" }
+if (-not $installedReport.pass) { throw "installed sidecar desktop report did not pass" }
+if (-not $installedReport.checks.bundledNativeSidecar) { throw "installed sidecar report did not prove bundled native sidecar" }
+if (-not $installedReport.checks.bundledDesktopInputProbe) { throw "installed sidecar report did not prove bundled desktop input probe" }
+if (-not $installedReport.checks.installedAppStartedSidecar) { throw "installed sidecar report did not start sidecar from installed app" }
+if (-not $installedReport.checks.installedServiceHealth) { throw "installed sidecar report did not prove service health" }
+if (-not $installedReport.checks.desktopSnapshotFromInstalledSidecar) { throw "installed sidecar report did not call desktop snapshot" }
+if (-not $installedReport.checks.desktopSnapshotSelfTestPass) { throw "installed sidecar desktop snapshot did not pass self-test" }
+if (-not $installedReport.checks.desktopSnapshotToolProfiles) { throw "installed sidecar desktop snapshot missing tool profiles" }
+if (-not $installedReport.checks.desktopSnapshotPrivacyRedacted) { throw "installed sidecar desktop snapshot privacy redaction missing" }
+if (($installedReport | ConvertTo-Json -Depth 10).Contains("M3 UIA self test input")) { throw "installed sidecar report leaked self-test input text" }
+
 $pilotReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-pilot-adapters.latest.json") | ConvertFrom-Json
 if ($pilotReport.schemaVersion -ne "m3-pilot-adapters@1") { throw "pilot report schema mismatch" }
 foreach ($site in @("workbuddy", "trae", "doubao", "deepseek")) {
@@ -86,5 +103,8 @@ Assert-Text "packages/shared/desktop-tool-profiles.js" "claude-code"
 Assert-Text "apps/local-service/src/server.js" "/desktop/input-snapshot"
 Assert-Text "apps/local-service-sidecar/src/main.rs" "/desktop/input-snapshot"
 Assert-Text "scripts/check-m3-sidecar-desktop-input.ps1" "m3-sidecar-desktop-input@1"
+Assert-Text "scripts/check-m3-installed-sidecar-desktop-input.ps1" "m3-installed-sidecar-desktop-input@1"
+Assert-Text "apps/desktop-shell/scripts/prepare-sidecar.js" "check-m3-desktop-input.ps1"
+Assert-Text "scripts/check-v4-installed-app-runtime.js" "desktopSnapshotFromInstalledSidecar"
 
 Write-Host "PASS: M3 pilot and desktop input critic checks passed."

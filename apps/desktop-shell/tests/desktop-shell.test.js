@@ -83,6 +83,7 @@ assert.ok(prepareSidecar.includes("smart-prompt-sidecar"));
 assert.ok(prepareSidecar.includes("apps\", \"local-service-sidecar"));
 assert.ok(prepareSidecar.includes("cargo"));
 assert.ok(prepareSidecar.includes("local-service-sidecar.exe"));
+assert.ok(prepareSidecar.includes("check-m3-desktop-input.ps1"));
 
 const interactionTest = fs.readFileSync(path.join(root, "tests/desktop-shell-interaction.test.js"), "utf8");
 assert.ok(interactionTest.includes("vm.runInContext"));
