@@ -140,21 +140,32 @@ function createStore(dataDir = defaultDataDir(), options = {}) {
     };
   }
 
+  function migrateProviderKeysIfNeeded(persisted, encryptedProviderKeys) {
+    if (!hasProviderKeys(persisted)) return null;
+    const provider = normalizeProvider(persisted.provider, "openai-compatible");
+    const migrated = normalizeProviderKeys({
+      provider: persisted.provider,
+      apiKey: persisted.apiKey,
+      providerKeys: encryptedProviderKeys
+    }, persisted.providerKeys, provider, persisted.apiKey);
+    credentialVault.saveProviderKeys(migrated);
+    writeJson(settingsFile, sanitizeSettingsFile(persisted));
+    writeJson(path.join(dataDir, "key-migration.json"), {
+      migrateProviderKeys: true,
+      migratedAt: new Date().toISOString(),
+      storage: credentialVault.getStorageSummary().storage
+    });
+    return migrated;
+  }
+
   function getSettings() {
     const persisted = readSettingsFile();
     const encryptedProviderKeys = {
       ...DEFAULT_SETTINGS.providerKeys,
       ...credentialVault.loadProviderKeys()
     };
-    if (hasProviderKeys(persisted)) {
-      const provider = normalizeProvider(persisted.provider, "openai-compatible");
-      const migrated = normalizeProviderKeys({
-        provider: persisted.provider,
-        apiKey: persisted.apiKey,
-        providerKeys: encryptedProviderKeys
-      }, persisted.providerKeys, provider, persisted.apiKey);
-      credentialVault.saveProviderKeys(migrated);
-      writeJson(settingsFile, sanitizeSettingsFile(persisted));
+    const migrated = migrateProviderKeysIfNeeded(persisted, encryptedProviderKeys);
+    if (migrated) {
       return {
         ...sanitizeSettingsFile(persisted),
         providerKeys: {
@@ -384,6 +395,61 @@ function createStore(dataDir = defaultDataDir(), options = {}) {
     };
   }
 
+  function clearAllLocalData() {
+    const deleted = [];
+    for (const file of [
+      settingsFile,
+      skillsFile,
+      promptsFile,
+      historyFile,
+      metricsFile,
+      metadataFile,
+      securityFile,
+      path.join(dataDir, "provider-keys.json"),
+      path.join(dataDir, "key-migration.json")
+    ]) {
+      if (fs.existsSync(file)) {
+        fs.rmSync(file, { force: true });
+        deleted.push(path.basename(file));
+      }
+    }
+    migrateData();
+    getSecurity();
+    return {
+      clearAllLocalData: true,
+      deleted,
+      schemaVersion: DATA_SCHEMA_VERSION
+    };
+  }
+
+  function exportDiagnostics() {
+    const settings = getSettings();
+    const metrics = getMetrics();
+    return {
+      createdAt: new Date().toISOString(),
+      diagnostics: true,
+      service: "smart-prompt-local-service",
+      schemaVersion: DATA_SCHEMA_VERSION,
+      dataDir,
+      metadata: getMetadata(),
+      counts: {
+        skills: getSkills().length,
+        prompts: getPrompts().length,
+        promptHistory: getPromptHistory().length,
+        metrics: metrics.eventCount
+      },
+      metrics,
+      credentialStorage: settings.credentialStorage,
+      keyMigration: readJson(path.join(dataDir, "key-migration.json"), {
+        migrateProviderKeys: false
+      }),
+      portRecovery: {
+        supported: true,
+        portRecovery: true
+      }
+    };
+  }
+
   migrateData();
 
   return {
@@ -410,7 +476,10 @@ function createStore(dataDir = defaultDataDir(), options = {}) {
     recordMetric,
     getMetrics,
     exportData,
-    restoreData
+    restoreData,
+    clearAllLocalData,
+    exportDiagnostics,
+    migrateProviderKeysIfNeeded
   };
 }
 

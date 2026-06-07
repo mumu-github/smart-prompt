@@ -11,6 +11,10 @@ New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Report) | Out-Nul
 
 Push-Location (Join-Path $Root "apps/desktop-shell")
 try {
+  npm run prepare-sidecar
+  if ($LASTEXITCODE -ne 0) {
+    throw "V4 native sidecar prepare failed with exit code $LASTEXITCODE."
+  }
   $env:SMART_PROMPT_TAURI_RUNTIME_REPORT = $Report
   npm run runtime-test
   if ($LASTEXITCODE -ne 0) {

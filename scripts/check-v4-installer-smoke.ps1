@@ -65,7 +65,7 @@ $reportObject = [ordered]@{
     installed = $false
     started = $false
     bundledSidecarResource = $false
-    bundledNodeRuntime = $false
+    bundledNativeSidecar = $false
     sourceCommandBundled = $false
     localServiceStartedFromInstalledApp = $false
     serviceHealthFromInstalledApp = $false
@@ -91,7 +91,7 @@ try {
     Select-Object -First 1
   if (-not $installedExe) {
     $installedExe = Get-ChildItem -LiteralPath $InstallDir -Recurse -File -Filter "*.exe" |
-      Where-Object { $_.Name -notmatch "unins|uninstall" -and $_.Name -notmatch "^node(\.exe)?$" } |
+      Where-Object { $_.Name -notmatch "unins|uninstall" -and $_.Name -notmatch "^local-service-sidecar(\.exe)?$" } |
       Sort-Object Length -Descending |
       Select-Object -First 1
   }
@@ -128,7 +128,7 @@ try {
   $runtimeReport = $runtimeText | ConvertFrom-Json
   $reportObject.installedRuntime = $runtimeReport
   $reportObject.checks.bundledSidecarResource = [bool]$runtimeReport.checks.bundledSidecarResource
-  $reportObject.checks.bundledNodeRuntime = [bool]$runtimeReport.checks.bundledNodeRuntime
+  $reportObject.checks.bundledNativeSidecar = [bool]$runtimeReport.checks.bundledNativeSidecar
   $reportObject.checks.sourceCommandBundled = [bool]$runtimeReport.checks.sourceCommandBundled
   $reportObject.checks.localServiceStartedFromInstalledApp = [bool]$runtimeReport.checks.localServiceStartedFromInstalledApp
   $reportObject.checks.serviceHealthFromInstalledApp = [bool]$runtimeReport.checks.serviceHealthFromInstalledApp
@@ -170,7 +170,7 @@ try {
     -and $reportObject.checks.installed `
     -and $reportObject.checks.started `
     -and $reportObject.checks.bundledSidecarResource `
-    -and $reportObject.checks.bundledNodeRuntime `
+    -and $reportObject.checks.bundledNativeSidecar `
     -and $reportObject.checks.sourceCommandBundled `
     -and $reportObject.checks.localServiceStartedFromInstalledApp `
     -and $reportObject.checks.serviceHealthFromInstalledApp `

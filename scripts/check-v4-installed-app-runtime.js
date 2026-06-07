@@ -136,17 +136,13 @@ function findRelativeFile(root, predicate) {
     pass: false,
     remotePort,
     servicePort,
-    bundledServiceResource: findRelativeFile(
+    bundledSidecarExecutable: findRelativeFile(
       installDir,
-      (file) => file.replace(/\\/g, "/").endsWith("smart-prompt-sidecar/apps/local-service/src/server.js")
-    ),
-    bundledNodeRuntime: findRelativeFile(
-      installDir,
-      (file) => /smart-prompt-sidecar\/bin\/node(\.exe)?$/i.test(file.replace(/\\/g, "/"))
+      (file) => /smart-prompt-sidecar\/bin\/local-service-sidecar(\.exe)?$/i.test(file.replace(/\\/g, "/"))
     ),
     checks: {
       bundledSidecarResource: false,
-      bundledNodeRuntime: false,
+      bundledNativeSidecar: false,
       webviewTarget: false,
       tauriApi: false,
       sourceCommandBundled: false,
@@ -158,8 +154,8 @@ function findRelativeFile(root, predicate) {
 
   let client;
   try {
-    report.checks.bundledSidecarResource = Boolean(report.bundledServiceResource);
-    report.checks.bundledNodeRuntime = Boolean(report.bundledNodeRuntime);
+    report.checks.bundledSidecarResource = Boolean(report.bundledSidecarExecutable);
+    report.checks.bundledNativeSidecar = Boolean(report.bundledSidecarExecutable);
 
     const target = await waitForTarget(remotePort);
     report.checks.webviewTarget = true;
@@ -174,7 +170,7 @@ function findRelativeFile(root, predicate) {
 
     const source = await evaluate(client, `window.__TAURI__.core.invoke("get_local_service_source")`);
     report.localServiceSource = source;
-    report.checks.sourceCommandBundled = source.includes("script=bundled") && source.includes("node=bundled");
+    report.checks.sourceCommandBundled = source.includes("local-service-sidecar=bundled");
 
     const serviceResult = await evaluate(client, `window.__TAURI__.core.invoke("start_local_service")`);
     assert.ok(["started", "running"].includes(serviceResult), `unexpected start result: ${serviceResult}`);

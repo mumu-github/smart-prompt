@@ -17,6 +17,7 @@
           <span id="service-status" class="status-pill">checking</span>
           <button id="start-service" type="button">Start Service</button>
           <button id="stop-service" type="button">Stop Service</button>
+          <button id="restart-service" type="button">Restart Service</button>
         </div>
       </header>
 
@@ -31,6 +32,15 @@
         </div>
         <div id="provider-test-status" class="skill-row">Provider test not run.</div>
         <button id="test-provider" type="button">Test Provider</button>
+      </section>
+
+      <section class="panel diagnostics-panel">
+        <h2>Diagnostics</h2>
+        <div class="diagnostics-actions">
+          <button id="export-diagnostics" type="button">Export Diagnostics</button>
+          <button id="clear-local-data" type="button">Clear Local Data</button>
+        </div>
+        <pre id="diagnostics-output" class="diagnostics-output">No diagnostics exported.</pre>
       </section>
 
       <section class="panel">

@@ -68,7 +68,10 @@ const releaseNotes = readText("docs/releases/v0.2.0-beta.1.md");
 const pilotLoop = readText("research/v5-pilot-loop.md");
 const desktopApp = readText("apps/desktop-shell/src/app.js");
 const localService = readText("apps/local-service/src/server.js");
+const localStore = readText("apps/local-service/src/store.js");
+const nativeSidecar = readText("apps/local-service-sidecar/src/main.rs");
 const tauriMain = readText("apps/desktop-shell/src-tauri/src/main.rs");
+const diagnosticsSource = `${desktopApp}\n${localService}\n${localStore}\n${nativeSidecar}`;
 
 const groupedCommitPatterns = [
   /v3.*evidence|evidence.*v3/i,
@@ -121,12 +124,12 @@ const acceptance = {
     pass: [
       "diagnostics",
       "/diagnostics/export",
-      "clear-all-local-data",
+      "clearAllLocalData",
       "migrateProviderKeys",
       "portRecovery"
-    ].every((token) => `${desktopApp}\n${localService}`.includes(token)),
-    partial: ["diagnostics", "clear-all-local-data"].some((token) => `${desktopApp}\n${localService}`.includes(token)),
-    evidence: ["apps/desktop-shell/src/app.js", "apps/local-service/src/server.js"]
+    ].every((token) => diagnosticsSource.includes(token)),
+    partial: ["diagnostics", "clearAllLocalData"].some((token) => diagnosticsSource.includes(token)),
+    evidence: ["apps/desktop-shell/src/app.js", "apps/local-service/src/server.js", "apps/local-service/src/store.js", "apps/local-service-sidecar/src/main.rs"]
   }),
   PILOT_LOOP_PASS: gate({
     pass: Boolean(

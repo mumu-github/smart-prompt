@@ -125,6 +125,33 @@ p {
   text-align: center;
 }
 
+.diagnostics-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.diagnostics-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.diagnostics-output {
+  min-height: 96px;
+  max-height: 220px;
+  overflow: auto;
+  padding: 10px;
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #0f1413;
+  color: #dce6e2;
+  font-size: 12px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 label {
   display: grid;
   gap: 7px;

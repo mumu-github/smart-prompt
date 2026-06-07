@@ -452,6 +452,14 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     assert.equal(backup.body.backup.metrics.length, 1);
     assert.ok(!JSON.stringify(backup.body.backup.settings).includes("provider-secret"));
 
+    const diagnostics = await authed("GET", "/diagnostics/export");
+    assert.equal(diagnostics.status, 200);
+    assert.equal(diagnostics.body.diagnostics.diagnostics, true);
+    assert.equal(diagnostics.body.diagnostics.portRecovery.portRecovery, true);
+    assert.ok(Object.hasOwn(diagnostics.body.diagnostics.keyMigration, "migrateProviderKeys"));
+    assert.equal(diagnostics.body.diagnostics.counts.prompts, 1);
+    assert.equal(diagnostics.body.diagnostics.metrics.insertSuccessRate, 1);
+
     const deletedPrompt = await authed("DELETE", `/prompts/${encodeURIComponent(savedPrompt.body.prompt.id)}`);
     assert.equal(deletedPrompt.status, 200);
     assert.equal(deletedPrompt.body.prompts.length, 0);
@@ -485,6 +493,13 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     }
     assert.deepEqual(gatewayCalls.slice(1).map((call) => call.mode), [MODE.IDEA, MODE.CONTINUE, MODE.POLISH]);
     assert.ok(gatewayCalls.every((call) => call.provider === PROVIDERS.GEMINI && call.model === "gemini-test" && call.hasApiKey));
+
+    const cleared = await authed("DELETE", "/data/all");
+    assert.equal(cleared.status, 200);
+    assert.equal(cleared.body.clearAllLocalData, true);
+    assert.equal(cleared.body.deleted.clearAllLocalData, true);
+    assert.equal(store.getPrompts().length, 0);
+    assert.equal(store.getSkills().length, 0);
   } finally {
     server.close();
   }

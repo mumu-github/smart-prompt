@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-06-07T12:00:06.773Z",
+  "createdAt": "2026-06-07T12:22:19.236Z",
   "pass": true,
   "releaseReady": true,
   "version": "0.2.0",
@@ -23,7 +23,7 @@
         "installed": true,
         "started": true,
         "bundledSidecarResource": true,
-        "bundledNodeRuntime": true,
+        "bundledNativeSidecar": true,
         "sourceCommandBundled": true,
         "localServiceStartedFromInstalledApp": true,
         "serviceHealthFromInstalledApp": true,
@@ -121,8 +121,8 @@
     "research/v4-installer-smoke.latest.json": {
       "evidenceFile": "research/v4-installer-smoke.latest.json",
       "exists": true,
-      "sha256": "9c9bb9a1e43eca5c",
-      "bytes": 2869
+      "sha256": "630398f0079e0651",
+      "bytes": 2934
     },
     "research/v3-live-site-formal.latest.json": {
       "evidenceFile": "research/v3-live-site-formal.latest.json",
@@ -151,20 +151,20 @@
     "apps/desktop-shell/scripts/prepare-sidecar.js": {
       "evidenceFile": "apps/desktop-shell/scripts/prepare-sidecar.js",
       "exists": true,
-      "sha256": "32196b4a7cae2ff7",
-      "bytes": 1400
+      "sha256": "acc0da2ab3fe161d",
+      "bytes": 1504
     },
     "scripts/check-v4-installed-app-runtime.js": {
       "evidenceFile": "scripts/check-v4-installed-app-runtime.js",
       "exists": true,
-      "sha256": "fc012593ccf17c2d",
-      "bytes": 7146
+      "sha256": "53b834db68b23b34",
+      "bytes": 6983
     },
     "apps/desktop-shell/src-tauri/src/main.rs": {
       "evidenceFile": "apps/desktop-shell/src-tauri/src/main.rs",
       "exists": true,
-      "sha256": "4b18299bc0cd21fe",
-      "bytes": 9258
+      "sha256": "25be1106c0a60a65",
+      "bytes": 10035
     }
   }
 }

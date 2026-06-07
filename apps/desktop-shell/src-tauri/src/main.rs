@@ -7,9 +7,11 @@ use tauri::{
 use tauri_plugin_global_shortcut::{Code, GlobalShortcutExt, Modifiers, Shortcut, ShortcutState};
 use std::{
     fs,
+    net::TcpStream,
     path::PathBuf,
     process::{Child, Command, Stdio},
     sync::Mutex,
+    time::Duration,
 };
 
 #[derive(Default)]
@@ -75,10 +77,13 @@ fn get_local_service_status(state: tauri::State<LocalServiceRuntimeState>) -> Re
 
 #[tauri::command]
 fn get_local_service_source(app: tauri::AppHandle) -> Result<String, String> {
-    let script = find_local_service_script(&app)
-        .ok_or_else(|| "local service script not found".to_string())?;
-    let node_runtime = find_node_runtime(&app);
-    Ok(format!("script={};node={}", script.source, node_runtime.source))
+    let sidecar = find_local_service_sidecar(&app)
+        .ok_or_else(|| "local-service-sidecar executable not found".to_string())?;
+    Ok(format!(
+        "local-service-sidecar={};binary={}",
+        sidecar.source,
+        sidecar.path.display()
+    ))
 }
 
 #[tauri::command]
@@ -96,22 +101,16 @@ fn start_local_service(
         }
     }
 
-    let script = find_local_service_script(&app)
-        .ok_or_else(|| "local service script not found".to_string())?;
-    let script = script.path.canonicalize().unwrap_or(script.path);
-    let script_dir = script
-        .parent()
-        .ok_or_else(|| "local service script parent not found".to_string())?;
-    let script_name = script
-        .file_name()
-        .ok_or_else(|| "local service script name not found".to_string())?;
-    let node_runtime = find_node_runtime(&app);
-    let node = node_runtime.path.canonicalize().unwrap_or(node_runtime.path);
+    if is_local_service_port_in_use() {
+        return Ok("running".to_string());
+    }
+
+    let sidecar = find_local_service_sidecar(&app)
+        .ok_or_else(|| "local-service-sidecar executable not found".to_string())?;
+    let sidecar = sidecar.path.canonicalize().unwrap_or(sidecar.path);
     let data_dir = local_service_data_dir(&app)?;
     fs::create_dir_all(&data_dir).map_err(|error| error.to_string())?;
-    let child_process = Command::new(node)
-        .current_dir(script_dir)
-        .arg(script_name)
+    let child_process = Command::new(sidecar)
         .env("SMART_PROMPT_DATA_DIR", data_dir)
         .stdin(Stdio::null())
         .stdout(Stdio::null())
@@ -135,44 +134,48 @@ fn stop_local_service(state: tauri::State<LocalServiceRuntimeState>) -> Result<S
     Ok("stopped".to_string())
 }
 
-fn find_local_service_script(app: &tauri::AppHandle) -> Option<ResolvedLocalPath> {
+#[tauri::command]
+fn restart_local_service(
+    app: tauri::AppHandle,
+    state: tauri::State<LocalServiceRuntimeState>
+) -> Result<String, String> {
+    let _ = stop_local_service(state.clone());
+    start_local_service(app, state)
+}
+
+fn sidecar_executable_name() -> &'static str {
+    if cfg!(target_os = "windows") {
+        "local-service-sidecar.exe"
+    } else {
+        "local-service-sidecar"
+    }
+}
+
+fn find_local_service_sidecar(app: &tauri::AppHandle) -> Option<ResolvedLocalPath> {
     let mut candidates: Vec<(PathBuf, &'static str)> = Vec::new();
     for root in bundled_sidecar_roots(app) {
-        candidates.push((root.join("apps/local-service/src/server.js"), "bundled"));
+        candidates.push((root.join("bin").join(sidecar_executable_name()), "bundled"));
     }
 
     if let Ok(current_dir) = std::env::current_dir() {
-        candidates.push((current_dir.join("../local-service/src/server.js"), "source"));
-        candidates.push((current_dir.join("../../apps/local-service/src/server.js"), "source"));
-        candidates.push((current_dir.join("apps/local-service/src/server.js"), "source"));
+        candidates.push((current_dir.join("../local-service-sidecar/target/release").join(sidecar_executable_name()), "source"));
+        candidates.push((current_dir.join("../local-service-sidecar/target/debug").join(sidecar_executable_name()), "source"));
+        candidates.push((current_dir.join("../../apps/local-service-sidecar/target/release").join(sidecar_executable_name()), "source"));
+        candidates.push((current_dir.join("../../apps/local-service-sidecar/target/debug").join(sidecar_executable_name()), "source"));
+        candidates.push((current_dir.join("apps/local-service-sidecar/target/release").join(sidecar_executable_name()), "source"));
+        candidates.push((current_dir.join("apps/local-service-sidecar/target/debug").join(sidecar_executable_name()), "source"));
     }
 
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     if let Some(apps_dir) = manifest_dir.parent().and_then(|desktop_dir| desktop_dir.parent()) {
-        candidates.push((apps_dir.join("local-service/src/server.js"), "source"));
+        candidates.push((apps_dir.join("local-service-sidecar/target/release").join(sidecar_executable_name()), "source"));
+        candidates.push((apps_dir.join("local-service-sidecar/target/debug").join(sidecar_executable_name()), "source"));
     }
 
     candidates
         .into_iter()
         .find(|(candidate, _)| candidate.exists())
         .map(|(path, source)| ResolvedLocalPath { path, source })
-}
-
-fn find_node_runtime(app: &tauri::AppHandle) -> ResolvedLocalPath {
-    let executable = if cfg!(target_os = "windows") { "node.exe" } else { "node" };
-    for root in bundled_sidecar_roots(app) {
-        let candidate = root.join("bin").join(executable);
-        if candidate.exists() {
-            return ResolvedLocalPath {
-                path: candidate,
-                source: "bundled",
-            };
-        }
-    }
-    ResolvedLocalPath {
-        path: PathBuf::from("node"),
-        source: "path",
-    }
 }
 
 fn bundled_sidecar_roots(app: &tauri::AppHandle) -> Vec<PathBuf> {
@@ -188,6 +191,21 @@ fn bundled_sidecar_roots(app: &tauri::AppHandle) -> Vec<PathBuf> {
         }
     }
     roots
+}
+
+fn local_service_port() -> u16 {
+    std::env::var("SMART_PROMPT_PORT")
+        .ok()
+        .and_then(|value| value.parse::<u16>().ok())
+        .unwrap_or(17371)
+}
+
+fn is_local_service_port_in_use() -> bool {
+    let address = format!("127.0.0.1:{}", local_service_port());
+    match address.parse() {
+        Ok(address) => TcpStream::connect_timeout(&address, Duration::from_millis(150)).is_ok(),
+        Err(_) => false,
+    }
 }
 
 fn local_service_data_dir(app: &tauri::AppHandle) -> Result<PathBuf, String> {
@@ -248,7 +266,8 @@ fn main() {
             get_local_service_status,
             get_local_service_source,
             start_local_service,
-            stop_local_service
+            stop_local_service,
+            restart_local_service
         ])
         .run(tauri::generate_context!())
         .expect("error while running Smart Prompt desktop shell");

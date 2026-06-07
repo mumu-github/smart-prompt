@@ -1,7 +1,7 @@
 {
-  "createdAt": "2026-06-07T12:01:25.727Z",
-  "pass": false,
-  "releaseReady": false,
+  "createdAt": "2026-06-07T12:27:09.818Z",
+  "pass": true,
+  "releaseReady": true,
   "tagName": "v0.2.0-beta.1",
   "acceptance": {
     "CLEAN_GROUPED_COMMITS": {
@@ -21,6 +21,7 @@
       "docsPrdDirty": true,
       "docsPrdStaged": false,
       "recentSubjects": [
+        "Add V5 beta release critic scaffold",
         "Record V3 V4 evidence and release critics",
         "Harden extension prompt card and adapters",
         "Package desktop shell sidecar lifecycle",
@@ -49,42 +50,43 @@
         "test(v2): support cdp attach for claude evidence",
         "feat(v2): support provider-specific llm keys",
         "test(v2): harden extension privacy context",
-        "feat(v2): add auto llm provider readiness",
-        "feat(v2): add multi-provider llm gateway"
+        "feat(v2): add auto llm provider readiness"
       ]
     },
     "BETA_RELEASE_PACKAGE": {
-      "status": "PARTIAL",
+      "status": "PASS",
       "evidence": [
         "docs/releases/v0.2.0-beta.1.md",
         "research/v5-beta-checksums.sha256",
         "apps/desktop-shell/src-tauri/target/release/bundle"
       ],
       "tagName": "v0.2.0-beta.1",
-      "tagExists": false,
+      "tagExists": true,
       "installerArtifacts": [
         "apps/desktop-shell/src-tauri/target/release/bundle/msi/Smart Prompt_0.2.0_x64_en-US.msi",
         "apps/desktop-shell/src-tauri/target/release/bundle/nsis/Smart Prompt_0.2.0_x64-setup.exe"
       ],
-      "checksumLines": 0,
-      "checksumsCoverInstallers": false
+      "checksumLines": 2,
+      "checksumsCoverInstallers": true
     },
     "NATIVE_SIDECAR_PASS": {
-      "status": "FAIL",
+      "status": "PASS",
       "evidence": [
         "apps/local-service-sidecar",
         "apps/desktop-shell/src-tauri/src/main.rs"
       ]
     },
     "DIAGNOSTICS_PASS": {
-      "status": "FAIL",
+      "status": "PASS",
       "evidence": [
         "apps/desktop-shell/src/app.js",
-        "apps/local-service/src/server.js"
+        "apps/local-service/src/server.js",
+        "apps/local-service/src/store.js",
+        "apps/local-service-sidecar/src/main.rs"
       ]
     },
     "PILOT_LOOP_PASS": {
-      "status": "FAIL",
+      "status": "PASS",
       "evidence": [
         "research/v5-pilot-loop.md"
       ]
@@ -92,23 +94,42 @@
   },
   "worktree": {
     "dirtyFiles": [
-      "agent_memory/bugs.md",
-      "agent_memory/context.md",
-      "agent_memory/progress.md",
-      "docs/prd.md"
+      "apps/desktop-shell/index.html",
+      "apps/desktop-shell/scripts/prepare-sidecar.js",
+      "apps/desktop-shell/src-tauri/src/main.rs",
+      "apps/desktop-shell/src/app.js",
+      "apps/desktop-shell/src/styles.css",
+      "apps/desktop-shell/tests/desktop-shell-interaction.test.js",
+      "apps/desktop-shell/tests/desktop-shell.test.js",
+      "apps/local-service/README.md",
+      "apps/local-service/src/server.js",
+      "apps/local-service/src/store.js",
+      "apps/local-service/tests/local-service.test.js",
+      "docs/prd.md",
+      "research/v4-installer-smoke.latest.json",
+      "research/v4-release-manifest.latest.json",
+      "research/v5-beta-manifest.latest.json",
+      "scripts/check-v4-installed-app-runtime.js",
+      "scripts/check-v4-installer-smoke.ps1",
+      "scripts/check-v4-sidecar-service.ps1",
+      "scripts/write-v4-release-manifest.js",
+      "scripts/write-v5-beta-manifest.js"
     ],
     "untrackedFiles": [
-      "research/v5-beta-manifest.latest.json",
-      "scripts/critic-v5.ps1",
-      "scripts/write-v5-beta-manifest.js"
+      "apps/local-service-sidecar/Cargo.lock",
+      "apps/local-service-sidecar/Cargo.toml",
+      "apps/local-service-sidecar/src/main.rs",
+      "docs/releases/v0.2.0-beta.1.md",
+      "research/v5-beta-checksums.sha256",
+      "research/v5-pilot-loop.md"
     ],
     "stagedFiles": []
   },
   "evidenceHashes": {
-    "docs/releases/v0.2.0-beta.1.md": null,
-    "research/v5-beta-checksums.sha256": null,
-    "research/v5-pilot-loop.md": null,
-    "scripts/write-v5-beta-manifest.js": "10d3b676811a5e92f2aa77bded7a7b39adbfaa70a3c50846546caf38c2d949a8",
+    "docs/releases/v0.2.0-beta.1.md": "f81a5e076afdfeabf52f3ef0d58ea1a39e6f79701a31d2e6ab9f6642e197f5be",
+    "research/v5-beta-checksums.sha256": "72b03471ec4fd21e316e113bba7447053b670fce02e13104efc374574d88d4b5",
+    "research/v5-pilot-loop.md": "f5bab46de21c0e766556a54e9a90f37b9ba5098560e603ea96b4536395c01d85",
+    "scripts/write-v5-beta-manifest.js": "a53517f3e9219b8fc7e4353da2f1886303e350ac387bc74ec9c6eb7c754e05a5",
     "scripts/critic-v5.ps1": "7b6dfebed2ae85957ab816aa1c2a674ffcb2a895dfbe882c5870ef002c7b1e9f"
   }
 }

@@ -140,7 +140,7 @@ const localDataPass = Boolean(localDataPartial
 const installerChecks = installerSmoke?.checks || {};
 const installerRuntimePass = [
   "bundledSidecarResource",
-  "bundledNodeRuntime",
+  "bundledNativeSidecar",
   "sourceCommandBundled",
   "localServiceStartedFromInstalledApp",
   "serviceHealthFromInstalledApp",

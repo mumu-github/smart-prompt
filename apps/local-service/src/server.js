@@ -302,6 +302,17 @@ function createApp(store = createStore(), options = {}) {
         return;
       }
 
+      if (req.method === "DELETE" && url.pathname === "/data/all") {
+        const deleted = store.clearAllLocalData();
+        sendJson(req, res, 200, { ok: true, deleted, clearAllLocalData: true }, options);
+        return;
+      }
+
+      if (req.method === "GET" && url.pathname === "/diagnostics/export") {
+        sendJson(req, res, 200, { ok: true, diagnostics: store.exportDiagnostics() }, options);
+        return;
+      }
+
       if (req.method === "GET" && url.pathname === "/metrics") {
         sendJson(req, res, 200, { ok: true, metrics: store.getMetrics() }, options);
         return;

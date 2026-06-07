@@ -37,10 +37,14 @@ const els = {
   geminiApiKey: document.getElementById("gemini-api-key"),
   startService: document.getElementById("start-service"),
   stopService: document.getElementById("stop-service"),
+  restartService: document.getElementById("restart-service"),
   firstRunProgress: document.getElementById("first-run-progress"),
   privacyBoundary: document.getElementById("privacy-boundary"),
   testProvider: document.getElementById("test-provider"),
   providerTestStatus: document.getElementById("provider-test-status"),
+  exportDiagnostics: document.getElementById("export-diagnostics"),
+  clearLocalData: document.getElementById("clear-local-data"),
+  diagnosticsOutput: document.getElementById("diagnostics-output"),
   saveSettings: document.getElementById("save-settings"),
   skillFolder: document.getElementById("skill-folder"),
   importFolder: document.getElementById("import-folder"),
@@ -377,10 +381,46 @@ async function stopLocalService() {
   setStatus("stop local service from terminal", false);
 }
 
+async function restartLocalService() {
+  if (window.__TAURI__?.core?.invoke) {
+    const status = await window.__TAURI__.core.invoke("restart_local_service");
+    serviceAuthToken = "";
+    document.documentElement.dataset.localServiceStatus = status;
+    await loadServiceState();
+    return;
+  }
+  setStatus("restart local service from terminal", false);
+}
+
+async function exportDiagnostics() {
+  const result = await serviceRequest("/diagnostics/export", { method: "GET" });
+  els.diagnosticsOutput.textContent = JSON.stringify(result.diagnostics, null, 2);
+  els.diagnosticsOutput.dataset.diagnostics = "exported";
+  setStatus("diagnostics exported", true);
+}
+
+async function clearLocalData() {
+  const confirmed = typeof window.confirm === "function"
+    ? window.confirm("Clear all local Smart Prompt data?")
+    : true;
+  if (!confirmed) return;
+  const result = await serviceRequest("/data/all", { method: "DELETE" });
+  serviceAuthToken = "";
+  localStorage.removeItem("smartPromptProviderTestPass");
+  localStorage.removeItem("smartPromptProviderTestedAt");
+  els.diagnosticsOutput.textContent = JSON.stringify(result.deleted, null, 2);
+  els.diagnosticsOutput.dataset.clearAllLocalData = "true";
+  setStatus("local data cleared", true);
+  await loadServiceState();
+}
+
 els.saveSettings.addEventListener("click", () => saveSettings().catch((error) => setStatus(error.message, false)));
 els.startService.addEventListener("click", () => startLocalService().catch((error) => setStatus(error.message, false)));
 els.stopService.addEventListener("click", () => stopLocalService().catch((error) => setStatus(error.message, false)));
+els.restartService.addEventListener("click", () => restartLocalService().catch((error) => setStatus(error.message, false)));
 els.testProvider.addEventListener("click", () => testProvider().catch((error) => setStatus(error.message, false)));
+els.exportDiagnostics.addEventListener("click", () => exportDiagnostics().catch((error) => setStatus(error.message, false)));
+els.clearLocalData.addEventListener("click", () => clearLocalData().catch((error) => setStatus(error.message, false)));
 els.importFolder.addEventListener("click", () => importFolder().catch((error) => setStatus(error.message, false)));
 els.savePrompt.addEventListener("click", () => savePrompt().catch((error) => setStatus(error.message, false)));
 els.skillList.addEventListener("click", handleSkillListAction);

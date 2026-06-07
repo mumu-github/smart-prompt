@@ -19,10 +19,14 @@ const elementIds = [
   "gemini-api-key",
   "start-service",
   "stop-service",
+  "restart-service",
   "first-run-progress",
   "privacy-boundary",
   "test-provider",
   "provider-test-status",
+  "export-diagnostics",
+  "clear-local-data",
+  "diagnostics-output",
   "save-settings",
   "skill-folder",
   "import-folder",
@@ -220,6 +224,28 @@ async function fakeFetch(url, options = {}) {
     serviceState.prompts = serviceState.prompts.filter((prompt) => prompt.id !== id);
     return createResponse({ ok: true, prompts: serviceState.prompts });
   }
+  if (method === "GET" && parsed.pathname === "/diagnostics/export") {
+    return createResponse({
+      ok: true,
+      diagnostics: {
+        diagnostics: true,
+        portRecovery: { portRecovery: true },
+        keyMigration: { migrateProviderKeys: true },
+        metrics: { insertSuccessRate: 1 }
+      }
+    });
+  }
+  if (method === "DELETE" && parsed.pathname === "/data/all") {
+    serviceState.skills = [];
+    serviceState.prompts = [];
+    serviceState.settings.providerKeys = {
+      agnes: "",
+      "openai-compatible": "",
+      anthropic: "",
+      gemini: ""
+    };
+    return createResponse({ ok: true, deleted: { clearAllLocalData: true } });
+  }
 
   return createResponse({ ok: false, error: { message: `Unhandled ${method} ${parsed.pathname}` } }, 404);
 }
@@ -242,11 +268,17 @@ const context = {
     },
     setItem(key, value) {
       localStorageValues[key] = String(value);
+    },
+    removeItem(key) {
+      delete localStorageValues[key];
     }
   },
   window: {}
 };
 context.window = {
+  confirm() {
+    return true;
+  },
   __TAURI__: {
     core: {
       async invoke(command, payload) {
@@ -254,6 +286,7 @@ context.window = {
         if (command === "set_global_shortcut") return payload.shortcut;
         if (command === "start_local_service") return "started";
         if (command === "stop_local_service") return "stopped";
+        if (command === "restart_local_service") return "started";
         if (command === "get_local_service_status") return "stopped";
         throw new Error(`Unhandled Tauri command ${command}`);
       }
@@ -350,6 +383,19 @@ context.window = {
   await elements["stop-service"].trigger("click");
   assert.ok(tauriInvokes.some((invoke) => invoke.command === "stop_local_service"));
   assert.equal(context.document.documentElement.dataset.localServiceStatus, "stopped");
+
+  await elements["restart-service"].trigger("click");
+  assert.ok(tauriInvokes.some((invoke) => invoke.command === "restart_local_service"));
+
+  await elements["export-diagnostics"].trigger("click");
+  await waitFor(() => elements["diagnostics-output"].dataset.diagnostics === "exported", "diagnostics export");
+  assert.ok(serviceRequests.some((request) => request.method === "GET" && request.path === "/diagnostics/export"));
+  assert.ok(elements["diagnostics-output"].textContent.includes("portRecovery"));
+
+  await elements["clear-local-data"].trigger("click");
+  await waitFor(() => elements["diagnostics-output"].dataset.clearAllLocalData === "true", "clear local data");
+  assert.ok(serviceRequests.some((request) => request.method === "DELETE" && request.path === "/data/all"));
+  assert.equal(localStorageValues.smartPromptProviderTestPass, undefined);
 
   assert.equal(context.window.__smartPromptEventsReady, true);
   shortcutListener({ payload: "Ctrl+Alt+P" });

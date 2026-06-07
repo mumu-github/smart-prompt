@@ -175,6 +175,14 @@ Response:
 { "ok": true, "prompts": [] }
 ```
 
+### `GET /diagnostics/export`
+
+Protected. Exports a bounded diagnostics bundle with counts, metrics, credential storage summary, key migration status, and port recovery status. Prompt bodies and provider keys are not included.
+
+### `DELETE /data/all`
+
+Protected. Deletes local settings, provider keys, skills, prompts, history, metrics, metadata, and auth token, then creates a fresh empty local data store. Clients should clear their cached auth token and call `GET /auth/bootstrap` again.
+
 ### `POST /prompts`
 
 Request:
