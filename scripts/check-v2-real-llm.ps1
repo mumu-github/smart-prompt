@@ -62,6 +62,7 @@ const {
   getProviderDefaults,
   getProviderStatuses
 } = require("./packages/shared/llm-gateway");
+const { MODE } = require("./packages/shared/smart-prompt-core");
 const { createStore, defaultDataDir } = require("./apps/local-service/src/store");
 
 function chooseProvider(storedSettings) {
@@ -101,9 +102,9 @@ function summarizeSettings(settings) {
 }
 
 const samples = [
-  { name: "idea", input: "", context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea" } },
-  { name: "continue", input: "帮我做一个 CRM 后台，需要客户列表和跟进记录", context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea" } },
-  { name: "polish", input: "目标：修复登录模块\n背景：Next.js 项目\n约束：不要改 API\n输出：补丁和验证命令\n验收：测试通过", context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea" } }
+  { name: MODE.IDEA, input: "", context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea", mode: MODE.IDEA } },
+  { name: MODE.CONTINUE, input: "帮我做一个 CRM 后台，需要客户列表和跟进记录", context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea", mode: MODE.CONTINUE } },
+  { name: MODE.POLISH, input: "目标：修复登录模块\n背景：Next.js 项目\n约束：不要改 API\n输出：补丁和验证命令\n验收：测试通过", context: { tool: "ChatGPT", host: "chatgpt.com", inputKind: "textarea", mode: MODE.POLISH } }
 ];
 
 (async () => {
@@ -163,7 +164,7 @@ const samples = [
     configuredProviders,
     settingsSummary: summarizeSettings(settings),
     providerStatus,
-    pass: process.env.SMART_PROMPT_REAL_LLM_DRY_RUN !== "1" && results.length === samples.length && results.every((result) => result.ok && result.generatedBy === "llm"),
+    pass: process.env.SMART_PROMPT_REAL_LLM_DRY_RUN !== "1" && results.length === samples.length && results.every((result) => result.ok && result.generatedBy === "llm" && result.mode === result.name),
     results
   };
   if (process.env.SMART_PROMPT_REAL_LLM_REPORT) {

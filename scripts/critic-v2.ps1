@@ -275,7 +275,7 @@ if (Test-Path $claudeCdpStartPath) {
 $realLlmProbePath = Join-Path $Root "scripts/check-v2-real-llm.ps1"
 if (Test-Path $realLlmProbePath) {
   $realLlmProbe = Get-Content -Raw -Encoding UTF8 $realLlmProbePath
-  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "SMART_PROMPT_REAL_LLM_DRY_RUN", "SMART_PROMPT_TEST_PROVIDER", "SMART_PROMPT_TEST_MODEL", "SMART_PROMPT_TEST_BASE_URL", "AGNES_API_KEY", "createStore", "defaultDataDir", "getProviderStatuses", "getConfiguredProviderOrder", "configuredProviders", "providerKeysAvailable", "idea", "continue", "polish")) {
+  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "SMART_PROMPT_REAL_LLM_DRY_RUN", "SMART_PROMPT_TEST_PROVIDER", "SMART_PROMPT_TEST_MODEL", "SMART_PROMPT_TEST_BASE_URL", "AGNES_API_KEY", "createStore", "defaultDataDir", "getProviderStatuses", "getConfiguredProviderOrder", "configuredProviders", "providerKeysAvailable", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH")) {
     if (-not $realLlmProbe.Contains($token)) {
       Add-Failure "Real LLM probe missing report or three-mode token: $token"
     }
@@ -370,7 +370,7 @@ if ($RequireRuntimeEvidence) {
     $results = @($realLlmReport.results)
     foreach ($modeName in @("idea", "continue", "polish")) {
       $modeResult = $results | Where-Object { $_.name -eq $modeName } | Select-Object -First 1
-      if (-not $modeResult -or -not $modeResult.ok -or $modeResult.generatedBy -ne "llm" -or $modeResult.promptLength -lt 40) {
+      if (-not $modeResult -or -not $modeResult.ok -or $modeResult.generatedBy -ne "llm" -or $modeResult.mode -ne $modeName -or $modeResult.promptLength -lt 40) {
         Add-Failure "Real LLM report does not prove $modeName mode generated through LLM."
       }
     }
