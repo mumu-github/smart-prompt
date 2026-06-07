@@ -478,6 +478,10 @@ function Invoke-ConfirmedForegroundFill {
   }
 
   $candidate = $candidates[$CandidateIndex]
+  $directWriteTooBroad = [bool](
+    $candidate.controlType -eq "ControlType.Document" -and
+    ([int]$candidate.boundingRect.width -gt 900 -or [int]$candidate.boundingRect.height -gt 500)
+  )
   $base.target = [pscustomobject]@{
     index = $candidate.index
     controlType = $candidate.controlType
@@ -485,6 +489,7 @@ function Invoke-ConfirmedForegroundFill {
     hasValuePattern = [bool]$candidate.hasValuePattern
     hasTextPattern = [bool]$candidate.hasTextPattern
     hasNativeWindowHandle = [bool]$candidate.hasNativeWindowHandle
+    directWriteBlocked = [bool]$directWriteTooBroad
     titleLength = $context.titleLength
     titleHash = $context.titleHash
     boundingRect = $candidate.boundingRect
@@ -492,7 +497,7 @@ function Invoke-ConfirmedForegroundFill {
 
   $strategy = ""
   $uiaSetValueTried = $false
-  if ($candidate.hasValuePattern -and $candidate.valuePattern) {
+  if ($candidate.hasValuePattern -and $candidate.valuePattern -and -not $directWriteTooBroad) {
     try {
       $uiaSetValueTried = $true
       $candidate.valuePattern.SetValue($Text)
@@ -501,7 +506,7 @@ function Invoke-ConfirmedForegroundFill {
       $strategy = ""
     }
   }
-  if (-not $strategy -and $candidate.hasNativeWindowHandle) {
+  if (-not $strategy -and $candidate.hasNativeWindowHandle -and -not $directWriteTooBroad) {
     [void][SmartPromptFillNative]::SetWindowText($candidate.nativeWindowHandle, $Text)
     $strategy = "win32_set_window_text_fallback"
   }
@@ -518,7 +523,7 @@ function Invoke-ConfirmedForegroundFill {
     }
   }
   if (-not $strategy) {
-    $base.reason = "foreground_candidate_has_no_write_strategy"
+    $base.reason = if ($directWriteTooBroad) { "foreground_candidate_requires_clipboard_fallback" } else { "foreground_candidate_has_no_write_strategy" }
     $base.uiaSetValueTried = [bool]$uiaSetValueTried
     return [pscustomobject]$base
   }

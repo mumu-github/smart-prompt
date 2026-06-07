@@ -14,6 +14,7 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - `scripts/check-m3-desktop-fill.ps1` 已新增显式 `-AllowClipboardFallback`：使用临时剪贴板文本加 `Ctrl+V` 写入，随后恢复原剪贴板；报告只保存长度/hash，不保存原文，也不会发送 Enter 或 submit 信号。
 - 真实前台窗口使用仍必须同时满足 `-ConfirmForeground`、`-ExpectedTitleHash`、`-ExpectedToolProfile` 和 `-AllowClipboardFallback`。缺少确认字段或窗口身份不匹配时，必须返回 `writeAttempted:false`。
 - `POST /desktop/fill` 和 native sidecar 也支持 `allowClipboardFallback:true`，用于 Codex、Claude Code、Hermes 这类 UIA 写入 pattern 不可用的终端/WebView 输入区。
+- 对真实前台窗口，脚本会阻止对超大 `ControlType.Document` 候选直接 `SetValue` 或 `SetWindowText`；这类候选通常是整个 App/WebView，而不是输入框。报告会标记 `directWriteBlocked:true` 并返回 `foreground_candidate_requires_clipboard_fallback`。
 
 已新增 `scripts/check-m3-desktop-input.ps1`：
 

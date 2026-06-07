@@ -60,6 +60,10 @@ Invoke-Step "M3 Windows foreground fill guard" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -ConfirmForeground -ExpectedTitleHash "not-a-real-title-hash" -ExpectedToolProfile "codex" -Text "M3 foreground guard raw text" -Report (Join-Path $Root "research/m3-desktop-fill-guard.latest.json")
 }
 
+Invoke-Step "M3 Windows real foreground clipboard guard" {
+  powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-real-desktop-tools.ps1") -AllowForegroundWrite -AllowClipboardFallback -ExpectedTitleHash "not-a-real-title-hash" -ExpectedToolProfile "codex" -Text "M3 real foreground clipboard guard raw text" -Report (Join-Path $Root "research/m3-real-desktop-clipboard-guard.latest.json")
+}
+
 Invoke-Step "M3 native sidecar desktop input self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-sidecar-desktop-input.ps1") -Report (Join-Path $Root "research/m3-sidecar-desktop-input.latest.json")
 }
@@ -166,6 +170,17 @@ if ($desktopFillGuardReport.reason -ne "foreground_title_hash_mismatch") { throw
 if (-not $desktopFillGuardReport.privacy.writtenTextNotStored) { throw "desktop fill guard stores written text" }
 if (($desktopFillGuardReport | ConvertTo-Json -Depth 10).Contains("M3 foreground guard raw text")) { throw "desktop fill guard leaked raw text" }
 
+$realDesktopClipboardGuardReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-real-desktop-clipboard-guard.latest.json") | ConvertFrom-Json
+if ($realDesktopClipboardGuardReport.schemaVersion -ne "m3-real-desktop-tools@1") { throw "real desktop clipboard guard schema mismatch" }
+if (-not $realDesktopClipboardGuardReport.write.allowed) { throw "real desktop clipboard guard did not exercise write path" }
+if (-not $realDesktopClipboardGuardReport.write.clipboardFallbackAllowed) { throw "real desktop clipboard guard did not allow fallback" }
+if ($realDesktopClipboardGuardReport.write.attempted) { throw "real desktop clipboard guard attempted write before target match" }
+if ($realDesktopClipboardGuardReport.write.clipboardFallbackTried) { throw "real desktop clipboard guard tried clipboard before target match" }
+if ($realDesktopClipboardGuardReport.write.reason -ne "foreground_title_hash_mismatch") { throw "real desktop clipboard guard did not stop on title hash mismatch" }
+if (-not $realDesktopClipboardGuardReport.privacy.clipboardTextNotStored) { throw "real desktop clipboard guard may store clipboard text" }
+if (-not $realDesktopClipboardGuardReport.privacy.fallbackRequiresExplicitAllow) { throw "real desktop clipboard guard fallback is not explicitly gated" }
+if (($realDesktopClipboardGuardReport | ConvertTo-Json -Depth 10).Contains("M3 real foreground clipboard guard raw text")) { throw "real desktop clipboard guard leaked raw text" }
+
 $sidecarReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-sidecar-desktop-input.latest.json") | ConvertFrom-Json
 if ($sidecarReport.schemaVersion -ne "m3-sidecar-desktop-input@1") { throw "sidecar desktop report schema mismatch" }
 if (-not $sidecarReport.pass) { throw "sidecar desktop report did not pass" }
@@ -251,6 +266,8 @@ Assert-Text "docs/m3-desktop-input.md" "workBuddy"
 Assert-Text "packages/shared/desktop-tool-profiles.js" "claude-code"
 Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "m3-real-desktop-tools@1"
 Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "real_write_requires_allow_foreground_write"
+Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "AllowClipboardFallback"
+Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "clipboardFallbackAllowed"
 Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "m3-desktop-tool-profiles@1"
 Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "claude-code"
 Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "hermes"
@@ -266,6 +283,8 @@ Assert-Text "scripts/check-m3-desktop-fill.ps1" "m3-windows-fill@1"
 Assert-Text "scripts/check-m3-desktop-fill.ps1" "ExpectedTitleHash"
 Assert-Text "scripts/check-m3-desktop-fill.ps1" "AllowClipboardFallback"
 Assert-Text "scripts/check-m3-desktop-fill.ps1" "clipboard_paste_fallback"
+Assert-Text "scripts/check-m3-desktop-fill.ps1" "foreground_candidate_requires_clipboard_fallback"
+Assert-Text "apps/local-service/src/desktop-input-detector.js" "directWriteBlocked"
 Assert-Text "scripts/check-m3-desktop-fill.ps1" "foreground_title_hash_mismatch"
 Assert-Text "scripts/check-m3-sidecar-desktop-input.ps1" "m3-sidecar-desktop-input@1"
 Assert-Text "scripts/check-m3-sidecar-desktop-fill.ps1" "m3-sidecar-desktop-fill@1"

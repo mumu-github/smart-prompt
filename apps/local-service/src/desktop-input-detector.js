@@ -101,6 +101,7 @@ function sanitizeFillReport(report = {}) {
       hasValuePattern: Boolean(report.target?.hasValuePattern),
       hasTextPattern: Boolean(report.target?.hasTextPattern),
       hasNativeWindowHandle: Boolean(report.target?.hasNativeWindowHandle),
+      directWriteBlocked: Boolean(report.target?.directWriteBlocked),
       index: Number(report.target?.index || 0),
       titleLength: Number(report.target?.titleLength || 0),
       titleHash: String(report.target?.titleHash || "").slice(0, 64),

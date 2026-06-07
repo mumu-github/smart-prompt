@@ -336,7 +336,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 ### M3：桌面输入框
 
 - 状态：进行中。
-- 已完成：Windows UIA self-test、Codex/Claude Code/Hermes 三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回协议、显式 `allowClipboardFallback` 剪贴板粘贴 self-test、开发路径 `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、native sidecar `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、安装包 bundled native sidecar snapshot/fill smoke、隐私脱敏报告。
+- 已完成：Windows UIA self-test、Codex/Claude Code/Hermes 三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回协议、显式 `allowClipboardFallback` 剪贴板粘贴 self-test、超大 `Document` 候选直写阻断、开发路径 `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、native sidecar `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、安装包 bundled native sidecar snapshot/fill smoke、隐私脱敏报告。
 - 待完成：Codex/Claude Code/Hermes 真实工具窗口写回验收报告、真实工具窗口内剪贴板 fallback 成功率记录。
 - 范围：Windows UIA 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 必须显式确认前台窗口身份后才可使用。macOS AX 暂缓到后续跨平台阶段。
 

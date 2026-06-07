@@ -8,6 +8,9 @@
 - 新增证据 `research/m3-desktop-fill-clipboard.latest.json`，当前 `pass:true`、`strategy:"clipboard_paste_fallback"`、`clipboardFallbackTried:true`、`clipboardRestored:true`；`research/m3-desktop-fill.latest.json`、`research/m3-sidecar-desktop-fill.latest.json`、`research/m3-installed-sidecar-desktop-input.latest.json` 已同步新增隐私字段。
 - 已为 `scripts/check-v4-installer-smoke.ps1` 加一次启动重试，解决安装后 app 偶发 5 秒内退出导致 smoke 误失败的问题；完整 `scripts/critic-m3.ps1` 已复跑并 PASS，OMX verdict 已记录 pass。
 - 仍未完成：Codex/Claude Code/Hermes 真实工具窗口内写回成功率和剪贴板 fallback 成功率尚未验收；本轮没有对真实前台工具窗口执行写入，只做 self-test 和受控接口链路。
+- 本轮继续推进：`scripts/check-m3-real-desktop-tools.ps1` 现在会把 `-AllowClipboardFallback` 传入真实前台写入桥；新增 `research/m3-real-desktop-clipboard-guard.latest.json`，证明即使开启真实写入与 clipboard fallback，只要 title hash 不匹配，也不会尝试写入或粘贴。
+- 已新增超大 `ControlType.Document` 候选直写阻断：真实 Codex 前台候选 0 是全窗口 Document，`research/m3-desktop-fill-direct-guard.latest.json` 证明 hash/profile 匹配时也会返回 `foreground_candidate_requires_clipboard_fallback`、`directWriteBlocked:true`、`writeAttempted:false`，避免把整页/整窗候选当输入框覆盖。
+- 已验证：`npm test` in `apps/local-service` PASS；`scripts/check-m3-desktop-fill.ps1 -SelfTest` PASS；`scripts/check-m3-desktop-fill.ps1 -SelfTest -AllowClipboardFallback` PASS；真实 Codex 前台 direct guard PASS；真实前台 clipboard mismatch guard PASS；完整 `scripts/critic-m3.ps1` PASS；OMX verdict 已记录 pass。
 
 ## M3 桌面写回与 PRD 状态 2026-06-07
 

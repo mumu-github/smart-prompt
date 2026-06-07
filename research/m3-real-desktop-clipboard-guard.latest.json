@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-real-desktop-tools@1",
-    "createdAt":  "2026-06-07T17:27:01.5520219Z",
+    "createdAt":  "2026-06-07T17:27:17.8282745Z",
     "platform":  "win32",
     "pass":  true,
     "requestedProfiles":  [
@@ -32,19 +32,19 @@
                      "focusableCandidates":  115
                  },
     "write":  {
-                  "allowed":  false,
+                  "allowed":  true,
                   "attempted":  false,
                   "pass":  false,
                   "verified":  false,
                   "strategy":  "",
-                  "clipboardFallbackAllowed":  false,
+                  "clipboardFallbackAllowed":  true,
                   "clipboardFallbackTried":  false,
                   "clipboardRestored":  false,
-                  "reason":  "real_write_requires_allow_foreground_write",
+                  "reason":  "foreground_title_hash_mismatch",
                   "expectedTitleHashMatched":  false,
-                  "expectedToolProfileMatched":  false,
+                  "expectedToolProfileMatched":  true,
                   "candidateIndex":  0,
-                  "exitCode":  null,
+                  "exitCode":  0,
                   "summary":  {
                                   "requestedTextLength":  0,
                                   "requestedTextHash":  "",

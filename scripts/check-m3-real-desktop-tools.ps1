@@ -4,6 +4,7 @@ param(
   [ValidateSet("codex", "claude-code", "hermes")]
   [string[]]$Profiles = @("codex", "claude-code", "hermes"),
   [switch]$AllowForegroundWrite,
+  [switch]$AllowClipboardFallback,
   [string]$ExpectedTitleHash = "",
   [string]$ExpectedToolProfile = "",
   [int]$CandidateIndex = 0,
@@ -111,6 +112,9 @@ $write = [pscustomobject]@{
   pass = $false
   verified = $false
   strategy = ""
+  clipboardFallbackAllowed = [bool]$AllowClipboardFallback
+  clipboardFallbackTried = $false
+  clipboardRestored = $false
   reason = "real_write_requires_allow_foreground_write"
   expectedTitleHashMatched = $false
   expectedToolProfileMatched = $false
@@ -135,6 +139,9 @@ if ($AllowForegroundWrite) {
     "-CandidateIndex", ([string]$CandidateIndex),
     "-Text", $Text
   )
+  if ($AllowClipboardFallback) {
+    $fillArgs += "-AllowClipboardFallback"
+  }
   $fillProbe = Invoke-JsonProbe -Path (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -Arguments $fillArgs
   $fill = $fillProbe.json
   if ($fillProbe.parseOk -and $fill) {
@@ -144,6 +151,9 @@ if ($AllowForegroundWrite) {
       pass = [bool]$fill.pass
       verified = [bool]$fill.verified
       strategy = if ($fill.strategy) { $fill.strategy } else { "" }
+      clipboardFallbackAllowed = [bool]$AllowClipboardFallback
+      clipboardFallbackTried = [bool]$fill.clipboardFallbackTried
+      clipboardRestored = [bool]$fill.clipboardRestored
       reason = if ($fill.reason) { $fill.reason } else { "" }
       expectedTitleHashMatched = [bool]$fill.foreground.expectedTitleHashMatched
       expectedToolProfileMatched = [bool]$fill.foreground.expectedToolProfileMatched
@@ -165,6 +175,9 @@ if ($AllowForegroundWrite) {
       pass = $false
       verified = $false
       strategy = ""
+      clipboardFallbackAllowed = [bool]$AllowClipboardFallback
+      clipboardFallbackTried = $false
+      clipboardRestored = $false
       reason = "foreground_fill_probe_json_parse_failed"
       expectedTitleHashMatched = $false
       expectedToolProfileMatched = $false
@@ -249,6 +262,8 @@ $reportObject = [pscustomobject]@{
     elementValuesNotRead = $true
     promptTextNotRead = $true
     writtenTextNotStored = $true
+    clipboardTextNotStored = $true
+    fallbackRequiresExplicitAllow = $true
     verificationUsesLengthAndHash = $true
     autoSubmit = $false
   }

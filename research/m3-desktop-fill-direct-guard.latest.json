@@ -1,0 +1,67 @@
+﻿{
+    "schemaVersion":  "m3-windows-fill@1",
+    "createdAt":  "2026-06-07T17:25:37.0040824Z",
+    "platform":  "win32",
+    "selfTest":  false,
+    "confirmForeground":  true,
+    "allowClipboardFallback":  false,
+    "pass":  false,
+    "writeAttempted":  false,
+    "verified":  false,
+    "strategy":  "",
+    "uiaSetValueTried":  false,
+    "clipboardFallbackTried":  false,
+    "clipboardRestored":  false,
+    "foreground":  {
+                       "processName":  "Codex",
+                       "pidPresent":  true,
+                       "titleLength":  5,
+                       "titleHash":  "616efbe96852d8c9",
+                       "detectedToolProfile":  "codex",
+                       "expectedTitleHashMatched":  true,
+                       "expectedToolProfileMatched":  true
+                   },
+    "supportedToolProfiles":  [
+                                  "codex",
+                                  "claude-code",
+                                  "hermes"
+                              ],
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotReadBeforeWrite":  true,
+                    "writtenTextNotStored":  true,
+                    "clipboardTextNotStored":  true,
+                    "fallbackRequiresExplicitAllow":  true,
+                    "verificationUsesLengthAndHash":  true,
+                    "promptTextNotRead":  true,
+                    "autoSubmit":  false
+                },
+    "summary":  {
+                    "candidateCount":  154,
+                    "requestedTextLength":  30,
+                    "requestedTextHash":  "97d983cd6ebe2589",
+                    "verifiedTextLength":  0,
+                    "verifiedTextHash":  "",
+                    "autoSubmit":  false,
+                    "submitSignalCount":  0
+                },
+    "target":  {
+                   "index":  0,
+                   "controlType":  "ControlType.Document",
+                   "classNameHash":  "",
+                   "hasValuePattern":  true,
+                   "hasTextPattern":  true,
+                   "hasNativeWindowHandle":  false,
+                   "directWriteBlocked":  true,
+                   "titleLength":  5,
+                   "titleHash":  "616efbe96852d8c9",
+                   "boundingRect":  {
+                                        "x":  -14,
+                                        "y":  -14,
+                                        "width":  3226,
+                                        "height":  1930
+                                    }
+               },
+    "reason":  "foreground_candidate_requires_clipboard_fallback"
+}

@@ -5,6 +5,7 @@
 - M3 Windows 桌面写回现在同时有直接写回 self-test 和显式剪贴板 fallback self-test。剪贴板 fallback 用于 UIA 无法暴露标准输入控件的桌面/CLI 工具，但必须由调用方显式传 `allowClipboardFallback:true`。
 - 真实前台写入仍受四重门控：`confirmForeground:true`、`expectedTitleHash`、`expectedToolProfile`、`allowClipboardFallback:true`。这些字段不满足时不得写入，不得自动发送。
 - 关键新增证据入口：`research/m3-desktop-fill-clipboard.latest.json`；完整 critic 入口仍是 `scripts/critic-m3.ps1`，本轮已 PASS 并记录 OMX pass verdict。
+- 后续新增证据入口：`research/m3-real-desktop-clipboard-guard.latest.json` 验证真实前台 clipboard fallback 仍受 title hash guard 保护；`research/m3-desktop-fill-direct-guard.latest.json` 验证真实 Codex 全窗口 `Document` 候选不会被直接写入。
 - 真实 Codex/Claude Code/Hermes 工具窗口写回仍是 M3 未完成项；当前 fallback 只证明受控降级链路，不代表真实工具窗口已经填入成功。
 
 ## 当前 M3 上下文 2026-06-07

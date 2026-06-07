@@ -4,6 +4,8 @@
 
 - 已解决一项：当 UIA 只能识别 Terminal/WebView/自绘宿主容器、拿不到可写 `ValuePattern` 时，新增显式 `allowClipboardFallback` 作为受控降级路径；报告不保存剪贴板/写入原文，且会恢复原剪贴板。
 - 安全边界：真实窗口 fallback 仍必须有 `confirmForeground`、`expectedTitleHash`、`expectedToolProfile` 和 `allowClipboardFallback`；缺任一项或 hash/profile 不匹配时必须 `writeAttempted:false`。
+- 已解决一项误写风险：真实 Codex 前台的候选 0 是全窗口 `ControlType.Document`，现在会被 `directWriteBlocked:true` 阻断，返回 `foreground_candidate_requires_clipboard_fallback`，不再直接 `SetValue` 或 `SetWindowText`。
+- 已解决一项真实前台 fallback guard：`research/m3-real-desktop-clipboard-guard.latest.json` 证明即使显式开启真实写入和 clipboard fallback，title hash 不匹配时仍不会尝试粘贴。
 - 仍需验证：当前剪贴板 fallback 只有临时 TextBox self-test 和服务契约证据；尚未在真实 Codex/Claude Code/Hermes 前台窗口里记录成功写入与回读结果。
 - 运行环境风险：隐藏 sidecar 进程创建临时窗口时，Windows 前台抢占策略会让 `SendKeys` self-test 不稳定；因此 sidecar smoke 继续验证直接写回链路，剪贴板 fallback 由前台 self-test 和接口契约验证。
 - 运行环境风险：安装后 app smoke 曾出现一次“启动 5 秒内退出”的偶发失败，已在 `scripts/check-v4-installer-smoke.ps1` 增加一次启动重试；完整 M3 critic 后续已 PASS。
