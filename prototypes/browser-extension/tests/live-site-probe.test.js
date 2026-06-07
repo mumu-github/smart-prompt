@@ -48,6 +48,25 @@ function unique(values) {
   return Array.from(new Set(values.filter(Boolean)));
 }
 
+function pathKindFromHref(href) {
+  try {
+    const segments = new URL(String(href)).pathname.split("/").filter(Boolean).length;
+    if (segments === 0) return "root";
+    if (segments === 1) return "one-segment";
+    return "multi-segment";
+  } catch {
+    return "unknown";
+  }
+}
+
+function safeUrlHost(href) {
+  try {
+    return new URL(String(href)).hostname;
+  } catch {
+    return "";
+  }
+}
+
 function getProbeSelectors(site) {
   const adapter = siteAdapters.SITE_ADAPTERS.find((item) => item.id === site.id);
   return unique([...(adapter?.inputSelectors || []), ...genericInputSelectors]);
@@ -440,13 +459,14 @@ async function probeSite(client, site) {
       .map((element, index) => {
         const rect = element.getBoundingClientRect();
         const style = getComputedStyle(element);
+        const placeholder = element.getAttribute("placeholder") || element.getAttribute("aria-label") || "";
         return {
           index,
           tag: element.tagName,
           id: element.id || "",
           role: element.getAttribute("role") || "",
           contentEditable: element.isContentEditable,
-          placeholder: element.getAttribute("placeholder") || element.getAttribute("aria-label") || "",
+          placeholderLength: placeholder.length,
           visible: rect.width > 24 && rect.height > 18 && style.visibility !== "hidden" && style.display !== "none",
           width: Math.round(rect.width),
           height: Math.round(rect.height)
@@ -788,9 +808,92 @@ function toFormalSite(result, extensionLoad) {
   };
 }
 
-function getPilotFailureReason(result, formalSite) {
+function includesAny(value, needles) {
+  const text = String(value || "").toLowerCase();
+  return needles.some((needle) => text.includes(needle));
+}
+
+function getPilotRouteDiagnostics(result, formalSite) {
+  const initial = result.initial || {};
+  const actualUrl = initial.url || result.url || "";
+  const requestedHost = safeUrlHost(result.url);
+  const actualHost = safeUrlHost(actualUrl);
+  const title = initial.title || "";
+  const candidates = Array.isArray(initial.candidates) ? initial.candidates : [];
+  const visibleInputCount = formalSite.focus.visibleInputCount;
+  const totalInputCandidateCount = candidates.length;
+  const hiddenInputCandidateCount = Math.max(0, totalInputCandidateCount - visibleInputCount);
+  const haystack = `${actualUrl} ${title}`;
+  const loginLike = includesAny(haystack, [
+    "login",
+    "log in",
+    "signin",
+    "sign-in",
+    "sign_in",
+    "auth",
+    "oauth",
+    "登录",
+    "登陆",
+    "注册"
+  ]);
+  const publicLike = includesAny(haystack, [
+    "pricing",
+    "download",
+    "docs",
+    "blog",
+    "solo",
+    "home",
+    "官网",
+    "产品",
+    "首页"
+  ]);
+  const redirectedHost = Boolean(requestedHost && actualHost && requestedHost !== actualHost);
+  let pageClassification = "unknown";
+  if (loginLike) {
+    pageClassification = "login_or_auth_gate";
+  } else if (totalInputCandidateCount === 0 && publicLike) {
+    pageClassification = "public_or_marketing_page";
+  } else if (totalInputCandidateCount === 0) {
+    pageClassification = "no_input_candidates_on_loaded_page";
+  } else if (visibleInputCount === 0) {
+    pageClassification = "input_candidates_hidden_or_offscreen";
+  } else if (redirectedHost) {
+    pageClassification = "redirected_host_with_visible_input";
+  } else {
+    pageClassification = "visible_input_detected";
+  }
+
+  return {
+    requestedHost,
+    actualHost,
+    redirectedHost,
+    actualPathKind: pathKindFromHref(actualUrl),
+    actualQueryPresent: (() => {
+      try {
+        return Boolean(new URL(String(actualUrl)).search);
+      } catch {
+        return false;
+      }
+    })(),
+    titleLength: String(title || "").length,
+    totalInputCandidateCount,
+    visibleInputCount,
+    hiddenInputCandidateCount,
+    loginLike,
+    publicLike,
+    pageClassification
+  };
+}
+
+function getPilotFailureReason(result, formalSite, routeDiagnostics = getPilotRouteDiagnostics(result, formalSite)) {
   if (!formalSite.formalExtensionLoaded) return "extension_not_loaded";
-  if (!formalSite.focus.ok) return result.focusResult?.reason || result.injectedFocusResult?.reason || "no_visible_input_candidate";
+  if (!formalSite.focus.ok) {
+    if (routeDiagnostics.pageClassification === "login_or_auth_gate") return "login_or_auth_gate_no_visible_composer";
+    if (routeDiagnostics.pageClassification === "public_or_marketing_page") return "public_or_marketing_page_no_visible_composer";
+    if (routeDiagnostics.pageClassification === "input_candidates_hidden_or_offscreen") return "input_candidates_hidden_or_offscreen";
+    if (routeDiagnostics.pageClassification === "no_input_candidates_on_loaded_page") return "no_input_candidates_on_loaded_page";
+    return result.focusResult?.reason || result.injectedFocusResult?.reason || "no_visible_input_candidate";
+  }
   if (!formalSite.display.passed) return result.displayError || "mascot_not_visible";
   if (formalSite.required.insert && !formalSite.insert.passed) {
     return formalSite.insert.reason || result.insert?.error || "insert_not_verified";
@@ -801,12 +904,15 @@ function getPilotFailureReason(result, formalSite) {
 
 function toPilotSite(result, formalSite) {
   const insertAttempted = Boolean(formalSite.required.insert);
-  const failureReason = getPilotFailureReason(result, formalSite);
+  const routeDiagnostics = getPilotRouteDiagnostics(result, formalSite);
+  const failureReason = getPilotFailureReason(result, formalSite, routeDiagnostics);
   return {
     id: result.id,
     name: result.name,
     betaPilot: Boolean(result.betaPilot),
     urlHost: new URL(result.url).hostname,
+    pageClassification: routeDiagnostics.pageClassification,
+    routeDiagnostics,
     formalExtensionLoaded: formalSite.formalExtensionLoaded,
     visibleInputCount: formalSite.focus.visibleInputCount,
     focusOk: formalSite.focus.ok,

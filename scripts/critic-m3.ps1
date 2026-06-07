@@ -92,9 +92,17 @@ $pilotReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-pil
 if ($pilotReport.schemaVersion -ne "m3-pilot-adapters@1") { throw "pilot report schema mismatch" }
 foreach ($site in @("workbuddy", "trae", "doubao", "deepseek")) {
   if (-not ($pilotReport.pilot.siteIds -contains $site)) { throw "pilot report missing site $site" }
+  $pilotSite = @($pilotReport.pilot.sites | Where-Object { $_.id -eq $site })[0]
+  if (-not $pilotSite) { throw "pilot report missing site diagnostic record $site" }
+  if (-not $pilotSite.pageClassification) { throw "pilot report missing pageClassification for $site" }
+  if (-not $pilotSite.routeDiagnostics) { throw "pilot report missing routeDiagnostics for $site" }
+  if ($null -eq $pilotSite.routeDiagnostics.totalInputCandidateCount) { throw "pilot report missing totalInputCandidateCount for $site" }
 }
 if ($pilotReport.summary.redactionLeaks.Count -gt 0) { throw "pilot report has redaction leaks" }
 if ($pilotReport.pilot.insertAttempts -lt 4) { throw "pilot report did not attempt all beta inserts" }
+if ($pilotReport.pilot.failureReasons.PSObject.Properties.Name.Count -eq 1 -and $pilotReport.pilot.failureReasons.PSObject.Properties.Name[0] -eq "no visible input candidate") {
+  throw "pilot report failure reasons are too coarse for beta adapter triage"
+}
 
 Assert-Text "docs/m3-desktop-input.md" "Windows UIA"
 Assert-Text "docs/m3-desktop-input.md" "macOS AX"
@@ -106,5 +114,7 @@ Assert-Text "scripts/check-m3-sidecar-desktop-input.ps1" "m3-sidecar-desktop-inp
 Assert-Text "scripts/check-m3-installed-sidecar-desktop-input.ps1" "m3-installed-sidecar-desktop-input@1"
 Assert-Text "apps/desktop-shell/scripts/prepare-sidecar.js" "check-m3-desktop-input.ps1"
 Assert-Text "scripts/check-v4-installed-app-runtime.js" "desktopSnapshotFromInstalledSidecar"
+Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "pageClassification"
+Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "routeDiagnostics"
 
 Write-Host "PASS: M3 pilot and desktop input critic checks passed."

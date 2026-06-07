@@ -71,3 +71,12 @@ macOS 侧需要通过 AXUIElement 获取当前前台应用、窗口和可编辑�
 - DeepSeek
 
 它生成 `research/m3-pilot-adapters.latest.json`，记录 Insert attempts、Insert success rate、失败原因、no-auto-send 状态和红线隐私检查。登录、地区限制、selector 失败都应记录为真实失败原因，而不是从报告里筛掉。
+
+当前 pilot 报告已新增 `pageClassification` 与 `routeDiagnostics`，用于区分：
+
+- `no_input_candidates_on_loaded_page`
+- `public_or_marketing_page_no_visible_composer`
+- `login_or_auth_gate_no_visible_composer`
+- `input_candidates_hidden_or_offscreen`
+
+最新结果仍是 4 次 Insert attempts、0 次成功；失败原因已从单一 `no visible input candidate` 细化为 `no_input_candidates_on_loaded_page: 3` 与 `public_or_marketing_page_no_visible_composer: 1`。

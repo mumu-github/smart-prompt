@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T14:54:27.4949753Z",
+    "createdAt":  "2026-06-07T15:08:11.1594241Z",
     "pass":  true,
     "port":  17441,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  90,
-                    "sha256":  "d507b3ea55255f8d"
+                    "sha256":  "1eaff403a72a2010"
                 },
     "checks":  {
                    "sidecarHealthy":  true,
@@ -24,12 +24,12 @@
     "snapshot":  {
                      "candidates":  [
                                         {
-                                            "automationIdHash":  "02a0a8c6d87d0e90",
+                                            "automationIdHash":  "2c3fa36e42cb6015",
                                             "boundingRect":  {
                                                                  "height":  72,
                                                                  "width":  470,
-                                                                 "x":  180,
-                                                                 "y":  203
+                                                                 "x":  206,
+                                                                 "y":  229
                                                              },
                                             "classNameHash":  "6fc5943e83514f41",
                                             "controlType":  "ControlType.Pane",
@@ -41,7 +41,7 @@
                                             "nameHash":  ""
                                         }
                                     ],
-                     "createdAt":  "2026-06-07T14:54:27.2058737Z",
+                     "createdAt":  "2026-06-07T15:08:10.8132270Z",
                      "foreground":  {
                                         "detectedToolProfile":  "codex",
                                         "pidPresent":  true,

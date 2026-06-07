@@ -1,6 +1,6 @@
 {
   "schemaVersion": "m3-pilot-adapters@1",
-  "createdAt": "2026-06-07T14:55:49.666Z",
+  "createdAt": "2026-06-07T15:09:22.290Z",
   "mode": "M3_PILOT_ADAPTERS",
   "pass": true,
   "formalExtensionOnly": false,
@@ -103,7 +103,8 @@
     "insertPasses": 0,
     "insertSuccessRate": 0,
     "failureReasons": {
-      "no visible input candidate": 4
+      "no_input_candidates_on_loaded_page": 3,
+      "public_or_marketing_page_no_visible_composer": 1
     },
     "sites": [
       {
@@ -111,6 +112,21 @@
         "name": "workBuddy",
         "betaPilot": true,
         "urlHost": "work-buddy.ai",
+        "pageClassification": "no_input_candidates_on_loaded_page",
+        "routeDiagnostics": {
+          "requestedHost": "work-buddy.ai",
+          "actualHost": "work-buddy.ai",
+          "redirectedHost": false,
+          "actualPathKind": "root",
+          "actualQueryPresent": false,
+          "titleLength": 25,
+          "totalInputCandidateCount": 0,
+          "visibleInputCount": 0,
+          "hiddenInputCandidateCount": 0,
+          "loginLike": false,
+          "publicLike": false,
+          "pageClassification": "no_input_candidates_on_loaded_page"
+        },
         "formalExtensionLoaded": true,
         "visibleInputCount": 0,
         "focusOk": false,
@@ -120,7 +136,7 @@
         "noAutoSendPassed": false,
         "insertStrategy": "",
         "insertKind": "",
-        "failureReason": "no visible input candidate",
+        "failureReason": "no_input_candidates_on_loaded_page",
         "privacy": {
           "urlRedacted": true,
           "profilePathRedacted": true,
@@ -133,6 +149,21 @@
         "name": "Trae",
         "betaPilot": true,
         "urlHost": "www.trae.ai",
+        "pageClassification": "public_or_marketing_page",
+        "routeDiagnostics": {
+          "requestedHost": "www.trae.ai",
+          "actualHost": "www.trae.ai",
+          "redirectedHost": false,
+          "actualPathKind": "one-segment",
+          "actualQueryPresent": false,
+          "titleLength": 43,
+          "totalInputCandidateCount": 0,
+          "visibleInputCount": 0,
+          "hiddenInputCandidateCount": 0,
+          "loginLike": false,
+          "publicLike": true,
+          "pageClassification": "public_or_marketing_page"
+        },
         "formalExtensionLoaded": true,
         "visibleInputCount": 0,
         "focusOk": false,
@@ -142,7 +173,7 @@
         "noAutoSendPassed": false,
         "insertStrategy": "",
         "insertKind": "",
-        "failureReason": "no visible input candidate",
+        "failureReason": "public_or_marketing_page_no_visible_composer",
         "privacy": {
           "urlRedacted": true,
           "profilePathRedacted": true,
@@ -155,6 +186,21 @@
         "name": "Doubao",
         "betaPilot": true,
         "urlHost": "www.doubao.com",
+        "pageClassification": "no_input_candidates_on_loaded_page",
+        "routeDiagnostics": {
+          "requestedHost": "www.doubao.com",
+          "actualHost": "www.doubao.com",
+          "redirectedHost": false,
+          "actualPathKind": "multi-segment",
+          "actualQueryPresent": true,
+          "titleLength": 2,
+          "totalInputCandidateCount": 0,
+          "visibleInputCount": 0,
+          "hiddenInputCandidateCount": 0,
+          "loginLike": false,
+          "publicLike": false,
+          "pageClassification": "no_input_candidates_on_loaded_page"
+        },
         "formalExtensionLoaded": true,
         "visibleInputCount": 0,
         "focusOk": false,
@@ -164,7 +210,7 @@
         "noAutoSendPassed": false,
         "insertStrategy": "",
         "insertKind": "",
-        "failureReason": "no visible input candidate",
+        "failureReason": "no_input_candidates_on_loaded_page",
         "privacy": {
           "urlRedacted": true,
           "profilePathRedacted": true,
@@ -177,6 +223,21 @@
         "name": "DeepSeek",
         "betaPilot": true,
         "urlHost": "chat.deepseek.com",
+        "pageClassification": "no_input_candidates_on_loaded_page",
+        "routeDiagnostics": {
+          "requestedHost": "chat.deepseek.com",
+          "actualHost": "chat.deepseek.com",
+          "redirectedHost": false,
+          "actualPathKind": "root",
+          "actualQueryPresent": false,
+          "titleLength": 41,
+          "totalInputCandidateCount": 0,
+          "visibleInputCount": 0,
+          "hiddenInputCandidateCount": 0,
+          "loginLike": false,
+          "publicLike": false,
+          "pageClassification": "no_input_candidates_on_loaded_page"
+        },
         "formalExtensionLoaded": true,
         "visibleInputCount": 0,
         "focusOk": false,
@@ -186,7 +247,7 @@
         "noAutoSendPassed": false,
         "insertStrategy": "",
         "insertKind": "",
-        "failureReason": "no visible input candidate",
+        "failureReason": "no_input_candidates_on_loaded_page",
         "privacy": {
           "urlRedacted": true,
           "profilePathRedacted": true,

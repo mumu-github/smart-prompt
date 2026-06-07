@@ -2,7 +2,7 @@
 
 ## M3 Pilot 与桌面输入识别风险 2026-06-07
 
-- 仍需内测修复：`research/m3-pilot-adapters.latest.json` 当前证明 workBuddy、Trae、Doubao、DeepSeek 四站正式扩展加载成功，但 Insert 成功率为 0；统一失败原因为 `no visible input candidate`，需要用登录态/正确 composer 路由继续定位。
+- 仍需内测修复：`research/m3-pilot-adapters.latest.json` 当前证明 workBuddy、Trae、Doubao、DeepSeek 四站正式扩展加载成功，但 Insert 成功率为 0；失败原因已细化为 `no_input_candidates_on_loaded_page: 3` 与 `public_or_marketing_page_no_visible_composer: 1`，需要用登录态/正确 composer 路由继续定位。
 - 已解决一项：Windows UIA 目前已有 self-test、JS local-service 开发路径接口，以及 native sidecar source/dev 等价 `/desktop/input-snapshot`；`research/m3-sidecar-desktop-input.latest.json` 为 `pass:true`。
 - 已解决一项：安装包内 native sidecar 已重新打包复验 M3 `/desktop/input-snapshot`；`research/m3-installed-sidecar-desktop-input.latest.json` 为 `pass:true`，且证明 bundled UIA probe 已进入 `resources/smart-prompt-sidecar/scripts/`。
 - 仍需产品化：当前只证明安装包 self-test snapshot，可识别 UIA 输入候选；真实 Codex/Claude Code/Hermes 桌面输入框写回和剪贴板 fallback 仍未验收。

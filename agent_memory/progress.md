@@ -4,7 +4,7 @@
 
 - 已创建 OMX autoresearch-goal mission：`smart-prompt-m3-pilot-metrics-and-desktop-input-`，critic 命令为 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-m3.ps1`。
 - 已新增 M3 beta adapter pilot 入口：`scripts/check-m3-pilot-adapters.ps1`，它会生成 `research/m3-pilot-adapters.latest.json`，覆盖 workBuddy、Trae、Doubao、DeepSeek 的 Insert attempts、成功率、失败原因和 redaction 检查。
-- 已跑真实 beta pilot：正式扩展加载成功，4 个新站点均尝试 Insert；当前 Insert 成功率为 0，失败原因均为 `no visible input candidate`。这不是 M3 完成，只是明确了下一步需要登录态/路由/selector 修复。
+- 已跑真实 beta pilot：正式扩展加载成功，4 个新站点均尝试 Insert；当前 Insert 成功率为 0。失败原因已从单一 `no visible input candidate` 细化为 `no_input_candidates_on_loaded_page: 3` 与 `public_or_marketing_page_no_visible_composer: 1`，每站带 `pageClassification` 与 `routeDiagnostics`。这不是 M3 完成，只是明确了下一步需要登录态/正确 composer 路由/selector 修复。
 - 已新增 Windows UIA 桌面输入识别 self-test：`scripts/check-m3-desktop-input.ps1 -SelfTest` 会创建临时 TextBox 并用 UIA 枚举候选，生成 `research/m3-desktop-input.latest.json`；当前报告 `pass:true`，候选数 1，检测到 Codex 工具画像。
 - 已新增开发路径 local-service 接口：`GET /desktop/input-snapshot` 和 `?selfTest=1`，受 auth 保护；返回窗口 title hash/length、UIA 候选和工具画像，不返回标题原文、元素原文或输入值。
 - 已新增 native sidecar 等价接口：`GET /desktop/input-snapshot` 和 `?selfTest=1`；Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1`，非 Windows 返回 guarded pending。
