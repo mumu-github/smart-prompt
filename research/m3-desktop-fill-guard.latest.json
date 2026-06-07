@@ -1,0 +1,36 @@
+﻿{
+    "schemaVersion":  "m3-windows-fill@1",
+    "createdAt":  "2026-06-07T15:45:54.3092304Z",
+    "platform":  "win32",
+    "selfTest":  false,
+    "confirmForeground":  true,
+    "pass":  false,
+    "writeAttempted":  false,
+    "verified":  false,
+    "strategy":  "",
+    "uiaSetValueTried":  false,
+    "foreground":  {
+                       "processName":  "Codex",
+                       "pidPresent":  true,
+                       "titleLength":  5,
+                       "titleHash":  "616efbe96852d8c9",
+                       "detectedToolProfile":  "codex",
+                       "expectedTitleHashMatched":  false,
+                       "expectedToolProfileMatched":  true
+                   },
+    "supportedToolProfiles":  [
+                                  "codex",
+                                  "claude-code",
+                                  "hermes"
+                              ],
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotReadBeforeWrite":  true,
+                    "writtenTextNotStored":  true,
+                    "verificationUsesLengthAndHash":  true,
+                    "promptTextNotRead":  true,
+                    "autoSubmit":  false
+                },
+    "reason":  "foreground_title_hash_mismatch"
+}

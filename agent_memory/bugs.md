@@ -2,7 +2,8 @@
 
 ## 当前 M3/V5 剩余风险 2026-06-07
 
-- 已解决：Windows snapshot/fill self-test、local-service 接口、native sidecar 接口、安装包 bundled sidecar smoke 均已通过 M3 critic；报告只保留长度、hash、策略和布尔校验，不保存 raw prompt 或写入文本。
+- 已解决：Windows snapshot/fill self-test、受控前台窗口写回 guard、local-service 接口、native sidecar 接口、安装包 bundled sidecar smoke 均已通过 M3 critic；报告只保留长度、hash、策略和布尔校验，不保存 raw prompt 或写入文本。
+- 已解决一项安全边界：真实前台窗口写回现在必须显式确认前台窗口，并匹配 title hash 与工具画像；hash/profile 不匹配时不会写入，避免误填当前 Codex/Claude/Hermes 以外的窗口。
 - 仍需验证：Codex、Claude Code、Hermes 真实工具窗口写回尚未通过实机验收；当前 fill 证据来自临时 WinForms TextBox self-test，写入策略实际为 `win32_set_window_text_fallback`，不是目标工具的真实输入框成功。
 - 仍需实现：macOS AX 只有 PRD/文档中的契约与 guarded pending 方向，尚未实现或验收。
 - 仍需内测：workBuddy、Trae、Doubao、DeepSeek 当前 pilot Insert 成功率为 0；失败原因已经细化，但需要登录态和正确 composer 路由继续修 adapter selector。

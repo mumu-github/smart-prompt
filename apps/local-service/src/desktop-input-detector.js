@@ -86,6 +86,7 @@ function sanitizeFillReport(report = {}) {
     createdAt: report.createdAt || new Date().toISOString(),
     platform: report.platform || process.platform,
     selfTest: Boolean(report.selfTest),
+    confirmForeground: Boolean(report.confirmForeground),
     pass: Boolean(report.pass),
     writeAttempted: Boolean(report.writeAttempted),
     verified: Boolean(report.verified),
@@ -95,8 +96,26 @@ function sanitizeFillReport(report = {}) {
       controlType: String(report.target?.controlType || "").slice(0, 80),
       classNameHash: String(report.target?.classNameHash || "").slice(0, 64),
       hasValuePattern: Boolean(report.target?.hasValuePattern),
+      hasTextPattern: Boolean(report.target?.hasTextPattern),
+      hasNativeWindowHandle: Boolean(report.target?.hasNativeWindowHandle),
+      index: Number(report.target?.index || 0),
       titleLength: Number(report.target?.titleLength || 0),
-      titleHash: String(report.target?.titleHash || "").slice(0, 64)
+      titleHash: String(report.target?.titleHash || "").slice(0, 64),
+      boundingRect: {
+        x: Number(report.target?.boundingRect?.x || 0),
+        y: Number(report.target?.boundingRect?.y || 0),
+        width: Number(report.target?.boundingRect?.width || 0),
+        height: Number(report.target?.boundingRect?.height || 0)
+      }
+    },
+    foreground: {
+      processName: String(report.foreground?.processName || "").slice(0, 80),
+      pidPresent: Boolean(report.foreground?.pidPresent),
+      titleLength: Number(report.foreground?.titleLength || 0),
+      titleHash: String(report.foreground?.titleHash || "").slice(0, 64),
+      detectedToolProfile: String(report.foreground?.detectedToolProfile || "unknown").slice(0, 80),
+      expectedTitleHashMatched: Boolean(report.foreground?.expectedTitleHashMatched),
+      expectedToolProfileMatched: Boolean(report.foreground?.expectedToolProfileMatched)
     },
     summary: {
       requestedTextLength: Number(report.summary?.requestedTextLength || 0),
@@ -154,6 +173,10 @@ async function fillDesktopInput(options = {}) {
   const script = path.join(rootDir(), "scripts", "check-m3-desktop-fill.ps1");
   const args = ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script, "-JsonOnly"];
   if (options.selfTest) args.push("-SelfTest");
+  if (options.confirmForeground) args.push("-ConfirmForeground");
+  if (options.expectedTitleHash) args.push("-ExpectedTitleHash", String(options.expectedTitleHash));
+  if (options.expectedToolProfile) args.push("-ExpectedToolProfile", String(options.expectedToolProfile));
+  if (Number.isFinite(Number(options.candidateIndex))) args.push("-CandidateIndex", String(Number(options.candidateIndex)));
   if (options.text) args.push("-Text", String(options.text));
   const raw = await runPowerShellJson(args, options.timeoutMs || 10000);
   return sanitizeFillReport(raw);

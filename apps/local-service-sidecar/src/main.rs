@@ -828,12 +828,15 @@ fn desktop_input_snapshot(url: &str) -> Result<Value, String> {
 fn desktop_input_fill(url: &str, body: &Value) -> Result<Value, String> {
     let self_test = url.contains("selfTest=1")
         || body.get("selfTest").and_then(Value::as_bool).unwrap_or(false);
+    let confirm_foreground = url.contains("confirmForeground=1")
+        || body.get("confirmForeground").and_then(Value::as_bool).unwrap_or(false);
     if !cfg!(target_os = "windows") {
         return Ok(json!({
             "schemaVersion": "m3-windows-fill@1",
             "createdAt": now(),
             "platform": std::env::consts::OS,
             "selfTest": self_test,
+            "confirmForeground": confirm_foreground,
             "pass": false,
             "reason": "macos_ax_pending_or_unsupported_platform",
             "writeAttempted": false,
@@ -855,6 +858,22 @@ fn desktop_input_fill(url: &str, body: &Value) -> Result<Value, String> {
         .arg("-JsonOnly");
     if self_test {
         command.arg("-SelfTest");
+    }
+    if confirm_foreground {
+        command.arg("-ConfirmForeground");
+    }
+    if let Some(expected_title_hash) = body.get("expectedTitleHash").and_then(Value::as_str) {
+        if !expected_title_hash.is_empty() {
+            command.arg("-ExpectedTitleHash").arg(expected_title_hash);
+        }
+    }
+    if let Some(expected_tool_profile) = body.get("expectedToolProfile").and_then(Value::as_str) {
+        if !expected_tool_profile.is_empty() {
+            command.arg("-ExpectedToolProfile").arg(expected_tool_profile);
+        }
+    }
+    if let Some(candidate_index) = body.get("candidateIndex").and_then(Value::as_i64) {
+        command.arg("-CandidateIndex").arg(candidate_index.to_string());
     }
     let text = body
         .get("text")

@@ -326,7 +326,15 @@ function createApp(store = createStore(), options = {}) {
       if (req.method === "POST" && url.pathname === "/desktop/fill") {
         const body = await readJson(req);
         const selfTest = url.searchParams.get("selfTest") === "1" || body.selfTest === true;
-        const fill = await desktopFill({ selfTest, text: body.text || body.prompt || "" });
+        const confirmForeground = url.searchParams.get("confirmForeground") === "1" || body.confirmForeground === true;
+        const fill = await desktopFill({
+          selfTest,
+          confirmForeground,
+          expectedTitleHash: body.expectedTitleHash || "",
+          expectedToolProfile: body.expectedToolProfile || "",
+          candidateIndex: Number.isFinite(Number(body.candidateIndex)) ? Number(body.candidateIndex) : 0,
+          text: body.text || body.prompt || ""
+        });
         sendJson(req, res, 200, { ok: true, fill }, options);
         return;
       }

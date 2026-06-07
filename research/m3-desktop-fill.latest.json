@@ -1,17 +1,20 @@
 ﻿{
     "schemaVersion":  "m3-windows-fill@1",
-    "createdAt":  "2026-06-07T15:31:27.3719891Z",
+    "createdAt":  "2026-06-07T15:45:51.9140704Z",
     "platform":  "win32",
     "selfTest":  true,
+    "confirmForeground":  false,
     "pass":  true,
     "writeAttempted":  true,
     "verified":  true,
     "strategy":  "win32_set_window_text_fallback",
     "uiaSetValueTried":  false,
     "target":  {
+                   "index":  0,
                    "controlType":  "ControlType.Pane",
-                   "classNameHash":  "aad36ef5b831a23e",
+                   "classNameHash":  "61f7af386b2a45e5",
                    "hasValuePattern":  false,
+                   "hasNativeWindowHandle":  true,
                    "titleLength":  33,
                    "titleHash":  "724b4c46d9fc5828"
                },

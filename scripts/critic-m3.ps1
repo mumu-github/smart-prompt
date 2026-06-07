@@ -44,6 +44,10 @@ Invoke-Step "M3 Windows desktop fill self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -SelfTest -Report (Join-Path $Root "research/m3-desktop-fill.latest.json")
 }
 
+Invoke-Step "M3 Windows foreground fill guard" {
+  powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -ConfirmForeground -ExpectedTitleHash "not-a-real-title-hash" -ExpectedToolProfile "codex" -Text "M3 foreground guard raw text" -Report (Join-Path $Root "research/m3-desktop-fill-guard.latest.json")
+}
+
 Invoke-Step "M3 native sidecar desktop input self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-sidecar-desktop-input.ps1") -Report (Join-Path $Root "research/m3-sidecar-desktop-input.latest.json")
 }
@@ -84,6 +88,15 @@ if ($desktopFillReport.privacy.autoSubmit) { throw "desktop fill report allows a
 if ($desktopFillReport.summary.autoSubmit) { throw "desktop fill summary indicates auto submit" }
 if ([int]$desktopFillReport.summary.submitSignalCount -ne 0) { throw "desktop fill report emitted submit signals" }
 if (($desktopFillReport | ConvertTo-Json -Depth 10).Contains("Smart Prompt M3 desktop fill self-test")) { throw "desktop fill report leaked self-test text" }
+
+$desktopFillGuardReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-desktop-fill-guard.latest.json") | ConvertFrom-Json
+if ($desktopFillGuardReport.schemaVersion -ne "m3-windows-fill@1") { throw "desktop fill guard report schema mismatch" }
+if (-not $desktopFillGuardReport.confirmForeground) { throw "desktop fill guard did not run confirmForeground path" }
+if ($desktopFillGuardReport.pass) { throw "desktop fill guard unexpectedly passed" }
+if ($desktopFillGuardReport.writeAttempted) { throw "desktop fill guard attempted write before target match" }
+if ($desktopFillGuardReport.reason -ne "foreground_title_hash_mismatch") { throw "desktop fill guard did not stop on title hash mismatch" }
+if (-not $desktopFillGuardReport.privacy.writtenTextNotStored) { throw "desktop fill guard stores written text" }
+if (($desktopFillGuardReport | ConvertTo-Json -Depth 10).Contains("M3 foreground guard raw text")) { throw "desktop fill guard leaked raw text" }
 
 $sidecarReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-sidecar-desktop-input.latest.json") | ConvertFrom-Json
 if ($sidecarReport.schemaVersion -ne "m3-sidecar-desktop-input@1") { throw "sidecar desktop report schema mismatch" }
@@ -156,9 +169,13 @@ Assert-Text "docs/m3-desktop-input.md" "workBuddy"
 Assert-Text "packages/shared/desktop-tool-profiles.js" "claude-code"
 Assert-Text "apps/local-service/src/server.js" "/desktop/input-snapshot"
 Assert-Text "apps/local-service/src/server.js" "/desktop/fill"
+Assert-Text "apps/local-service/src/server.js" "confirmForeground"
 Assert-Text "apps/local-service-sidecar/src/main.rs" "/desktop/input-snapshot"
 Assert-Text "apps/local-service-sidecar/src/main.rs" "/desktop/fill"
+Assert-Text "apps/local-service-sidecar/src/main.rs" "ConfirmForeground"
 Assert-Text "scripts/check-m3-desktop-fill.ps1" "m3-windows-fill@1"
+Assert-Text "scripts/check-m3-desktop-fill.ps1" "ExpectedTitleHash"
+Assert-Text "scripts/check-m3-desktop-fill.ps1" "foreground_title_hash_mismatch"
 Assert-Text "scripts/check-m3-sidecar-desktop-input.ps1" "m3-sidecar-desktop-input@1"
 Assert-Text "scripts/check-m3-sidecar-desktop-fill.ps1" "m3-sidecar-desktop-fill@1"
 Assert-Text "scripts/check-m3-installed-sidecar-desktop-input.ps1" "m3-installed-sidecar-desktop-input@1"

@@ -359,7 +359,88 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
         }
       };
     },
-    fillDesktopInput: async ({ selfTest, text }) => {
+    fillDesktopInput: async ({ selfTest, confirmForeground, expectedTitleHash, expectedToolProfile, candidateIndex, text }) => {
+      if (!selfTest && !confirmForeground) {
+        assert.equal(text, "M3 Guard Raw Text");
+        return {
+          schemaVersion: "m3-windows-fill@1",
+          createdAt: new Date().toISOString(),
+          platform: "win32",
+          selfTest: false,
+          confirmForeground: false,
+          pass: false,
+          reason: "foreground_fill_requires_confirm_foreground",
+          writeAttempted: false,
+          verified: false,
+          supportedToolProfiles: ["codex", "claude-code", "hermes"],
+          privacy: {
+            titleRedacted: true,
+            elementNamesHashed: true,
+            elementValuesNotReadBeforeWrite: true,
+            writtenTextNotStored: true,
+            verificationUsesLengthAndHash: true,
+            promptTextNotRead: true,
+            autoSubmit: false
+          }
+        };
+      }
+      if (confirmForeground) {
+        assert.equal(selfTest, false);
+        assert.equal(expectedTitleHash, "abc123");
+        assert.equal(expectedToolProfile, "codex");
+        assert.equal(candidateIndex, 0);
+        assert.equal(text, "M3 Real Target Raw Text");
+        return {
+          schemaVersion: "m3-windows-fill@1",
+          createdAt: new Date().toISOString(),
+          platform: "win32",
+          selfTest: false,
+          confirmForeground: true,
+          pass: true,
+          writeAttempted: true,
+          verified: true,
+          strategy: "uia_value_pattern",
+          uiaSetValueTried: true,
+          foreground: {
+            processName: "WindowsTerminal",
+            pidPresent: true,
+            titleLength: 32,
+            titleHash: "abc123",
+            detectedToolProfile: "codex",
+            expectedTitleHashMatched: true,
+            expectedToolProfileMatched: true
+          },
+          target: {
+            index: 0,
+            controlType: "ControlType.Edit",
+            classNameHash: "class-hash",
+            hasValuePattern: true,
+            hasTextPattern: false,
+            hasNativeWindowHandle: true,
+            titleLength: 32,
+            titleHash: "abc123",
+            boundingRect: { x: 1, y: 2, width: 320, height: 80 }
+          },
+          summary: {
+            requestedTextLength: text.length,
+            requestedTextHash: "real-request-hash",
+            verifiedTextLength: text.length,
+            verifiedTextHash: "real-request-hash",
+            autoSubmit: false,
+            submitSignalCount: 0
+          },
+          supportedToolProfiles: ["codex", "claude-code", "hermes"],
+          privacy: {
+            titleRedacted: true,
+            elementNamesHashed: true,
+            elementValuesNotReadBeforeWrite: true,
+            writtenTextNotStored: true,
+            verificationUsesLengthAndHash: true,
+            promptTextNotRead: true,
+            autoSubmit: false
+          }
+        };
+      }
       assert.equal(selfTest, true);
       assert.equal(text, "M3 Fill Raw Test Text");
       return {
@@ -367,6 +448,7 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
         createdAt: new Date().toISOString(),
         platform: "win32",
         selfTest,
+        confirmForeground: false,
         pass: true,
         writeAttempted: true,
         verified: true,
@@ -468,6 +550,33 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     assert.equal(desktopFill.body.fill.privacy.verificationUsesLengthAndHash, true);
     assert.equal(desktopFill.body.fill.privacy.autoSubmit, false);
     assert.ok(!JSON.stringify(desktopFill.body.fill).includes("M3 Fill Raw Test Text"));
+
+    const guardedFill = await authed("POST", "/desktop/fill", { text: "M3 Guard Raw Text" });
+    assert.equal(guardedFill.status, 200);
+    assert.equal(guardedFill.body.fill.pass, false);
+    assert.equal(guardedFill.body.fill.writeAttempted, false);
+    assert.equal(guardedFill.body.fill.reason, "foreground_fill_requires_confirm_foreground");
+    assert.ok(!JSON.stringify(guardedFill.body.fill).includes("M3 Guard Raw Text"));
+
+    const confirmedFill = await authed("POST", "/desktop/fill", {
+      confirmForeground: true,
+      expectedTitleHash: "abc123",
+      expectedToolProfile: "codex",
+      candidateIndex: 0,
+      text: "M3 Real Target Raw Text"
+    });
+    assert.equal(confirmedFill.status, 200);
+    assert.equal(confirmedFill.body.fill.selfTest, false);
+    assert.equal(confirmedFill.body.fill.confirmForeground, true);
+    assert.equal(confirmedFill.body.fill.pass, true);
+    assert.equal(confirmedFill.body.fill.writeAttempted, true);
+    assert.equal(confirmedFill.body.fill.foreground.expectedTitleHashMatched, true);
+    assert.equal(confirmedFill.body.fill.foreground.expectedToolProfileMatched, true);
+    assert.equal(confirmedFill.body.fill.target.index, 0);
+    assert.equal(confirmedFill.body.fill.target.hasNativeWindowHandle, true);
+    assert.equal(confirmedFill.body.fill.summary.autoSubmit, false);
+    assert.equal(confirmedFill.body.fill.summary.submitSignalCount, 0);
+    assert.ok(!JSON.stringify(confirmedFill.body.fill).includes("M3 Real Target Raw Text"));
 
     const providers = await authed("GET", "/llm/providers");
     assert.equal(providers.status, 200);

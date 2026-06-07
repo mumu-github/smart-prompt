@@ -19,6 +19,7 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 
 - `-SelfTest` 会创建临时 WinForms TextBox，并优先使用 UIA `ValuePattern.SetValue` 写入文本。
 - 如果 UIA value pattern 不可用，会使用 Win32 `SetWindowText` 作为 self-test fallback。
+- 非 self-test 写前台窗口必须显式传入 `-ConfirmForeground`、`-ExpectedTitleHash` 和 `-ExpectedToolProfile`；窗口 hash 或工具画像不匹配时只返回失败报告，不写入。
 - 输出 `research/m3-desktop-fill.latest.json`。
 - 报告只保存写入文本长度、hash、写入策略和校验结果，不保存 prompt 原文，不触发提交信号。
 
@@ -30,6 +31,16 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - `POST /desktop/fill?selfTest=1`
 
 这些接口返回当前桌面输入快照或写回校验结果，仍需要 per-install auth token。
+
+`POST /desktop/fill` 的真实前台窗口写回协议：
+
+- `confirmForeground: true`
+- `expectedTitleHash: <来自 /desktop/input-snapshot 的 foreground.titleHash>`
+- `expectedToolProfile: codex | claude-code | hermes`
+- `candidateIndex: 0` 或调用方选择的输入候选
+- `text` 或 `prompt`
+
+缺少确认字段、窗口 hash 不匹配或工具画像不匹配时，接口必须返回 `writeAttempted:false`。
 
 已新增 native sidecar 受保护接口：
 
@@ -46,7 +57,7 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - `scripts/check-m3-installed-sidecar-desktop-input.ps1` 会构建桌面壳、静默安装 NSIS 包、从安装后的 app 启动 bundled native sidecar，再调用 `GET /desktop/input-snapshot?selfTest=1` 与 `POST /desktop/fill?selfTest=1`。
 - 证据文件：`research/m3-installed-sidecar-desktop-input.latest.json`，当前 `pass:true`。
 
-这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用；M3 仍未完成，因为还缺 macOS AX 和 Codex/Claude Code/Hermes 真实工具窗口写回。
+这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用，并且前台窗口写回已有受控确认协议；M3 仍未完成，因为还缺 macOS AX 和 Codex/Claude Code/Hermes 真实工具窗口写回验收报告。
 
 ## 工具画像
 
