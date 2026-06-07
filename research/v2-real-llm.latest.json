@@ -1,29 +1,43 @@
 {
-  "createdAt": "2026-06-06T20:09:49.181Z",
+  "createdAt": "2026-06-07T04:17:37.419Z",
   "dataDir": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\apps\\local-service\\.smart-prompt-data",
   "dryRun": false,
-  "requestedProvider": "auto",
-  "selectedProvider": "openai-compatible",
+  "requestedProvider": "agnes",
+  "selectedProvider": "agnes",
   "configuredProviders": [
-    "openai-compatible"
+    "agnes"
   ],
   "settingsSummary": {
-    "provider": "auto",
-    "baseUrl": "https://api.openai.com/v1",
-    "model": "gpt-4o-mini",
+    "provider": "agnes",
+    "baseUrl": "https://apihub.agnes-ai.com/v1",
+    "model": "agnes-2.0-flash",
     "apiKeyConfigured": false,
     "providerKeysAvailable": {
+      "agnes": false,
       "openai-compatible": false,
       "anthropic": false,
       "gemini": false
     }
   },
   "providerStatus": {
-    "selected": "auto",
+    "selected": "agnes",
     "auto": {
-      "provider": "openai-compatible"
+      "provider": "agnes"
     },
     "providers": [
+      {
+        "provider": "agnes",
+        "label": "Agnes",
+        "baseUrl": "https://apihub.agnes-ai.com/v1",
+        "model": "agnes-2.0-flash",
+        "envKeys": [
+          "AGNES_API_KEY"
+        ],
+        "selected": true,
+        "keyAvailable": true,
+        "keySource": "AGNES_API_KEY",
+        "usesStoredKey": false
+      },
       {
         "provider": "anthropic",
         "label": "Anthropic",
@@ -66,24 +80,31 @@
       }
     ]
   },
-  "pass": false,
+  "pass": true,
   "results": [
     {
       "name": "idea",
-      "ok": false,
-      "provider": "openai-compatible",
-      "code": "llm_request_failed",
-      "status": 429,
-      "message": "LLM request failed with 429.",
-      "attempts": [
-        {
-          "provider": "openai-compatible",
-          "code": "llm_request_failed",
-          "status": 429,
-          "message": "LLM request failed with 429."
-        }
-      ],
-      "bodyPreview": "{\n    \"error\": {\n        \"message\": \"You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api"
+      "ok": true,
+      "provider": "agnes",
+      "generatedBy": "llm",
+      "mode": "idea",
+      "promptLength": 514
+    },
+    {
+      "name": "continue",
+      "ok": true,
+      "provider": "agnes",
+      "generatedBy": "llm",
+      "mode": "continue",
+      "promptLength": 1375
+    },
+    {
+      "name": "polish",
+      "ok": true,
+      "provider": "agnes",
+      "generatedBy": "llm",
+      "mode": "polish",
+      "promptLength": 2149
     }
   ]
 }

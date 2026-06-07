@@ -2,12 +2,9 @@
 
 ## 当前问题
 
-- 旧 Agnes 通过报告不是最终完成证据：报告里 `idea`、`continue`、`polish` 三项都返回 LLM，但 `polish` 项的 `mode` 是 `continue`。已补严脚本和 strict critic；需要用户用新版脚本重新生成 `research/v2-real-llm.latest.json`。
-- 真实 LLM 三模式现在可用 Agnes 尝试：项目已支持 `AGNES_API_KEY`、provider `agnes`、base URL `https://apihub.agnes-ai.com/v1`、model `agnes-2.0-flash`；但完成门仍需要用户在本机用有效 Agnes key 运行 `check-v2-real-llm.ps1 -Provider agnes` 并写入 `pass: true` 报告。
-- 真实 LLM 三模式已进入外部条件阻塞：绝对路径运行 `check-v2-real-llm.ps1` 已排除脚本路径问题；当前仍只有 `OPENAI_API_KEY` 可用，且 OpenAI API 在 `idea` 模式返回 HTTP 429 quota/billing。没有可用 OpenAI billing 或 Anthropic/Gemini 替代 key 时，无法生成 `REAL_LLM_3_MODES_PASS` 机器证据。
-- 真实 LLM 三模式仍未通过：本轮 `scripts/check-v2-real-llm.ps1 -DryRun` 只发现 `OPENAI_API_KEY`，未发现 Anthropic/Gemini 环境变量或桌面壳保存的 provider key；真实运行仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing，需可用 API key/billing 后重新运行三模式验收。
+- 当前没有已知阻塞 V2 完成的 runtime 问题；Agnes 最新报告已严格证明真实 LLM 三模式。后续只需跑 strict critic 和 OMX/Codex goal 收尾。
 
-- 当前无阻塞 V2 自动化代码路径推进的问题；完整验收只缺真实 LLM quota 可用性。
+- 当前无阻塞 V2 自动化代码路径推进的问题；完整 runtime 验收已经具备机器证据。
 - 本地 prompt/skill 库已支持导入、推荐、保存、列表和删除；当前不再是主要缺口。
 - 浏览器扩展 Prompt Card 的 Save 已接入本地 prompt 库；当前不再只保存到扩展本地收藏。
 - 浏览器扩展本地服务离线 fallback 已有 headless runtime 覆盖；当前不再只靠静态检查证明。

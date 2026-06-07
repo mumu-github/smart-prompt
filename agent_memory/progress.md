@@ -59,25 +59,25 @@
 
 ## 正在进行
 
-- 正在推进 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务、全局快捷键触发、5 个真实站点正式扩展显示、ChatGPT/Gemini/Claude Insert 已通过，真实 LLM DryRun/参数化验收脚本已补齐，且已新增 Agnes provider，但真实 LLM 三模式 pass 证据尚未写入。
-- Claude Insert 已通过专用 CDP profile 真实登录态验证，`research/v2-claude-insert.latest.json` 证明正式 unpacked 扩展加载、小人显示和 Insert 填入均成功，且 `injectedProbe: false`；当前完整 V2 runtime 验收只剩真实 LLM 三模式 quota/billing 证据未通过。
+- 正在收尾 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务、全局快捷键触发、5 个真实站点正式扩展显示、ChatGPT/Gemini/Claude Insert、Agnes 真实 LLM 三模式均已有机器证据。
+- Claude Insert 已通过专用 CDP profile 真实登录态验证，`research/v2-claude-insert.latest.json` 证明正式 unpacked 扩展加载、小人显示和 Insert 填入均成功，且 `injectedProbe: false`；Agnes 真实 LLM 报告也已严格证明 `idea`、`continue`、`polish` 三模式。
 
 ## 下一步
 
-- 使用新版 `scripts/check-v2-real-llm.ps1 -Provider agnes` 复跑三模式真实 LLM 验收；新版脚本会强制 `idea`、`continue`、`polish` 三个样本的 `mode` 字段与样本名一致，避免 polish 被误判为 continue。
-- 若真实 LLM 三模式通过，补 `REAL_LLM_3_MODES_PASS`，运行 `scripts/critic-v2.ps1 -RequireRuntimeEvidence`，再记录 OMX pass verdict 并完成 Codex goal。
+- 运行 `scripts/critic-v2.ps1 -RequireRuntimeEvidence`；若通过，记录 OMX pass verdict 并完成 Codex goal。
 
 ## 验证状态
 
+- 本轮新版 Agnes 报告已通过：`research/v2-real-llm.latest.json` 为 `pass: true`，`dryRun: false`，provider/model 为 `agnes`/`agnes-2.0-flash`，`idea`、`continue`、`polish` 三项均 `ok: true`、`generatedBy: "llm"`、`mode` 与样本名一致，promptLength 分别大于 40。
 - 本轮校验用户 Agnes 报告时发现：用户运行的旧报告 `pass: true` 且三项均 `generatedBy: "llm"`，但 `polish` 样本返回的 `mode` 为 `continue`，不足以证明严格三模式。已补严 `check-v2-real-llm.ps1` 和 `critic-v2.ps1`，默认 `scripts/critic-v2.ps1` PASS；当前 Codex 进程没有 `AGNES_API_KEY`，无法代跑新版真实报告，需用户在有 key 的 PowerShell 中重新运行。
-- 本轮新增 Agnes provider：共享 LLM gateway 支持 `agnes`、`AGNES_API_KEY`、默认 `https://apihub.agnes-ai.com/v1` 和 `agnes-2.0-flash`；桌面壳暴露 Agnes Key；local-service/desktop-shell 测试和默认 `scripts/critic-v2.ps1` PASS；`scripts/check-v2-real-llm.ps1 -DryRun -Provider agnes` PASS，真实 Agnes 三模式等待用户本机 key 运行。
+- 本轮新增 Agnes provider：共享 LLM gateway 支持 `agnes`、`AGNES_API_KEY`、默认 `https://apihub.agnes-ai.com/v1` 和 `agnes-2.0-flash`；桌面壳暴露 Agnes Key；local-service/desktop-shell 测试和默认 `scripts/critic-v2.ps1` PASS；`scripts/check-v2-real-llm.ps1 -DryRun -Provider agnes` PASS；新版真实 Agnes 三模式报告已通过。
 - 本轮绝对路径复跑：`powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\lhy10\Documents\Smart Prompt\scripts\check-v2-real-llm.ps1" -DryRun` 证明脚本路径可达，但仍只发现 `OPENAI_API_KEY`；真实运行同一绝对路径脚本仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing。该条件已多轮重复，当前无法在没有可用 API key/billing 或 Anthropic/Gemini 替代 key 的情况下继续证明 `REAL_LLM_3_MODES_PASS`。
 - 本轮复跑：`scripts/check-v2-real-llm.ps1 -DryRun` 只发现 `OPENAI_API_KEY`，未发现 Anthropic/Gemini 环境变量或桌面壳保存的 provider key；真实运行 `scripts/check-v2-real-llm.ps1` 仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing；`scripts/critic-v2.ps1 -RequireRuntimeEvidence` 当前只失败在缺少 `REAL_LLM_3_MODES_PASS` 和三模式真实 LLM 机器证据。
 - 本轮新增并验证桌面壳交互测试：`apps/desktop-shell/tests/desktop-shell-interaction.test.js` 通过 fake DOM/fetch/Tauri 执行真实 `src/app.js`，覆盖 provider/API key 保存、skill 导入/删除、prompt 保存/删除、本地服务启动和全局快捷键事件；`npm test` in `apps/desktop-shell` PASS，`scripts/critic-v2.ps1` 默认 PASS。
 - 严格 runtime evidence critic 仍未通过：`INSERT_CLAUDE_PASS` 已补齐，当前缺口只剩 `REAL_LLM_3_MODES_PASS`；真实 LLM 报告仍是 OpenAI quota/billing 429。
 
 - 已验证：`scripts/start-v2-claude-cdp.ps1` 语法解析和 `-DryRun` PASS；`scripts/check-v2-real-llm.ps1` 语法解析、默认 `-DryRun`、`-Provider gemini -DryRun` PASS，真实复跑写入新版 `research/v2-real-llm.latest.json` 且仍返回 OpenAI 429；`scripts/critic-v2.ps1` 默认自动化检查 PASS；local-service、browser-extension、desktop-shell 静态测试 PASS；local-service 测试已覆盖 `DELETE /skills/:id`、`DELETE /prompts/:id` 和 CORS `DELETE`；desktop-shell 静态测试已覆盖 skill/prompt 删除 UI；Node 语法检查 PASS；本地服务可启动并响应 `/health`、`/generate` fallback 和 `/prompts` 保存；Chrome headless demo 能显示小人和 prompt card，已确认在线 Save 写入本地 prompt 库、离线 Save 回退 `chrome.storage.local`，且 Insert 只写入不提交；8 站点适配器与共享核心同步测试 PASS；live-site probe 已静态验证使用适配器 selector；Rust/Cargo 已安装，Tauri `cargo check` PASS；`scripts/check-v2-tauri-runtime.ps1` 已验证 Tauri app 启动、Tauri command、从 Tauri 启动本地服务、全局快捷键触发计数；`scripts/check-v2-live-sites.ps1` 已通过 CDP `Extensions.loadUnpacked` 证明 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 站点正式扩展显示，且 ChatGPT/Gemini Insert 成功。
-- 未验证：真实 LLM 三模式因当前 OpenAI quota/billing 429 未证明。
+- 未验证：无当前 V2 完成门阻塞项；Perplexity/Replit 等额外站点仍受 challenge/login/region 限制，不影响当前 5 站点正式扩展验收。
 - 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start-v2-claude-cdp.ps1 -DryRun` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1 -DryRun -Report .runtime\v2-real-llm-dryrun.json` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1 -DryRun -Provider gemini -Report .runtime\v2-real-llm-gemini-dryrun.json` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1` 返回 OpenAI 429 并写入新版失败报告；`npm test` 已在 `prototypes/browser-extension` PASS；`npm test` 已在 `apps/local-service` PASS；`npm test` 已在 `apps/desktop-shell` PASS；`node -c apps\local-service\src\server.js`、`node -c apps\local-service\src\store.js`、`node -c apps\desktop-shell\src\app.js` PASS；`node -c packages\shared\smart-prompt-core.js`、`node -c prototypes\browser-extension\src\site-adapters.js`、`node -c prototypes\browser-extension\src\content.js`、`node -c prototypes\browser-extension\tests\site-adapters.test.js`、`node -c prototypes\browser-extension\tests\live-site-probe.test.js` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` 当前只失败在缺少 `REAL_LLM_3_MODES_PASS` 且 `research/v2-real-llm.latest.json` 非 pass；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runtime.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-claude-insert.ps1 -AttachCdp -CdpPort 9232 -LoginWaitSeconds 30` 已 PASS。
 
 ## 最近变化
