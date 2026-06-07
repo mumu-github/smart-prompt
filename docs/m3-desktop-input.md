@@ -97,7 +97,7 @@ macOS AXUIElement 仍是后续跨平台方向，但本轮先不做识别实现�
 - Doubao
 - DeepSeek
 
-它生成 `research/m3-pilot-adapters.latest.json`，记录 Insert attempts、Insert success rate、失败原因、no-auto-send 状态和红线隐私检查。登录、地区限制、selector 失败都应记录为真实失败原因，而不是从报告里筛掉。
+它生成 `research/m3-pilot-adapters.latest.json`，记录 Insert attempts、Insert success rate、失败原因、no-auto-send 状态、route matrix 和红线隐私检查。登录、地区限制、selector 失败都应记录为真实失败原因，而不是从报告里筛掉。
 
 当前 pilot 报告已新增 `pageClassification` 与 `routeDiagnostics`，用于区分：
 
@@ -106,4 +106,4 @@ macOS AXUIElement 仍是后续跨平台方向，但本轮先不做识别实现�
 - `login_or_auth_gate_no_visible_composer`
 - `input_candidates_hidden_or_offscreen`
 
-最新结果仍是 4 次 Insert attempts、0 次成功；失败原因已从单一 `no visible input candidate` 细化为 `no_input_candidates_on_loaded_page: 3` 与 `public_or_marketing_page_no_visible_composer: 1`。
+最新结果仍是 4 次 Insert attempts、0 次成功；每站已探测 5 个候选入口。失败原因已从单一 `no visible input candidate` 细化为 `no_input_candidates_on_loaded_page: 2`、`public_or_marketing_page_no_visible_composer: 1` 与 `login_or_auth_gate_no_visible_composer: 1`。当前 route matrix 显示 workBuddy、Trae、Doubao 候选入口都没有可见 composer；DeepSeek 有可见输入，但被识别为登录/认证页，探针不会再把登录框当作 composer 写入。

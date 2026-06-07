@@ -22,7 +22,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 ### 下一阶段收口
 
-- 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因。
+- 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因；当前 beta adapter pilot 已补 route matrix，用于区分无 composer、营销页和登录/认证页。
 - 补 workBuddy、Trae、Doubao、DeepSeek 等新网页站点适配。
 - 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test、三工具画像 self-test、真实 Codex 前台窗口 snapshot-only 审计、Windows 写回 self-test、受控前台窗口写回 guard、source/dev sidecar snapshot/fill 和安装包 bundled sidecar snapshot/fill smoke 已通过，真实工具窗口写回验收仍待完成；macOS AX 暂缓到后续跨平台阶段。
 

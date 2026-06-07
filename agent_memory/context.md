@@ -12,7 +12,7 @@
 
 - 当前 active goal 是 M3：一方面跑真实内测数据观察 workBuddy、Trae、Doubao、DeepSeek 新 adapter 的 Insert 成功率和失败原因；另一方面进入 Windows UIA 桌面输入框识别，覆盖 Codex、Claude Code、Hermes；macOS AX 先不做。
 - 已创建 OMX mission：`smart-prompt-m3-pilot-metrics-and-desktop-input-`；critic 命令为 `scripts\critic-m3.ps1`。
-- M3 pilot 证据入口：`research/m3-pilot-adapters.latest.json`。当前四个 beta 站点均有真实 headless Chrome 探针数据，正式扩展加载成功，但 visible input 为 0，Insert 成功率为 0；失败原因已细化为 `no_input_candidates_on_loaded_page: 3` 与 `public_or_marketing_page_no_visible_composer: 1`，并带 `pageClassification`/`routeDiagnostics`。
+- M3 pilot 证据入口：`research/m3-pilot-adapters.latest.json`。当前四个 beta 站点均有真实 headless Chrome 探针数据，正式扩展加载成功，但 Insert 成功率为 0；已新增每站 5 个候选入口的 route matrix，失败原因细化为 `no_input_candidates_on_loaded_page: 2`、`public_or_marketing_page_no_visible_composer: 1` 与 `login_or_auth_gate_no_visible_composer: 1`，并带 `pageClassification`/`routeDiagnostics`/`routeMatrix`。
 - M3 Windows UIA 证据入口：`research/m3-desktop-input.latest.json` 与 `research/m3-real-desktop-tools.latest.json`。当前 self-test 通过，Windows UIA 能枚举临时 TextBox 候选，并匹配 Codex 工具画像；真实前台 Codex snapshot-only 审计也已通过，候选数 116，默认 `writeAttempted:false`；报告不保存 raw title、raw element name 或 input value。
 - 新增 local-service 开发接口与 native sidecar source/dev 接口：`GET /desktop/input-snapshot`，受 auth 保护；native sidecar 通过 Windows PowerShell UIA bridge 返回同一契约。
 - M3 native sidecar 证据入口：`research/m3-sidecar-desktop-input.latest.json`。当前 sidecar smoke 通过，证明 native sidecar health/auth 后可调用 `desktop/input-snapshot?selfTest=1` 并返回 1 个 UIA 输入候选。

@@ -5,7 +5,7 @@ const path = require("node:path");
 const { spawn } = require("node:child_process");
 const { startServer } = require("../../../apps/local-service/src/server");
 const { createStore } = require("../../../apps/local-service/src/store");
-const { collectRedactionLeaks, redactEvidence } = require("../../../packages/shared/evidence-redaction");
+const { collectRedactionLeaks, redactEvidence, summarizeUrl } = require("../../../packages/shared/evidence-redaction");
 const siteAdapters = require("../src/site-adapters.js");
 
 const chromePath = process.env.CHROME_PATH || "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe";
@@ -103,10 +103,62 @@ const sites = [
   { id: "v0", name: "v0", url: "https://v0.dev/chat", requireInsert: false },
   { id: "lovable", name: "Lovable", url: "https://lovable.dev/", requireInsert: false },
   { id: "replit", name: "Replit", url: "https://replit.com/agent4", requireInsert: false },
-  { id: "workbuddy", name: "workBuddy", url: "https://work-buddy.ai/", requireInsert: true, betaPilot: true },
-  { id: "trae", name: "Trae", url: "https://www.trae.ai/solo", requireInsert: true, betaPilot: true },
-  { id: "doubao", name: "Doubao", url: "https://www.doubao.com/chat/", requireInsert: true, betaPilot: true },
-  { id: "deepseek", name: "DeepSeek", url: "https://chat.deepseek.com/", requireInsert: true, betaPilot: true }
+  {
+    id: "workbuddy",
+    name: "workBuddy",
+    url: "https://work-buddy.ai/",
+    requireInsert: true,
+    betaPilot: true,
+    routeCandidates: [
+      "https://work-buddy.ai/",
+      "https://work-buddy.ai/chat",
+      "https://work-buddy.ai/app",
+      "https://work-buddy.ai/login",
+      "https://app.work-buddy.ai/"
+    ]
+  },
+  {
+    id: "trae",
+    name: "Trae",
+    url: "https://www.trae.ai/solo",
+    requireInsert: true,
+    betaPilot: true,
+    routeCandidates: [
+      "https://www.trae.ai/solo",
+      "https://www.trae.ai/",
+      "https://www.trae.ai/chat",
+      "https://www.trae.ai/app",
+      "https://www.trae.ai/login"
+    ]
+  },
+  {
+    id: "doubao",
+    name: "Doubao",
+    url: "https://www.doubao.com/chat/",
+    requireInsert: true,
+    betaPilot: true,
+    routeCandidates: [
+      "https://www.doubao.com/chat/",
+      "https://www.doubao.com/",
+      "https://www.doubao.com/chat",
+      "https://www.doubao.com/bot/",
+      "https://www.doubao.com/login"
+    ]
+  },
+  {
+    id: "deepseek",
+    name: "DeepSeek",
+    url: "https://chat.deepseek.com/",
+    requireInsert: true,
+    betaPilot: true,
+    routeCandidates: [
+      "https://chat.deepseek.com/",
+      "https://chat.deepseek.com/a/chat",
+      "https://chat.deepseek.com/chat",
+      "https://chat.deepseek.com/sign_in",
+      "https://deepseek.com/"
+    ]
+  }
 ];
 const defaultSiteIds = ["chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit"];
 const activeSites = siteFilter.size
@@ -234,6 +286,184 @@ async function waitFor(client, expression, predicate, timeout = 12000) {
     await sleep(350);
   }
   throw new Error(`Condition not met: ${expression}\nLast value: ${JSON.stringify(lastValue)}`);
+}
+
+async function collectRouteSnapshot(client, site, url) {
+  const collectInputsSource = createCollectInputsSource(site);
+  await client.send("Page.navigate", { url });
+  await client.send("Page.loadEventFired").catch(() => {});
+  await sleep(Number(process.env.SMART_PROMPT_LIVE_ROUTE_SETTLE_MS || 3000));
+  return evaluate(client, `(() => {
+    ${collectInputsSource}
+    const candidates = smartPromptProbeInputs()
+      .map((element, index) => {
+        const rect = element.getBoundingClientRect();
+        const style = getComputedStyle(element);
+        return {
+          index,
+          tag: element.tagName,
+          role: element.getAttribute("role") || "",
+          contentEditable: element.isContentEditable,
+          visible: rect.width > 24 && rect.height > 18 && style.visibility !== "hidden" && style.display !== "none",
+          width: Math.round(rect.width),
+          height: Math.round(rect.height)
+        };
+      });
+    return {
+      url: location.href,
+      title: document.title,
+      candidates
+    };
+  })()`);
+}
+
+function getActualQueryPresent(href) {
+  try {
+    return Boolean(new URL(String(href)).search);
+  } catch {
+    return false;
+  }
+}
+
+function summarizeProbeError(error, code = "probe_error") {
+  return {
+    errorCode: code,
+    errorKind: error?.name || "Error",
+    errorMessageLength: String(error?.message || "").length
+  };
+}
+
+function classifyRouteSnapshot({ requestedUrl, actualUrl, title, candidates, visibleInputCount }) {
+  const totalInputCandidateCount = candidates.length;
+  const hiddenInputCandidateCount = Math.max(0, totalInputCandidateCount - visibleInputCount);
+  const haystack = `${actualUrl} ${title}`;
+  const loginLike = includesAny(haystack, [
+    "login",
+    "log in",
+    "signin",
+    "sign-in",
+    "sign_in",
+    "auth",
+    "oauth",
+    "登录",
+    "登陆",
+    "注册"
+  ]);
+  const publicLike = includesAny(haystack, [
+    "pricing",
+    "download",
+    "docs",
+    "blog",
+    "solo",
+    "home",
+    "官网",
+    "产品",
+    "首页"
+  ]);
+  const requestedHost = safeUrlHost(requestedUrl);
+  const actualHost = safeUrlHost(actualUrl);
+  const redirectedHost = Boolean(requestedHost && actualHost && requestedHost !== actualHost);
+  let pageClassification = "unknown";
+  if (loginLike) {
+    pageClassification = "login_or_auth_gate";
+  } else if (totalInputCandidateCount === 0 && publicLike) {
+    pageClassification = "public_or_marketing_page";
+  } else if (totalInputCandidateCount === 0) {
+    pageClassification = "no_input_candidates_on_loaded_page";
+  } else if (visibleInputCount === 0) {
+    pageClassification = "input_candidates_hidden_or_offscreen";
+  } else if (redirectedHost) {
+    pageClassification = "redirected_host_with_visible_input";
+  } else {
+    pageClassification = "visible_input_detected";
+  }
+
+  return {
+    requestedHost,
+    actualHost,
+    redirectedHost,
+    actualPathKind: pathKindFromHref(actualUrl),
+    actualQueryPresent: getActualQueryPresent(actualUrl),
+    titleLength: String(title || "").length,
+    totalInputCandidateCount,
+    visibleInputCount,
+    hiddenInputCandidateCount,
+    loginLike,
+    publicLike,
+    pageClassification
+  };
+}
+
+async function probePilotRouteMatrix(client, site) {
+  const urls = unique([site.url, ...(site.routeCandidates || [])]);
+  const attempts = [];
+  for (const [index, url] of urls.entries()) {
+    try {
+      const snapshot = await collectRouteSnapshot(client, site, url);
+      const candidates = Array.isArray(snapshot.candidates) ? snapshot.candidates : [];
+      const visibleInputCount = candidates.filter((candidate) => candidate.visible).length;
+      const diagnostics = classifyRouteSnapshot({
+        requestedUrl: url,
+        actualUrl: snapshot.url || url,
+        title: snapshot.title || "",
+        candidates,
+        visibleInputCount
+      });
+      attempts.push({
+        index,
+        rawUrl: url,
+        requestedUrl: summarizeUrl(url),
+        actualUrl: summarizeUrl(snapshot.url || url),
+        ...diagnostics
+      });
+    } catch (error) {
+      attempts.push({
+        index,
+        rawUrl: url,
+        requestedUrl: summarizeUrl(url),
+        actualUrl: null,
+        requestedHost: safeUrlHost(url),
+        actualHost: "",
+        redirectedHost: false,
+        actualPathKind: "unknown",
+        actualQueryPresent: false,
+        titleLength: 0,
+        totalInputCandidateCount: 0,
+        visibleInputCount: 0,
+        hiddenInputCandidateCount: 0,
+        loginLike: false,
+        publicLike: false,
+        pageClassification: "route_probe_error",
+        errorKind: error.name || "Error",
+        errorMessageLength: String(error.message || "").length
+      });
+    }
+  }
+  const best = attempts.find((attempt) => attempt.pageClassification === "visible_input_detected")
+    || attempts.find((attempt) => attempt.pageClassification === "redirected_host_with_visible_input")
+    || null;
+  return {
+    attemptCount: attempts.length,
+    visibleRouteCount: attempts.filter((attempt) => attempt.visibleInputCount > 0).length,
+    loginRouteCount: attempts.filter((attempt) => attempt.loginLike).length,
+    publicRouteCount: attempts.filter((attempt) => attempt.publicLike).length,
+    selectedCandidateIndex: best ? best.index : -1,
+    selectedCandidateUrl: best ? best.rawUrl : "",
+    attempts
+  };
+}
+
+function toPublicRouteMatrix(matrix) {
+  if (!matrix) return null;
+  return {
+    attemptCount: matrix.attemptCount,
+    visibleRouteCount: matrix.visibleRouteCount,
+    loginRouteCount: matrix.loginRouteCount,
+    publicRouteCount: matrix.publicRouteCount,
+    selectedCandidateIndex: matrix.selectedCandidateIndex,
+    selectedCandidate: matrix.selectedCandidateUrl ? summarizeUrl(matrix.selectedCandidateUrl) : null,
+    attempts: matrix.attempts.map(({ rawUrl, ...attempt }) => attempt)
+  };
 }
 
 function createNoAutoSendSource() {
@@ -483,6 +713,29 @@ async function probeSite(client, site) {
     };
   })()`);
 
+  if (pilotMode) {
+    const initialCandidates = Array.isArray(initial.candidates) ? initial.candidates : [];
+    const initialVisibleInputCount = initialCandidates.filter((candidate) => candidate.visible).length;
+    const initialRouteDiagnostics = classifyRouteSnapshot({
+      requestedUrl: site.url,
+      actualUrl: initial.url || site.url,
+      title: initial.title || "",
+      candidates: initialCandidates,
+      visibleInputCount: initialVisibleInputCount
+    });
+    if (initialRouteDiagnostics.loginLike) {
+      return {
+        ...site,
+        injectedProbe,
+        passedDisplay: false,
+        passedInsert: false,
+        initial,
+        focusResult: { ok: false, reason: "login_or_auth_gate_no_visible_composer" },
+        routeGate: initialRouteDiagnostics
+      };
+    }
+  }
+
   const focusExpression = `(() => {
     ${collectInputsSource}
     const candidates = smartPromptProbeInputs()
@@ -551,7 +804,7 @@ async function probeSite(client, site) {
       await sleep(500);
       return probeSiteAfterInjection(client, site, initial, focusResult);
     }
-    return { ...site, injectedProbe, passedDisplay: false, passedInsert: false, initial, focusResult, displayError: error.message };
+    return { ...site, injectedProbe, passedDisplay: false, passedInsert: false, initial, focusResult, displayError: summarizeProbeError(error, "display_probe_failed") };
   }
 
   if (!site.requireInsert) {
@@ -562,7 +815,7 @@ async function probeSite(client, site) {
   try {
     insert = await performInsertProbe(client, collectInputsSource);
   } catch (error) {
-    insert = { opened: false, ok: false, error: error.message };
+    insert = { opened: false, ok: false, ...summarizeProbeError(error, "insert_probe_failed") };
   }
 
   return {
@@ -641,7 +894,7 @@ async function probeSiteAfterInjection(client, site, initialBeforeInjection, foc
       initial: initialBeforeInjection,
       focusResult: focusBeforeInjection,
       injectedFocusResult: refocused,
-      displayError: error.message
+      displayError: summarizeProbeError(error, "display_probe_failed")
     };
   }
 
@@ -662,7 +915,7 @@ async function probeSiteAfterInjection(client, site, initialBeforeInjection, foc
   try {
     insert = await performInsertProbe(client, collectInputsSource);
   } catch (error) {
-    insert = { opened: false, ok: false, error: error.message };
+    insert = { opened: false, ok: false, ...summarizeProbeError(error, "insert_probe_failed") };
   }
 
   return {
@@ -816,77 +1069,21 @@ function includesAny(value, needles) {
 function getPilotRouteDiagnostics(result, formalSite) {
   const initial = result.initial || {};
   const actualUrl = initial.url || result.url || "";
-  const requestedHost = safeUrlHost(result.url);
-  const actualHost = safeUrlHost(actualUrl);
   const title = initial.title || "";
   const candidates = Array.isArray(initial.candidates) ? initial.candidates : [];
   const visibleInputCount = formalSite.focus.visibleInputCount;
-  const totalInputCandidateCount = candidates.length;
-  const hiddenInputCandidateCount = Math.max(0, totalInputCandidateCount - visibleInputCount);
-  const haystack = `${actualUrl} ${title}`;
-  const loginLike = includesAny(haystack, [
-    "login",
-    "log in",
-    "signin",
-    "sign-in",
-    "sign_in",
-    "auth",
-    "oauth",
-    "登录",
-    "登陆",
-    "注册"
-  ]);
-  const publicLike = includesAny(haystack, [
-    "pricing",
-    "download",
-    "docs",
-    "blog",
-    "solo",
-    "home",
-    "官网",
-    "产品",
-    "首页"
-  ]);
-  const redirectedHost = Boolean(requestedHost && actualHost && requestedHost !== actualHost);
-  let pageClassification = "unknown";
-  if (loginLike) {
-    pageClassification = "login_or_auth_gate";
-  } else if (totalInputCandidateCount === 0 && publicLike) {
-    pageClassification = "public_or_marketing_page";
-  } else if (totalInputCandidateCount === 0) {
-    pageClassification = "no_input_candidates_on_loaded_page";
-  } else if (visibleInputCount === 0) {
-    pageClassification = "input_candidates_hidden_or_offscreen";
-  } else if (redirectedHost) {
-    pageClassification = "redirected_host_with_visible_input";
-  } else {
-    pageClassification = "visible_input_detected";
-  }
-
-  return {
-    requestedHost,
-    actualHost,
-    redirectedHost,
-    actualPathKind: pathKindFromHref(actualUrl),
-    actualQueryPresent: (() => {
-      try {
-        return Boolean(new URL(String(actualUrl)).search);
-      } catch {
-        return false;
-      }
-    })(),
-    titleLength: String(title || "").length,
-    totalInputCandidateCount,
-    visibleInputCount,
-    hiddenInputCandidateCount,
-    loginLike,
-    publicLike,
-    pageClassification
-  };
+  return classifyRouteSnapshot({
+    requestedUrl: result.url,
+    actualUrl,
+    title,
+    candidates,
+    visibleInputCount
+  });
 }
 
 function getPilotFailureReason(result, formalSite, routeDiagnostics = getPilotRouteDiagnostics(result, formalSite)) {
   if (!formalSite.formalExtensionLoaded) return "extension_not_loaded";
+  if (routeDiagnostics.loginLike) return "login_or_auth_gate_no_visible_composer";
   if (!formalSite.focus.ok) {
     if (routeDiagnostics.pageClassification === "login_or_auth_gate") return "login_or_auth_gate_no_visible_composer";
     if (routeDiagnostics.pageClassification === "public_or_marketing_page") return "public_or_marketing_page_no_visible_composer";
@@ -894,9 +1091,9 @@ function getPilotFailureReason(result, formalSite, routeDiagnostics = getPilotRo
     if (routeDiagnostics.pageClassification === "no_input_candidates_on_loaded_page") return "no_input_candidates_on_loaded_page";
     return result.focusResult?.reason || result.injectedFocusResult?.reason || "no_visible_input_candidate";
   }
-  if (!formalSite.display.passed) return result.displayError || "mascot_not_visible";
+  if (!formalSite.display.passed) return result.displayError?.errorCode || "mascot_not_visible";
   if (formalSite.required.insert && !formalSite.insert.passed) {
-    return formalSite.insert.reason || result.insert?.error || "insert_not_verified";
+    return formalSite.insert.reason || result.insert?.errorCode || "insert_not_verified";
   }
   if (formalSite.required.noAutoSend && !formalSite.noAutoSend.passed) return "no_auto_send_failed";
   return "";
@@ -913,6 +1110,12 @@ function toPilotSite(result, formalSite) {
     urlHost: new URL(result.url).hostname,
     pageClassification: routeDiagnostics.pageClassification,
     routeDiagnostics,
+    routeMatrix: result.routeMatrix || null,
+    routeSelection: result.routeSelection || {
+      usedMatrix: false,
+      selectedCandidate: null,
+      selectedReason: "primary_site_url"
+    },
     formalExtensionLoaded: formalSite.formalExtensionLoaded,
     visibleInputCount: formalSite.focus.visibleInputCount,
     focusOk: formalSite.focus.ok,
@@ -976,9 +1179,37 @@ function toPilotSite(result, formalSite) {
     await client.send("Page.enable");
     for (const site of activeSites) {
       try {
-        results.push(await probeSite(client, site));
+        let routeMatrix = null;
+        let targetSite = site;
+        let routeSelection = {
+          usedMatrix: false,
+          selectedCandidate: null,
+          selectedReason: "primary_site_url"
+        };
+        if (pilotMode && site.betaPilot) {
+          const matrix = await probePilotRouteMatrix(client, site);
+          routeMatrix = toPublicRouteMatrix(matrix);
+          if (matrix.selectedCandidateUrl) {
+            targetSite = { ...site, url: matrix.selectedCandidateUrl };
+            routeSelection = {
+              usedMatrix: true,
+              selectedCandidate: summarizeUrl(matrix.selectedCandidateUrl),
+              selectedReason: "visible_input_route_candidate"
+            };
+          } else {
+            routeSelection = {
+              usedMatrix: false,
+              selectedCandidate: summarizeUrl(site.url),
+              selectedReason: "no_visible_route_candidate"
+            };
+          }
+        }
+        const { routeCandidates, ...siteForProbe } = targetSite;
+        const result = await probeSite(client, siteForProbe);
+        results.push({ ...result, routeMatrix, routeSelection });
       } catch (error) {
-        results.push({ ...site, passedDisplay: false, passedInsert: false, error: error.message });
+        const { routeCandidates, ...siteForReport } = site;
+        results.push({ ...siteForReport, passedDisplay: false, passedInsert: false, ...summarizeProbeError(error, "site_probe_failed") });
       }
     }
   } finally {

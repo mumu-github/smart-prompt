@@ -205,11 +205,26 @@ foreach ($site in @("workbuddy", "trae", "doubao", "deepseek")) {
   if (-not $pilotSite.pageClassification) { throw "pilot report missing pageClassification for $site" }
   if (-not $pilotSite.routeDiagnostics) { throw "pilot report missing routeDiagnostics for $site" }
   if ($null -eq $pilotSite.routeDiagnostics.totalInputCandidateCount) { throw "pilot report missing totalInputCandidateCount for $site" }
+  if (-not $pilotSite.routeMatrix) { throw "pilot report missing routeMatrix for $site" }
+  if ([int]$pilotSite.routeMatrix.attemptCount -lt 3) { throw "pilot routeMatrix has too few attempts for $site" }
+  if (-not $pilotSite.routeMatrix.attempts -or $pilotSite.routeMatrix.attempts.Count -lt 3) { throw "pilot routeMatrix missing attempts for $site" }
+  foreach ($attempt in $pilotSite.routeMatrix.attempts) {
+    if (-not $attempt.requestedUrl.redacted) { throw "pilot routeMatrix missing redacted requestedUrl for $site" }
+    if ($null -eq $attempt.titleLength) { throw "pilot routeMatrix missing titleLength for $site" }
+    if (-not $attempt.pageClassification) { throw "pilot routeMatrix missing pageClassification for $site" }
+    if ($null -eq $attempt.totalInputCandidateCount) { throw "pilot routeMatrix missing input count for $site" }
+  }
 }
 if ($pilotReport.summary.redactionLeaks.Count -gt 0) { throw "pilot report has redaction leaks" }
 if ($pilotReport.pilot.insertAttempts -lt 4) { throw "pilot report did not attempt all beta inserts" }
 if ($pilotReport.pilot.failureReasons.PSObject.Properties.Name.Count -eq 1 -and $pilotReport.pilot.failureReasons.PSObject.Properties.Name[0] -eq "no visible input candidate") {
   throw "pilot report failure reasons are too coarse for beta adapter triage"
+}
+if (-not ($pilotReport.pilot.failureReasons.PSObject.Properties.Name -contains "login_or_auth_gate_no_visible_composer")) {
+  throw "pilot report does not distinguish login/auth gate failures"
+}
+if (($pilotReport | ConvertTo-Json -Depth 20).Contains("function smartPromptProbeInputs")) {
+  throw "pilot report leaked raw probe source in failure reasons"
 }
 
 Assert-Text "docs/m3-desktop-input.md" "Windows UIA"
@@ -238,5 +253,7 @@ Assert-Text "scripts/check-v4-installed-app-runtime.js" "desktopSnapshotFromInst
 Assert-Text "scripts/check-v4-installed-app-runtime.js" "desktopFillFromInstalledSidecar"
 Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "pageClassification"
 Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "routeDiagnostics"
+Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "routeMatrix"
+Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "login_or_auth_gate_no_visible_composer"
 
 Write-Host "PASS: M3 pilot and desktop input critic checks passed."
