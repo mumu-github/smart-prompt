@@ -72,6 +72,85 @@
         '[contenteditable="true"]'
       ],
       insertStrategy: "textarea-first"
+    },
+    {
+      id: "workbuddy",
+      tool: "workBuddy",
+      hostnames: ["work-buddy.ai", "www.work-buddy.ai"],
+      inputSelectors: [
+        'textarea[placeholder*="work-buddy"]',
+        'textarea[placeholder*="WorkBuddy"]',
+        'textarea[placeholder*="Ask"]',
+        'textarea[placeholder*="Describe"]',
+        '[data-testid*="chat"] textarea',
+        '[data-testid*="prompt"] textarea',
+        '[aria-label*="prompt"][contenteditable="true"]',
+        '[aria-label*="Ask"][contenteditable="true"]',
+        '[contenteditable="true"][role="textbox"]',
+        '[role="textbox"]',
+        'textarea',
+        '[contenteditable="true"]'
+      ],
+      insertStrategy: "textarea-first"
+    },
+    {
+      id: "trae",
+      tool: "Trae",
+      hostnames: ["trae.ai", "www.trae.ai"],
+      inputSelectors: [
+        'textarea[placeholder*="Trae"]',
+        'textarea[placeholder*="Ask"]',
+        'textarea[placeholder*="Build"]',
+        'textarea[aria-label*="prompt"]',
+        '[data-testid*="chat"] textarea',
+        '[data-testid*="prompt"] textarea',
+        '[contenteditable="true"][role="textbox"]',
+        '[role="textbox"]',
+        'textarea',
+        '[contenteditable="true"]'
+      ],
+      insertStrategy: "textarea-first"
+    },
+    {
+      id: "doubao",
+      tool: "Doubao",
+      hostnames: ["doubao.com", "www.doubao.com", "dola.com", "www.dola.com"],
+      inputSelectors: [
+        'textarea[placeholder*="豆包"]',
+        'textarea[placeholder*="输入"]',
+        'textarea[placeholder*="Ask"]',
+        'textarea[aria-label*="豆包"]',
+        'textarea[aria-label*="输入"]',
+        '[data-testid*="chat"] textarea',
+        '[data-testid*="prompt"] textarea',
+        '[aria-label*="输入"][contenteditable="true"]',
+        '[contenteditable="plaintext-only"]',
+        '[contenteditable="true"][role="textbox"]',
+        '[role="textbox"]',
+        'textarea',
+        '[contenteditable="true"]'
+      ],
+      insertStrategy: "contenteditable-or-textarea"
+    },
+    {
+      id: "deepseek",
+      tool: "DeepSeek",
+      hostnames: ["chat.deepseek.com", "deepseek.com", "www.deepseek.com"],
+      inputSelectors: [
+        'textarea[placeholder*="DeepSeek"]',
+        'textarea[placeholder*="请输入"]',
+        'textarea[placeholder*="Ask"]',
+        'textarea[aria-label*="DeepSeek"]',
+        'textarea[aria-label*="chat"]',
+        '[data-testid*="chat"] textarea',
+        '[data-testid*="prompt"] textarea',
+        '[contenteditable="plaintext-only"]',
+        '[contenteditable="true"][role="textbox"]',
+        '[role="textbox"]',
+        'textarea',
+        '[contenteditable="true"]'
+      ],
+      insertStrategy: "textarea-first"
     }
   ]);
 

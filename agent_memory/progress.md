@@ -1,5 +1,16 @@
 # 当前进度
 
+## V5 PRD 与发布资产收尾 2026-06-07
+
+- 已把 `docs/prd.md` 从 `v0.1` 草案更新为 `v0.2 beta` PRD，补入 V5 已完成项、验收证据、安装包路径、native sidecar、真实 LLM/provider、pilot 指标、里程碑状态和后续 M3 范围。
+- 已确认并纳入用户的工具范围修改：目标用户行包含 workBuddy、Trae、Doubao、DeepSeek、Hermes，并把 Codex/Claude Code/Hermes 作为桌面/CLI 工具画像进入 M3。
+- 已创建 GitHub Release：`https://github.com/mumu-github/smart-prompt/releases/tag/v0.2.0-beta.1`，并上传 MSI、NSIS exe、`v5-beta-checksums.sha256` 三个 assets。
+- 已补 beta 站点适配：浏览器扩展和 shared core 新增 workBuddy、Trae、Doubao、DeepSeek；manifest 与测试已同步。Codex/Claude Code/Hermes 已补工具画像，不冒充网页 adapter。
+- 已补真实内测 metrics 链路：扩展把 `card_ready`、`insert`、`save`、`retry`、`undo` 等 privacy-safe feedback 上报到 `/metrics`；local-service 和 native sidecar 汇总 Insert 成功率、保存率、Undo/Retry 使用率、adapter 失败率、失败原因。
+- 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`C:\Users\lhy10\.cargo\bin\cargo.exe check` in `apps/local-service-sidecar` PASS；`git diff --check` 无空白错误。
+- 待提交：当前 PRD、adapter、metrics、release 收尾改动尚未提交。
+- 仍待真实内测：workBuddy、Trae、Doubao、DeepSeek selector 需要在真实登录态页面采集 Insert 成功率和失败原因后继续修正。
+
 ## V5 Beta 发布与真实内测闭环完成进度 2026-06-07
 
 - 已完成分组提交链路，且显式排除 `docs/prd.md`：V3/V4 evidence、desktop shell、local-service、extension、release scripts 已先行分组提交，V5 最终新增 `Ship V5 beta native sidecar release` 与 `Record V5 beta release pass manifest` 两个提交。

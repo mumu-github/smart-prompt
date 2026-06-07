@@ -435,6 +435,11 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
       action: "insert",
       mode: MODE.CONTINUE,
       tool: "ChatGPT",
+      adapterId: "chatgpt",
+      site: "chatgpt.com",
+      insertStrategy: "contenteditable-or-textarea",
+      kind: "contenteditable",
+      verified: true,
       ok: true,
       adopted: true,
       promptLength: 42,
@@ -442,14 +447,51 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     });
     assert.equal(metric.status, 200);
     assert.equal(metric.body.metric.action, "insert");
+    assert.equal(metric.body.metric.adapterId, "chatgpt");
+    assert.equal(metric.body.metric.site, "chatgpt.com");
     assert.equal(metric.body.metrics.insertSuccessRate, 1);
     assert.ok(!JSON.stringify(metric.body.metrics).includes("should not be persisted"));
+
+    await authed("POST", "/metrics", {
+      action: "card_ready",
+      mode: MODE.CONTINUE,
+      tool: "ChatGPT",
+      adapterId: "chatgpt",
+      site: "chatgpt.com",
+      ok: true,
+      verified: true
+    });
+    await authed("POST", "/metrics", {
+      action: "insert",
+      mode: MODE.CONTINUE,
+      tool: "DeepSeek",
+      adapterId: "deepseek",
+      site: "chat.deepseek.com",
+      insertStrategy: "textarea-first",
+      ok: false,
+      adopted: false,
+      verified: false,
+      failureReason: "after_write_mismatch"
+    });
+    await authed("POST", "/metrics", { action: "save", mode: MODE.CONTINUE, tool: "ChatGPT", adapterId: "chatgpt", site: "chatgpt.com", ok: true });
+    await authed("POST", "/metrics", { action: "retry", mode: MODE.CONTINUE, tool: "ChatGPT", adapterId: "chatgpt", site: "chatgpt.com", ok: false });
+    await authed("POST", "/metrics", { action: "undo", mode: MODE.CONTINUE, tool: "ChatGPT", adapterId: "chatgpt", site: "chatgpt.com", ok: true, verified: true });
+
+    const metrics = await authed("GET", "/metrics");
+    assert.equal(metrics.body.metrics.insertSuccessRate, 0.5);
+    assert.equal(metrics.body.metrics.adapterFailureRate, 0.5);
+    assert.equal(metrics.body.metrics.saveRate, 1);
+    assert.equal(metrics.body.metrics.retryUsageRate, 1);
+    assert.equal(metrics.body.metrics.undoUsageRate, 0.5);
+    assert.equal(metrics.body.metrics.byAdapter.chatgpt.verifiedInserts, 1);
+    assert.equal(metrics.body.metrics.byAdapter.deepseek.failures, 1);
+    assert.equal(metrics.body.metrics.failureReasons.after_write_mismatch, 1);
 
     const backup = await authed("GET", "/data/backup");
     assert.equal(backup.status, 200);
     assert.equal(backup.body.backup.schemaVersion, DATA_SCHEMA_VERSION);
     assert.equal(backup.body.backup.prompts.length, 1);
-    assert.equal(backup.body.backup.metrics.length, 1);
+    assert.equal(backup.body.backup.metrics.length, 6);
     assert.ok(!JSON.stringify(backup.body.backup.settings).includes("provider-secret"));
 
     const diagnostics = await authed("GET", "/diagnostics/export");
@@ -458,7 +500,7 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     assert.equal(diagnostics.body.diagnostics.portRecovery.portRecovery, true);
     assert.ok(Object.hasOwn(diagnostics.body.diagnostics.keyMigration, "migrateProviderKeys"));
     assert.equal(diagnostics.body.diagnostics.counts.prompts, 1);
-    assert.equal(diagnostics.body.diagnostics.metrics.insertSuccessRate, 1);
+    assert.equal(diagnostics.body.diagnostics.metrics.insertSuccessRate, 0.5);
 
     const deletedPrompt = await authed("DELETE", `/prompts/${encodeURIComponent(savedPrompt.body.prompt.id)}`);
     assert.equal(deletedPrompt.status, 200);

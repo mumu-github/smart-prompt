@@ -327,13 +327,21 @@ function createStore(dataDir = defaultDataDir(), options = {}) {
 
   function recordMetric(event = {}) {
     const current = readJson(metricsFile, []);
+    const clip = (value, length) => String(value || "").slice(0, length);
     const safe = {
       id: event.id || `metric-${Date.now()}`,
       created_at: event.created_at || new Date().toISOString(),
-      action: String(event.action || "unknown").slice(0, 40),
-      mode: String(event.mode || "").slice(0, 40),
-      tool: String(event.tool || "").slice(0, 80),
-      generatedBy: String(event.generatedBy || "").slice(0, 40),
+      action: clip(event.action || "unknown", 40),
+      mode: clip(event.mode, 40),
+      tool: clip(event.tool, 80),
+      adapterId: clip(event.adapterId || event.adapter_id, 80),
+      site: clip(event.site || event.host, 120),
+      generatedBy: clip(event.generatedBy, 40),
+      source: clip(event.source, 40),
+      insertStrategy: clip(event.insertStrategy || event.strategy, 80),
+      kind: clip(event.kind, 40),
+      verified: Boolean(event.verified),
+      failureReason: clip(event.failureReason || event.reason, 120),
       ok: Boolean(event.ok),
       adopted: Boolean(event.adopted),
       promptLength: Number(event.promptLength || 0)
@@ -346,16 +354,47 @@ function createStore(dataDir = defaultDataDir(), options = {}) {
   function getMetrics() {
     const events = readJson(metricsFile, []);
     const byAction = {};
+    const byAdapter = {};
+    const failureReasons = {};
     for (const event of events) {
       byAction[event.action] = (byAction[event.action] || 0) + 1;
+      const adapterId = event.adapterId || "unknown";
+      byAdapter[adapterId] = byAdapter[adapterId] || {
+        events: 0,
+        insertAttempts: 0,
+        verifiedInserts: 0,
+        failures: 0
+      };
+      byAdapter[adapterId].events += 1;
+      if (event.action === "insert") {
+        byAdapter[adapterId].insertAttempts += 1;
+        if (event.verified || event.adopted) {
+          byAdapter[adapterId].verifiedInserts += 1;
+        } else {
+          byAdapter[adapterId].failures += 1;
+          const reason = event.failureReason || "unknown";
+          failureReasons[reason] = (failureReasons[reason] || 0) + 1;
+        }
+      }
     }
     const insertEvents = events.filter((event) => event.action === "insert");
-    const adoptedInsertEvents = insertEvents.filter((event) => event.adopted);
+    const adoptedInsertEvents = insertEvents.filter((event) => event.adopted || event.verified);
+    const cardReadyEvents = events.filter((event) => event.action === "card_ready");
+    const saveEvents = events.filter((event) => event.action === "save");
+    const undoEvents = events.filter((event) => event.action === "undo");
+    const retryEvents = events.filter((event) => event.action === "retry");
+    const rate = (numerator, denominator) => denominator ? numerator / denominator : 0;
     return {
       schemaVersion: DATA_SCHEMA_VERSION,
       eventCount: events.length,
       byAction,
-      insertSuccessRate: insertEvents.length ? adoptedInsertEvents.length / insertEvents.length : 0,
+      byAdapter,
+      failureReasons,
+      insertSuccessRate: rate(adoptedInsertEvents.length, insertEvents.length),
+      saveRate: rate(saveEvents.length, cardReadyEvents.length),
+      undoUsageRate: rate(undoEvents.length, insertEvents.length),
+      retryUsageRate: rate(retryEvents.length, cardReadyEvents.length),
+      adapterFailureRate: rate(insertEvents.length - adoptedInsertEvents.length, insertEvents.length),
       savedPromptCount: getPrompts().length,
       skillCount: getSkills().length,
       promptHistoryCount: getPromptHistory().length,

@@ -4,8 +4,8 @@ const path = require("node:path");
 const adapters = require("../src/site-adapters.js");
 const sharedCore = require("../../../packages/shared/smart-prompt-core.js");
 
-assert.ok(adapters.SITE_ADAPTERS.length >= 8);
-const expectedAdapterIds = ["chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit"];
+assert.ok(adapters.SITE_ADAPTERS.length >= 12);
+const expectedAdapterIds = ["chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit", "workbuddy", "trae", "doubao", "deepseek"];
 assert.deepEqual(adapters.SITE_ADAPTERS.map((adapter) => adapter.id), expectedAdapterIds);
 for (const id of expectedAdapterIds) {
   const adapter = adapters.SITE_ADAPTERS.find((item) => item.id === id);
@@ -25,7 +25,11 @@ const expectedInsertStrategies = {
   lovable: "textarea-first",
   bolt: "textarea-first",
   v0: "textarea-first",
-  replit: "textarea-first"
+  replit: "textarea-first",
+  workbuddy: "textarea-first",
+  trae: "textarea-first",
+  doubao: "contenteditable-or-textarea",
+  deepseek: "textarea-first"
 };
 for (const [id, strategy] of Object.entries(expectedInsertStrategies)) {
   const adapter = adapters.SITE_ADAPTERS.find((item) => item.id === id);
@@ -40,7 +44,11 @@ const selectorExpectations = {
   lovable: '[role="textbox"][aria-label="Chat input"]',
   bolt: '[role="textbox"][aria-label*="Type your idea"]',
   v0: 'textarea[id^="prompt-textarea"]',
-  replit: 'textarea[placeholder*="Replit"]'
+  replit: 'textarea[placeholder*="Replit"]',
+  workbuddy: 'textarea[placeholder*="work-buddy"]',
+  trae: 'textarea[placeholder*="Trae"]',
+  doubao: 'textarea[placeholder*="豆包"]',
+  deepseek: 'textarea[placeholder*="DeepSeek"]'
 };
 for (const [id, expectedSelector] of Object.entries(selectorExpectations)) {
   const adapter = adapters.SITE_ADAPTERS.find((item) => item.id === id);
@@ -55,7 +63,13 @@ assert.equal(adapters.detectSiteAdapter("bolt.new").id, "bolt");
 assert.equal(adapters.detectSiteAdapter("lovable.dev").id, "lovable");
 assert.equal(adapters.detectSiteAdapter("replit.com").id, "replit");
 assert.equal(adapters.detectSiteAdapter("v0.app").id, "v0");
+assert.equal(adapters.detectSiteAdapter("www.work-buddy.ai").id, "workbuddy");
+assert.equal(adapters.detectSiteAdapter("www.trae.ai").id, "trae");
+assert.equal(adapters.detectSiteAdapter("www.doubao.com").id, "doubao");
+assert.equal(adapters.detectSiteAdapter("chat.deepseek.com").id, "deepseek");
 assert.equal(sharedCore.detectSiteAdapter("v0.app").id, "v0");
+assert.equal(sharedCore.detectTool("", "Claude Code workspace"), "Claude Code");
+assert.equal(sharedCore.detectTool("", "Hermes terminal"), "Hermes");
 
 const lightInput = { id: "light" };
 const shadowInput = { id: "shadow" };
@@ -127,6 +141,7 @@ assert.equal(failedResult.verified, false);
 const content = fs.readFileSync(path.join(__dirname, "../src/content.js"), "utf8");
 assert.ok(content.includes("localService.generate"));
 assert.ok(content.includes("localService.savePrompt"));
+assert.ok(content.includes("localService.recordMetric"));
 assert.ok(content.includes("saveFavoriteLocally"));
 assert.ok(content.includes("source: \"browser-extension\""));
 assert.ok(content.includes("smartPromptFeedback"));
@@ -161,7 +176,9 @@ assert.ok(!/KeyboardEvent\([^)]*Enter/.test(content));
 
 const localServiceClient = fs.readFileSync(path.join(__dirname, "../src/local-service-client.js"), "utf8");
 assert.ok(localServiceClient.includes("function savePrompt"));
+assert.ok(localServiceClient.includes("function recordMetric"));
 assert.ok(localServiceClient.includes("\"/prompts\""));
+assert.ok(localServiceClient.includes("\"/metrics\""));
 assert.ok(localServiceClient.includes("/auth/bootstrap"));
 assert.ok(localServiceClient.includes("Authorization"));
 assert.ok(localServiceClient.includes("authTokens"));

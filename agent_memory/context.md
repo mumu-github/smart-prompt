@@ -3,9 +3,11 @@
 ## V5 Beta 发布上下文 2026-06-07
 
 - V5 当前已进入 beta 发布闭环：本地 native sidecar、诊断导出、删除全部本地数据、key 迁移状态、崩溃重启/端口恢复、release notes、checksum、pilot-loop 证据均已落地。
-- `v0.2.0-beta.1` 已作为 Git tag 推送到 GitHub private repo；当前至少满足“GitHub 里发布或打 tag”的发布要求。
+- `v0.2.0-beta.1` 已作为 Git tag 推送到 GitHub private repo，且 GitHub Release 页面已创建并上传 MSI、NSIS exe、checksum assets。
 - 当前 beta release 证据入口是 `research/v5-beta-manifest.latest.json`，该 manifest 为 `pass:true`、`releaseReady:true`。
-- 当前保留的已知本地未提交改动只有 `docs/prd.md`，这是用户未确认 scope 编辑，后续不要默认 stage 或改写。
+- `docs/prd.md` 已更新为 v0.2 beta PRD，并明确纳入 workBuddy、Trae、Doubao、DeepSeek、Hermes；这是当前 V5 PRD 收尾目标的一部分，可以随本轮提交。
+- 浏览器扩展和 shared core 已新增 workBuddy、Trae、Doubao、DeepSeek beta adapter；Codex、Claude Code、Hermes 当前只作为工具画像，真实桌面输入框识别仍属于 M3。
+- 当前 metrics 闭环已覆盖 `card_ready`、`insert`、`save`、`retry`、`undo`，并在 local-service/native sidecar 汇总 Insert 成功率、保存率、Undo/Retry 使用率和失败原因。
 
 ## V4 可安装内测版完成上下文 2026-06-07
 

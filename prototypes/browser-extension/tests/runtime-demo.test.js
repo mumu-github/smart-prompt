@@ -316,7 +316,7 @@ async function waitFor(client, expression, predicate, timeout = 10000) {
       status: document.getElementById("smart-prompt-card")?.dataset.status || "",
       context: document.querySelector(".spc-context")?.textContent || "",
       feedback: window.__demoStorage?.smartPromptFeedback || []
-    }))()`, (value) => value.status === "failed" && value.context.includes("service offline") && value.feedback[0]?.action === "retry");
+    }))()`, (value) => value.status === "failed" && value.context.includes("service offline") && value.feedback.some((event) => event.action === "retry"));
     assert.equal(offlineRetry.status, "failed");
 
     await evaluate(client, `(() => {

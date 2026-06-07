@@ -781,15 +781,31 @@ fn record_prompt_history(data_dir: &Path, mode: &str, generated_by: &str) -> Res
     write_json(&data_dir.join("prompt-history.json"), &Value::Array(history))
 }
 
+fn event_string(event: &Value, keys: &[&str], max_chars: usize) -> String {
+    for key in keys {
+        if let Some(value) = event.get(*key).and_then(Value::as_str) {
+            return value.chars().take(max_chars).collect();
+        }
+    }
+    String::new()
+}
+
 fn record_metric(data_dir: &Path, event: Value) -> Result<Vec<Value>, String> {
     let mut metrics = read_array(data_dir, "metrics.json")?;
     metrics.insert(0, json!({
         "id": event.get("id").and_then(Value::as_str).map(|value| value.to_string()).unwrap_or_else(|| format!("metric-{}", now())),
         "created_at": now(),
-        "action": event.get("action").and_then(Value::as_str).unwrap_or("unknown"),
-        "mode": event.get("mode").and_then(Value::as_str).unwrap_or(""),
-        "tool": event.get("tool").and_then(Value::as_str).unwrap_or(""),
-        "generatedBy": event.get("generatedBy").and_then(Value::as_str).unwrap_or(""),
+        "action": event_string(&event, &["action"], 40),
+        "mode": event_string(&event, &["mode"], 40),
+        "tool": event_string(&event, &["tool"], 80),
+        "adapterId": event_string(&event, &["adapterId", "adapter_id"], 80),
+        "site": event_string(&event, &["site", "host"], 120),
+        "generatedBy": event_string(&event, &["generatedBy"], 40),
+        "source": event_string(&event, &["source"], 40),
+        "insertStrategy": event_string(&event, &["insertStrategy", "strategy"], 80),
+        "kind": event_string(&event, &["kind"], 40),
+        "verified": event.get("verified").and_then(Value::as_bool).unwrap_or(false),
+        "failureReason": event_string(&event, &["failureReason", "reason"], 120),
         "ok": event.get("ok").and_then(Value::as_bool).unwrap_or(false),
         "adopted": event.get("adopted").and_then(Value::as_bool).unwrap_or(false),
         "promptLength": event.get("promptLength").and_then(Value::as_u64).unwrap_or(0)
@@ -799,18 +815,56 @@ fn record_metric(data_dir: &Path, event: Value) -> Result<Vec<Value>, String> {
     Ok(metrics)
 }
 
+fn bump_json_usize(value: &mut Value, key: &str) {
+    if let Some(object) = value.as_object_mut() {
+        let next = object.get(key).and_then(Value::as_u64).unwrap_or(0) + 1;
+        object.insert(key.to_string(), json!(next));
+    }
+}
+
 fn metrics_summary(data_dir: &Path) -> Result<Value, String> {
     let events = read_array(data_dir, "metrics.json")?;
     let mut by_action = BTreeMap::new();
+    let mut by_adapter: BTreeMap<String, Value> = BTreeMap::new();
+    let mut failure_reasons = BTreeMap::new();
     let mut inserts = 0usize;
     let mut adopted = 0usize;
+    let mut card_ready = 0usize;
+    let mut saves = 0usize;
+    let mut undos = 0usize;
+    let mut retries = 0usize;
     for event in &events {
         let action = event.get("action").and_then(Value::as_str).unwrap_or("unknown").to_string();
         *by_action.entry(action.clone()).or_insert(0usize) += 1;
+        let adapter_id = event.get("adapterId").and_then(Value::as_str).unwrap_or("unknown").to_string();
+        let adapter = by_adapter.entry(adapter_id).or_insert_with(|| json!({
+            "events": 0,
+            "insertAttempts": 0,
+            "verifiedInserts": 0,
+            "failures": 0
+        }));
+        bump_json_usize(adapter, "events");
+        if action == "card_ready" {
+            card_ready += 1;
+        } else if action == "save" {
+            saves += 1;
+        } else if action == "undo" {
+            undos += 1;
+        } else if action == "retry" {
+            retries += 1;
+        }
         if action == "insert" {
             inserts += 1;
-            if event.get("adopted").and_then(Value::as_bool).unwrap_or(false) {
+            bump_json_usize(adapter, "insertAttempts");
+            if event.get("adopted").and_then(Value::as_bool).unwrap_or(false)
+                || event.get("verified").and_then(Value::as_bool).unwrap_or(false)
+            {
                 adopted += 1;
+                bump_json_usize(adapter, "verifiedInserts");
+            } else {
+                bump_json_usize(adapter, "failures");
+                let reason = event.get("failureReason").and_then(Value::as_str).unwrap_or("unknown").to_string();
+                *failure_reasons.entry(reason).or_insert(0usize) += 1;
             }
         }
     }
@@ -818,7 +872,13 @@ fn metrics_summary(data_dir: &Path) -> Result<Value, String> {
         "schemaVersion": 1,
         "eventCount": events.len(),
         "byAction": by_action,
+        "byAdapter": by_adapter,
+        "failureReasons": failure_reasons,
         "insertSuccessRate": if inserts == 0 { 0.0 } else { adopted as f64 / inserts as f64 },
+        "saveRate": if card_ready == 0 { 0.0 } else { saves as f64 / card_ready as f64 },
+        "undoUsageRate": if inserts == 0 { 0.0 } else { undos as f64 / inserts as f64 },
+        "retryUsageRate": if card_ready == 0 { 0.0 } else { retries as f64 / card_ready as f64 },
+        "adapterFailureRate": if inserts == 0 { 0.0 } else { (inserts - adopted) as f64 / inserts as f64 },
         "savedPromptCount": read_array(data_dir, "prompts.json")?.len(),
         "skillCount": read_array(data_dir, "skills.json")?.len(),
         "promptHistoryCount": read_array(data_dir, "prompt-history.json")?.len(),

@@ -1,8 +1,30 @@
 # PRD：跨平台提示词自动化生成小工具
 
-版本：v0.1  
-日期：2026-06-06  
-状态：研究支撑版草案
+版本：v0.2 beta
+日期：2026-06-07
+状态：Beta 发布与真实内测闭环版
+
+## 0. 当前 Beta 状态
+
+v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；下一阶段重点是真实内测数据闭环和更多工具适配。
+
+### 已完成证据
+
+- Beta 版本：`v0.2.0-beta.1`。
+- Release notes：`docs/releases/v0.2.0-beta.1.md`。
+- Release manifest：`research/v5-beta-manifest.latest.json`，当前 `pass:true`、`releaseReady:true`。
+- 安装包：`apps/desktop-shell/src-tauri/target/release/bundle/msi/Smart Prompt_0.2.0_x64_en-US.msi` 与 `apps/desktop-shell/src-tauri/target/release/bundle/nsis/Smart Prompt_0.2.0_x64-setup.exe`。
+- Checksum：`research/v5-beta-checksums.sha256`。
+- Native sidecar：`apps/local-service-sidecar/`。
+- V5 critic：`scripts/critic-v5.ps1` 已通过。
+- Git tag：`v0.2.0-beta.1` 已推送到 GitHub private repo。
+- GitHub Release：`https://github.com/mumu-github/smart-prompt/releases/tag/v0.2.0-beta.1`，已上传 MSI、NSIS exe 和 checksum assets。
+
+### 下一阶段收口
+
+- 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因。
+- 补 workBuddy、Trae、Doubao、DeepSeek 等新网页站点适配。
+- 补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案。
 
 ## 1. 背景
 
@@ -27,7 +49,7 @@
 
 ### 核心用户
 
-- 高频使用 Cursor、Codex、Claude Code、Windsurf、Lovable、Bolt、v0、Replit 等 vibe coding/AI 构建工具的人。
+- 高频使用 Cursor、Codex、Claude Code、Windsurf、Lovable、Bolt、v0、Replit、workBuddy、Trae、Doubao、DeepSeek、Hermes 等 vibe coding/AI 构建工具的人。
 - 高频使用 ChatGPT、Claude、Gemini、Perplexity 等网页 LLM 的产品、运营、设计、研发用户。
 
 ### 次级用户
@@ -53,6 +75,15 @@
 
 ## 6. MVP 范围
 
+### v0.2 beta 已完成
+
+- 浏览器扩展已覆盖 ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit 的 P0 allowlist，并保留未知网页输入框兜底检测。
+- 三模式 prompt card 已接入真实 LLM：Idea、Continue、Polish 都可通过 provider gateway 生成。
+- Local Service 已支持 prompt/skill 库、provider 设置、API key 状态、诊断导出、指标接口和删除全部本地数据。
+- Tauri 桌面壳已支持设置页、本地服务控制、托盘、全局快捷键、provider key 配置、skill 管理和诊断 UX。
+- 发布版 sidecar 已从“Node + JS resources”升级为 Rust native executable，并具备崩溃重启和端口占用恢复。
+- Beta 安装包、checksum、release notes 和验收 manifest 已生成。
+
 ### P0 必做
 
 - 浏览器扩展识别主流网页 LLM/Agent 输入框。
@@ -62,12 +93,13 @@
 - 本地 prompt/skill 库：用户可导入 Markdown、`SKILL.md`、`AGENTS.md`、`CLAUDE.md`、`.cursorrules`。
 - 简单 skill 推荐：关键词 + 工具环境 + 用户历史选择。
 - 小人静态状态图：待机、思考、建议、成功、错误。
+- 内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因。
 
 ### P1
 
 - Windows UI Automation 与 macOS AXUIElement 桌面输入框识别。
 - skill embedding 匹配。
-- 针对 Cursor/Codex/Claude Code/Windsurf 的专用 prompt 模板。
+- 针对 Cursor/Codex/Claude Code/Windsurf/Hermes 的专用 prompt 模板。
 - prompt 版本历史与收藏。
 - Remotion 轻量动画：呼吸、挥手、思考、填入成功。
 
@@ -83,7 +115,9 @@
 ### 7.1 输入环境识别
 
 - 识别当前浏览器 tab host、页面标题、输入框类型和位置。
-- 对 ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0 维护站点适配器。
+- 正式 allowlist：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit。
+- Beta 扩展 allowlist：workBuddy、Trae、Doubao、DeepSeek；进入真实内测后按失败原因调整 selector 和写入策略。
+- 桌面/CLI 工具画像：Codex、Claude Code、Hermes；M3 通过 Windows UIA/macOS AX 接入真实输入框。
 - 对未知网页回退通用 `textarea/input/contenteditable/role=textbox` 检测。
 - 在桌面 app 中记录当前前台应用名称和窗口标题。
 
@@ -122,8 +156,17 @@
 - 浏览器：DOM 写入 + 触发 input/change 事件。
 - 桌面：accessibility set value；失败时剪贴板粘贴兜底。
 - 填入后不自动发送，用户保留最终确认权。
+- 记录隐私安全的填入结果：adapter、写入策略、是否通过回读校验、失败原因；不记录完整 prompt 正文、整页内容或用户账号信息。
 
-### 7.7 图像与动画
+### 7.7 真实 LLM 与 provider
+
+- 支持 OpenAI-compatible、Anthropic、Gemini 三类 provider。
+- 支持用户自带 API key；桌面壳只展示 key 是否配置，不在 UI 中回显密钥。
+- OpenAI-compatible 可配置 base URL 与 model，用于 Agnes、小米或其他兼容接口。
+- provider gateway 必须支持 Idea、Continue、Polish 三模式。
+- 未配置 key 时保留 dry-run/local-template 降级，不伪装成真实 LLM 通过。
+
+### 7.8 图像与动画
 
 - 小人形象：如果用户提供原型图，按原型生成；未提供时使用“友好、轻量、像桌面助手的提示词小人”概念。
 - 生成动作：待机、思考、展示建议、填入成功、错误提醒。
@@ -145,11 +188,28 @@
 
 - Desktop Shell：Tauri 优先，Electron 备选。
 - Browser Extension：Chrome/Edge MV3，后续适配 Firefox/Safari。
-- Local Service：负责本地库、skill 扫描、设置、LLM gateway。
+- Local Service：负责本地库、skill 扫描、设置、LLM gateway、metrics、diagnostics。
+- Native Sidecar：发布版使用 Rust executable 承载本地服务能力，负责启动恢复、端口占用恢复、健康检查和诊断出口。
 - Context Detector：输入框识别、状态判断、站点/app 画像。
 - Prompt Orchestrator：生成最终 prompt 请求。
 - Fill Engine：浏览器 DOM、UIA、AXUIElement、剪贴板 fallback。
 - Asset Pipeline：GPT Image 系列 + Remotion。
+
+### v0.2 beta 运行链路
+
+1. 浏览器扩展在网页输入框旁注入小人和 prompt card。
+2. 扩展只读取当前聚焦输入框文本和必要 host/title 信息。
+3. 扩展通过本地服务调用 provider gateway 生成三模式 prompt。
+4. 用户点击 Insert 后，扩展写回输入框并做回读校验。
+5. 扩展记录 privacy-safe feedback event，用于统计 Insert、Save、Undo、Retry。
+6. 桌面壳通过 native sidecar 启停本地服务，并提供 key、skill、诊断、清空数据 UX。
+
+### 发布与诊断
+
+- 安装包需包含桌面壳、native sidecar、必要资源和版本信息。
+- 诊断导出应包含 provider 配置状态、sidecar 健康状态、端口、版本、最近错误摘要和 metrics summary。
+- 删除全部本地数据必须清理 prompts、skills、settings、metrics 和非敏感缓存；provider key 清理由 key 管理 UX 单独确认。
+- key 迁移 UX 应提示旧设置中是否存在明文 key，并引导迁入 provider key 存储。
 
 ### 技术来源
 
@@ -206,6 +266,21 @@
 - mode_guess
 - timestamp
 
+### PilotMetric
+
+- id
+- action：`card_ready` / `insert` / `save` / `undo` / `retry` / `copy`
+- mode：Idea / Continue / Polish
+- tool
+- adapter_id
+- insert_strategy
+- ok
+- adopted
+- verified
+- failure_reason
+- prompt_length
+- timestamp
+
 ## 12. 关键交互流程
 
 1. 用户聚焦 AI 输入框。
@@ -217,9 +292,22 @@
 7. 用户刷新/编辑。
 8. 用户点击填入。
 9. 工具写回输入框但不自动发送。
-10. 用户确认后自行发送。
+10. 工具记录填入校验结果和失败原因。
+11. 用户确认后自行发送。
 
 ## 13. 成功指标
+
+### v0.2 beta 内测指标
+
+- Insert 成功率：`verified insert / insert attempts`，按 adapter、provider、mode 分组。
+- 保存率：`save / card_ready`，用于判断生成内容是否值得沉淀。
+- Undo 使用率：`undo / insert attempts`，用于识别误填或不满意场景。
+- Retry 使用率：`retry / card_ready`，用于识别生成质量不足或模式判断错误。
+- 失败站点原因：至少记录 selector 未命中、写入失败、回读校验失败、权限/登录态、站点改版、provider 失败。
+- Prompt 采用率：生成 card 后 `insert` 或 `save` 任一发生的比例。
+- 安全边界：无自动发送事件；无默认上传整页内容。
+
+### 长期产品指标
 
 - 激活率：安装后 24 小时内至少使用一次 >= 50%。
 - 填入率：生成 card 后点击填入 >= 45%。
@@ -232,31 +320,34 @@
 
 ### M0：研究与设计
 
-- 完成研究报告、竞品分析、开源实现分析、PRD、UI/UX 概念图。
+- 状态：已完成。
+- 产出：研究报告、竞品分析、开源实现分析、PRD、UI/UX 概念图、小人状态图方向。
 
 ### M1：浏览器 MVP
 
-- Chrome/Edge 扩展。
-- 覆盖 5 个网页 LLM/Agent 输入框。
-- 三模式 prompt card。
-- 一键填入。
+- 状态：已完成 beta baseline。
+- 产出：Chrome/Edge MV3 扩展、8 站正式 allowlist、三模式 prompt card、一键填入、Insert 回读校验、反馈事件。
 
 ### M2：桌面壳
 
-- Tauri/Electron 悬浮小人。
-- 全局快捷键。
-- 本地 prompt/skill 库。
+- 状态：已完成 v0.2 beta。
+- 产出：Tauri 桌面壳、托盘、全局快捷键、设置页、本地 prompt/skill 库、provider key 配置、native sidecar、安装包、checksum、诊断导出。
 
 ### M3：桌面输入框
 
-- Windows UIA 与 macOS AX 初步支持。
-- Cursor/Codex/Claude Code/Windsurf 专用模板。
+- 状态：下一阶段。
+- 范围：Windows UIA 与 macOS AX 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 的安全提示。
 
 ### M4：评估与团队
 
-- prompt 版本和反馈。
-- 小型 eval。
-- 团队库/共享。
+- 状态：后续。
+- 范围：prompt 版本和反馈、小型 eval、团队库/共享、跨设备同步和更完整的 skill 安全策略。
+
+### M5：Beta 发布与真实内测闭环
+
+- 状态：发布包、Release 页面与基础证据已完成，真实用户数据待收集。
+- 已完成：V5 release notes、checksum、installer artifact、native sidecar、GitHub Release assets、release-ready manifest、V5 critic。
+- 待完成：真实内测 Insert/Save/Undo/Retry 数据、失败站点 adapter 修复记录。
 
 ## 15. 风险与应对
 
@@ -268,10 +359,14 @@
 | 小人过度干扰 | 用户关闭 | 默认安静、可调触发条件、支持站点级关闭 |
 | 第三方 skill 安全风险 | 供应链问题 | 默认文本只读、风险标记、执行脚本需显式授权 |
 | 竞品快速跟进 | 差异化变弱 | 把环境识别、skill routing 和填入路径做成核心能力 |
+| 新增站点改版频繁 | Insert 失败率上升 | 用 adapter 级 metrics 记录失败原因，优先修复高频失败 selector |
+| provider key 配置失败 | 三模式无法调用真实 LLM | 设置页明确 key 状态，保留 dry-run 降级但不计入真实 LLM 验收 |
+| 桌面输入框权限复杂 | M3 验收延迟 | 先做 Windows UIA/macOS AX POC，再按工具画像逐个收敛 |
+| 发布资产分发不完整 | 内测用户安装成本高 | GitHub Release 上传 MSI/NSIS/checksum，并在 release notes 写清安装与诊断方式 |
 
 ## 16. 开放问题
 
-- 用户是否会提供小人原型图；若没有，第一版使用概念小人。
-- `gpt-image-2` 在用户实际 API 环境中的可用性需要实测。
-- 桌面版本优先 Tauri 还是 Electron，需要用悬浮窗和 accessibility POC 验证。
+- workBuddy、Trae、Doubao、DeepSeek 的真实输入框 selector 需要通过内测验证，不能只靠静态假设。
+- Codex、Claude Code、Hermes 属于桌面/CLI 工具画像，是否进入 M3 UIA/AX 首批验收范围需要确认。
+- `gpt-image-2` 在用户实际 API 环境中的可用性仍受 billing/key 限制；项目内小人资产已可先用内置 image_gen 版本推进 UI。
 - 是否允许团队同步 prompts/skills，需要后续商业模式判断。

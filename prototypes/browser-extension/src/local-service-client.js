@@ -86,11 +86,19 @@
     }, serviceUrl);
   }
 
+  function recordMetric(payload, serviceUrl) {
+    return request("/metrics", {
+      method: "POST",
+      body: JSON.stringify({ event: payload })
+    }, serviceUrl);
+  }
+
   const api = {
     DEFAULT_SERVICE_URL,
     auth,
     generate,
     health,
+    recordMetric,
     recommend,
     savePrompt
   };

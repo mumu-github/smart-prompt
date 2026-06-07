@@ -327,25 +327,39 @@
   }
 
   async function recordFeedbackEvent(action, detail) {
-    const existing = await storageGet([STORAGE_KEYS.feedback]);
-    const events = Array.isArray(existing[STORAGE_KEYS.feedback]) ? existing[STORAGE_KEYS.feedback] : [];
-    events.unshift({
+    const event = {
       id: `feedback-${Date.now()}`,
       action,
       created_at: new Date().toISOString(),
       mode: state.lastContext?.mode || engine.detectMode(state.lastInputText),
       tool: state.lastContext?.tool || "",
       adapterId: state.lastContext?.adapterId || "",
+      site: location.hostname,
       generatedBy: state.card?.querySelector(".spc-source-badge")?.dataset.generatedBy || "",
+      source: "browser-extension",
+      ok: detail?.ok === true || detail?.verified === true || ["card_ready", "copy", "save"].includes(action),
       adopted: action === "insert" && detail?.verified === true,
+      verified: Boolean(detail?.verified),
+      insertStrategy: detail?.strategy || "",
+      kind: detail?.kind || "",
+      failureReason: detail?.reason || "",
+      promptLength: String(state.lastPrompt || "").length,
       detail: {
         strategy: detail?.strategy || "",
         kind: detail?.kind || "",
         verified: Boolean(detail?.verified),
         reason: detail?.reason || ""
       }
-    });
+    };
+    const existing = await storageGet([STORAGE_KEYS.feedback]);
+    const events = Array.isArray(existing[STORAGE_KEYS.feedback]) ? existing[STORAGE_KEYS.feedback] : [];
+    events.unshift(event);
     await storageSet({ [STORAGE_KEYS.feedback]: events.slice(0, 100) });
+    if (state.settings.preferLocalService && localService?.recordMetric) {
+      localService.recordMetric(event, state.settings.serviceUrl).catch(() => {
+        // Local metrics are best-effort; extension-local feedback remains the fallback.
+      });
+    }
   }
 
   async function refreshCardPreview(advanceVariant) {
@@ -363,6 +377,7 @@
     const card = engine.buildCard(inputText, context, state.importedSkills, state.variant);
     state.lastInputText = inputText;
     renderCard(card, context, "template");
+    await recordFeedbackEvent("card_ready", { verified: true, reason: "template_ready" });
 
     if (!state.settings.preferLocalService || !localService?.generate) return;
 
