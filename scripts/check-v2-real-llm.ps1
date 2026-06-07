@@ -54,6 +54,7 @@ try {
   if ($DryRun) { Set-ScopedEnv "SMART_PROMPT_REAL_LLM_DRY_RUN" "1" }
   @'
 const fs = require("node:fs");
+const { redactEvidence } = require("./packages/shared/evidence-redaction");
 const {
   PROVIDERS,
   chooseConfiguredProvider,
@@ -167,10 +168,11 @@ const samples = [
     pass: process.env.SMART_PROMPT_REAL_LLM_DRY_RUN !== "1" && results.length === samples.length && results.every((result) => result.ok && result.generatedBy === "llm" && result.mode === result.name),
     results
   };
+  const safeReport = redactEvidence(report);
   if (process.env.SMART_PROMPT_REAL_LLM_REPORT) {
-    fs.writeFileSync(process.env.SMART_PROMPT_REAL_LLM_REPORT, `${JSON.stringify(report, null, 2)}\n`, "utf8");
+    fs.writeFileSync(process.env.SMART_PROMPT_REAL_LLM_REPORT, `${JSON.stringify(safeReport, null, 2)}\n`, "utf8");
   }
-  console.log(JSON.stringify(report, null, 2));
+  console.log(JSON.stringify(safeReport, null, 2));
   if (!report.dryRun && !report.pass) {
     process.exitCode = 1;
   }

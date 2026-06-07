@@ -9,7 +9,11 @@
       "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
       "name": "Smart Prompt Copilot",
       "version": "0.1.0",
-      "path": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\prototypes\\browser-extension",
+      "path": {
+        "redacted": "REDACTED_PATH",
+        "length": 66,
+        "sha256": "2aa6d66988d2b857"
+      },
       "enabled": true
     }
   },
@@ -22,14 +26,30 @@
     {
       "id": "chatgpt",
       "name": "ChatGPT",
-      "url": "https://chatgpt.com/",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://chatgpt.com",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "5d9354f7cb0eac0c"
+      },
       "requireInsert": true,
       "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": true,
       "initial": {
-        "url": "https://chatgpt.com/",
-        "title": "ChatGPT",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://chatgpt.com",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "5d9354f7cb0eac0c"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 7,
+          "sha256": "50a4122943273ad2"
+        },
         "injectedProbe": false,
         "mascot": true,
         "card": false,
@@ -81,12 +101,26 @@
           "context": "ChatGPT / chatgpt.com / div / template"
         },
         "afterInsert": {
-          "output": "你是熟悉 ChatGPT 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
-          "value": "你是熟悉 ChatGPT 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "output": {
+            "redacted": "REDACTED_TEXT",
+            "length": 230,
+            "sha256": "4f53feb6347c5ccf"
+          },
+          "value": {
+            "redacted": "REDACTED_TEXT",
+            "length": 230,
+            "sha256": "4f53feb6347c5ccf"
+          },
           "outputLength": 230,
           "valueLength": 230,
           "cardClosed": true,
-          "url": "https://chatgpt.com/"
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://chatgpt.com",
+            "pathKind": "root",
+            "queryPresent": false,
+            "sha256": "5d9354f7cb0eac0c"
+          }
         },
         "ok": true
       }
@@ -94,14 +128,30 @@
     {
       "id": "claude",
       "name": "Claude",
-      "url": "https://claude.ai/new",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://claude.ai",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "146fa17c61d40722"
+      },
       "requireInsert": true,
       "injectedProbe": true,
       "passedDisplay": false,
       "passedInsert": false,
       "initial": {
-        "url": "https://claude.ai/login?from=logout",
-        "title": "Sign in - Claude",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://claude.ai",
+          "pathKind": "one-segment",
+          "queryPresent": true,
+          "sha256": "61727e9b3b2f2121"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 16,
+          "sha256": "201d9399a8f8068d"
+        },
         "injectedProbe": false,
         "mascot": false,
         "card": false,
@@ -119,14 +169,30 @@
     {
       "id": "gemini",
       "name": "Gemini",
-      "url": "https://gemini.google.com/app",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://gemini.google.com",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "380e7aa25639dad5"
+      },
       "requireInsert": true,
       "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": true,
       "initial": {
-        "url": "https://gemini.google.com/app",
-        "title": "Google Gemini",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://gemini.google.com",
+          "pathKind": "one-segment",
+          "queryPresent": false,
+          "sha256": "380e7aa25639dad5"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 13,
+          "sha256": "063b734802746476"
+        },
         "injectedProbe": false,
         "mascot": true,
         "card": false,
@@ -178,12 +244,26 @@
           "context": "Gemini / gemini.google.com / div / template"
         },
         "afterInsert": {
-          "output": "你是熟悉 Gemini 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
-          "value": "你是熟悉 Gemini 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "output": {
+            "redacted": "REDACTED_TEXT",
+            "length": 229,
+            "sha256": "3235279d728ba67d"
+          },
+          "value": {
+            "redacted": "REDACTED_TEXT",
+            "length": 229,
+            "sha256": "3235279d728ba67d"
+          },
           "outputLength": 229,
           "valueLength": 229,
           "cardClosed": true,
-          "url": "https://gemini.google.com/app"
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://gemini.google.com",
+            "pathKind": "one-segment",
+            "queryPresent": false,
+            "sha256": "380e7aa25639dad5"
+          }
         },
         "ok": true
       }
@@ -191,14 +271,30 @@
     {
       "id": "perplexity",
       "name": "Perplexity",
-      "url": "https://www.perplexity.ai/",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://www.perplexity.ai",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "bd687578ef655f76"
+      },
       "requireInsert": false,
       "injectedProbe": true,
       "passedDisplay": false,
       "passedInsert": false,
       "initial": {
-        "url": "https://www.perplexity.ai/?__cf_chl_rt_tk=QF0oEmHEcaa33mQR95iczvdqR1JdMKvD5ud5WA8Zlug-1780760080-1.0.1.1-iRARtkDS52Ia7zZK_uNyWeOb2_Zp5JD05vuaQcXsliE",
-        "title": "Just a moment...",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://www.perplexity.ai",
+          "pathKind": "root",
+          "queryPresent": true,
+          "sha256": "a8429c6be131b23c"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 16,
+          "sha256": "301dc171e5fa8c5f"
+        },
         "injectedProbe": false,
         "mascot": false,
         "card": false,
@@ -216,14 +312,30 @@
     {
       "id": "bolt",
       "name": "Bolt",
-      "url": "https://bolt.new/",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://bolt.new",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "34ea67d75a31b417"
+      },
       "requireInsert": false,
       "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": null,
       "initial": {
-        "url": "https://bolt.new/",
-        "title": "Bolt AI builder: Websites, apps & prototypes",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://bolt.new",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "34ea67d75a31b417"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 44,
+          "sha256": "fd797dbae62444fa"
+        },
         "injectedProbe": false,
         "mascot": false,
         "card": false,
@@ -271,14 +383,30 @@
     {
       "id": "v0",
       "name": "v0",
-      "url": "https://v0.dev/chat",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://v0.dev",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "30fd7c560ce6ed06"
+      },
       "requireInsert": false,
       "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": null,
       "initial": {
-        "url": "https://v0.app/",
-        "title": "v0 by Vercel - Build Full-Stack Web Apps with AI",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://v0.app",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "879a793bdc606a46"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 48,
+          "sha256": "4e77457c89763d3c"
+        },
         "injectedProbe": false,
         "mascot": true,
         "card": false,
@@ -315,14 +443,30 @@
     {
       "id": "lovable",
       "name": "Lovable",
-      "url": "https://lovable.dev/",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://lovable.dev",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "7eb11b6a6b2250c4"
+      },
       "requireInsert": false,
       "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": null,
       "initial": {
-        "url": "https://lovable.dev/",
-        "title": "AI App Builder | Vibe Code Apps & Websites with AI, Fast",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://lovable.dev",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "7eb11b6a6b2250c4"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 56,
+          "sha256": "65385f60f028b450"
+        },
         "injectedProbe": false,
         "mascot": false,
         "card": false,
@@ -370,14 +514,30 @@
     {
       "id": "replit",
       "name": "Replit",
-      "url": "https://replit.com/ai",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://replit.com",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "2328b070d9584ff2"
+      },
       "requireInsert": false,
       "injectedProbe": true,
       "passedDisplay": false,
       "passedInsert": false,
       "initial": {
-        "url": "https://replit.com/ai",
-        "title": "Replit AI – Turn natural language into apps and websites",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://replit.com",
+          "pathKind": "one-segment",
+          "queryPresent": false,
+          "sha256": "2328b070d9584ff2"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 56,
+          "sha256": "17795f5f25f7ef48"
+        },
         "injectedProbe": false,
         "mascot": false,
         "card": false,

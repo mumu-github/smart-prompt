@@ -1,0 +1,157 @@
+{
+  "createdAt": "2026-06-07T09:25:46.376Z",
+  "pass": true,
+  "releaseReady": true,
+  "git": {
+    "commit": "3de1a5deb5608be047d97bc220fbe6a49787def8",
+    "branch": "codex/prompt-automation-research",
+    "dirtyCount": 50
+  },
+  "acceptance": {
+    "LOCAL_SERVICE_SECURITY_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "research/v3-security-privacy.latest.json"
+      ]
+    },
+    "PRIVACY_CONTEXT_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "research/v3-security-privacy.latest.json",
+        "packages/shared/evidence-redaction.js"
+      ]
+    },
+    "NO_AUTO_SEND_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "prototypes/browser-extension/tests/site-adapters.test.js",
+        "prototypes/browser-extension/tests/runtime-demo.test.js"
+      ]
+    },
+    "LIVE_SITE_FORMAL_PASS": {
+      "status": "PASS",
+      "displayPassCount": 8,
+      "displayPasses": [
+        "chatgpt",
+        "claude",
+        "gemini",
+        "perplexity",
+        "bolt",
+        "v0",
+        "lovable",
+        "replit"
+      ],
+      "insertPasses": [
+        "chatgpt",
+        "claude",
+        "gemini"
+      ],
+      "noAutoSendPasses": [
+        "chatgpt",
+        "claude",
+        "gemini"
+      ],
+      "missing": {
+        "display": [],
+        "insert": [],
+        "noAutoSend": []
+      },
+      "failures": [],
+      "evidence": [
+        "research/v3-live-site-formal.latest.json"
+      ]
+    },
+    "REAL_LLM_SAFE_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "research/v2-real-llm.latest.json"
+      ]
+    },
+    "SKILL_ROUTING_PASS": {
+      "status": "PASS",
+      "hitRate": 1,
+      "evidence": [
+        "research/v3-skill-routing.latest.json"
+      ]
+    },
+    "TAURI_SECURITY_PASS": {
+      "status": "PASS",
+      "risk": "withGlobalTauri remains enabled but scoped to the labeled main window capability",
+      "evidence": [
+        "research/v3-tauri-security.latest.json"
+      ]
+    },
+    "V3_RELEASE_MANIFEST_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "research/v3-release-manifest.latest.json"
+      ]
+    }
+  },
+  "evidence": {
+    "research/v3-security-privacy.latest.json": {
+      "evidenceFile": "research/v3-security-privacy.latest.json",
+      "exists": true,
+      "sha256": "515bb079057eac1a",
+      "bytes": 988,
+      "pass": true,
+      "createdAt": "2026-06-07T09:25:01.555Z"
+    },
+    "research/v3-tauri-security.latest.json": {
+      "evidenceFile": "research/v3-tauri-security.latest.json",
+      "exists": true,
+      "sha256": "4f1f54fa9c45c444",
+      "bytes": 975,
+      "pass": true,
+      "createdAt": "2026-06-07T09:25:07.752Z"
+    },
+    "research/v3-skill-routing.latest.json": {
+      "evidenceFile": "research/v3-skill-routing.latest.json",
+      "exists": true,
+      "sha256": "5d5269beb078f487",
+      "bytes": 19221,
+      "pass": true,
+      "createdAt": "2026-06-07T09:25:07.829Z"
+    },
+    "research/v3-live-site-formal.latest.json": {
+      "evidenceFile": "research/v3-live-site-formal.latest.json",
+      "exists": true,
+      "sha256": "892a729b531ab3c9",
+      "bytes": 41265,
+      "pass": true,
+      "createdAt": "2026-06-07T09:23:52.189Z"
+    },
+    "research/v2-live-site-probe.latest.json": {
+      "evidenceFile": "research/v2-live-site-probe.latest.json",
+      "exists": true,
+      "sha256": "d4311cc21abdf30e",
+      "bytes": 14325,
+      "pass": false,
+      "createdAt": "2026-06-06T15:35:17.410Z"
+    },
+    "research/v2-claude-insert.latest.json": {
+      "evidenceFile": "research/v2-claude-insert.latest.json",
+      "exists": true,
+      "sha256": "f6b24af41556e3d4",
+      "bytes": 3670,
+      "pass": false,
+      "createdAt": "2026-06-06T19:51:52.094Z"
+    },
+    "research/v2-real-llm.latest.json": {
+      "evidenceFile": "research/v2-real-llm.latest.json",
+      "exists": true,
+      "sha256": "517d5d9b79d0431b",
+      "bytes": 2663,
+      "pass": true,
+      "createdAt": "2026-06-07T04:17:37.419Z"
+    },
+    "research/v2-tauri-runtime.latest.json": {
+      "evidenceFile": "research/v2-tauri-runtime.latest.json",
+      "exists": true,
+      "sha256": "033bbda9acaee2c5",
+      "bytes": 456,
+      "pass": true,
+      "createdAt": "2026-06-07T08:07:48.084Z"
+    }
+  }
+}

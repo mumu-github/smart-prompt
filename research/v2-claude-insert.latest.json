@@ -9,7 +9,11 @@
     "claude"
   ],
   "profilePersistent": true,
-  "profileDir": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\.runtime\\v2-live-chrome-profile",
+  "profileDir": {
+    "redacted": "REDACTED_PATH",
+    "length": 69,
+    "sha256": "885d9f116f2602e5"
+  },
   "extensionLoad": {
     "ok": true,
     "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
@@ -17,7 +21,11 @@
       "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
       "name": "Smart Prompt Copilot",
       "version": "0.1.0",
-      "path": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\prototypes\\browser-extension",
+      "path": {
+        "redacted": "REDACTED_PATH",
+        "length": 66,
+        "sha256": "2aa6d66988d2b857"
+      },
       "enabled": true
     }
   },
@@ -33,14 +41,30 @@
     {
       "id": "claude",
       "name": "Claude",
-      "url": "https://claude.ai/new",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://claude.ai",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "146fa17c61d40722"
+      },
       "requireInsert": true,
       "injectedProbe": false,
       "passedDisplay": true,
       "passedInsert": true,
       "initial": {
-        "url": "https://claude.ai/new",
-        "title": "New chat - Claude",
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://claude.ai",
+          "pathKind": "one-segment",
+          "queryPresent": false,
+          "sha256": "146fa17c61d40722"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 17,
+          "sha256": "5e4e0eda7a1abc95"
+        },
         "injectedProbe": false,
         "mascot": true,
         "card": false,
@@ -93,12 +117,26 @@
           "context": "Claude / claude.ai / div / template"
         },
         "afterInsert": {
-          "output": "你是熟悉 Claude 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
-          "value": "你是熟悉 Claude 的提示词协作助手。\n\n我的初始想法：我想让 AI 帮我把当前想法变成可执行方案\n\n请采用这个角度：先澄清目标、用户和成功标准，再给出可执行方案。\n\n请输出：\n1. 你对需求的理解\n2. 3 个可选 prompt 方向\n3. 每个方向适合的使用场景\n4. 你最推荐的一版完整 prompt\n5. 我下一步需要补充的 3 个关键信息\n\n可参考的 skill：code-review, security-review, test-plan。",
+          "output": {
+            "redacted": "REDACTED_TEXT",
+            "length": 229,
+            "sha256": "20b20fe240045beb"
+          },
+          "value": {
+            "redacted": "REDACTED_TEXT",
+            "length": 229,
+            "sha256": "20b20fe240045beb"
+          },
           "outputLength": 229,
           "valueLength": 229,
           "cardClosed": true,
-          "url": "https://claude.ai/new"
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://claude.ai",
+            "pathKind": "one-segment",
+            "queryPresent": false,
+            "sha256": "146fa17c61d40722"
+          }
         },
         "ok": true
       }

@@ -1,6 +1,10 @@
 {
   "createdAt": "2026-06-07T04:17:37.419Z",
-  "dataDir": "C:\\Users\\lhy10\\Documents\\Smart Prompt\\apps\\local-service\\.smart-prompt-data",
+  "dataDir": {
+    "redacted": "REDACTED_PATH",
+    "length": 75,
+    "sha256": "51ce6e78ba361fb7"
+  },
   "dryRun": false,
   "requestedProvider": "agnes",
   "selectedProvider": "agnes",

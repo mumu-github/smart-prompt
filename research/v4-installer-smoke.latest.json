@@ -1,0 +1,55 @@
+{
+    "createdAt":  "2026-06-07T11:59:51.3778956Z",
+    "pass":  true,
+    "installer":  "apps/desktop-shell/src-tauri/target/release/bundle/nsis/Smart Prompt_0.2.0_x64-setup.exe",
+    "installDirName":  "install",
+    "remotePort":  9239,
+    "servicePort":  17391,
+    "checks":  {
+                   "installerExists":  true,
+                   "installed":  true,
+                   "started":  true,
+                   "bundledSidecarResource":  true,
+                   "bundledNodeRuntime":  true,
+                   "sourceCommandBundled":  true,
+                   "localServiceStartedFromInstalledApp":  true,
+                   "serviceHealthFromInstalledApp":  true,
+                   "localServiceStoppedFromInstalledApp":  true,
+                   "exited":  true,
+                   "uninstalled":  true
+               },
+    "installExitCode":  0,
+    "installedExeName":  "smart-prompt-desktop.exe",
+    "installedExeBytes":  8976896,
+    "processIdObserved":  true,
+    "installedRuntimeRawLength":  803,
+    "installedRuntime":  {
+                             "createdAt":  "2026-06-07T12:00:02.272Z",
+                             "pass":  true,
+                             "remotePort":  9239,
+                             "servicePort":  17391,
+                             "bundledServiceResource":  "resources/smart-prompt-sidecar/apps/local-service/src/server.js",
+                             "bundledNodeRuntime":  "resources/smart-prompt-sidecar/bin/node.exe",
+                             "checks":  {
+                                            "bundledSidecarResource":  true,
+                                            "bundledNodeRuntime":  true,
+                                            "webviewTarget":  true,
+                                            "tauriApi":  true,
+                                            "sourceCommandBundled":  true,
+                                            "localServiceStartedFromInstalledApp":  true,
+                                            "serviceHealthFromInstalledApp":  true,
+                                            "localServiceStoppedFromInstalledApp":  true
+                                        },
+                             "localServiceSource":  "script=bundled;node=bundled",
+                             "startResult":  "started",
+                             "service":  {
+                                             "ok":  true,
+                                             "service":  "smart-prompt-local-service"
+                                         },
+                             "runningStatus":  "running",
+                             "stopResult":  "stopped"
+                         },
+    "exitMethod":  "close-main-window",
+    "uninstallerName":  "uninstall.exe",
+    "uninstallExitCode":  0
+}

@@ -1,0 +1,839 @@
+{
+  "createdAt": "2026-06-07T09:25:07.829Z",
+  "pass": true,
+  "targetHitRate": 0.7,
+  "fixtureCount": 20,
+  "hitCount": 20,
+  "hitRate": 1,
+  "results": [
+    {
+      "index": 0,
+      "inputHash": "089d78cc8e09594a",
+      "inputLength": 35,
+      "expectedSkillId": "skill-ui-ux",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-ui-ux",
+          "name": "ui-ux",
+          "score": 2.3,
+          "reason": {
+            "matchedTokens": [
+              "ui",
+              "ux"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "inputHash": "231766a046223ac8",
+      "inputLength": 37,
+      "expectedSkillId": "skill-code-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 2.3,
+          "reason": {
+            "matchedTokens": [
+              "code",
+              "review"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 1.3,
+          "reason": {
+            "matchedTokens": [
+              "review"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "inputHash": "894b92160e1cfb38",
+      "inputLength": 40,
+      "expectedSkillId": "skill-test-plan",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "inputHash": "146069586ccc505e",
+      "inputLength": 42,
+      "expectedSkillId": "skill-security-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 3.3,
+          "reason": {
+            "matchedTokens": [
+              "privacy",
+              "api",
+              "key"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "inputHash": "9d0295083e7f77c6",
+      "inputLength": 51,
+      "expectedSkillId": "skill-ui-ux",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-ui-ux",
+          "name": "ui-ux",
+          "score": 2.3,
+          "reason": {
+            "matchedTokens": [
+              "ui",
+              "frontend"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "inputHash": "30d9c178b6135ba8",
+      "inputLength": 49,
+      "expectedSkillId": "skill-code-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "inputHash": "b42d22795806ee72",
+      "inputLength": 49,
+      "expectedSkillId": "skill-test-plan",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 2.3,
+          "reason": {
+            "matchedTokens": [
+              "plan",
+              "qa"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 7,
+      "inputHash": "3c521982f03da6bf",
+      "inputLength": 43,
+      "expectedSkillId": "skill-security-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 8,
+      "inputHash": "64b0aca94feb9390",
+      "inputLength": 42,
+      "expectedSkillId": "skill-ui-ux",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-ui-ux",
+          "name": "ui-ux",
+          "score": 1.3,
+          "reason": {
+            "matchedTokens": [
+              "ux"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 9,
+      "inputHash": "d08cf8f3c3080f94",
+      "inputLength": 42,
+      "expectedSkillId": "skill-code-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 4.3,
+          "reason": {
+            "matchedTokens": [
+              "code",
+              "review",
+              "bug",
+              "risk"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 1.3,
+          "reason": {
+            "matchedTokens": [
+              "review"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 10,
+      "inputHash": "e9febdd55da27267",
+      "inputLength": 45,
+      "expectedSkillId": "skill-test-plan",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 1.3,
+          "reason": {
+            "matchedTokens": [
+              "test"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 11,
+      "inputHash": "676813148b02d7d7",
+      "inputLength": 46,
+      "expectedSkillId": "skill-security-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 2.3,
+          "reason": {
+            "matchedTokens": [
+              "privacy",
+              "key"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 12,
+      "inputHash": "2005cf8e2b0d0fc3",
+      "inputLength": 43,
+      "expectedSkillId": "skill-ui-ux",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-ui-ux",
+          "name": "ui-ux",
+          "score": 2.3,
+          "reason": {
+            "matchedTokens": [
+              "ui",
+              "ux"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 13,
+      "inputHash": "80df5604438fc723",
+      "inputLength": 37,
+      "expectedSkillId": "skill-code-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 1.3,
+          "reason": {
+            "matchedTokens": [
+              "bug"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 1.3,
+          "reason": {
+            "matchedTokens": [
+              "security"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 14,
+      "inputHash": "a8e9f8bedc6a138f",
+      "inputLength": 41,
+      "expectedSkillId": "skill-test-plan",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 15,
+      "inputHash": "c48be1186b64b28c",
+      "inputLength": 45,
+      "expectedSkillId": "skill-security-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 16,
+      "inputHash": "a268ab0d5df96b98",
+      "inputLength": 38,
+      "expectedSkillId": "skill-ui-ux",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-ui-ux",
+          "name": "ui-ux",
+          "score": 2.3,
+          "reason": {
+            "matchedTokens": [
+              "ux",
+              "prototype"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 17,
+      "inputHash": "7fc1583a6ad155b2",
+      "inputLength": 39,
+      "expectedSkillId": "skill-code-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 1.3,
+          "reason": {
+            "matchedTokens": [
+              "review"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 1.3,
+          "reason": {
+            "matchedTokens": [
+              "review"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 18,
+      "inputHash": "db354bbd9a6dab1b",
+      "inputLength": 47,
+      "expectedSkillId": "skill-test-plan",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    },
+    {
+      "index": 19,
+      "inputHash": "8fc6b89e79affef4",
+      "inputLength": 37,
+      "expectedSkillId": "skill-security-review",
+      "hit": true,
+      "top3": [
+        {
+          "id": "skill-security-review",
+          "name": "security-review",
+          "score": 2.3,
+          "reason": {
+            "matchedTokens": [
+              "privacy",
+              "api"
+            ],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-code-review",
+          "name": "code-review",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        },
+        {
+          "id": "skill-test-plan",
+          "name": "test-plan",
+          "score": 0.3,
+          "reason": {
+            "matchedTokens": [],
+            "toolBoost": 0,
+            "sourceBoost": 0.3
+          }
+        }
+      ]
+    }
+  ]
+}

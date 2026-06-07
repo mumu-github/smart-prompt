@@ -1,0 +1,170 @@
+{
+  "createdAt": "2026-06-07T12:00:06.773Z",
+  "pass": true,
+  "releaseReady": true,
+  "version": "0.2.0",
+  "acceptance": {
+    "INSTALLER_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "apps/desktop-shell/src-tauri/tauri.conf.json",
+        "apps/desktop-shell/scripts/prepare-sidecar.js",
+        "scripts/check-v4-installer-smoke.ps1",
+        "scripts/check-v4-installed-app-runtime.js",
+        "research/v4-installer-smoke.latest.json"
+      ],
+      "artifacts": [
+        "apps/desktop-shell/src-tauri/target/release/bundle/msi/Smart Prompt_0.2.0_x64_en-US.msi",
+        "apps/desktop-shell/src-tauri/target/release/bundle/nsis/Smart Prompt_0.2.0_x64-setup.exe"
+      ],
+      "installedRuntimePass": true,
+      "checks": {
+        "installerExists": true,
+        "installed": true,
+        "started": true,
+        "bundledSidecarResource": true,
+        "bundledNodeRuntime": true,
+        "sourceCommandBundled": true,
+        "localServiceStartedFromInstalledApp": true,
+        "serviceHealthFromInstalledApp": true,
+        "localServiceStoppedFromInstalledApp": true,
+        "exited": true,
+        "uninstalled": true
+      }
+    },
+    "SIDECAR_SERVICE_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "research/v4-sidecar-service.latest.json"
+      ],
+      "checks": {
+        "webviewTarget": true,
+        "tauriApi": true,
+        "shortcutRegistered": true,
+        "localServiceStarted": true,
+        "localServiceStopped": true,
+        "globalShortcutTriggered": true
+      }
+    },
+    "FIRST_RUN_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "apps/desktop-shell/index.html",
+        "apps/desktop-shell/src/app.js",
+        "apps/desktop-shell/tests/desktop-shell-interaction.test.js",
+        "research/v2-real-llm.latest.json"
+      ],
+      "firstRunUiPass": true,
+      "firstRunLogicPass": true,
+      "realLlmPass": true
+    },
+    "KEYCHAIN_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "research/v3-tauri-security.latest.json",
+        "apps/local-service/src/credential-vault.js"
+      ]
+    },
+    "LIVE_SITE_STABILITY_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "research/v3-live-site-formal.latest.json",
+        "research/v4-live-site-stability.latest.json",
+        "research/v4-live-site-stability-recovery.md"
+      ],
+      "singleRunPass": true,
+      "mode": "LOGIN_ROUTE_RECOVERY_PASS",
+      "recoveryStrategyPass": true
+    },
+    "PROMPT_CARD_UX_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "prototypes/browser-extension/src/content.js",
+        "prototypes/browser-extension/tests/runtime-demo.test.js"
+      ],
+      "promptCardSourcePass": true,
+      "promptCardRuntimePass": true
+    },
+    "LOCAL_DATA_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "apps/local-service/src/store.js",
+        "apps/local-service/tests/local-service.test.js"
+      ]
+    },
+    "V4_RELEASE_MANIFEST_PASS": {
+      "status": "PASS",
+      "evidence": [
+        "research/v4-release-manifest.latest.json"
+      ]
+    }
+  },
+  "evidence": {
+    "research/v4-sidecar-service.latest.json": {
+      "evidenceFile": "research/v4-sidecar-service.latest.json",
+      "exists": true,
+      "sha256": "244184a587d80a1e",
+      "bytes": 553
+    },
+    "research/v4-live-site-stability.latest.json": {
+      "evidenceFile": "research/v4-live-site-stability.latest.json",
+      "exists": true,
+      "sha256": "4a6d76cf40f714b9",
+      "bytes": 1662
+    },
+    "research/v4-live-site-stability-recovery.md": {
+      "evidenceFile": "research/v4-live-site-stability-recovery.md",
+      "exists": true,
+      "sha256": "3c11cb8ffc37a572",
+      "bytes": 2512
+    },
+    "research/v4-installer-smoke.latest.json": {
+      "evidenceFile": "research/v4-installer-smoke.latest.json",
+      "exists": true,
+      "sha256": "9c9bb9a1e43eca5c",
+      "bytes": 2869
+    },
+    "research/v3-live-site-formal.latest.json": {
+      "evidenceFile": "research/v3-live-site-formal.latest.json",
+      "exists": true,
+      "sha256": "892a729b531ab3c9",
+      "bytes": 41265
+    },
+    "research/v3-tauri-security.latest.json": {
+      "evidenceFile": "research/v3-tauri-security.latest.json",
+      "exists": true,
+      "sha256": "3358b7c5eb5b8987",
+      "bytes": 1037
+    },
+    "research/v2-real-llm.latest.json": {
+      "evidenceFile": "research/v2-real-llm.latest.json",
+      "exists": true,
+      "sha256": "517d5d9b79d0431b",
+      "bytes": 2663
+    },
+    "apps/desktop-shell/src-tauri/tauri.conf.json": {
+      "evidenceFile": "apps/desktop-shell/src-tauri/tauri.conf.json",
+      "exists": true,
+      "sha256": "ddd3a353827dcdb2",
+      "bytes": 1127
+    },
+    "apps/desktop-shell/scripts/prepare-sidecar.js": {
+      "evidenceFile": "apps/desktop-shell/scripts/prepare-sidecar.js",
+      "exists": true,
+      "sha256": "32196b4a7cae2ff7",
+      "bytes": 1400
+    },
+    "scripts/check-v4-installed-app-runtime.js": {
+      "evidenceFile": "scripts/check-v4-installed-app-runtime.js",
+      "exists": true,
+      "sha256": "fc012593ccf17c2d",
+      "bytes": 7146
+    },
+    "apps/desktop-shell/src-tauri/src/main.rs": {
+      "evidenceFile": "apps/desktop-shell/src-tauri/src/main.rs",
+      "exists": true,
+      "sha256": "4b18299bc0cd21fe",
+      "bytes": 9258
+    }
+  }
+}

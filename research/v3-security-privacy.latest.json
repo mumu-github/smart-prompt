@@ -1,0 +1,42 @@
+{
+  "createdAt": "2026-06-07T09:25:01.555Z",
+  "pass": true,
+  "trustedOrigin": "chrome-extension://abcdefghijklmnopqrstuvwxyzabcdef",
+  "evilOrigin": "https://evil.example",
+  "checks": {
+    "healthPublic": true,
+    "unauthSettingsBlocked": true,
+    "evilOriginBlocked": true,
+    "trustedBootstrap": true,
+    "protectedBearerAccepted": true,
+    "protectedTokenHeaderAccepted": true,
+    "corsNoWildcard": true,
+    "redactionNoLeaks": true
+  },
+  "observations": {
+    "health": {
+      "status": 200,
+      "authRequired": true
+    },
+    "unauthSettings": {
+      "status": 401,
+      "code": "auth_required"
+    },
+    "evilOrigin": {
+      "optionsStatus": 403,
+      "settingsStatus": 403,
+      "allowOrigin": ""
+    },
+    "bootstrap": {
+      "status": 200,
+      "allowOrigin": "chrome-extension://abcdefghijklmnopqrstuvwxyzabcdef",
+      "auth": {
+        "length": 64,
+        "sha256": "637f525e2da179c8"
+      }
+    },
+    "redaction": {
+      "leaks": []
+    }
+  }
+}

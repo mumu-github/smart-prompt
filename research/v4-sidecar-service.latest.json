@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-06-07T08:07:48.084Z",
+  "createdAt": "2026-06-07T10:04:56.232Z",
   "pass": true,
   "remotePort": 9228,
   "servicePort": 17381,
@@ -8,6 +8,7 @@
     "tauriApi": true,
     "shortcutRegistered": true,
     "localServiceStarted": true,
+    "localServiceStopped": true,
     "globalShortcutTriggered": true
   },
   "shortcut": "Ctrl+Alt+P",
@@ -17,5 +18,7 @@
     "version": "0.3.0",
     "authRequired": true
   },
-  "shortcutHits": 1
+  "serviceStatus": "running",
+  "shortcutHits": 1,
+  "serviceStopStatus": "stopped"
 }

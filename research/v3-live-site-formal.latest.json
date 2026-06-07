@@ -1,0 +1,1548 @@
+{
+  "schemaVersion": "v3-live-site-formal@1",
+  "createdAt": "2026-06-07T09:23:52.189Z",
+  "mode": "LIVE_SITE_FORMAL_PASS",
+  "pass": true,
+  "formalExtensionOnly": true,
+  "attachCdp": false,
+  "remotePort": 9232,
+  "headless": false,
+  "injectFallback": false,
+  "loginWaitMs": 180000,
+  "noAutoSendWaitMs": 1200,
+  "siteFilter": [
+    "chatgpt",
+    "claude",
+    "gemini",
+    "perplexity",
+    "lovable",
+    "bolt",
+    "v0",
+    "replit"
+  ],
+  "profilePersistent": true,
+  "profileDir": {
+    "redacted": "REDACTED_PATH",
+    "length": 69,
+    "sha256": "885d9f116f2602e5"
+  },
+  "extensionLoad": {
+    "ok": true,
+    "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
+    "matchedExtension": {
+      "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
+      "name": "Smart Prompt Copilot",
+      "version": "0.1.0",
+      "path": {
+        "redacted": "REDACTED_PATH",
+        "length": 66,
+        "sha256": "2aa6d66988d2b857"
+      },
+      "enabled": true
+    }
+  },
+  "displayPasses": 8,
+  "displayRequired": 8,
+  "requiredInsertIds": [
+    "chatgpt",
+    "claude",
+    "gemini"
+  ],
+  "insertPasses": [
+    "chatgpt",
+    "claude",
+    "gemini"
+  ],
+  "requirements": {
+    "displaySiteIds": [
+      "chatgpt",
+      "claude",
+      "gemini",
+      "perplexity",
+      "bolt",
+      "v0",
+      "lovable",
+      "replit"
+    ],
+    "insertSiteIds": [
+      "chatgpt",
+      "claude",
+      "gemini"
+    ],
+    "noAutoSendSiteIds": [
+      "chatgpt",
+      "claude",
+      "gemini"
+    ],
+    "requireFormalExtension": true,
+    "requireInjectedProbeFalse": true,
+    "insertMustNotSubmit": true,
+    "redactionRequired": true
+  },
+  "summary": {
+    "displayPasses": [
+      "chatgpt",
+      "claude",
+      "gemini",
+      "perplexity",
+      "bolt",
+      "v0",
+      "lovable",
+      "replit"
+    ],
+    "insertPasses": [
+      "chatgpt",
+      "claude",
+      "gemini"
+    ],
+    "noAutoSendPasses": [
+      "chatgpt",
+      "claude",
+      "gemini"
+    ],
+    "displayMissing": [],
+    "insertMissing": [],
+    "noAutoSendMissing": [],
+    "injectedProbeFailures": [],
+    "anyInjectedProbe": false,
+    "redactionLeaks": []
+  },
+  "sites": [
+    {
+      "id": "chatgpt",
+      "required": {
+        "display": true,
+        "insert": true,
+        "noAutoSend": true
+      },
+      "requiredDisplay": true,
+      "requiredInsert": true,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": true,
+        "visibleInputCount": 1,
+        "inputKind": "contenteditable"
+      },
+      "display": {
+        "passed": true,
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": true,
+        "passed": true,
+        "opened": true,
+        "cardOpened": true,
+        "outputLength": 230,
+        "afterValueLength": 230,
+        "outputPrefixContained": false,
+        "cardClosed": true,
+        "afterWriteVerified": true,
+        "verifiedBy": "dom-evidence",
+        "strategy": "contenteditable-or-textarea",
+        "kind": "contenteditable",
+        "reason": "after_write_verified",
+        "filledOnly": true,
+        "submitted": false
+      },
+      "noAutoSend": {
+        "required": true,
+        "passed": true,
+        "waitMs": 1200,
+        "outputLength": 230,
+        "valueLength": 230,
+        "outputPrefixContained": false,
+        "inputRetained": true,
+        "retainedBy": "dom-evidence-length",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "v3-live-site-formal.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "claude",
+      "required": {
+        "display": true,
+        "insert": true,
+        "noAutoSend": true
+      },
+      "requiredDisplay": true,
+      "requiredInsert": true,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": true,
+        "visibleInputCount": 1,
+        "inputKind": "contenteditable"
+      },
+      "display": {
+        "passed": true,
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": true,
+        "passed": true,
+        "opened": true,
+        "cardOpened": true,
+        "outputLength": 229,
+        "afterValueLength": 229,
+        "outputPrefixContained": false,
+        "cardClosed": true,
+        "afterWriteVerified": true,
+        "verifiedBy": "dom-evidence",
+        "strategy": "contenteditable-or-textarea",
+        "kind": "contenteditable",
+        "reason": "after_write_verified",
+        "filledOnly": true,
+        "submitted": false
+      },
+      "noAutoSend": {
+        "required": true,
+        "passed": true,
+        "waitMs": 1200,
+        "outputLength": 229,
+        "valueLength": 229,
+        "outputPrefixContained": false,
+        "inputRetained": true,
+        "retainedBy": "dom-evidence-length",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "v3-live-site-formal.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "gemini",
+      "required": {
+        "display": true,
+        "insert": true,
+        "noAutoSend": true
+      },
+      "requiredDisplay": true,
+      "requiredInsert": true,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": true,
+        "visibleInputCount": 1,
+        "inputKind": "contenteditable"
+      },
+      "display": {
+        "passed": true,
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": true,
+        "passed": true,
+        "opened": true,
+        "cardOpened": true,
+        "outputLength": 229,
+        "afterValueLength": 229,
+        "outputPrefixContained": true,
+        "cardClosed": true,
+        "afterWriteVerified": true,
+        "verifiedBy": "dom-evidence",
+        "strategy": "contenteditable",
+        "kind": "contenteditable",
+        "reason": "after_write_verified",
+        "filledOnly": true,
+        "submitted": false
+      },
+      "noAutoSend": {
+        "required": true,
+        "passed": true,
+        "waitMs": 1200,
+        "outputLength": 229,
+        "valueLength": 229,
+        "outputPrefixContained": true,
+        "inputRetained": true,
+        "retainedBy": "external-prefix",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "v3-live-site-formal.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "perplexity",
+      "required": {
+        "display": true,
+        "insert": false,
+        "noAutoSend": false
+      },
+      "requiredDisplay": true,
+      "requiredInsert": false,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": true,
+        "visibleInputCount": 1,
+        "inputKind": "contenteditable"
+      },
+      "display": {
+        "passed": true,
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": false,
+        "passed": null
+      },
+      "noAutoSend": {
+        "required": false,
+        "passed": null
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "v3-live-site-formal.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "bolt",
+      "required": {
+        "display": true,
+        "insert": false,
+        "noAutoSend": false
+      },
+      "requiredDisplay": true,
+      "requiredInsert": false,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": true,
+        "visibleInputCount": 2,
+        "inputKind": "contenteditable"
+      },
+      "display": {
+        "passed": true,
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": false,
+        "passed": null
+      },
+      "noAutoSend": {
+        "required": false,
+        "passed": null
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "v3-live-site-formal.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "v0",
+      "required": {
+        "display": true,
+        "insert": false,
+        "noAutoSend": false
+      },
+      "requiredDisplay": true,
+      "requiredInsert": false,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": true,
+        "visibleInputCount": 1,
+        "inputKind": "textarea"
+      },
+      "display": {
+        "passed": true,
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": false,
+        "passed": null
+      },
+      "noAutoSend": {
+        "required": false,
+        "passed": null
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "v3-live-site-formal.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "lovable",
+      "required": {
+        "display": true,
+        "insert": false,
+        "noAutoSend": false
+      },
+      "requiredDisplay": true,
+      "requiredInsert": false,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": true,
+        "visibleInputCount": 2,
+        "inputKind": "contenteditable"
+      },
+      "display": {
+        "passed": true,
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": false,
+        "passed": null
+      },
+      "noAutoSend": {
+        "required": false,
+        "passed": null
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "v3-live-site-formal.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "replit",
+      "required": {
+        "display": true,
+        "insert": false,
+        "noAutoSend": false
+      },
+      "requiredDisplay": true,
+      "requiredInsert": false,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": true,
+        "visibleInputCount": 1,
+        "inputKind": "textarea"
+      },
+      "display": {
+        "passed": true,
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": false,
+        "passed": null
+      },
+      "noAutoSend": {
+        "required": false,
+        "passed": null
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "v3-live-site-formal.latest.json",
+        "createdAt": ""
+      }
+    }
+  ],
+  "results": [
+    {
+      "id": "chatgpt",
+      "name": "ChatGPT",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://chatgpt.com",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "5d9354f7cb0eac0c"
+      },
+      "requireInsert": true,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": true,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://chatgpt.com",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "5d9354f7cb0eac0c"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 7,
+          "sha256": "50a4122943273ad2"
+        },
+        "injectedProbe": false,
+        "mascot": true,
+        "card": false,
+        "inputSelectors": [
+          "#prompt-textarea",
+          "textarea[data-id=\"prompt-textarea\"]",
+          "[contenteditable=\"true\"][data-id]",
+          "[contenteditable=\"true\"][role=\"textbox\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])",
+          "[contenteditable=\"true\"]"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "prompt-textarea",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "与 ChatGPT 聊天",
+            "visible": true,
+            "width": 460,
+            "height": 40
+          },
+          {
+            "index": 1,
+            "tag": "TEXTAREA",
+            "id": "",
+            "role": "",
+            "contentEditable": false,
+            "placeholder": "有问题，尽管问",
+            "visible": false,
+            "width": 0,
+            "height": 0
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "prompt-textarea",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "state": "normal",
+        "transform": "translate(777px, 336px)",
+        "debug": null
+      },
+      "insert": {
+        "opened": true,
+        "card": {
+          "card": true,
+          "outputLength": 230,
+          "context": "ChatGPT / chatgpt.com / div / template / service offline"
+        },
+        "started": {
+          "opened": true,
+          "cardOpened": true,
+          "outputLength": 230,
+          "beforeMessageCount": 0,
+          "beforeInputLength": 0,
+          "insertEvidence": {
+            "ok": false,
+            "verified": false,
+            "kind": "",
+            "strategy": "",
+            "reason": "",
+            "valueLength": 0,
+            "createdAt": 0
+          },
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://chatgpt.com",
+            "pathKind": "root",
+            "queryPresent": false,
+            "sha256": "5d9354f7cb0eac0c"
+          }
+        },
+        "afterInsert": {
+          "outputLength": 230,
+          "valueLength": 230,
+          "outputPrefixContained": false,
+          "cardClosed": false,
+          "afterWriteVerified": true,
+          "verifiedBy": "dom-evidence",
+          "writerResult": null,
+          "insertEvidence": {
+            "ok": true,
+            "verified": true,
+            "kind": "contenteditable",
+            "strategy": "contenteditable-or-textarea",
+            "reason": "after_write_verified",
+            "valueLength": 230,
+            "createdAt": 1780824166203
+          },
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://chatgpt.com",
+            "pathKind": "root",
+            "queryPresent": false,
+            "sha256": "5d9354f7cb0eac0c"
+          }
+        },
+        "noAutoSend": {
+          "waitMs": 1200,
+          "outputLength": 230,
+          "valueLength": 230,
+          "outputPrefixContained": false,
+          "insertEvidence": {
+            "ok": true,
+            "verified": true,
+            "kind": "contenteditable",
+            "strategy": "contenteditable-or-textarea",
+            "reason": "after_write_verified",
+            "valueLength": 230,
+            "createdAt": 1780824166203
+          },
+          "cardClosed": true,
+          "inputRetained": true,
+          "retainedBy": "dom-evidence-length",
+          "navigationChanged": false,
+          "messageCountChanged": false,
+          "assistantGenerationStarted": false,
+          "nativeSubmitEventCount": 0,
+          "requestSubmitCallCount": 0,
+          "formSubmitCallCount": 0,
+          "submitted": false,
+          "passed": true
+        },
+        "filledOnly": true,
+        "ok": true
+      },
+      "noAutoSend": {
+        "waitMs": 1200,
+        "outputLength": 230,
+        "valueLength": 230,
+        "outputPrefixContained": false,
+        "insertEvidence": {
+          "ok": true,
+          "verified": true,
+          "kind": "contenteditable",
+          "strategy": "contenteditable-or-textarea",
+          "reason": "after_write_verified",
+          "valueLength": 230,
+          "createdAt": 1780824166203
+        },
+        "cardClosed": true,
+        "inputRetained": true,
+        "retainedBy": "dom-evidence-length",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false,
+        "passed": true
+      }
+    },
+    {
+      "id": "claude",
+      "name": "Claude",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://claude.ai",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "146fa17c61d40722"
+      },
+      "requireInsert": true,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": true,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://claude.ai",
+          "pathKind": "one-segment",
+          "queryPresent": false,
+          "sha256": "146fa17c61d40722"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 17,
+          "sha256": "5e4e0eda7a1abc95"
+        },
+        "injectedProbe": false,
+        "mascot": true,
+        "card": false,
+        "inputSelectors": [
+          "[data-testid=\"chat-input\"] div[contenteditable=\"true\"]",
+          "div[contenteditable=\"true\"][role=\"textbox\"]",
+          "div[contenteditable=\"true\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])",
+          "[contenteditable=\"true\"]"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Write your prompt to Claude",
+            "visible": true,
+            "width": 638,
+            "height": 22
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "state": "normal",
+        "transform": "translate(792px, 306px)",
+        "debug": null
+      },
+      "insert": {
+        "opened": true,
+        "card": {
+          "card": true,
+          "outputLength": 229,
+          "context": "Claude / claude.ai / div / template / service offline"
+        },
+        "started": {
+          "opened": true,
+          "cardOpened": true,
+          "outputLength": 229,
+          "beforeMessageCount": 0,
+          "beforeInputLength": 1,
+          "insertEvidence": {
+            "ok": false,
+            "verified": false,
+            "kind": "",
+            "strategy": "",
+            "reason": "",
+            "valueLength": 0,
+            "createdAt": 0
+          },
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://claude.ai",
+            "pathKind": "one-segment",
+            "queryPresent": false,
+            "sha256": "146fa17c61d40722"
+          }
+        },
+        "afterInsert": {
+          "outputLength": 229,
+          "valueLength": 229,
+          "outputPrefixContained": false,
+          "cardClosed": false,
+          "afterWriteVerified": true,
+          "verifiedBy": "dom-evidence",
+          "writerResult": null,
+          "insertEvidence": {
+            "ok": true,
+            "verified": true,
+            "kind": "contenteditable",
+            "strategy": "contenteditable-or-textarea",
+            "reason": "after_write_verified",
+            "valueLength": 229,
+            "createdAt": 1780824176360
+          },
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://claude.ai",
+            "pathKind": "one-segment",
+            "queryPresent": false,
+            "sha256": "146fa17c61d40722"
+          }
+        },
+        "noAutoSend": {
+          "waitMs": 1200,
+          "outputLength": 229,
+          "valueLength": 229,
+          "outputPrefixContained": false,
+          "insertEvidence": {
+            "ok": true,
+            "verified": true,
+            "kind": "contenteditable",
+            "strategy": "contenteditable-or-textarea",
+            "reason": "after_write_verified",
+            "valueLength": 229,
+            "createdAt": 1780824176360
+          },
+          "cardClosed": true,
+          "inputRetained": true,
+          "retainedBy": "dom-evidence-length",
+          "navigationChanged": false,
+          "messageCountChanged": false,
+          "assistantGenerationStarted": false,
+          "nativeSubmitEventCount": 0,
+          "requestSubmitCallCount": 0,
+          "formSubmitCallCount": 0,
+          "submitted": false,
+          "passed": true
+        },
+        "filledOnly": true,
+        "ok": true
+      },
+      "noAutoSend": {
+        "waitMs": 1200,
+        "outputLength": 229,
+        "valueLength": 229,
+        "outputPrefixContained": false,
+        "insertEvidence": {
+          "ok": true,
+          "verified": true,
+          "kind": "contenteditable",
+          "strategy": "contenteditable-or-textarea",
+          "reason": "after_write_verified",
+          "valueLength": 229,
+          "createdAt": 1780824176360
+        },
+        "cardClosed": true,
+        "inputRetained": true,
+        "retainedBy": "dom-evidence-length",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false,
+        "passed": true
+      }
+    },
+    {
+      "id": "gemini",
+      "name": "Gemini",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://gemini.google.com",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "380e7aa25639dad5"
+      },
+      "requireInsert": true,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": true,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://gemini.google.com",
+          "pathKind": "one-segment",
+          "queryPresent": false,
+          "sha256": "380e7aa25639dad5"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 13,
+          "sha256": "063b734802746476"
+        },
+        "injectedProbe": false,
+        "mascot": true,
+        "card": false,
+        "inputSelectors": [
+          "rich-textarea div[contenteditable=\"true\"]",
+          "div[aria-label][contenteditable=\"true\"]",
+          "div[contenteditable=\"true\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])",
+          "[contenteditable=\"true\"]"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "为 Gemini 输入提示",
+            "visible": true,
+            "width": 425,
+            "height": 24
+          },
+          {
+            "index": 1,
+            "tag": "DIV",
+            "id": "",
+            "role": "",
+            "contentEditable": true,
+            "placeholder": "",
+            "visible": false,
+            "width": 0,
+            "height": 1
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "state": "normal",
+        "transform": "translate(629px, 358px)",
+        "debug": null
+      },
+      "insert": {
+        "opened": true,
+        "card": {
+          "card": true,
+          "outputLength": 229,
+          "context": "Gemini / gemini.google.com / div / template"
+        },
+        "started": {
+          "opened": true,
+          "cardOpened": true,
+          "outputLength": 229,
+          "beforeMessageCount": 5,
+          "beforeInputLength": 1,
+          "insertEvidence": {
+            "ok": false,
+            "verified": false,
+            "kind": "",
+            "strategy": "",
+            "reason": "",
+            "valueLength": 0,
+            "createdAt": 0
+          },
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://gemini.google.com",
+            "pathKind": "one-segment",
+            "queryPresent": false,
+            "sha256": "380e7aa25639dad5"
+          }
+        },
+        "afterInsert": {
+          "outputLength": 229,
+          "valueLength": 229,
+          "outputPrefixContained": true,
+          "cardClosed": false,
+          "afterWriteVerified": true,
+          "verifiedBy": "dom-evidence",
+          "writerResult": null,
+          "insertEvidence": {
+            "ok": true,
+            "verified": true,
+            "kind": "contenteditable",
+            "strategy": "contenteditable",
+            "reason": "after_write_verified",
+            "valueLength": 229,
+            "createdAt": 1780824186615
+          },
+          "url": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://gemini.google.com",
+            "pathKind": "one-segment",
+            "queryPresent": false,
+            "sha256": "380e7aa25639dad5"
+          }
+        },
+        "noAutoSend": {
+          "waitMs": 1200,
+          "outputLength": 229,
+          "valueLength": 229,
+          "outputPrefixContained": true,
+          "insertEvidence": {
+            "ok": true,
+            "verified": true,
+            "kind": "contenteditable",
+            "strategy": "contenteditable",
+            "reason": "after_write_verified",
+            "valueLength": 229,
+            "createdAt": 1780824186615
+          },
+          "cardClosed": true,
+          "inputRetained": true,
+          "retainedBy": "external-prefix",
+          "navigationChanged": false,
+          "messageCountChanged": false,
+          "assistantGenerationStarted": false,
+          "nativeSubmitEventCount": 0,
+          "requestSubmitCallCount": 0,
+          "formSubmitCallCount": 0,
+          "submitted": false,
+          "passed": true
+        },
+        "filledOnly": true,
+        "ok": true
+      },
+      "noAutoSend": {
+        "waitMs": 1200,
+        "outputLength": 229,
+        "valueLength": 229,
+        "outputPrefixContained": true,
+        "insertEvidence": {
+          "ok": true,
+          "verified": true,
+          "kind": "contenteditable",
+          "strategy": "contenteditable",
+          "reason": "after_write_verified",
+          "valueLength": 229,
+          "createdAt": 1780824186615
+        },
+        "cardClosed": true,
+        "inputRetained": true,
+        "retainedBy": "external-prefix",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false,
+        "passed": true
+      }
+    },
+    {
+      "id": "perplexity",
+      "name": "Perplexity",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://www.perplexity.ai",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "bd687578ef655f76"
+      },
+      "requireInsert": false,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": null,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://www.perplexity.ai",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "bd687578ef655f76"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 10,
+          "sha256": "f394cc2a6da7dfd6"
+        },
+        "injectedProbe": false,
+        "mascot": false,
+        "card": false,
+        "inputSelectors": [
+          "textarea[placeholder*=\"Ask\"]",
+          "textarea[aria-label*=\"Ask\"]",
+          "[data-testid*=\"composer\"] textarea",
+          "[contenteditable=\"true\"][role=\"textbox\"]",
+          "[contenteditable=\"true\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "ask-input",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "",
+            "visible": true,
+            "width": 606,
+            "height": 52
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "ask-input",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "state": "normal",
+        "transform": "translate(857px, 336px)",
+        "debug": null
+      }
+    },
+    {
+      "id": "bolt",
+      "name": "Bolt",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://bolt.new",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "34ea67d75a31b417"
+      },
+      "requireInsert": false,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": null,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://bolt.new",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "34ea67d75a31b417"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 44,
+          "sha256": "fd797dbae62444fa"
+        },
+        "injectedProbe": false,
+        "mascot": false,
+        "card": false,
+        "inputSelectors": [
+          "[role=\"textbox\"][aria-label*=\"Type your idea\"]",
+          "[contenteditable=\"true\"][aria-label*=\"Type your idea\"]",
+          "textarea[placeholder*=\"Type your idea\"]",
+          "[data-testid*=\"chat\"] [role=\"textbox\"]",
+          "[contenteditable=\"true\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Type your idea and we'll build it together.",
+            "visible": true,
+            "width": 614,
+            "height": 80
+          },
+          {
+            "index": 1,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Type your idea and we'll build it together.",
+            "visible": true,
+            "width": 525,
+            "height": 80
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "state": "normal",
+        "transform": "translate(754px, 386px)",
+        "debug": null
+      }
+    },
+    {
+      "id": "v0",
+      "name": "v0",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://v0.dev",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "30fd7c560ce6ed06"
+      },
+      "requireInsert": false,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": null,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://v0.app",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "879a793bdc606a46"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 48,
+          "sha256": "4e77457c89763d3c"
+        },
+        "injectedProbe": false,
+        "mascot": true,
+        "card": false,
+        "inputSelectors": [
+          "textarea[id^=\"prompt-textarea\"]",
+          "textarea[placeholder*=\"v0\"]",
+          "[data-testid*=\"prompt\"] textarea",
+          "textarea",
+          "[contenteditable=\"true\"]",
+          "[role=\"textbox\"]",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "TEXTAREA",
+            "id": "prompt-textarea-_new-chat_",
+            "role": "",
+            "contentEditable": false,
+            "placeholder": "让 v0 构建…",
+            "visible": true,
+            "width": 664,
+            "height": 54
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "TEXTAREA",
+        "id": "prompt-textarea-_new-chat_",
+        "role": "",
+        "contentEditable": false,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "state": "normal",
+        "transform": "translate(782px, 272px)",
+        "debug": null
+      }
+    },
+    {
+      "id": "lovable",
+      "name": "Lovable",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://lovable.dev",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "7eb11b6a6b2250c4"
+      },
+      "requireInsert": false,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": null,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://lovable.dev",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "7eb11b6a6b2250c4"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 56,
+          "sha256": "65385f60f028b450"
+        },
+        "injectedProbe": false,
+        "mascot": false,
+        "card": false,
+        "inputSelectors": [
+          "[role=\"textbox\"][aria-label=\"Chat input\"]",
+          "[contenteditable=\"true\"][aria-label=\"Chat input\"]",
+          "[data-testid*=\"chat\"] [role=\"textbox\"]",
+          "textarea[placeholder*=\"Build\"]",
+          "[contenteditable=\"true\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Chat input",
+            "visible": true,
+            "width": 742,
+            "height": 80
+          },
+          {
+            "index": 1,
+            "tag": "DIV",
+            "id": "",
+            "role": "textbox",
+            "contentEditable": true,
+            "placeholder": "Chat input",
+            "visible": true,
+            "width": 550,
+            "height": 80
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "DIV",
+        "id": "",
+        "role": "textbox",
+        "contentEditable": true,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "state": "normal",
+        "transform": "translate(818px, 385px)",
+        "debug": null
+      }
+    },
+    {
+      "id": "replit",
+      "name": "Replit",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://replit.com",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "da7f6090bbddfda1"
+      },
+      "requireInsert": false,
+      "injectedProbe": false,
+      "passedDisplay": true,
+      "passedInsert": null,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://replit.com",
+          "pathKind": "one-segment",
+          "queryPresent": false,
+          "sha256": "da7f6090bbddfda1"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 53,
+          "sha256": "1c3f65f667e0b533"
+        },
+        "injectedProbe": false,
+        "mascot": false,
+        "card": false,
+        "inputSelectors": [
+          "textarea[placeholder*=\"Replit\"]",
+          "textarea[placeholder*=\"Ask\"]",
+          "textarea[placeholder*=\"Describe\"]",
+          "textarea[placeholder*=\"Build\"]",
+          "textarea[aria-label*=\"Ask\"]",
+          "textarea[aria-label*=\"prompt\"]",
+          "[data-cy*=\"ai\"] textarea",
+          "[data-testid*=\"ai\"] textarea",
+          "[data-testid*=\"prompt\"] textarea",
+          "[aria-label*=\"prompt\"][contenteditable=\"true\"]",
+          "[aria-label*=\"Ask\"][contenteditable=\"true\"]",
+          "[contenteditable=\"plaintext-only\"]",
+          "[contenteditable=\"true\"][role=\"textbox\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "[contenteditable=\"true\"]",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": [
+          {
+            "index": 0,
+            "tag": "TEXTAREA",
+            "id": "",
+            "role": "",
+            "contentEditable": false,
+            "placeholder": "Prompt placeholder",
+            "visible": true,
+            "width": 536,
+            "height": 272
+          }
+        ]
+      },
+      "focusResult": {
+        "ok": true,
+        "tag": "TEXTAREA",
+        "id": "",
+        "role": "",
+        "contentEditable": false,
+        "beforeValue": ""
+      },
+      "display": {
+        "mascot": true,
+        "visible": true,
+        "rect": {
+          "width": 74,
+          "height": 74
+        },
+        "state": "normal",
+        "transform": "translate(715px, 482px)",
+        "debug": null
+      }
+    }
+  ]
+}

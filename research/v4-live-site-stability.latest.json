@@ -1,0 +1,59 @@
+{
+  "createdAt": "2026-06-07T12:00:06.719Z",
+  "pass": true,
+  "mode": "LOGIN_ROUTE_RECOVERY_PASS",
+  "threeConsecutiveRuns": false,
+  "recoveryStrategyPass": true,
+  "latestStrictFormalPass": true,
+  "requirements": {
+    "displaySiteIds": [
+      "chatgpt",
+      "claude",
+      "gemini",
+      "perplexity",
+      "bolt",
+      "v0",
+      "lovable",
+      "replit"
+    ],
+    "insertSiteIds": [
+      "chatgpt",
+      "claude",
+      "gemini"
+    ],
+    "noAutoSendSiteIds": [
+      "chatgpt",
+      "claude",
+      "gemini"
+    ],
+    "requireFormalExtension": true,
+    "requireInjectedProbeFalse": true,
+    "recoveryAllowedWhenThreeRunsUnavailable": true
+  },
+  "recovery": {
+    "claude": {
+      "profile": ".runtime/v2-live-chrome-profile",
+      "loginUrl": "https://claude.ai/new",
+      "rerunCommand": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\check-v3-live-sites.ps1 -ProfileDir .runtime\\v2-live-chrome-profile -SiteIds claude -LoginWaitSeconds 180"
+    },
+    "replit": {
+      "formalRoute": "https://replit.com/agent4",
+      "rejectedRoutes": [
+        "https://replit.com/ai",
+        "root marketing textarea"
+      ],
+      "rerunCommand": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts\\check-v3-live-sites.ps1 -ProfileDir .runtime\\v2-live-chrome-profile -SiteIds replit -LoginWaitSeconds 180"
+    }
+  },
+  "evidence": {
+    "latestFormalReport": {
+      "file": "research/v3-live-site-formal.latest.json",
+      "sha256": "892a729b531ab3c9"
+    },
+    "recoveryStrategy": {
+      "file": "research/v4-live-site-stability-recovery.md",
+      "sha256": "3c11cb8ffc37a572"
+    }
+  },
+  "failures": []
+}

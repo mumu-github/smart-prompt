@@ -1,0 +1,41 @@
+{
+  "createdAt": "2026-06-07T10:55:10.210Z",
+  "pass": true,
+  "tauri": {
+    "withGlobalTauri": true,
+    "cspLength": 368,
+    "capability": {
+      "identifier": "main-window",
+      "windows": [
+        "main"
+      ],
+      "permissions": [
+        "core:event:allow-listen",
+        "core:event:allow-unlisten"
+      ]
+    },
+    "invokeCommands": [
+      "set_global_shortcut",
+      "get_shortcut_hits",
+      "get_local_service_source",
+      "start_local_service",
+      "stop_local_service"
+    ]
+  },
+  "checks": {
+    "cspConfigured": true,
+    "cspBlocksDangerousSources": true,
+    "cspAllowsLocalServiceOnly": true,
+    "mainWindowLabeled": true,
+    "globalTauriScoped": true,
+    "capabilityMainOnly": true,
+    "capabilityNoWildcard": true,
+    "capabilityMinimalPermissions": true,
+    "shellPluginRemoved": true,
+    "explicitInvokeHandler": true,
+    "credentialVaultReturnsKeys": true,
+    "credentialSettingsNoPlaintext": true,
+    "credentialVaultNoPlaintext": true,
+    "credentialStorageEncrypted": true
+  }
+}
