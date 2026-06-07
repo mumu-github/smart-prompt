@@ -4,6 +4,7 @@ param(
   [switch]$SelfTest,
   [switch]$ConfirmForeground,
   [switch]$AllowClipboardFallback,
+  [switch]$AllowTextPatternVerification,
   [string]$ExpectedTitleHash = "",
   [string]$ExpectedToolProfile = "",
   [int]$CandidateIndex = 0,
@@ -41,6 +42,8 @@ function New-Privacy {
     writtenTextNotStored = $true
     clipboardTextNotStored = $true
     fallbackRequiresExplicitAllow = $true
+    textPatternVerificationRequiresExplicitAllow = $true
+    verificationTextNotStored = $true
     verificationUsesLengthAndHash = $true
     caretTextNotRead = $true
     promptTextNotRead = $true
@@ -57,24 +60,43 @@ function New-UnsupportedReport {
     selfTest = [bool]$SelfTest
     confirmForeground = [bool]$ConfirmForeground
     allowClipboardFallback = [bool]$AllowClipboardFallback
+    allowTextPatternVerification = [bool]$AllowTextPatternVerification
     pass = $false
     reason = $Reason
     writeAttempted = $false
     verified = $false
     clipboardFallbackTried = $false
     clipboardRestored = $false
+    textPatternVerificationTried = $false
+    textPatternVerificationMatched = $false
     supportedToolProfiles = @("codex", "claude-code", "hermes")
     privacy = New-Privacy
   }
 }
 
 function Get-ToolProfile {
-  param([string]$ProcessName, [string]$WindowTitle)
-  $haystack = "$ProcessName $WindowTitle"
+  param([string]$ProcessName, [string]$WindowTitle, [string[]]$ChildProcessNames = @())
+  $haystack = "$ProcessName $WindowTitle " + (($ChildProcessNames | ForEach-Object { [string]$_ }) -join " ")
   if ($haystack -match "(?i)claude[\s-]*code") { return "claude-code" }
+  if ($haystack -match "(?i)\bclaude\b") { return "claude-code" }
   if ($haystack -match "(?i)\bcodex\b|openai[\s-]*codex") { return "codex" }
   if ($haystack -match "(?i)\bhermes\b") { return "hermes" }
   return "unknown"
+}
+
+function Get-ChildProcessNames {
+  param([int]$ProcessId)
+  $names = @()
+  try {
+    $children = @(Get-CimInstance Win32_Process -Filter "ParentProcessId=$ProcessId" -ErrorAction SilentlyContinue)
+    foreach ($child in $children) {
+      if ($child.Name) {
+        $names += [System.IO.Path]::GetFileNameWithoutExtension([string]$child.Name)
+      }
+      $names += Get-ChildProcessNames -ProcessId ([int]$child.ProcessId)
+    }
+  } catch {}
+  return @($names | Where-Object { $_ } | Select-Object -Unique)
 }
 
 function Ensure-FillTypes {
@@ -144,8 +166,25 @@ function Get-RuntimeIdKey {
 }
 
 function New-RectObject {
-  param([int]$X, [int]$Y, [int]$Width, [int]$Height)
-  return [pscustomobject]@{ x = $X; y = $Y; width = $Width; height = $Height }
+  param([object]$X, [object]$Y, [object]$Width, [object]$Height)
+  function ConvertTo-SafeInt {
+    param([object]$Value)
+    try {
+      $number = [double]$Value
+      if ([double]::IsNaN($number) -or [double]::IsInfinity($number)) { return 0 }
+      if ($number -gt [int]::MaxValue) { return [int]::MaxValue }
+      if ($number -lt [int]::MinValue) { return [int]::MinValue }
+      return [int]$number
+    } catch {
+      return 0
+    }
+  }
+  return [pscustomobject]@{
+    x = ConvertTo-SafeInt $X
+    y = ConvertTo-SafeInt $Y
+    width = ConvertTo-SafeInt $Width
+    height = ConvertTo-SafeInt $Height
+  }
 }
 
 function Test-RectIntersects {
@@ -295,7 +334,7 @@ function Invoke-ClipboardPasteFallback {
     } else {
       [System.Windows.Forms.SendKeys]::SendWait("^v")
     }
-    Start-Sleep -Milliseconds 180
+    Start-Sleep -Milliseconds 450
     [void][System.Windows.Forms.Application]::DoEvents()
     $result.ok = $true
   } catch {
@@ -319,6 +358,44 @@ function Invoke-ClipboardPasteFallback {
   return [pscustomobject]$result
 }
 
+function Test-TextPatternContains {
+  param(
+    [object]$Candidate,
+    [string]$ExpectedText,
+    [int]$CharacterLimit = 65536
+  )
+  $result = [ordered]@{
+    tried = $false
+    matched = $false
+    readLength = 0
+    textHash = ""
+    reason = ""
+  }
+  if (-not $Candidate -or -not $Candidate.hasTextPattern -or -not $Candidate.textPattern) {
+    $result.reason = "text_pattern_unavailable"
+    return [pscustomobject]$result
+  }
+  try {
+    $result.tried = $true
+    $range = $Candidate.textPattern.DocumentRange
+    if (-not $range) {
+      $result.reason = "text_pattern_range_unavailable"
+      return [pscustomobject]$result
+    }
+    $text = $range.GetText($CharacterLimit)
+    if ($null -eq $text) { $text = "" }
+    $result.readLength = $text.Length
+    $result.textHash = Get-HashText $text
+    $result.matched = $text.Contains($ExpectedText)
+    if (-not $result.matched) {
+      $result.reason = "text_pattern_verification_mismatch"
+    }
+  } catch {
+    $result.reason = "text_pattern_verification_failed"
+  }
+  return [pscustomobject]$result
+}
+
 function Get-ForegroundContext {
   $handle = [SmartPromptFillNative]::GetForegroundWindow()
   $title = Get-WindowTextSafe -Handle $handle
@@ -332,6 +409,7 @@ function Get-ForegroundContext {
       $processName = ""
     }
   }
+  $childProcessNames = if ($processId -gt 0) { @(Get-ChildProcessNames -ProcessId $processId) } else { @() }
   return [pscustomobject]@{
     handle = $handle
     title = $title
@@ -339,7 +417,9 @@ function Get-ForegroundContext {
     processIdPresent = $processId -gt 0
     titleHash = Get-HashText $title
     titleLength = $title.Length
-    detectedToolProfile = Get-ToolProfile -ProcessName $processName -WindowTitle $title
+    childProcessCount = $childProcessNames.Count
+    childToolProcessHintPresent = [bool](($childProcessNames -join " ") -match "(?i)\bcodex\b|\bclaude\b|\bhermes\b")
+    detectedToolProfile = Get-ToolProfile -ProcessName $processName -WindowTitle $title -ChildProcessNames $childProcessNames
   }
 }
 
@@ -349,7 +429,7 @@ function Get-InputCandidates {
   $items = @()
   if (-not $RootElement) { return $items }
   $rootBounds = $RootElement.Current.BoundingRectangle
-  $rootRect = New-RectObject -X ([int]$rootBounds.X) -Y ([int]$rootBounds.Y) -Width ([int]$rootBounds.Width) -Height ([int]$rootBounds.Height)
+  $rootRect = New-RectObject -X $rootBounds.X -Y $rootBounds.Y -Width $rootBounds.Width -Height $rootBounds.Height
   $caret = Get-CaretContext
   $focusedRuntimeId = ""
   try {
@@ -380,11 +460,12 @@ function Get-InputCandidates {
     $isTextInput = $controlType -in @("ControlType.Edit", "ControlType.Document") -or $hasValue -or $hasText -or $className -match "(?i)edit|text"
     if (-not $isTextInput) { continue }
     $rect = $element.Current.BoundingRectangle
-    $rectObject = New-RectObject -X ([int]$rect.X) -Y ([int]$rect.Y) -Width ([int]$rect.Width) -Height ([int]$rect.Height)
+    $rectObject = New-RectObject -X $rect.X -Y $rect.Y -Width $rect.Width -Height $rect.Height
     $signals = Get-InputSignals -Element $element -Rect $rectObject -RootRect $rootRect -FocusedRuntimeId $focusedRuntimeId -Caret $caret -ControlType $controlType -ClassName $className -HasValuePattern ([bool]$hasValue) -HasTextPattern ([bool]$hasText) -NativeWindowHandle $nativeHandle
     $items += [pscustomobject]@{
       element = $element
       valuePattern = $valuePattern
+      textPattern = $textPattern
       index = $items.Count
       controlType = $controlType
       className = $className
@@ -490,6 +571,7 @@ function Invoke-SelfTestFill {
       selfTest = $true
       confirmForeground = $false
       allowClipboardFallback = [bool]$AllowClipboardFallback
+      allowTextPatternVerification = [bool]$AllowTextPatternVerification
       pass = [bool]$verified
       reason = if ($verified) { "" } else { $reason }
       writeAttempted = [bool]$writeAttempted
@@ -498,6 +580,8 @@ function Invoke-SelfTestFill {
       uiaSetValueTried = [bool]$uiaSetValueTried
       clipboardFallbackTried = [bool]$clipboardFallbackTried
       clipboardRestored = [bool]$clipboardRestored
+      textPatternVerificationTried = $false
+      textPatternVerificationMatched = $false
       target = [pscustomobject]@{
         index = 0
         controlType = $controlType
@@ -535,6 +619,8 @@ function Invoke-ConfirmedForegroundFill {
     titleLength = $context.titleLength
     titleHash = $context.titleHash
     detectedToolProfile = $context.detectedToolProfile
+    childProcessCount = $context.childProcessCount
+    childToolProcessHintPresent = [bool]$context.childToolProcessHintPresent
     expectedTitleHashMatched = $false
     expectedToolProfileMatched = $false
   }
@@ -545,6 +631,7 @@ function Invoke-ConfirmedForegroundFill {
     selfTest = $false
     confirmForeground = [bool]$ConfirmForeground
     allowClipboardFallback = [bool]$AllowClipboardFallback
+    allowTextPatternVerification = [bool]$AllowTextPatternVerification
     pass = $false
     writeAttempted = $false
     verified = $false
@@ -552,6 +639,8 @@ function Invoke-ConfirmedForegroundFill {
     uiaSetValueTried = $false
     clipboardFallbackTried = $false
     clipboardRestored = $false
+    textPatternVerificationTried = $false
+    textPatternVerificationMatched = $false
     foreground = $foreground
     supportedToolProfiles = @("codex", "claude-code", "hermes")
     privacy = New-Privacy
@@ -593,6 +682,8 @@ function Invoke-ConfirmedForegroundFill {
     requestedTextHash = Get-HashText $Text
     verifiedTextLength = 0
     verifiedTextHash = ""
+    textPatternVerificationReadLength = 0
+    textPatternVerificationTextHash = ""
     autoSubmit = $false
     submitSignalCount = 0
   }
@@ -682,6 +773,17 @@ function Invoke-ConfirmedForegroundFill {
     $verifiedText = Get-WindowTextSafe -Handle $candidate.nativeWindowHandle
   }
   $verified = $verifiedText -eq $Text
+  if (-not $verified -and $AllowTextPatternVerification -and $candidate.hasTextPattern) {
+    $textPatternCheck = Test-TextPatternContains -Candidate $candidate -ExpectedText $Text
+    $base.textPatternVerificationTried = [bool]$textPatternCheck.tried
+    $base.textPatternVerificationMatched = [bool]$textPatternCheck.matched
+    $base.summary.textPatternVerificationReadLength = [int]$textPatternCheck.readLength
+    $base.summary.textPatternVerificationTextHash = $textPatternCheck.textHash
+    if ($textPatternCheck.matched) {
+      $verified = $true
+      $verifiedText = $Text
+    }
+  }
   $base.pass = [bool]$verified
   $base.writeAttempted = $true
   $base.verified = [bool]$verified

@@ -1,6 +1,6 @@
 {
   "schemaVersion": "m3-pilot-adapters@1",
-  "createdAt": "2026-06-07T16:38:36.445Z",
+  "createdAt": "2026-06-07T19:04:12.981Z",
   "mode": "M3_PILOT_ADAPTERS",
   "pass": true,
   "formalExtensionOnly": false,
@@ -537,7 +537,7 @@
         "routeMatrix": {
           "attemptCount": 5,
           "visibleRouteCount": 0,
-          "loginRouteCount": 1,
+          "loginRouteCount": 0,
           "publicRouteCount": 0,
           "selectedCandidateIndex": -1,
           "selectedCandidate": null,
@@ -670,22 +670,22 @@
               "actualUrl": {
                 "redacted": "REDACTED_URL",
                 "origin": "https://www.doubao.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "9613879c94734865"
+                "pathKind": "multi-segment",
+                "queryPresent": true,
+                "sha256": "67d5880d491b15da"
               },
               "requestedHost": "www.doubao.com",
               "actualHost": "www.doubao.com",
               "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 19,
+              "actualPathKind": "multi-segment",
+              "actualQueryPresent": true,
+              "titleLength": 2,
               "totalInputCandidateCount": 0,
               "visibleInputCount": 0,
               "hiddenInputCandidateCount": 0,
-              "loginLike": true,
+              "loginLike": false,
               "publicLike": false,
-              "pageClassification": "login_or_auth_gate"
+              "pageClassification": "no_input_candidates_on_loaded_page"
             }
           ]
         },
@@ -1698,7 +1698,7 @@
       "routeMatrix": {
         "attemptCount": 5,
         "visibleRouteCount": 0,
-        "loginRouteCount": 1,
+        "loginRouteCount": 0,
         "publicRouteCount": 0,
         "selectedCandidateIndex": -1,
         "selectedCandidate": null,
@@ -1831,22 +1831,22 @@
             "actualUrl": {
               "redacted": "REDACTED_URL",
               "origin": "https://www.doubao.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "9613879c94734865"
+              "pathKind": "multi-segment",
+              "queryPresent": true,
+              "sha256": "67d5880d491b15da"
             },
             "requestedHost": "www.doubao.com",
             "actualHost": "www.doubao.com",
             "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 19,
+            "actualPathKind": "multi-segment",
+            "actualQueryPresent": true,
+            "titleLength": 2,
             "totalInputCandidateCount": 0,
             "visibleInputCount": 0,
             "hiddenInputCandidateCount": 0,
-            "loginLike": true,
+            "loginLike": false,
             "publicLike": false,
-            "pageClassification": "login_or_auth_gate"
+            "pageClassification": "no_input_candidates_on_loaded_page"
           }
         ]
       },

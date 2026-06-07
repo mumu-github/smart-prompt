@@ -52,7 +52,9 @@ function sanitizeSnapshot(snapshot = {}) {
       pidPresent: Boolean(foreground.pidPresent),
       titleLength: Number(foreground.titleLength || 0),
       titleHash: String(foreground.titleHash || "").slice(0, 64),
-      detectedToolProfile: foreground.detectedToolProfile || detected?.id || "unknown"
+      detectedToolProfile: foreground.detectedToolProfile || detected?.id || "unknown",
+      childProcessCount: Number(foreground.childProcessCount || 0),
+      childToolProcessHintPresent: Boolean(foreground.childToolProcessHintPresent)
     },
     caret: {
       source: String(snapshot.caret?.source || "win32_get_gui_thread_info").slice(0, 80),
@@ -127,6 +129,7 @@ function sanitizeFillReport(report = {}) {
     selfTest: Boolean(report.selfTest),
     confirmForeground: Boolean(report.confirmForeground),
     allowClipboardFallback: Boolean(report.allowClipboardFallback),
+    allowTextPatternVerification: Boolean(report.allowTextPatternVerification),
     pass: Boolean(report.pass),
     writeAttempted: Boolean(report.writeAttempted),
     verified: Boolean(report.verified),
@@ -134,6 +137,8 @@ function sanitizeFillReport(report = {}) {
     uiaSetValueTried: Boolean(report.uiaSetValueTried),
     clipboardFallbackTried: Boolean(report.clipboardFallbackTried),
     clipboardRestored: Boolean(report.clipboardRestored),
+    textPatternVerificationTried: Boolean(report.textPatternVerificationTried),
+    textPatternVerificationMatched: Boolean(report.textPatternVerificationMatched),
     target: {
       controlType: String(report.target?.controlType || "").slice(0, 80),
       classNameHash: String(report.target?.classNameHash || "").slice(0, 64),
@@ -158,6 +163,8 @@ function sanitizeFillReport(report = {}) {
       titleLength: Number(report.foreground?.titleLength || 0),
       titleHash: String(report.foreground?.titleHash || "").slice(0, 64),
       detectedToolProfile: String(report.foreground?.detectedToolProfile || "unknown").slice(0, 80),
+      childProcessCount: Number(report.foreground?.childProcessCount || 0),
+      childToolProcessHintPresent: Boolean(report.foreground?.childToolProcessHintPresent),
       expectedTitleHashMatched: Boolean(report.foreground?.expectedTitleHashMatched),
       expectedToolProfileMatched: Boolean(report.foreground?.expectedToolProfileMatched)
     },
@@ -171,6 +178,8 @@ function sanitizeFillReport(report = {}) {
       requestedTextHash: String(report.summary?.requestedTextHash || "").slice(0, 64),
       verifiedTextLength: Number(report.summary?.verifiedTextLength || 0),
       verifiedTextHash: String(report.summary?.verifiedTextHash || "").slice(0, 64),
+      textPatternVerificationReadLength: Number(report.summary?.textPatternVerificationReadLength || 0),
+      textPatternVerificationTextHash: String(report.summary?.textPatternVerificationTextHash || "").slice(0, 64),
       autoSubmit: Boolean(report.summary?.autoSubmit),
       submitSignalCount: Number(report.summary?.submitSignalCount || 0)
     },
@@ -182,6 +191,8 @@ function sanitizeFillReport(report = {}) {
       writtenTextNotStored: true,
       clipboardTextNotStored: true,
       fallbackRequiresExplicitAllow: true,
+      textPatternVerificationRequiresExplicitAllow: true,
+      verificationTextNotStored: true,
       verificationUsesLengthAndHash: true,
       caretTextNotRead: true,
       promptTextNotRead: true,

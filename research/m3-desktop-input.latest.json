@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-windows-uia@1",
-    "createdAt":  "2026-06-07T17:50:12.2500034Z",
+    "createdAt":  "2026-06-07T18:59:45.9420831Z",
     "platform":  "win32",
     "selfTest":  true,
     "selfTestProfile":  "codex",
@@ -13,7 +13,9 @@
                        "titleHash":  "1ce2043d4a53175b",
                        "detectedToolProfile":  "codex",
                        "expectedToolProfile":  "codex",
-                       "expectedToolProfileMatched":  true
+                       "expectedToolProfileMatched":  true,
+                       "childProcessCount":  0,
+                       "childToolProcessHintPresent":  false
                    },
     "caret":  {
                   "source":  "win32_get_gui_thread_info",
@@ -21,8 +23,8 @@
                   "visible":  true,
                   "windowHandlePresent":  true,
                   "rect":  {
-                               "x":  315,
-                               "y":  206,
+                               "x":  185,
+                               "y":  76,
                                "width":  1,
                                "height":  12
                            },
@@ -38,15 +40,15 @@
                            "index":  0,
                            "controlType":  "ControlType.Pane",
                            "nameHash":  "",
-                           "automationIdHash":  "51bd53d1415d5959",
-                           "classNameHash":  "c82be26548fa0711",
+                           "automationIdHash":  "ceb2124e05420857",
+                           "classNameHash":  "50a373efb14fd8b5",
                            "isKeyboardFocusable":  false,
                            "isEnabled":  true,
                            "hasValuePattern":  false,
                            "hasTextPattern":  false,
                            "boundingRect":  {
-                                                "x":  180,
-                                                "y":  203,
+                                                "x":  50,
+                                                "y":  73,
                                                 "width":  470,
                                                 "height":  72
                                             },

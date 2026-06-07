@@ -1,11 +1,9 @@
 ﻿{
     "schemaVersion":  "m3-real-desktop-tools@1",
-    "createdAt":  "2026-06-07T19:00:41.8299672Z",
+    "createdAt":  "2026-06-07T18:55:48.2874001Z",
     "platform":  "win32",
     "pass":  true,
     "requestedProfiles":  [
-                              "codex",
-                              "claude-code",
                               "hermes"
                           ],
     "supportedToolProfiles":  [
@@ -14,23 +12,23 @@
                                   "hermes"
                               ],
     "attach":  {
-                   "requested":  "",
-                   "attempted":  false,
-                   "windowFound":  false,
-                   "setForeground":  false,
-                   "processName":  "",
-                   "titleLength":  0,
-                   "titleHash":  "",
-                   "detectedToolProfile":  "unknown",
-                   "childProcessCount":  0,
+                   "requested":  "hermes",
+                   "attempted":  true,
+                   "windowFound":  true,
+                   "setForeground":  true,
+                   "processName":  "electron",
+                   "titleLength":  6,
+                   "titleHash":  "66e0988d1198afe0",
+                   "detectedToolProfile":  "hermes",
+                   "childProcessCount":  3,
                    "childToolProcessHintPresent":  false
                },
     "foreground":  {
-                       "processName":  "Codex",
+                       "processName":  "electron",
                        "pidPresent":  true,
-                       "titleLength":  5,
-                       "titleHash":  "616efbe96852d8c9",
-                       "detectedToolProfile":  "codex",
+                       "titleLength":  6,
+                       "titleHash":  "66e0988d1198afe0",
+                       "detectedToolProfile":  "hermes",
                        "hasTargetForeground":  true
                    },
     "snapshot":  {
@@ -38,66 +36,52 @@
                      "parseOk":  true,
                      "parseError":  "",
                      "probeOk":  true,
-                     "candidateCount":  116,
-                     "valuePatternCandidates":  1,
-                     "textPatternCandidates":  1,
-                     "focusableCandidates":  115,
+                     "candidateCount":  144,
+                     "valuePatternCandidates":  4,
+                     "textPatternCandidates":  45,
+                     "focusableCandidates":  100,
                      "focusedCandidateCount":  1,
                      "caretCandidateCount":  0,
-                     "bestCandidateIndex":  0,
-                     "bestCandidateScore":  95,
+                     "bestCandidateIndex":  131,
+                     "bestCandidateScore":  190,
                      "caretVisible":  false,
                      "caretWindowPresent":  false
                  },
     "write":  {
                   "allowed":  true,
-                  "attempted":  false,
-                  "pass":  false,
-                  "verified":  false,
-                  "strategy":  "",
+                  "attempted":  true,
+                  "pass":  true,
+                  "verified":  true,
+                  "strategy":  "uia_value_pattern",
                   "clipboardFallbackAllowed":  true,
                   "clipboardFallbackTried":  false,
                   "clipboardRestored":  false,
-                  "textPatternVerificationAllowed":  false,
-                  "textPatternVerificationTried":  false,
-                  "textPatternVerificationMatched":  false,
-                  "reason":  "foreground_title_hash_mismatch",
-                  "expectedTitleHashMatched":  false,
+                  "textPatternVerificationAllowed":  true,
+                  "textPatternVerificationTried":  true,
+                  "textPatternVerificationMatched":  true,
+                  "reason":  "",
+                  "expectedTitleHashMatched":  true,
                   "expectedToolProfileMatched":  true,
-                  "candidateIndex":  0,
+                  "candidateIndex":  131,
                   "exitCode":  0,
                   "summary":  {
-                                  "requestedTextLength":  0,
-                                  "requestedTextHash":  "",
-                                  "verifiedTextLength":  0,
-                                  "verifiedTextHash":  "",
-                                  "textPatternVerificationReadLength":  0,
-                                  "textPatternVerificationTextHash":  "",
+                                  "requestedTextLength":  31,
+                                  "requestedTextHash":  "30fea09b54bf60ff",
+                                  "verifiedTextLength":  31,
+                                  "verifiedTextHash":  "30fea09b54bf60ff",
+                                  "textPatternVerificationReadLength":  31,
+                                  "textPatternVerificationTextHash":  "30fea09b54bf60ff",
                                   "autoSubmit":  false,
                                   "submitSignalCount":  0
                               }
               },
     "coverage":  [
                      {
-                         "id":  "codex",
+                         "id":  "hermes",
                          "status":  "foreground_detected",
                          "foregroundDetected":  true,
-                         "snapshotCandidateCount":  116,
-                         "realWindowWriteValidated":  false
-                     },
-                     {
-                         "id":  "claude-code",
-                         "status":  "not_foreground",
-                         "foregroundDetected":  false,
-                         "snapshotCandidateCount":  0,
-                         "realWindowWriteValidated":  false
-                     },
-                     {
-                         "id":  "hermes",
-                         "status":  "not_foreground",
-                         "foregroundDetected":  false,
-                         "snapshotCandidateCount":  0,
-                         "realWindowWriteValidated":  false
+                         "snapshotCandidateCount":  144,
+                         "realWindowWriteValidated":  true
                      }
                  ],
     "checks":  {
@@ -105,8 +89,8 @@
                    "supportedProfilesPresent":  true,
                    "foregroundClassified":  true,
                    "hasTargetForeground":  true,
-                   "writeAttempted":  false,
-                   "writeValidated":  false,
+                   "writeAttempted":  true,
+                   "writeValidated":  true,
                    "privacyRedacted":  true,
                    "rawTitleStored":  false,
                    "rawElementNamesStored":  false,
@@ -128,5 +112,5 @@
                     "verificationUsesLengthAndHash":  true,
                     "autoSubmit":  false
                 },
-    "completionImpact":  "real_tool_write_still_pending"
+    "completionImpact":  "all_requested_real_tool_writes_validated"
 }

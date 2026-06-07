@@ -121,6 +121,21 @@ if (-not $realDesktopReport.pass) { throw "real desktop tools report did not pas
 if (-not $realDesktopReport.snapshot.probeOk) { throw "real desktop tools snapshot did not probe foreground" }
 if (-not $realDesktopReport.checks.snapshotOk) { throw "real desktop tools report missing snapshot ok" }
 if ($null -eq $realDesktopReport.snapshot.bestCandidateIndex) { throw "real desktop tools report missing best candidate index" }
+
+$realDesktopFillMatrixReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-real-desktop-tools-fill-matrix.latest.json") | ConvertFrom-Json
+if ($realDesktopFillMatrixReport.schemaVersion -ne "m3-real-desktop-tools-fill-matrix@1") { throw "real desktop fill matrix schema mismatch" }
+if (-not $realDesktopFillMatrixReport.pass) { throw "real desktop fill matrix did not pass" }
+if ([int]$realDesktopFillMatrixReport.summary.foregroundDetectedCount -ne 3) { throw "real desktop fill matrix did not detect all three tools" }
+if ([int]$realDesktopFillMatrixReport.summary.writeAttemptedCount -ne 3) { throw "real desktop fill matrix did not attempt all three writes" }
+if ([int]$realDesktopFillMatrixReport.summary.writeVerifiedCount -ne 3) { throw "real desktop fill matrix did not verify all three writes" }
+if (-not $realDesktopFillMatrixReport.summary.noAutoSubmit) { throw "real desktop fill matrix auto-submitted" }
+foreach ($profileId in @("codex", "claude-code", "hermes")) {
+  $tool = @($realDesktopFillMatrixReport.tools | Where-Object { $_.id -eq $profileId })
+  if ($tool.Count -ne 1) { throw "real desktop fill matrix missing $profileId" }
+  if (-not $tool[0].writeVerified) { throw "real desktop fill matrix did not verify $profileId" }
+  if (-not $tool[0].textPatternVerificationMatched) { throw "real desktop fill matrix did not text-verify $profileId" }
+  if (-not $tool[0].noAutoSubmit) { throw "real desktop fill matrix submit signal for $profileId" }
+}
 if ($null -eq $realDesktopReport.snapshot.focusedCandidateCount) { throw "real desktop tools report missing focused candidate count" }
 if ($null -eq $realDesktopReport.snapshot.caretCandidateCount) { throw "real desktop tools report missing caret candidate count" }
 if (-not $realDesktopReport.checks.foregroundClassified) { throw "real desktop tools report did not classify foreground" }

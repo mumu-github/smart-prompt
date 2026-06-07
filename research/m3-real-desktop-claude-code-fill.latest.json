@@ -1,0 +1,116 @@
+﻿{
+    "schemaVersion":  "m3-real-desktop-tools@1",
+    "createdAt":  "2026-06-07T18:54:28.2505601Z",
+    "platform":  "win32",
+    "pass":  true,
+    "requestedProfiles":  [
+                              "claude-code"
+                          ],
+    "supportedToolProfiles":  [
+                                  "codex",
+                                  "claude-code",
+                                  "hermes"
+                              ],
+    "attach":  {
+                   "requested":  "claude-code",
+                   "attempted":  true,
+                   "windowFound":  true,
+                   "setForeground":  true,
+                   "processName":  "claude",
+                   "titleLength":  6,
+                   "titleHash":  "0615570f9ea13694",
+                   "detectedToolProfile":  "claude-code",
+                   "childProcessCount":  1,
+                   "childToolProcessHintPresent":  true
+               },
+    "foreground":  {
+                       "processName":  "claude",
+                       "pidPresent":  true,
+                       "titleLength":  6,
+                       "titleHash":  "0615570f9ea13694",
+                       "detectedToolProfile":  "claude-code",
+                       "hasTargetForeground":  true
+                   },
+    "snapshot":  {
+                     "exitCode":  0,
+                     "parseOk":  true,
+                     "parseError":  "",
+                     "probeOk":  true,
+                     "candidateCount":  27,
+                     "valuePatternCandidates":  6,
+                     "textPatternCandidates":  10,
+                     "focusableCandidates":  17,
+                     "focusedCandidateCount":  2,
+                     "caretCandidateCount":  0,
+                     "bestCandidateIndex":  20,
+                     "bestCandidateScore":  175,
+                     "caretVisible":  false,
+                     "caretWindowPresent":  false
+                 },
+    "write":  {
+                  "allowed":  true,
+                  "attempted":  true,
+                  "pass":  true,
+                  "verified":  true,
+                  "strategy":  "uia_value_pattern",
+                  "clipboardFallbackAllowed":  true,
+                  "clipboardFallbackTried":  false,
+                  "clipboardRestored":  false,
+                  "textPatternVerificationAllowed":  true,
+                  "textPatternVerificationTried":  true,
+                  "textPatternVerificationMatched":  true,
+                  "reason":  "",
+                  "expectedTitleHashMatched":  true,
+                  "expectedToolProfileMatched":  true,
+                  "candidateIndex":  20,
+                  "exitCode":  0,
+                  "summary":  {
+                                  "requestedTextLength":  35,
+                                  "requestedTextHash":  "f9f66bc7f1ca520d",
+                                  "verifiedTextLength":  35,
+                                  "verifiedTextHash":  "f9f66bc7f1ca520d",
+                                  "textPatternVerificationReadLength":  35,
+                                  "textPatternVerificationTextHash":  "f9f66bc7f1ca520d",
+                                  "autoSubmit":  false,
+                                  "submitSignalCount":  0
+                              }
+              },
+    "coverage":  [
+                     {
+                         "id":  "claude-code",
+                         "status":  "foreground_detected",
+                         "foregroundDetected":  true,
+                         "snapshotCandidateCount":  27,
+                         "realWindowWriteValidated":  true
+                     }
+                 ],
+    "checks":  {
+                   "snapshotOk":  true,
+                   "supportedProfilesPresent":  true,
+                   "foregroundClassified":  true,
+                   "hasTargetForeground":  true,
+                   "writeAttempted":  true,
+                   "writeValidated":  true,
+                   "privacyRedacted":  true,
+                   "rawTitleStored":  false,
+                   "rawElementNamesStored":  false,
+                   "rawInputValuesStored":  false,
+                   "rawPromptTextStored":  false,
+                   "noAutoSubmit":  true
+               },
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "caretTextNotRead":  true,
+                    "promptTextNotRead":  true,
+                    "writtenTextNotStored":  true,
+                    "clipboardTextNotStored":  true,
+                    "fallbackRequiresExplicitAllow":  true,
+                    "textPatternVerificationRequiresExplicitAllow":  true,
+                    "verificationTextNotStored":  true,
+                    "verificationUsesLengthAndHash":  true,
+                    "autoSubmit":  false
+                },
+    "completionImpact":  "all_requested_real_tool_writes_validated"
+}

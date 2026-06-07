@@ -1,5 +1,12 @@
 # M3 Desktop Input Recognition
 
+## 2026-06-08 真实桌面工具端更新
+
+- M3 验收不再把“新开 Windows Terminal/PowerShell 命令行窗口跑 Codex/Claude/Hermes”当作真实工具端证据；这类受控 CLI smoke 只能说明终端宿主机制，不能替代真实桌面工具端。
+- `scripts/check-m3-real-desktop-tools.ps1` 现在支持 `-AttachExistingWindow -AttachProfile <profile>`，只会 attach 到已经打开的真实桌面窗口，不会启动命令行窗口；报告只保存标题长度/hash、进程名、工具画像和候选数量，不保存标题原文、元素名称原文、输入值或 prompt 正文。
+- 最新真实桌面填入矩阵 `research/m3-real-desktop-tools-fill-matrix.latest.json` 已在用户打开的真实 Codex、Claude Code、Hermes 桌面窗口上通过：3/3 前景识别、3/3 写入尝试、3/3 回读验证、`noAutoSubmit:true`。Codex 使用 `clipboard_paste_fallback` 并恢复剪贴板；Claude Code 与 Hermes 使用 `uia_value_pattern`。三者都只保存长度/hash，不保存写入原文。
+- 真实桌面填入仍必须显式开启 `-AllowForegroundWrite`，并且需要 attach/snapshot 后的 title hash 与 tool profile 匹配；对当前用户正在使用的工具窗口，默认不执行填入，因为会改动真实输入框。本轮三工具测试是在用户明确允许并打开真实桌面窗口后执行，不得用新开的命令行窗口替代。
+
 日期：2026-06-07
 
 ## 当前范围

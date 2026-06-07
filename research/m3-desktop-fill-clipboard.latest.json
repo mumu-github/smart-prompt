@@ -1,10 +1,11 @@
 ﻿{
     "schemaVersion":  "m3-windows-fill@1",
-    "createdAt":  "2026-06-07T17:07:55.2372173Z",
+    "createdAt":  "2026-06-07T19:00:09.1663430Z",
     "platform":  "win32",
     "selfTest":  true,
     "confirmForeground":  false,
     "allowClipboardFallback":  true,
+    "allowTextPatternVerification":  false,
     "pass":  true,
     "reason":  "",
     "writeAttempted":  true,
@@ -13,10 +14,12 @@
     "uiaSetValueTried":  false,
     "clipboardFallbackTried":  true,
     "clipboardRestored":  true,
+    "textPatternVerificationTried":  false,
+    "textPatternVerificationMatched":  false,
     "target":  {
                    "index":  0,
                    "controlType":  "ControlType.Pane",
-                   "classNameHash":  "c6d5e7c38138c781",
+                   "classNameHash":  "48a9b8edb760deb3",
                    "hasValuePattern":  false,
                    "hasNativeWindowHandle":  true,
                    "titleLength":  33,
@@ -42,7 +45,10 @@
                     "writtenTextNotStored":  true,
                     "clipboardTextNotStored":  true,
                     "fallbackRequiresExplicitAllow":  true,
+                    "textPatternVerificationRequiresExplicitAllow":  true,
+                    "verificationTextNotStored":  true,
                     "verificationUsesLengthAndHash":  true,
+                    "caretTextNotRead":  true,
                     "promptTextNotRead":  true,
                     "autoSubmit":  false
                 }

@@ -1,5 +1,12 @@
 # 问题与风险
 
+## M3 真实桌面工具输入风险更新 2026-06-08
+
+- 已解决：Claude Code 真实窗口曾因 UIA 元素 `BoundingRectangle` 出现 Infinity/无效坐标导致 snapshot 崩溃；`check-m3-desktop-input.ps1` 与 `check-m3-desktop-fill.ps1` 已改为安全转换 bounds，避免单个坏元素拖垮整次验证。
+- 已解决：真实桌面写入默认候选 0 容易指向整窗 `Document`；`check-m3-real-desktop-tools.ps1` 已改为默认使用 snapshot 的 `bestCandidateIndex`，除非调用方显式传入候选。
+- 已解决：三工具真实桌面输入均已验证 no-auto-submit；但测试文本会留在真实工具输入框中，后续真实内测前应由用户手动清空或覆盖，避免误发送测试标记。
+- 仍需关注：真实 beta adapter 网页内测 Insert 成功率仍为 M3 另一条线，不能因为桌面工具输入通过就标记整个 active goal 完成。
+
 ## M3 caret/focus 输入信号风险 2026-06-08
 
 - 已解决一项观测缺口：输入候选现在会记录 caret/focus/底部位置/超大 Document 等强信号，便于解释为什么某个候选更像输入区。

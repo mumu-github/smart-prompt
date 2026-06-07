@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T16:17:51.2383123Z",
+    "createdAt":  "2026-06-07T19:00:48.1717635Z",
     "pass":  true,
     "port":  17441,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  90,
-                    "sha256":  "2348ac1ab9419355"
+                    "sha256":  "1abba177bc5538f5"
                 },
     "checks":  {
                    "sidecarHealthy":  true,
@@ -24,25 +24,49 @@
     "snapshot":  {
                      "candidates":  [
                                         {
-                                            "automationIdHash":  "ddddca4031fc3a9c",
+                                            "automationIdHash":  "478535db79632752",
                                             "boundingRect":  {
                                                                  "height":  72,
                                                                  "width":  470,
-                                                                 "x":  180,
-                                                                 "y":  203
+                                                                 "x":  50,
+                                                                 "y":  73
                                                              },
-                                            "classNameHash":  "3c90891ab8e92fe6",
+                                            "classNameHash":  "ef47f5b6113964e2",
                                             "controlType":  "ControlType.Pane",
                                             "hasTextPattern":  false,
                                             "hasValuePattern":  false,
                                             "index":  0,
+                                            "inputSignals":  {
+                                                                 "broadDocument":  false,
+                                                                 "caretWindowMatch":  true,
+                                                                 "caretWithinBounds":  true,
+                                                                 "focusedElementMatch":  true,
+                                                                 "hasKeyboardFocus":  true,
+                                                                 "nearWindowBottom":  true,
+                                                                 "score":  150
+                                                             },
                                             "isEnabled":  true,
                                             "isKeyboardFocusable":  false,
                                             "nameHash":  ""
                                         }
                                     ],
-                     "createdAt":  "2026-06-07T16:17:50.8734372Z",
+                     "caret":  {
+                                   "rect":  {
+                                                "height":  12,
+                                                "width":  1,
+                                                "x":  185,
+                                                "y":  76
+                                            },
+                                   "source":  "win32_get_gui_thread_info",
+                                   "supported":  true,
+                                   "virtualCaretMayBeHidden":  true,
+                                   "visible":  true,
+                                   "windowHandlePresent":  true
+                               },
+                     "createdAt":  "2026-06-07T19:00:47.8972414Z",
                      "foreground":  {
+                                        "childProcessCount":  0,
+                                        "childToolProcessHintPresent":  false,
                                         "detectedToolProfile":  "codex",
                                         "expectedToolProfile":  "codex",
                                         "expectedToolProfileMatched":  true,
@@ -64,9 +88,15 @@
                      "selfTest":  true,
                      "selfTestProfile":  "codex",
                      "summary":  {
+                                     "bestCandidateIndex":  0,
+                                     "bestCandidateScore":  150,
                                      "candidateCount":  1,
+                                     "caretCandidateCount":  1,
+                                     "caretVisible":  true,
+                                     "caretWindowPresent":  true,
                                      "detectedToolProfile":  "codex",
                                      "focusableCandidates":  0,
+                                     "focusedCandidateCount":  1,
                                      "textPatternCandidates":  0,
                                      "valuePatternCandidates":  0
                                  },

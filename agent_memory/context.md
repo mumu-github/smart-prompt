@@ -1,5 +1,12 @@
 # 项目上下文
 
+## 当前 M3 真实桌面工具输入上下文 2026-06-08
+
+- 用户明确要求真实桌面工具端验收，不接受新开 Windows Terminal/PowerShell 命令行窗口作为 Codex/Claude Code/Hermes 的替代证据。
+- `scripts/check-m3-real-desktop-tools.ps1` 支持 `-AttachExistingWindow -AttachProfile <profile>`，只 attach 已打开的真实桌面窗口；真实写入必须显式 `-AllowForegroundWrite`，并匹配 title hash 与 tool profile。
+- `research/m3-real-desktop-tools-fill-matrix.latest.json` 是三工具真实桌面填入矩阵证据：Codex、Claude Code、Hermes 均已在真实桌面窗口完成写入和回读验证，且不自动发送。报告只保存长度/hash/布尔状态/策略，不保存标题原文、输入原文或 prompt 正文。
+- 当前 M3 桌面工具部分可认为已取得实机写入证据；active goal 仍未整体完成，因为 beta adapter 真实内测 Insert 成功率仍需继续观察和修复。
+
 ## 当前 M3 caret/focus 输入信号上下文 2026-06-08
 
 - M3 输入识别已新增跟输入强关联的候选信号：Win32 caret 可见性、caret 是否落在候选区域、UIA focused element 匹配、键盘焦点、窗口底部接近度、超大 `ControlType.Document` 标记，以及 `inputSignals`/`bestCandidateIndex`/`bestCandidateScore`。

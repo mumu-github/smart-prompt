@@ -1,5 +1,13 @@
 # 当前进度
 
+## M3 真实桌面 Codex 填入验证更新 2026-06-08
+
+- 用户明确要求不要把新开的命令行窗口当作真实桌面工具端验收；本轮已移除刚生成的 CLI-window smoke 脚本与证据，不把 Windows Terminal/PowerShell 受控窗口计入 M3 完成。
+- `scripts/check-m3-real-desktop-tools.ps1` 已改为支持 `-AttachExistingWindow -AttachProfile <profile>`，只 attach 到已经打开的真实桌面窗口；不会启动命令行窗口，报告只保存标题长度/hash、工具画像、候选数量和写入验证摘要。
+- 已在真实 `Codex.exe` 桌面窗口上跑通受控填入：`research/m3-real-desktop-tools.latest.json` 为 `pass:true`，`write.attempted:true`，`write.verified:true`，`strategy:"clipboard_paste_fallback"`，`textPatternVerificationMatched:true`，`clipboardRestored:true`，`autoSubmit:false`，`submitSignalCount:0`。
+- 为了验证 Codex WebView/Document 类输入区，将 TextPattern 验证读取上限从 8192 提升到 65536；仍只做匹配判断并保存长度/hash，不保存验证文本原文。
+- 已继续完成 Claude Code 与 Hermes：`research/m3-real-desktop-tools-fill-matrix.latest.json` 为 `pass:true`，Codex/Claude Code/Hermes 均 `writeAttempted:true`、`writeVerified:true`、`textPatternVerificationMatched:true`、`noAutoSubmit:true`。Codex 使用 `clipboard_paste_fallback`，Claude Code/Hermes 使用 `uia_value_pattern`。
+
 ## M3 caret/focus 输入信号更新 2026-06-08
 
 - 已回答“能否通过光标或输入强关联指标识别”的问题：可以作为候选排序强信号，但不能单独作为真实工具写入许可。

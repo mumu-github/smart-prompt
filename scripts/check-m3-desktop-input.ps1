@@ -30,12 +30,28 @@ function Get-HashText {
 }
 
 function Get-ToolProfile {
-  param([string]$ProcessName, [string]$WindowTitle)
-  $haystack = "$ProcessName $WindowTitle"
+  param([string]$ProcessName, [string]$WindowTitle, [string[]]$ChildProcessNames = @())
+  $haystack = "$ProcessName $WindowTitle " + (($ChildProcessNames | ForEach-Object { [string]$_ }) -join " ")
   if ($haystack -match "(?i)claude[\s-]*code") { return "claude-code" }
+  if ($haystack -match "(?i)\bclaude\b") { return "claude-code" }
   if ($haystack -match "(?i)\bcodex\b|openai[\s-]*codex") { return "codex" }
   if ($haystack -match "(?i)\bhermes\b") { return "hermes" }
   return "unknown"
+}
+
+function Get-ChildProcessNames {
+  param([int]$ProcessId)
+  $names = @()
+  try {
+    $children = @(Get-CimInstance Win32_Process -Filter "ParentProcessId=$ProcessId" -ErrorAction SilentlyContinue)
+    foreach ($child in $children) {
+      if ($child.Name) {
+        $names += [System.IO.Path]::GetFileNameWithoutExtension([string]$child.Name)
+      }
+      $names += Get-ChildProcessNames -ProcessId ([int]$child.ProcessId)
+    }
+  } catch {}
+  return @($names | Where-Object { $_ } | Select-Object -Unique)
 }
 
 function Get-SelfTestTitle {
@@ -65,12 +81,24 @@ function Get-RuntimeIdKey {
 }
 
 function New-RectObject {
-  param([int]$X, [int]$Y, [int]$Width, [int]$Height)
+  param([object]$X, [object]$Y, [object]$Width, [object]$Height)
+  function ConvertTo-SafeInt {
+    param([object]$Value)
+    try {
+      $number = [double]$Value
+      if ([double]::IsNaN($number) -or [double]::IsInfinity($number)) { return 0 }
+      if ($number -gt [int]::MaxValue) { return [int]::MaxValue }
+      if ($number -lt [int]::MinValue) { return [int]::MinValue }
+      return [int]$number
+    } catch {
+      return 0
+    }
+  }
   return [pscustomobject]@{
-    x = $X
-    y = $Y
-    width = $Width
-    height = $Height
+    x = ConvertTo-SafeInt $X
+    y = ConvertTo-SafeInt $Y
+    width = ConvertTo-SafeInt $Width
+    height = ConvertTo-SafeInt $Height
   }
 }
 
@@ -191,6 +219,7 @@ function Get-UiaSnapshot {
       $processName = ""
     }
   }
+  $childProcessNames = if ($processId -gt 0) { @(Get-ChildProcessNames -ProcessId $processId) } else { @() }
 
   $rootElement = [System.Windows.Automation.AutomationElement]::FromHandle($Handle)
   $elements = @()
@@ -203,7 +232,7 @@ function Get-UiaSnapshot {
   }
   if ($rootElement) {
     $rootBounds = $rootElement.Current.BoundingRectangle
-    $rootRect = New-RectObject -X ([int]$rootBounds.X) -Y ([int]$rootBounds.Y) -Width ([int]$rootBounds.Width) -Height ([int]$rootBounds.Height)
+    $rootRect = New-RectObject -X $rootBounds.X -Y $rootBounds.Y -Width $rootBounds.Width -Height $rootBounds.Height
     $toInspect = New-Object System.Collections.ArrayList
     [void]$toInspect.Add($rootElement)
     $all = $rootElement.FindAll(
@@ -226,7 +255,7 @@ function Get-UiaSnapshot {
       $isTextInput = $controlType -in @("ControlType.Edit", "ControlType.Document") -or $hasValue -or $hasText -or $className -match "(?i)edit|text"
       if (-not $isTextInput) { continue }
       $rect = $element.Current.BoundingRectangle
-      $rectObject = New-RectObject -X ([int]$rect.X) -Y ([int]$rect.Y) -Width ([int]$rect.Width) -Height ([int]$rect.Height)
+      $rectObject = New-RectObject -X $rect.X -Y $rect.Y -Width $rect.Width -Height $rect.Height
       $nativeHandle = [IntPtr]$element.Current.NativeWindowHandle
       $signals = Get-InputSignals -Element $element -Rect $rectObject -RootRect $rootRect -FocusedRuntimeId $focusedRuntimeId -Caret $caret -ControlType $controlType -ClassName $className -HasValuePattern ([bool]$hasValue) -HasTextPattern ([bool]$hasText) -NativeWindowHandle $nativeHandle
       $elements += [pscustomobject]@{
@@ -245,7 +274,7 @@ function Get-UiaSnapshot {
     }
   }
 
-  $toolProfile = Get-ToolProfile -ProcessName $processName -WindowTitle $title
+  $toolProfile = Get-ToolProfile -ProcessName $processName -WindowTitle $title -ChildProcessNames $childProcessNames
   $candidateCount = $elements.Count
   $toolProfileMatched = -not $ExpectedToolProfile -or $toolProfile -eq $ExpectedToolProfile
   $bestCandidate = @($elements | Sort-Object @{ Expression = { [int]$_.inputSignals.score }; Descending = $true }, @{ Expression = { [int]$_.index }; Ascending = $true } | Select-Object -First 1)
@@ -265,6 +294,8 @@ function Get-UiaSnapshot {
       detectedToolProfile = $toolProfile
       expectedToolProfile = $ExpectedToolProfile
       expectedToolProfileMatched = [bool]$toolProfileMatched
+      childProcessCount = $childProcessNames.Count
+      childToolProcessHintPresent = [bool](($childProcessNames -join " ") -match "(?i)\bcodex\b|\bclaude\b|\bhermes\b")
     }
     caret = $caret
     supportedToolProfiles = @("codex", "claude-code", "hermes")

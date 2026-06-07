@@ -1,0 +1,85 @@
+﻿{
+    "schemaVersion":  "m3-real-desktop-tools-fill-matrix@1",
+    "createdAt":  "2026-06-07T18:56:38.1294891Z",
+    "platform":  "win32",
+    "pass":  true,
+    "requestedProfiles":  [
+                              "codex",
+                              "claude-code",
+                              "hermes"
+                          ],
+    "summary":  {
+                    "foregroundDetectedCount":  3,
+                    "writeAttemptedCount":  3,
+                    "writeVerifiedCount":  3,
+                    "noAutoSubmit":  true
+                },
+    "tools":  [
+                  {
+                      "id":  "codex",
+                      "pass":  true,
+                      "foregroundDetected":  true,
+                      "writeAttempted":  true,
+                      "writeVerified":  true,
+                      "writeStrategy":  "clipboard_paste_fallback",
+                      "candidateIndex":  0,
+                      "snapshotCandidateCount":  116,
+                      "textPatternVerificationMatched":  true,
+                      "clipboardFallbackTried":  true,
+                      "clipboardRestored":  true,
+                      "noAutoSubmit":  true,
+                      "requestedTextLength":  30,
+                      "requestedTextHash":  "9ee87f327457fa13",
+                      "verifiedTextLength":  30,
+                      "verifiedTextHash":  "9ee87f327457fa13"
+                  },
+                  {
+                      "id":  "claude-code",
+                      "pass":  true,
+                      "foregroundDetected":  true,
+                      "writeAttempted":  true,
+                      "writeVerified":  true,
+                      "writeStrategy":  "uia_value_pattern",
+                      "candidateIndex":  20,
+                      "snapshotCandidateCount":  27,
+                      "textPatternVerificationMatched":  true,
+                      "clipboardFallbackTried":  false,
+                      "clipboardRestored":  false,
+                      "noAutoSubmit":  true,
+                      "requestedTextLength":  35,
+                      "requestedTextHash":  "f9f66bc7f1ca520d",
+                      "verifiedTextLength":  35,
+                      "verifiedTextHash":  "f9f66bc7f1ca520d"
+                  },
+                  {
+                      "id":  "hermes",
+                      "pass":  true,
+                      "foregroundDetected":  true,
+                      "writeAttempted":  true,
+                      "writeVerified":  true,
+                      "writeStrategy":  "uia_value_pattern",
+                      "candidateIndex":  131,
+                      "snapshotCandidateCount":  144,
+                      "textPatternVerificationMatched":  true,
+                      "clipboardFallbackTried":  false,
+                      "clipboardRestored":  false,
+                      "noAutoSubmit":  true,
+                      "requestedTextLength":  31,
+                      "requestedTextHash":  "30fea09b54bf60ff",
+                      "verifiedTextLength":  31,
+                      "verifiedTextHash":  "30fea09b54bf60ff"
+                  }
+              ],
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "promptTextNotRead":  true,
+                    "writtenTextNotStored":  true,
+                    "clipboardTextNotStored":  true,
+                    "verificationTextNotStored":  true,
+                    "verificationUsesLengthAndHash":  true,
+                    "autoSubmit":  false
+                },
+    "completionImpact":  "all_three_real_desktop_tool_writes_validated"
+}
