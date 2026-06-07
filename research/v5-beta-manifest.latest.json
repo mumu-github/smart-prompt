@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-06-07T12:27:09.818Z",
+  "createdAt": "2026-06-07T12:28:22.131Z",
   "pass": true,
   "releaseReady": true,
   "tagName": "v0.2.0-beta.1",
@@ -21,6 +21,7 @@
       "docsPrdDirty": true,
       "docsPrdStaged": false,
       "recentSubjects": [
+        "Ship V5 beta native sidecar release",
         "Add V5 beta release critic scaffold",
         "Record V3 V4 evidence and release critics",
         "Harden extension prompt card and adapters",
@@ -49,8 +50,7 @@
         "test(v2): require runtime evidence reports",
         "test(v2): support cdp attach for claude evidence",
         "feat(v2): support provider-specific llm keys",
-        "test(v2): harden extension privacy context",
-        "feat(v2): add auto llm provider readiness"
+        "test(v2): harden extension privacy context"
       ]
     },
     "BETA_RELEASE_PACKAGE": {
@@ -94,35 +94,9 @@
   },
   "worktree": {
     "dirtyFiles": [
-      "apps/desktop-shell/index.html",
-      "apps/desktop-shell/scripts/prepare-sidecar.js",
-      "apps/desktop-shell/src-tauri/src/main.rs",
-      "apps/desktop-shell/src/app.js",
-      "apps/desktop-shell/src/styles.css",
-      "apps/desktop-shell/tests/desktop-shell-interaction.test.js",
-      "apps/desktop-shell/tests/desktop-shell.test.js",
-      "apps/local-service/README.md",
-      "apps/local-service/src/server.js",
-      "apps/local-service/src/store.js",
-      "apps/local-service/tests/local-service.test.js",
-      "docs/prd.md",
-      "research/v4-installer-smoke.latest.json",
-      "research/v4-release-manifest.latest.json",
-      "research/v5-beta-manifest.latest.json",
-      "scripts/check-v4-installed-app-runtime.js",
-      "scripts/check-v4-installer-smoke.ps1",
-      "scripts/check-v4-sidecar-service.ps1",
-      "scripts/write-v4-release-manifest.js",
-      "scripts/write-v5-beta-manifest.js"
+      "docs/prd.md"
     ],
-    "untrackedFiles": [
-      "apps/local-service-sidecar/Cargo.lock",
-      "apps/local-service-sidecar/Cargo.toml",
-      "apps/local-service-sidecar/src/main.rs",
-      "docs/releases/v0.2.0-beta.1.md",
-      "research/v5-beta-checksums.sha256",
-      "research/v5-pilot-loop.md"
-    ],
+    "untrackedFiles": [],
     "stagedFiles": []
   },
   "evidenceHashes": {
