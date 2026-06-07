@@ -1,6 +1,6 @@
 {
     "schemaVersion":  "m3-installed-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T15:08:13.2131201Z",
+    "createdAt":  "2026-06-07T15:31:40.7385286Z",
     "pass":  true,
     "remotePort":  9241,
     "servicePort":  17461,
@@ -10,18 +10,24 @@
                    "installerSmokePass":  true,
                    "bundledNativeSidecar":  true,
                    "bundledDesktopInputProbe":  true,
+                   "bundledDesktopFillProbe":  true,
                    "installedAppStartedSidecar":  true,
                    "installedServiceHealth":  true,
                    "desktopSnapshotFromInstalledSidecar":  true,
                    "desktopSnapshotSelfTestPass":  true,
                    "desktopSnapshotToolProfiles":  true,
                    "desktopSnapshotPrivacyRedacted":  true,
+                   "desktopFillFromInstalledSidecar":  true,
+                   "desktopFillSelfTestPass":  true,
+                   "desktopFillToolProfiles":  true,
+                   "desktopFillPrivacyRedacted":  true,
                    "installedAppStoppedSidecar":  true
                },
     "installer":  "apps/desktop-shell/src-tauri/target/release/bundle/nsis/Smart Prompt_0.2.0_x64-setup.exe",
     "installedExeName":  "smart-prompt-desktop.exe",
     "bundledSidecarExecutable":  "resources/smart-prompt-sidecar/bin/local-service-sidecar.exe",
     "bundledDesktopInputProbe":  "resources/smart-prompt-sidecar/scripts/check-m3-desktop-input.ps1",
+    "bundledDesktopFillProbe":  "resources/smart-prompt-sidecar/scripts/check-m3-desktop-fill.ps1",
     "desktopInputSnapshot":  {
                                  "ok":  true,
                                  "schemaVersion":  "m3-windows-uia@1",
@@ -40,6 +46,31 @@
                                                  "titleRedacted":  true
                                              }
                              },
+    "desktopFill":  {
+                        "ok":  true,
+                        "schemaVersion":  "m3-windows-fill@1",
+                        "selfTest":  true,
+                        "pass":  true,
+                        "writeAttempted":  true,
+                        "verified":  true,
+                        "strategy":  "win32_set_window_text_fallback",
+                        "requestedTextLength":  35,
+                        "verifiedTextLength":  35,
+                        "supportedToolProfiles":  [
+                                                      "codex",
+                                                      "claude-code",
+                                                      "hermes"
+                                                  ],
+                        "privacy":  {
+                                        "autoSubmit":  false,
+                                        "elementNamesHashed":  true,
+                                        "elementValuesNotReadBeforeWrite":  true,
+                                        "promptTextNotRead":  true,
+                                        "titleRedacted":  true,
+                                        "verificationUsesLengthAndHash":  true,
+                                        "writtenTextNotStored":  true
+                                    }
+                    },
     "failedChecks":  [
 
                      ]

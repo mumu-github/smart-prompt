@@ -5,7 +5,7 @@ const { buildCard, detectMode, rankSkills } = require("../../../packages/shared/
 const { generateWithConfiguredProvider, getProviderStatuses, redactKey } = require("../../../packages/shared/llm-gateway");
 const { createStore, DEFAULT_PORT } = require("./store");
 const { importSkillFolder } = require("./skill-library");
-const { getDesktopInputSnapshot } = require("./desktop-input-detector");
+const { fillDesktopInput, getDesktopInputSnapshot } = require("./desktop-input-detector");
 
 const DEFAULT_ALLOWED_ORIGINS = Object.freeze([
   /^chrome-extension:\/\/[a-z]{32}$/i,
@@ -109,6 +109,7 @@ function isAuthorized(req, store, options = {}) {
 function createApp(store = createStore(), options = {}) {
   const generateWithLlm = options.generateWithLlm || generateWithConfiguredProvider;
   const desktopInputSnapshot = options.getDesktopInputSnapshot || getDesktopInputSnapshot;
+  const desktopFill = options.fillDesktopInput || fillDesktopInput;
 
   return async function app(req, res) {
     const url = new URL(req.url, "http://127.0.0.1");
@@ -322,6 +323,14 @@ function createApp(store = createStore(), options = {}) {
         return;
       }
 
+      if (req.method === "POST" && url.pathname === "/desktop/fill") {
+        const body = await readJson(req);
+        const selfTest = url.searchParams.get("selfTest") === "1" || body.selfTest === true;
+        const fill = await desktopFill({ selfTest, text: body.text || body.prompt || "" });
+        sendJson(req, res, 200, { ok: true, fill }, options);
+        return;
+      }
+
       if (req.method === "GET" && url.pathname === "/metrics") {
         sendJson(req, res, 200, { ok: true, metrics: store.getMetrics() }, options);
         return;
@@ -400,10 +409,11 @@ function startServer({
   store = createStore(),
   generateWithLlm,
   getDesktopInputSnapshot: desktopInputSnapshot,
+  fillDesktopInput: desktopFill,
   allowedOrigins = [],
   disableAuth = false
 } = {}) {
-  const server = http.createServer(createApp(store, { generateWithLlm, getDesktopInputSnapshot: desktopInputSnapshot, allowedOrigins, disableAuth }));
+  const server = http.createServer(createApp(store, { generateWithLlm, getDesktopInputSnapshot: desktopInputSnapshot, fillDesktopInput: desktopFill, allowedOrigins, disableAuth }));
   server.listen(port, "127.0.0.1");
   return server;
 }

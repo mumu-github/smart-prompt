@@ -41,12 +41,17 @@ $reportObject = [ordered]@{
     installerSmokePass = $false
     bundledNativeSidecar = $false
     bundledDesktopInputProbe = $false
+    bundledDesktopFillProbe = $false
     installedAppStartedSidecar = $false
     installedServiceHealth = $false
     desktopSnapshotFromInstalledSidecar = $false
     desktopSnapshotSelfTestPass = $false
     desktopSnapshotToolProfiles = $false
     desktopSnapshotPrivacyRedacted = $false
+    desktopFillFromInstalledSidecar = $false
+    desktopFillSelfTestPass = $false
+    desktopFillToolProfiles = $false
+    desktopFillPrivacyRedacted = $false
     installedAppStoppedSidecar = $false
   }
 }
@@ -79,21 +84,29 @@ try {
   $raw = Get-Content -Raw -Encoding UTF8 $rawPath | ConvertFrom-Json
   $runtime = $raw.installedRuntime
   $snapshot = $runtime.desktopInputSnapshot
+  $fill = $runtime.desktopFill
 
   $reportObject.installer = $raw.installer
   $reportObject.installedExeName = $raw.installedExeName
   $reportObject.bundledSidecarExecutable = $runtime.bundledSidecarExecutable
   $reportObject.bundledDesktopInputProbe = $runtime.bundledDesktopInputProbe
+  $reportObject.bundledDesktopFillProbe = $runtime.bundledDesktopFillProbe
   $reportObject.desktopInputSnapshot = $snapshot
+  $reportObject.desktopFill = $fill
   $reportObject.checks.installerSmokePass = [bool]$raw.pass
   $reportObject.checks.bundledNativeSidecar = [bool]$runtime.checks.bundledNativeSidecar
   $reportObject.checks.bundledDesktopInputProbe = [bool]$runtime.checks.bundledDesktopInputProbe
+  $reportObject.checks.bundledDesktopFillProbe = [bool]$runtime.checks.bundledDesktopFillProbe
   $reportObject.checks.installedAppStartedSidecar = [bool]$runtime.checks.localServiceStartedFromInstalledApp
   $reportObject.checks.installedServiceHealth = [bool]$runtime.checks.serviceHealthFromInstalledApp
   $reportObject.checks.desktopSnapshotFromInstalledSidecar = [bool]$runtime.checks.desktopSnapshotFromInstalledSidecar
   $reportObject.checks.desktopSnapshotSelfTestPass = [bool]$runtime.checks.desktopSnapshotSelfTestPass
   $reportObject.checks.desktopSnapshotToolProfiles = [bool]$runtime.checks.desktopSnapshotToolProfiles
   $reportObject.checks.desktopSnapshotPrivacyRedacted = [bool]$runtime.checks.desktopSnapshotPrivacyRedacted
+  $reportObject.checks.desktopFillFromInstalledSidecar = [bool]$runtime.checks.desktopFillFromInstalledSidecar
+  $reportObject.checks.desktopFillSelfTestPass = [bool]$runtime.checks.desktopFillSelfTestPass
+  $reportObject.checks.desktopFillToolProfiles = [bool]$runtime.checks.desktopFillToolProfiles
+  $reportObject.checks.desktopFillPrivacyRedacted = [bool]$runtime.checks.desktopFillPrivacyRedacted
   $reportObject.checks.installedAppStoppedSidecar = [bool]$runtime.checks.localServiceStoppedFromInstalledApp
   $failedChecks = @()
   foreach ($entry in $reportObject.checks.GetEnumerator()) {

@@ -358,6 +358,46 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
           promptTextNotRead: true
         }
       };
+    },
+    fillDesktopInput: async ({ selfTest, text }) => {
+      assert.equal(selfTest, true);
+      assert.equal(text, "M3 Fill Raw Test Text");
+      return {
+        schemaVersion: "m3-windows-fill@1",
+        createdAt: new Date().toISOString(),
+        platform: "win32",
+        selfTest,
+        pass: true,
+        writeAttempted: true,
+        verified: true,
+        strategy: "uia_value_pattern",
+        uiaSetValueTried: true,
+        target: {
+          controlType: "ControlType.Edit",
+          classNameHash: "class-hash",
+          hasValuePattern: true,
+          titleLength: 34,
+          titleHash: "title-hash"
+        },
+        summary: {
+          requestedTextLength: text.length,
+          requestedTextHash: "request-hash",
+          verifiedTextLength: text.length,
+          verifiedTextHash: "request-hash",
+          autoSubmit: false,
+          submitSignalCount: 0
+        },
+        supportedToolProfiles: ["codex", "claude-code", "hermes"],
+        privacy: {
+          titleRedacted: true,
+          elementNamesHashed: true,
+          elementValuesNotReadBeforeWrite: true,
+          writtenTextNotStored: true,
+          verificationUsesLengthAndHash: true,
+          promptTextNotRead: true,
+          autoSubmit: false
+        }
+      };
     }
   });
   await new Promise((resolve) => server.once("listening", resolve));
@@ -412,6 +452,22 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     assert.equal(desktopSnapshot.body.snapshot.privacy.elementValuesNotRead, true);
     assert.ok(!JSON.stringify(desktopSnapshot.body.snapshot).includes("codex Smart Prompt"));
     assert.ok(!JSON.stringify(desktopSnapshot.body.snapshot).includes("M3 UIA self test input"));
+
+    const unauthDesktopFill = await request(port, "POST", "/desktop/fill?selfTest=1", { text: "M3 Fill Raw Test Text" });
+    assert.equal(unauthDesktopFill.status, 401);
+    const desktopFill = await authed("POST", "/desktop/fill?selfTest=1", { text: "M3 Fill Raw Test Text" });
+    assert.equal(desktopFill.status, 200);
+    assert.equal(desktopFill.body.fill.schemaVersion, "m3-windows-fill@1");
+    assert.equal(desktopFill.body.fill.pass, true);
+    assert.equal(desktopFill.body.fill.writeAttempted, true);
+    assert.equal(desktopFill.body.fill.verified, true);
+    assert.equal(desktopFill.body.fill.summary.autoSubmit, false);
+    assert.equal(desktopFill.body.fill.summary.submitSignalCount, 0);
+    assert.deepEqual(desktopFill.body.fill.supportedToolProfiles, ["codex", "claude-code", "hermes"]);
+    assert.equal(desktopFill.body.fill.privacy.writtenTextNotStored, true);
+    assert.equal(desktopFill.body.fill.privacy.verificationUsesLengthAndHash, true);
+    assert.equal(desktopFill.body.fill.privacy.autoSubmit, false);
+    assert.ok(!JSON.stringify(desktopFill.body.fill).includes("M3 Fill Raw Test Text"));
 
     const providers = await authed("GET", "/llm/providers");
     assert.equal(providers.status, 200);

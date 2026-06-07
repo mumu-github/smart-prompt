@@ -24,6 +24,19 @@ async function getJson(url, headers = {}) {
   return response.json();
 }
 
+async function postJson(url, body, headers = {}) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      ...headers,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(body)
+  });
+  if (!response.ok) throw new Error(`POST ${url} failed: ${response.status}`);
+  return response.json();
+}
+
 async function waitForTarget(remotePort) {
   const deadline = Date.now() + 90000;
   while (Date.now() < deadline) {
@@ -144,10 +157,15 @@ function findRelativeFile(root, predicate) {
       installDir,
       (file) => /smart-prompt-sidecar\/scripts\/check-m3-desktop-input\.ps1$/i.test(file.replace(/\\/g, "/"))
     ),
+    bundledDesktopFillProbe: findRelativeFile(
+      installDir,
+      (file) => /smart-prompt-sidecar\/scripts\/check-m3-desktop-fill\.ps1$/i.test(file.replace(/\\/g, "/"))
+    ),
     checks: {
       bundledSidecarResource: false,
       bundledNativeSidecar: false,
       bundledDesktopInputProbe: false,
+      bundledDesktopFillProbe: false,
       webviewTarget: false,
       tauriApi: false,
       sourceCommandBundled: false,
@@ -157,6 +175,10 @@ function findRelativeFile(root, predicate) {
       desktopSnapshotSelfTestPass: false,
       desktopSnapshotPrivacyRedacted: false,
       desktopSnapshotToolProfiles: false,
+      desktopFillFromInstalledSidecar: false,
+      desktopFillSelfTestPass: false,
+      desktopFillPrivacyRedacted: false,
+      desktopFillToolProfiles: false,
       localServiceStoppedFromInstalledApp: false
     }
   };
@@ -166,6 +188,7 @@ function findRelativeFile(root, predicate) {
     report.checks.bundledSidecarResource = Boolean(report.bundledSidecarExecutable);
     report.checks.bundledNativeSidecar = Boolean(report.bundledSidecarExecutable);
     report.checks.bundledDesktopInputProbe = Boolean(report.bundledDesktopInputProbe);
+    report.checks.bundledDesktopFillProbe = Boolean(report.bundledDesktopFillProbe);
 
     const target = await waitForTarget(remotePort);
     report.checks.webviewTarget = true;
@@ -220,6 +243,39 @@ function findRelativeFile(root, predicate) {
     report.checks.desktopSnapshotToolProfiles = profiles.includes("codex")
       && profiles.includes("claude-code")
       && profiles.includes("hermes");
+
+    const fillText = "M3 installed desktop fill self-test";
+    const fillResponse = await postJson(
+      `http://127.0.0.1:${servicePort}/desktop/fill?selfTest=1`,
+      { text: fillText },
+      { Authorization: `Bearer ${auth.auth.token}` }
+    );
+    const fill = fillResponse.fill || {};
+    const fillProfiles = Array.isArray(fill.supportedToolProfiles) ? fill.supportedToolProfiles : [];
+    report.desktopFill = {
+      ok: Boolean(fillResponse.ok),
+      schemaVersion: fill.schemaVersion || "",
+      selfTest: Boolean(fill.selfTest),
+      pass: Boolean(fill.pass),
+      writeAttempted: Boolean(fill.writeAttempted),
+      verified: Boolean(fill.verified),
+      strategy: fill.strategy || "",
+      requestedTextLength: Number(fill.summary?.requestedTextLength || 0),
+      verifiedTextLength: Number(fill.summary?.verifiedTextLength || 0),
+      supportedToolProfiles: fillProfiles,
+      privacy: fill.privacy || {}
+    };
+    report.checks.desktopFillFromInstalledSidecar = Boolean(fillResponse.ok);
+    report.checks.desktopFillSelfTestPass = Boolean(fill.pass)
+      && Boolean(fill.writeAttempted)
+      && Boolean(fill.verified);
+    report.checks.desktopFillPrivacyRedacted = Boolean(fill.privacy?.writtenTextNotStored)
+      && Boolean(fill.privacy?.verificationUsesLengthAndHash)
+      && Boolean(fill.privacy?.autoSubmit) === false
+      && JSON.stringify(fill).includes(fillText) === false;
+    report.checks.desktopFillToolProfiles = fillProfiles.includes("codex")
+      && fillProfiles.includes("claude-code")
+      && fillProfiles.includes("hermes");
 
     const runningStatus = await evaluate(client, `window.__TAURI__.core.invoke("get_local_service_status")`);
     assert.equal(runningStatus, "running");

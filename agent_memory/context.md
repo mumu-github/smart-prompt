@@ -1,5 +1,13 @@
 # 项目上下文
 
+## 当前 M3 上下文 2026-06-07
+
+- 当前 active goal 仍是 M3：一方面收集新 beta adapter 的真实内测 Insert 数据，另一方面推进 Windows UIA/macOS AX 桌面输入框识别，覆盖 Codex、Claude Code、Hermes 等桌面/CLI 工具。
+- Windows 路径已从“只识别快照”推进到“self-test 写回”：`GET /desktop/input-snapshot` 与 `POST /desktop/fill` 在 local-service、native sidecar、安装包 bundled sidecar 中都有机器证据。
+- 关键证据入口：`research/m3-desktop-input.latest.json`、`research/m3-desktop-fill.latest.json`、`research/m3-sidecar-desktop-input.latest.json`、`research/m3-sidecar-desktop-fill.latest.json`、`research/m3-installed-sidecar-desktop-input.latest.json`、`research/m3-pilot-adapters.latest.json`。
+- `docs/prd.md` 当前是 v0.2 beta PRD：V5 发布包和 release-ready manifest 已完成；M3 为进行中。PRD 不能写成“真实桌面工具已完成”，因为 Codex/Claude Code/Hermes 真实窗口写回和 macOS AX 尚未验收。
+- 当前写回 self-test 主要证明链路、auth、打包、隐私脱敏和 no-auto-submit；它不等同于在真实工具窗口里填入成功。
+
 ## M3 Pilot 与桌面输入识别上下文 2026-06-07
 
 - 当前 active goal 是 M3：一方面跑真实内测数据观察 workBuddy、Trae、Doubao、DeepSeek 新 adapter 的 Insert 成功率和失败原因；另一方面进入 Windows UIA/macOS AX 桌面输入框识别，覆盖 Codex、Claude Code、Hermes。

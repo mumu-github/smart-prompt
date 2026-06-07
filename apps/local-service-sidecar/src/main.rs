@@ -279,6 +279,10 @@ fn route(
             "ok": true,
             "snapshot": desktop_input_snapshot(url)?
         }))),
+        (Method::Post, "/desktop/fill") => Ok((200, json!({
+            "ok": true,
+            "fill": desktop_input_fill(url, &body)?
+        }))),
         _ => Ok((404, json!({ "ok": false, "error": { "code": "not_found", "message": format!("{path}") } }))),
     }
 }
@@ -795,7 +799,7 @@ fn desktop_input_snapshot(url: &str) -> Result<Value, String> {
         }));
     }
 
-    let script = find_m3_desktop_input_script()
+    let script = find_m3_script("check-m3-desktop-input.ps1")
         .ok_or_else(|| "M3 desktop input probe script not found near native sidecar.".to_string())?;
     let mut command = Command::new("powershell");
     command
@@ -821,6 +825,58 @@ fn desktop_input_snapshot(url: &str) -> Result<Value, String> {
     Ok(value)
 }
 
+fn desktop_input_fill(url: &str, body: &Value) -> Result<Value, String> {
+    let self_test = url.contains("selfTest=1")
+        || body.get("selfTest").and_then(Value::as_bool).unwrap_or(false);
+    if !cfg!(target_os = "windows") {
+        return Ok(json!({
+            "schemaVersion": "m3-windows-fill@1",
+            "createdAt": now(),
+            "platform": std::env::consts::OS,
+            "selfTest": self_test,
+            "pass": false,
+            "reason": "macos_ax_pending_or_unsupported_platform",
+            "writeAttempted": false,
+            "verified": false,
+            "supportedToolProfiles": ["codex", "claude-code", "hermes"],
+            "privacy": desktop_fill_privacy()
+        }));
+    }
+
+    let script = find_m3_script("check-m3-desktop-fill.ps1")
+        .ok_or_else(|| "M3 desktop fill probe script not found near native sidecar.".to_string())?;
+    let mut command = Command::new("powershell");
+    command
+        .arg("-NoProfile")
+        .arg("-ExecutionPolicy")
+        .arg("Bypass")
+        .arg("-File")
+        .arg(script)
+        .arg("-JsonOnly");
+    if self_test {
+        command.arg("-SelfTest");
+    }
+    let text = body
+        .get("text")
+        .or_else(|| body.get("prompt"))
+        .and_then(Value::as_str)
+        .unwrap_or("");
+    if !text.is_empty() {
+        command.arg("-Text").arg(text);
+    }
+    let output = command.output().map_err(|error| error.to_string())?;
+    if !output.status.success() {
+        return Err(format!(
+            "M3 desktop fill probe failed: {}",
+            String::from_utf8_lossy(&output.stderr)
+        ));
+    }
+    let text = String::from_utf8_lossy(&output.stdout).trim_start_matches('\u{feff}').trim().to_string();
+    let mut value: Value = serde_json::from_str(&text).map_err(|error| format!("Invalid desktop fill JSON: {error}"))?;
+    ensure_desktop_fill_privacy(&mut value);
+    Ok(value)
+}
+
 fn desktop_input_privacy() -> Value {
     json!({
         "titleRedacted": true,
@@ -837,7 +893,26 @@ fn ensure_desktop_input_privacy(value: &mut Value) {
     }
 }
 
-fn find_m3_desktop_input_script() -> Option<PathBuf> {
+fn desktop_fill_privacy() -> Value {
+    json!({
+        "titleRedacted": true,
+        "elementNamesHashed": true,
+        "elementValuesNotReadBeforeWrite": true,
+        "writtenTextNotStored": true,
+        "verificationUsesLengthAndHash": true,
+        "promptTextNotRead": true,
+        "autoSubmit": false
+    })
+}
+
+fn ensure_desktop_fill_privacy(value: &mut Value) {
+    if let Some(object) = value.as_object_mut() {
+        object.insert("privacy".to_string(), desktop_fill_privacy());
+        object.entry("supportedToolProfiles".to_string()).or_insert_with(|| json!(["codex", "claude-code", "hermes"]));
+    }
+}
+
+fn find_m3_script(script_name: &str) -> Option<PathBuf> {
     let mut roots = Vec::new();
     if let Ok(current_exe) = std::env::current_exe() {
         roots.extend(current_exe.ancestors().map(Path::to_path_buf));
@@ -848,7 +923,7 @@ fn find_m3_desktop_input_script() -> Option<PathBuf> {
     let manifest_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
     roots.extend(manifest_dir.ancestors().map(Path::to_path_buf));
     roots.into_iter()
-        .map(|root| root.join("scripts").join("check-m3-desktop-input.ps1"))
+        .map(|root| root.join("scripts").join(script_name))
         .find(|candidate| candidate.exists())
 }
 

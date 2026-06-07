@@ -15,27 +15,38 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - 输出 `research/m3-desktop-input.latest.json`。
 - 报告不保存窗口标题原文、元素名称原文或输入值，只保存长度、hash、候选数量和 UIA pattern 能力。
 
+已新增 `scripts/check-m3-desktop-fill.ps1`：
+
+- `-SelfTest` 会创建临时 WinForms TextBox，并优先使用 UIA `ValuePattern.SetValue` 写入文本。
+- 如果 UIA value pattern 不可用，会使用 Win32 `SetWindowText` 作为 self-test fallback。
+- 输出 `research/m3-desktop-fill.latest.json`。
+- 报告只保存写入文本长度、hash、写入策略和校验结果，不保存 prompt 原文，不触发提交信号。
+
 已新增 local-service 受保护接口：
 
 - `GET /desktop/input-snapshot`
 - `GET /desktop/input-snapshot?selfTest=1`
+- `POST /desktop/fill`
+- `POST /desktop/fill?selfTest=1`
 
-该接口返回当前桌面输入快照，仍需要 per-install auth token。
+这些接口返回当前桌面输入快照或写回校验结果，仍需要 per-install auth token。
 
 已新增 native sidecar 受保护接口：
 
 - `GET /desktop/input-snapshot`
 - `GET /desktop/input-snapshot?selfTest=1`
+- `POST /desktop/fill`
+- `POST /desktop/fill?selfTest=1`
 
-当前 Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1`，并由 `scripts/check-m3-sidecar-desktop-input.ps1` 启动 native sidecar 做端到端 smoke。
+当前 Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1` 和 `scripts/check-m3-desktop-fill.ps1`，并由 `scripts/check-m3-sidecar-desktop-input.ps1`、`scripts/check-m3-sidecar-desktop-fill.ps1` 启动 native sidecar 做端到端 smoke。
 
 安装包路径也已新增 M3 smoke：
 
-- `apps/desktop-shell/scripts/prepare-sidecar.js` 会把 `check-m3-desktop-input.ps1` 打入 `resources/smart-prompt-sidecar/scripts/`。
-- `scripts/check-m3-installed-sidecar-desktop-input.ps1` 会构建桌面壳、静默安装 NSIS 包、从安装后的 app 启动 bundled native sidecar，再调用 `GET /desktop/input-snapshot?selfTest=1`。
+- `apps/desktop-shell/scripts/prepare-sidecar.js` 会把 `check-m3-desktop-input.ps1` 和 `check-m3-desktop-fill.ps1` 打入 `resources/smart-prompt-sidecar/scripts/`。
+- `scripts/check-m3-installed-sidecar-desktop-input.ps1` 会构建桌面壳、静默安装 NSIS 包、从安装后的 app 启动 bundled native sidecar，再调用 `GET /desktop/input-snapshot?selfTest=1` 与 `POST /desktop/fill?selfTest=1`。
 - 证据文件：`research/m3-installed-sidecar-desktop-input.latest.json`，当前 `pass:true`。
 
-这证明 Windows 安装包内 sidecar snapshot 路径可用；M3 仍未完成，因为还缺 macOS AX 和 Codex/Claude Code/Hermes 真实桌面输入框写回。
+这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用；M3 仍未完成，因为还缺 macOS AX 和 Codex/Claude Code/Hermes 真实工具窗口写回。
 
 ## 工具画像
 

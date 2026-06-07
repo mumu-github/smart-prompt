@@ -1,5 +1,13 @@
 # 问题与风险
 
+## 当前 M3/V5 剩余风险 2026-06-07
+
+- 已解决：Windows snapshot/fill self-test、local-service 接口、native sidecar 接口、安装包 bundled sidecar smoke 均已通过 M3 critic；报告只保留长度、hash、策略和布尔校验，不保存 raw prompt 或写入文本。
+- 仍需验证：Codex、Claude Code、Hermes 真实工具窗口写回尚未通过实机验收；当前 fill 证据来自临时 WinForms TextBox self-test，写入策略实际为 `win32_set_window_text_fallback`，不是目标工具的真实输入框成功。
+- 仍需实现：macOS AX 只有 PRD/文档中的契约与 guarded pending 方向，尚未实现或验收。
+- 仍需内测：workBuddy、Trae、Doubao、DeepSeek 当前 pilot Insert 成功率为 0；失败原因已经细化，但需要登录态和正确 composer 路由继续修 adapter selector。
+- 发布注意：本轮改动已重新构建本地安装包用于 M3 smoke，但不代表 GitHub 上 `v0.2.0-beta.1` release assets 已随之更新；若要对外发布这些 M3 fill 改动，应新建后续 beta tag/release 或显式替换 release assets。
+
 ## M3 Pilot 与桌面输入识别风险 2026-06-07
 
 - 仍需内测修复：`research/m3-pilot-adapters.latest.json` 当前证明 workBuddy、Trae、Doubao、DeepSeek 四站正式扩展加载成功，但 Insert 成功率为 0；失败原因已细化为 `no_input_candidates_on_loaded_page: 3` 与 `public_or_marketing_page_no_visible_composer: 1`，需要用登录态/正确 composer 路由继续定位。

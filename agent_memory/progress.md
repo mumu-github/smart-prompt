@@ -1,5 +1,15 @@
 # 当前进度
 
+## M3 桌面写回与 PRD 状态 2026-06-07
+
+- 本轮已补齐 Windows 桌面写回 self-test：`scripts/check-m3-desktop-fill.ps1` 生成 `research/m3-desktop-fill.latest.json`，当前 `pass:true`；写入策略为 `win32_set_window_text_fallback`，已验证写入和回读 hash/length，不保存写入文本原文，不自动提交。
+- 已补齐 local-service `POST /desktop/fill`，并在 `apps/local-service/tests/local-service.test.js` 覆盖 auth、工具画像、隐私脱敏和“不泄露 raw text”。
+- 已补齐 native sidecar `POST /desktop/fill`，并新增 `scripts/check-m3-sidecar-desktop-fill.ps1`；`research/m3-sidecar-desktop-fill.latest.json` 当前 `pass:true`。
+- 已补齐安装包 bundled sidecar fill smoke：`prepare-sidecar.js` 会打包 `check-m3-desktop-fill.ps1`，`research/m3-installed-sidecar-desktop-input.latest.json` 当前 `pass:true`，包含 `desktopFillFromInstalledSidecar`、`desktopFillSelfTestPass`、`desktopFillPrivacyRedacted`。
+- 已同步 `docs/prd.md` 与 `docs/m3-desktop-input.md`：PRD 当前是 v0.2 beta 收口版；M3 标记为进行中，Windows self-test/snapshot/fill 链路已通过，但真实 Codex/Claude Code/Hermes 工具窗口写回和 macOS AX 仍待完成。
+- 已验证：`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`cargo check` in `apps/local-service-sidecar` PASS；`scripts/check-m3-desktop-fill.ps1 -SelfTest` PASS；`scripts/check-m3-sidecar-desktop-fill.ps1` PASS；`scripts/check-m3-installed-sidecar-desktop-input.ps1` PASS；`scripts/critic-m3.ps1` PASS；`git diff --check` PASS。
+- 当前 beta adapter pilot 仍是 4 次 Insert attempts、0 次成功；失败原因保持为 `no_input_candidates_on_loaded_page: 3` 和 `public_or_marketing_page_no_visible_composer: 1`，后续需要真实登录态/正确 composer 路由继续修 selector。
+
 ## M3 Pilot 与桌面输入识别进度 2026-06-07
 
 - 已创建 OMX autoresearch-goal mission：`smart-prompt-m3-pilot-metrics-and-desktop-input-`，critic 命令为 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-m3.ps1`。

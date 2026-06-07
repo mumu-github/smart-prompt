@@ -1,0 +1,73 @@
+﻿{
+    "schemaVersion":  "m3-sidecar-desktop-fill@1",
+    "createdAt":  "2026-06-07T15:31:38.7585088Z",
+    "pass":  true,
+    "port":  17442,
+    "dataDir":  {
+                    "redacted":  "REDACTED_PATH",
+                    "length":  95,
+                    "sha256":  "3c0e34b62a2248d8"
+                },
+    "requestedText":  {
+                          "length":  33,
+                          "sha256":  "83e0e56a66f8df2a"
+                      },
+    "checks":  {
+                   "sidecarHealthy":  true,
+                   "authRequired":  true,
+                   "fillOk":  true,
+                   "schema":  "m3-windows-fill@1",
+                   "pass":  true,
+                   "writeAttempted":  true,
+                   "verified":  true,
+                   "codexProfile":  true,
+                   "claudeCodeProfile":  true,
+                   "hermesProfile":  true,
+                   "privacyWrittenTextNotStored":  true,
+                   "privacyVerificationUsesHash":  true,
+                   "privacyNoAutoSubmit":  true,
+                   "summaryNoAutoSubmit":  true,
+                   "noSubmitSignals":  true,
+                   "rawTextLeak":  false
+               },
+    "fill":  {
+                 "createdAt":  "2026-06-07T15:31:38.4228573Z",
+                 "pass":  true,
+                 "platform":  "win32",
+                 "privacy":  {
+                                 "autoSubmit":  false,
+                                 "elementNamesHashed":  true,
+                                 "elementValuesNotReadBeforeWrite":  true,
+                                 "promptTextNotRead":  true,
+                                 "titleRedacted":  true,
+                                 "verificationUsesLengthAndHash":  true,
+                                 "writtenTextNotStored":  true
+                             },
+                 "schemaVersion":  "m3-windows-fill@1",
+                 "selfTest":  true,
+                 "strategy":  "win32_set_window_text_fallback",
+                 "summary":  {
+                                 "autoSubmit":  false,
+                                 "requestedTextHash":  "83e0e56a66f8df2a",
+                                 "requestedTextLength":  33,
+                                 "submitSignalCount":  0,
+                                 "verifiedTextHash":  "83e0e56a66f8df2a",
+                                 "verifiedTextLength":  33
+                             },
+                 "supportedToolProfiles":  [
+                                               "codex",
+                                               "claude-code",
+                                               "hermes"
+                                           ],
+                 "target":  {
+                                "classNameHash":  "f9e520bb508fd8b3",
+                                "controlType":  "ControlType.Pane",
+                                "hasValuePattern":  false,
+                                "titleHash":  "724b4c46d9fc5828",
+                                "titleLength":  33
+                            },
+                 "uiaSetValueTried":  false,
+                 "verified":  true,
+                 "writeAttempted":  true
+             }
+}

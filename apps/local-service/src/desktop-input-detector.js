@@ -80,6 +80,46 @@ function sanitizeSnapshot(snapshot = {}) {
   };
 }
 
+function sanitizeFillReport(report = {}) {
+  return {
+    schemaVersion: report.schemaVersion || "m3-windows-fill@1",
+    createdAt: report.createdAt || new Date().toISOString(),
+    platform: report.platform || process.platform,
+    selfTest: Boolean(report.selfTest),
+    pass: Boolean(report.pass),
+    writeAttempted: Boolean(report.writeAttempted),
+    verified: Boolean(report.verified),
+    strategy: String(report.strategy || "").slice(0, 80),
+    uiaSetValueTried: Boolean(report.uiaSetValueTried),
+    target: {
+      controlType: String(report.target?.controlType || "").slice(0, 80),
+      classNameHash: String(report.target?.classNameHash || "").slice(0, 64),
+      hasValuePattern: Boolean(report.target?.hasValuePattern),
+      titleLength: Number(report.target?.titleLength || 0),
+      titleHash: String(report.target?.titleHash || "").slice(0, 64)
+    },
+    summary: {
+      requestedTextLength: Number(report.summary?.requestedTextLength || 0),
+      requestedTextHash: String(report.summary?.requestedTextHash || "").slice(0, 64),
+      verifiedTextLength: Number(report.summary?.verifiedTextLength || 0),
+      verifiedTextHash: String(report.summary?.verifiedTextHash || "").slice(0, 64),
+      autoSubmit: Boolean(report.summary?.autoSubmit),
+      submitSignalCount: Number(report.summary?.submitSignalCount || 0)
+    },
+    supportedToolProfiles: DESKTOP_TOOL_PROFILES.map((profile) => profile.id),
+    privacy: {
+      titleRedacted: true,
+      elementNamesHashed: true,
+      elementValuesNotReadBeforeWrite: true,
+      writtenTextNotStored: true,
+      verificationUsesLengthAndHash: true,
+      promptTextNotRead: true,
+      autoSubmit: false
+    },
+    reason: report.reason || ""
+  };
+}
+
 async function getDesktopInputSnapshot(options = {}) {
   if (options.snapshot) return sanitizeSnapshot(options.snapshot);
   if (process.platform !== "win32") {
@@ -100,9 +140,30 @@ async function getDesktopInputSnapshot(options = {}) {
   return sanitizeSnapshot(raw);
 }
 
+async function fillDesktopInput(options = {}) {
+  if (options.report) return sanitizeFillReport(options.report);
+  if (process.platform !== "win32") {
+    return sanitizeFillReport({
+      schemaVersion: "m3-windows-fill@1",
+      platform: process.platform,
+      selfTest: Boolean(options.selfTest),
+      pass: false,
+      reason: "macos_ax_pending_or_unsupported_platform"
+    });
+  }
+  const script = path.join(rootDir(), "scripts", "check-m3-desktop-fill.ps1");
+  const args = ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script, "-JsonOnly"];
+  if (options.selfTest) args.push("-SelfTest");
+  if (options.text) args.push("-Text", String(options.text));
+  const raw = await runPowerShellJson(args, options.timeoutMs || 10000);
+  return sanitizeFillReport(raw);
+}
+
 module.exports = {
   DESKTOP_TOOL_PROFILES,
   detectDesktopTool,
+  fillDesktopInput,
   getDesktopInputSnapshot,
+  sanitizeFillReport,
   sanitizeSnapshot
 };
