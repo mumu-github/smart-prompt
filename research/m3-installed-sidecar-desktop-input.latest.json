@@ -1,6 +1,6 @@
 {
     "schemaVersion":  "m3-installed-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T16:17:58.8634243Z",
+    "createdAt":  "2026-06-07T17:08:11.7997793Z",
     "pass":  true,
     "remotePort":  9241,
     "servicePort":  17461,
@@ -63,8 +63,10 @@
                                                   ],
                         "privacy":  {
                                         "autoSubmit":  false,
+                                        "clipboardTextNotStored":  true,
                                         "elementNamesHashed":  true,
                                         "elementValuesNotReadBeforeWrite":  true,
+                                        "fallbackRequiresExplicitAllow":  true,
                                         "promptTextNotRead":  true,
                                         "titleRedacted":  true,
                                         "verificationUsesLengthAndHash":  true,

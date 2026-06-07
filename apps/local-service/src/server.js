@@ -327,9 +327,11 @@ function createApp(store = createStore(), options = {}) {
         const body = await readJson(req);
         const selfTest = url.searchParams.get("selfTest") === "1" || body.selfTest === true;
         const confirmForeground = url.searchParams.get("confirmForeground") === "1" || body.confirmForeground === true;
+        const allowClipboardFallback = url.searchParams.get("allowClipboardFallback") === "1" || body.allowClipboardFallback === true;
         const fill = await desktopFill({
           selfTest,
           confirmForeground,
+          allowClipboardFallback,
           expectedTitleHash: body.expectedTitleHash || "",
           expectedToolProfile: body.expectedToolProfile || "",
           candidateIndex: Number.isFinite(Number(body.candidateIndex)) ? Number(body.candidateIndex) : 0,

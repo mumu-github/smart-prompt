@@ -1,5 +1,14 @@
 # 当前进度
 
+## M3 剪贴板 fallback 更新 2026-06-08
+
+- 已解释并修复“工具内输入框一直识别不到”的主要技术缺口：桌面/CLI 工具常把输入区放在 Terminal、WebView 或自绘容器中，Windows UIA 可能只能看到宿主容器，无法暴露标准 `ValuePattern` 或原生 Edit 控件。
+- 已为 `scripts/check-m3-desktop-fill.ps1` 新增显式 `-AllowClipboardFallback`；该路径使用临时剪贴板文本粘贴，随后恢复原剪贴板，报告只保存长度/hash，不保存写入原文，也不发送 Enter/submit。
+- 已将 `allowClipboardFallback` 接入 local-service `POST /desktop/fill`、native sidecar `/desktop/fill`、sanitizer 和本地服务测试；真实前台窗口仍必须匹配 `confirmForeground`、`expectedTitleHash` 与 `expectedToolProfile` 才会尝试写入。
+- 新增证据 `research/m3-desktop-fill-clipboard.latest.json`，当前 `pass:true`、`strategy:"clipboard_paste_fallback"`、`clipboardFallbackTried:true`、`clipboardRestored:true`；`research/m3-desktop-fill.latest.json`、`research/m3-sidecar-desktop-fill.latest.json`、`research/m3-installed-sidecar-desktop-input.latest.json` 已同步新增隐私字段。
+- 已为 `scripts/check-v4-installer-smoke.ps1` 加一次启动重试，解决安装后 app 偶发 5 秒内退出导致 smoke 误失败的问题；完整 `scripts/critic-m3.ps1` 已复跑并 PASS，OMX verdict 已记录 pass。
+- 仍未完成：Codex/Claude Code/Hermes 真实工具窗口内写回成功率和剪贴板 fallback 成功率尚未验收；本轮没有对真实前台工具窗口执行写入，只做 self-test 和受控接口链路。
+
 ## M3 桌面写回与 PRD 状态 2026-06-07
 
 - 用户已更新当前 M3 范围：先不做 macOS AX，本阶段只追 Windows UIA 桌面输入框识别与真实 adapter pilot 数据。

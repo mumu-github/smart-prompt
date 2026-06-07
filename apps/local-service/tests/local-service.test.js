@@ -359,8 +359,9 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
         }
       };
     },
-    fillDesktopInput: async ({ selfTest, confirmForeground, expectedTitleHash, expectedToolProfile, candidateIndex, text }) => {
+    fillDesktopInput: async ({ selfTest, confirmForeground, allowClipboardFallback, expectedTitleHash, expectedToolProfile, candidateIndex, text }) => {
       if (!selfTest && !confirmForeground) {
+        assert.equal(allowClipboardFallback, false);
         assert.equal(text, "M3 Guard Raw Text");
         return {
           schemaVersion: "m3-windows-fill@1",
@@ -368,16 +369,21 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
           platform: "win32",
           selfTest: false,
           confirmForeground: false,
+          allowClipboardFallback: false,
           pass: false,
           reason: "foreground_fill_requires_confirm_foreground",
           writeAttempted: false,
           verified: false,
+          clipboardFallbackTried: false,
+          clipboardRestored: false,
           supportedToolProfiles: ["codex", "claude-code", "hermes"],
           privacy: {
             titleRedacted: true,
             elementNamesHashed: true,
             elementValuesNotReadBeforeWrite: true,
             writtenTextNotStored: true,
+            clipboardTextNotStored: true,
+            fallbackRequiresExplicitAllow: true,
             verificationUsesLengthAndHash: true,
             promptTextNotRead: true,
             autoSubmit: false
@@ -386,6 +392,7 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
       }
       if (confirmForeground) {
         assert.equal(selfTest, false);
+        assert.equal(allowClipboardFallback, true);
         assert.equal(expectedTitleHash, "abc123");
         assert.equal(expectedToolProfile, "codex");
         assert.equal(candidateIndex, 0);
@@ -396,11 +403,14 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
           platform: "win32",
           selfTest: false,
           confirmForeground: true,
+          allowClipboardFallback: true,
           pass: true,
           writeAttempted: true,
           verified: true,
-          strategy: "uia_value_pattern",
-          uiaSetValueTried: true,
+          strategy: "clipboard_paste_fallback",
+          uiaSetValueTried: false,
+          clipboardFallbackTried: true,
+          clipboardRestored: true,
           foreground: {
             processName: "WindowsTerminal",
             pidPresent: true,
@@ -435,6 +445,8 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
             elementNamesHashed: true,
             elementValuesNotReadBeforeWrite: true,
             writtenTextNotStored: true,
+            clipboardTextNotStored: true,
+            fallbackRequiresExplicitAllow: true,
             verificationUsesLengthAndHash: true,
             promptTextNotRead: true,
             autoSubmit: false
@@ -442,6 +454,7 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
         };
       }
       assert.equal(selfTest, true);
+      assert.equal(allowClipboardFallback, false);
       assert.equal(text, "M3 Fill Raw Test Text");
       return {
         schemaVersion: "m3-windows-fill@1",
@@ -449,11 +462,14 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
         platform: "win32",
         selfTest,
         confirmForeground: false,
+        allowClipboardFallback: false,
         pass: true,
         writeAttempted: true,
         verified: true,
         strategy: "uia_value_pattern",
         uiaSetValueTried: true,
+        clipboardFallbackTried: false,
+        clipboardRestored: false,
         target: {
           controlType: "ControlType.Edit",
           classNameHash: "class-hash",
@@ -475,6 +491,8 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
           elementNamesHashed: true,
           elementValuesNotReadBeforeWrite: true,
           writtenTextNotStored: true,
+          clipboardTextNotStored: true,
+          fallbackRequiresExplicitAllow: true,
           verificationUsesLengthAndHash: true,
           promptTextNotRead: true,
           autoSubmit: false
@@ -540,6 +558,7 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     const desktopFill = await authed("POST", "/desktop/fill?selfTest=1", { text: "M3 Fill Raw Test Text" });
     assert.equal(desktopFill.status, 200);
     assert.equal(desktopFill.body.fill.schemaVersion, "m3-windows-fill@1");
+    assert.equal(desktopFill.body.fill.allowClipboardFallback, false);
     assert.equal(desktopFill.body.fill.pass, true);
     assert.equal(desktopFill.body.fill.writeAttempted, true);
     assert.equal(desktopFill.body.fill.verified, true);
@@ -547,6 +566,8 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     assert.equal(desktopFill.body.fill.summary.submitSignalCount, 0);
     assert.deepEqual(desktopFill.body.fill.supportedToolProfiles, ["codex", "claude-code", "hermes"]);
     assert.equal(desktopFill.body.fill.privacy.writtenTextNotStored, true);
+    assert.equal(desktopFill.body.fill.privacy.clipboardTextNotStored, true);
+    assert.equal(desktopFill.body.fill.privacy.fallbackRequiresExplicitAllow, true);
     assert.equal(desktopFill.body.fill.privacy.verificationUsesLengthAndHash, true);
     assert.equal(desktopFill.body.fill.privacy.autoSubmit, false);
     assert.ok(!JSON.stringify(desktopFill.body.fill).includes("M3 Fill Raw Test Text"));
@@ -563,13 +584,18 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
       expectedTitleHash: "abc123",
       expectedToolProfile: "codex",
       candidateIndex: 0,
+      allowClipboardFallback: true,
       text: "M3 Real Target Raw Text"
     });
     assert.equal(confirmedFill.status, 200);
     assert.equal(confirmedFill.body.fill.selfTest, false);
     assert.equal(confirmedFill.body.fill.confirmForeground, true);
+    assert.equal(confirmedFill.body.fill.allowClipboardFallback, true);
     assert.equal(confirmedFill.body.fill.pass, true);
     assert.equal(confirmedFill.body.fill.writeAttempted, true);
+    assert.equal(confirmedFill.body.fill.strategy, "clipboard_paste_fallback");
+    assert.equal(confirmedFill.body.fill.clipboardFallbackTried, true);
+    assert.equal(confirmedFill.body.fill.clipboardRestored, true);
     assert.equal(confirmedFill.body.fill.foreground.expectedTitleHashMatched, true);
     assert.equal(confirmedFill.body.fill.foreground.expectedToolProfileMatched, true);
     assert.equal(confirmedFill.body.fill.target.index, 0);

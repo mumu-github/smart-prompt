@@ -3,6 +3,7 @@ param(
   [switch]$JsonOnly,
   [switch]$SelfTest,
   [switch]$ConfirmForeground,
+  [switch]$AllowClipboardFallback,
   [string]$ExpectedTitleHash = "",
   [string]$ExpectedToolProfile = "",
   [int]$CandidateIndex = 0,
@@ -38,6 +39,8 @@ function New-Privacy {
     elementNamesHashed = $true
     elementValuesNotReadBeforeWrite = $true
     writtenTextNotStored = $true
+    clipboardTextNotStored = $true
+    fallbackRequiresExplicitAllow = $true
     verificationUsesLengthAndHash = $true
     promptTextNotRead = $true
     autoSubmit = $false
@@ -52,10 +55,13 @@ function New-UnsupportedReport {
     platform = if ($env:OS -like "*Windows*") { "win32" } else { $PSVersionTable.Platform }
     selfTest = [bool]$SelfTest
     confirmForeground = [bool]$ConfirmForeground
+    allowClipboardFallback = [bool]$AllowClipboardFallback
     pass = $false
     reason = $Reason
     writeAttempted = $false
     verified = $false
+    clipboardFallbackTried = $false
+    clipboardRestored = $false
     supportedToolProfiles = @("codex", "claude-code", "hermes")
     privacy = New-Privacy
   }
@@ -87,6 +93,8 @@ public static class SmartPromptFillNative {
   public static extern bool SetWindowText(IntPtr hWnd, string lpString);
   [DllImport("user32.dll", CharSet = CharSet.Unicode)]
   public static extern int GetWindowText(IntPtr hWnd, StringBuilder text, int count);
+  [DllImport("user32.dll")]
+  public static extern bool SetForegroundWindow(IntPtr hWnd);
 }
 "@
   }
@@ -97,6 +105,82 @@ function Get-WindowTextSafe {
   $builder = New-Object System.Text.StringBuilder 512
   [void][SmartPromptFillNative]::GetWindowText($Handle, $builder, $builder.Capacity)
   return $builder.ToString()
+}
+
+function Invoke-ClipboardRetry {
+  param([scriptblock]$Action)
+  $lastError = $null
+  for ($attempt = 0; $attempt -lt 8; $attempt += 1) {
+    try {
+      return & $Action
+    } catch {
+      $lastError = $_
+      Start-Sleep -Milliseconds (80 * ($attempt + 1))
+    }
+  }
+  throw $lastError
+}
+
+function Invoke-ClipboardPasteFallback {
+  param(
+    [IntPtr]$ForegroundHandle,
+    [object]$Candidate,
+    [string]$PasteText
+  )
+  Add-Type -AssemblyName System.Windows.Forms
+  $result = [ordered]@{
+    ok = $false
+    strategy = "clipboard_paste_fallback"
+    clipboardFallbackTried = $true
+    clipboardRestored = $false
+    errorCode = ""
+  }
+  $previousData = $null
+  $hadPreviousData = $false
+  $clipboardChanged = $false
+  try {
+    $previousData = Invoke-ClipboardRetry { [System.Windows.Forms.Clipboard]::GetDataObject() }
+    $hadPreviousData = $null -ne $previousData
+    Invoke-ClipboardRetry { [System.Windows.Forms.Clipboard]::SetText($PasteText, [System.Windows.Forms.TextDataFormat]::UnicodeText) }
+    $clipboardChanged = $true
+    if ($ForegroundHandle -ne [IntPtr]::Zero) {
+      [void][SmartPromptFillNative]::SetForegroundWindow($ForegroundHandle)
+    }
+    if ($Candidate -and $Candidate.element) {
+      try {
+        [void]$Candidate.element.SetFocus()
+      } catch {
+        # Some terminal and WebView elements do not expose focus through UIA.
+      }
+    }
+    Start-Sleep -Milliseconds 120
+    if ($Candidate -and $Candidate.winFormsControl) {
+      $Candidate.winFormsControl.Paste()
+    } else {
+      [System.Windows.Forms.SendKeys]::SendWait("^v")
+    }
+    Start-Sleep -Milliseconds 180
+    [void][System.Windows.Forms.Application]::DoEvents()
+    $result.ok = $true
+  } catch {
+    $result.errorCode = "clipboard_paste_fallback_failed"
+  } finally {
+    if ($clipboardChanged) {
+      try {
+        if ($hadPreviousData) {
+          Invoke-ClipboardRetry { [System.Windows.Forms.Clipboard]::SetDataObject($previousData, $true) }
+        } else {
+          Invoke-ClipboardRetry { [System.Windows.Forms.Clipboard]::Clear() }
+        }
+        $result.clipboardRestored = $true
+      } catch {
+        $result.clipboardRestored = $false
+      }
+    } else {
+      $result.clipboardRestored = $true
+    }
+  }
+  return [pscustomobject]$result
 }
 
 function Get-ForegroundContext {
@@ -211,10 +295,30 @@ function Invoke-SelfTestFill {
 
     $strategy = ""
     $uiaSetValueTried = $false
-    if ($hasValuePattern -and $valuePattern) {
+    $clipboardFallbackTried = $false
+    $clipboardRestored = $false
+    $writeAttempted = $false
+    $reason = ""
+
+    if ($AllowClipboardFallback) {
+      $testCandidate = [pscustomobject]@{
+        element = $element
+        nativeWindowHandle = [IntPtr]$textbox.Handle
+        winFormsControl = $textbox
+      }
+      $paste = Invoke-ClipboardPasteFallback -ForegroundHandle ([IntPtr]$form.Handle) -Candidate $testCandidate -PasteText $Text
+      $clipboardFallbackTried = [bool]$paste.clipboardFallbackTried
+      $clipboardRestored = [bool]$paste.clipboardRestored
+      $strategy = $paste.strategy
+      $writeAttempted = [bool]$paste.ok
+      if (-not $paste.ok) {
+        $reason = $paste.errorCode
+      }
+    } elseif ($hasValuePattern -and $valuePattern) {
       try {
         $uiaSetValueTried = $true
         $valuePattern.SetValue($Text)
+        $writeAttempted = $true
         [void][System.Windows.Forms.Application]::DoEvents()
         if ($textbox.Text -eq $Text) {
           $strategy = "uia_value_pattern"
@@ -224,10 +328,11 @@ function Invoke-SelfTestFill {
       }
     }
 
-    if (-not $strategy) {
+    if (-not $AllowClipboardFallback -and -not $strategy) {
       [void][SmartPromptFillNative]::SetWindowText($textbox.Handle, $Text)
       [void][System.Windows.Forms.Application]::DoEvents()
       $strategy = "win32_set_window_text_fallback"
+      $writeAttempted = $true
     }
 
     $builder = New-Object System.Text.StringBuilder 1024
@@ -241,11 +346,15 @@ function Invoke-SelfTestFill {
       platform = "win32"
       selfTest = $true
       confirmForeground = $false
+      allowClipboardFallback = [bool]$AllowClipboardFallback
       pass = [bool]$verified
-      writeAttempted = $true
+      reason = if ($verified) { "" } else { $reason }
+      writeAttempted = [bool]$writeAttempted
       verified = [bool]$verified
       strategy = $strategy
       uiaSetValueTried = [bool]$uiaSetValueTried
+      clipboardFallbackTried = [bool]$clipboardFallbackTried
+      clipboardRestored = [bool]$clipboardRestored
       target = [pscustomobject]@{
         index = 0
         controlType = $controlType
@@ -292,11 +401,14 @@ function Invoke-ConfirmedForegroundFill {
     platform = "win32"
     selfTest = $false
     confirmForeground = [bool]$ConfirmForeground
+    allowClipboardFallback = [bool]$AllowClipboardFallback
     pass = $false
     writeAttempted = $false
     verified = $false
     strategy = ""
     uiaSetValueTried = $false
+    clipboardFallbackTried = $false
+    clipboardRestored = $false
     foreground = $foreground
     supportedToolProfiles = @("codex", "claude-code", "hermes")
     privacy = New-Privacy
@@ -337,6 +449,26 @@ function Invoke-ConfirmedForegroundFill {
     submitSignalCount = 0
   }
   if ($candidates.Count -eq 0) {
+    if ($AllowClipboardFallback) {
+      $base.target = [pscustomobject]@{
+        index = -1
+        controlType = "ForegroundWindow"
+        classNameHash = ""
+        hasValuePattern = $false
+        hasTextPattern = $false
+        hasNativeWindowHandle = $context.handle -ne [IntPtr]::Zero
+        titleLength = $context.titleLength
+        titleHash = $context.titleHash
+        boundingRect = [pscustomobject]@{ x = 0; y = 0; width = 0; height = 0 }
+      }
+      $paste = Invoke-ClipboardPasteFallback -ForegroundHandle $context.handle -Candidate $null -PasteText $Text
+      $base.writeAttempted = [bool]$paste.ok
+      $base.strategy = $paste.strategy
+      $base.clipboardFallbackTried = [bool]$paste.clipboardFallbackTried
+      $base.clipboardRestored = [bool]$paste.clipboardRestored
+      $base.reason = if ($paste.ok) { "foreground_after_clipboard_paste_verification_unavailable" } else { $paste.errorCode }
+      return [pscustomobject]$base
+    }
     $base.reason = "foreground_no_input_candidates"
     return [pscustomobject]$base
   }
@@ -373,6 +505,18 @@ function Invoke-ConfirmedForegroundFill {
     [void][SmartPromptFillNative]::SetWindowText($candidate.nativeWindowHandle, $Text)
     $strategy = "win32_set_window_text_fallback"
   }
+  if (-not $strategy -and $AllowClipboardFallback) {
+    $paste = Invoke-ClipboardPasteFallback -ForegroundHandle $context.handle -Candidate $candidate -PasteText $Text
+    $base.clipboardFallbackTried = [bool]$paste.clipboardFallbackTried
+    $base.clipboardRestored = [bool]$paste.clipboardRestored
+    if ($paste.ok) {
+      $strategy = $paste.strategy
+    } else {
+      $base.reason = $paste.errorCode
+      $base.uiaSetValueTried = [bool]$uiaSetValueTried
+      return [pscustomobject]$base
+    }
+  }
   if (-not $strategy) {
     $base.reason = "foreground_candidate_has_no_write_strategy"
     $base.uiaSetValueTried = [bool]$uiaSetValueTried
@@ -392,7 +536,13 @@ function Invoke-ConfirmedForegroundFill {
   $base.summary.verifiedTextLength = $verifiedText.Length
   $base.summary.verifiedTextHash = Get-HashText $verifiedText
   if (-not $verified) {
-    $base.reason = "foreground_after_write_verification_failed"
+    if ($strategy -eq "clipboard_paste_fallback" -and -not $candidate.hasNativeWindowHandle) {
+      $base.reason = "foreground_after_clipboard_paste_verification_unavailable"
+    } elseif ($strategy -eq "clipboard_paste_fallback") {
+      $base.reason = "foreground_after_clipboard_paste_verification_failed"
+    } else {
+      $base.reason = "foreground_after_write_verification_failed"
+    }
   }
   return [pscustomobject]$base
 }

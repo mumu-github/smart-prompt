@@ -830,6 +830,8 @@ fn desktop_input_fill(url: &str, body: &Value) -> Result<Value, String> {
         || body.get("selfTest").and_then(Value::as_bool).unwrap_or(false);
     let confirm_foreground = url.contains("confirmForeground=1")
         || body.get("confirmForeground").and_then(Value::as_bool).unwrap_or(false);
+    let allow_clipboard_fallback = url.contains("allowClipboardFallback=1")
+        || body.get("allowClipboardFallback").and_then(Value::as_bool).unwrap_or(false);
     if !cfg!(target_os = "windows") {
         return Ok(json!({
             "schemaVersion": "m3-windows-fill@1",
@@ -837,10 +839,13 @@ fn desktop_input_fill(url: &str, body: &Value) -> Result<Value, String> {
             "platform": std::env::consts::OS,
             "selfTest": self_test,
             "confirmForeground": confirm_foreground,
+            "allowClipboardFallback": allow_clipboard_fallback,
             "pass": false,
             "reason": "macos_ax_pending_or_unsupported_platform",
             "writeAttempted": false,
             "verified": false,
+            "clipboardFallbackTried": false,
+            "clipboardRestored": false,
             "supportedToolProfiles": ["codex", "claude-code", "hermes"],
             "privacy": desktop_fill_privacy()
         }));
@@ -861,6 +866,9 @@ fn desktop_input_fill(url: &str, body: &Value) -> Result<Value, String> {
     }
     if confirm_foreground {
         command.arg("-ConfirmForeground");
+    }
+    if allow_clipboard_fallback {
+        command.arg("-AllowClipboardFallback");
     }
     if let Some(expected_title_hash) = body.get("expectedTitleHash").and_then(Value::as_str) {
         if !expected_title_hash.is_empty() {
@@ -918,6 +926,8 @@ fn desktop_fill_privacy() -> Value {
         "elementNamesHashed": true,
         "elementValuesNotReadBeforeWrite": true,
         "writtenTextNotStored": true,
+        "clipboardTextNotStored": true,
+        "fallbackRequiresExplicitAllow": true,
         "verificationUsesLengthAndHash": true,
         "promptTextNotRead": true,
         "autoSubmit": false

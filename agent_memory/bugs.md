@@ -1,5 +1,13 @@
 # 问题与风险
 
+## M3 剪贴板 fallback 风险 2026-06-08
+
+- 已解决一项：当 UIA 只能识别 Terminal/WebView/自绘宿主容器、拿不到可写 `ValuePattern` 时，新增显式 `allowClipboardFallback` 作为受控降级路径；报告不保存剪贴板/写入原文，且会恢复原剪贴板。
+- 安全边界：真实窗口 fallback 仍必须有 `confirmForeground`、`expectedTitleHash`、`expectedToolProfile` 和 `allowClipboardFallback`；缺任一项或 hash/profile 不匹配时必须 `writeAttempted:false`。
+- 仍需验证：当前剪贴板 fallback 只有临时 TextBox self-test 和服务契约证据；尚未在真实 Codex/Claude Code/Hermes 前台窗口里记录成功写入与回读结果。
+- 运行环境风险：隐藏 sidecar 进程创建临时窗口时，Windows 前台抢占策略会让 `SendKeys` self-test 不稳定；因此 sidecar smoke 继续验证直接写回链路，剪贴板 fallback 由前台 self-test 和接口契约验证。
+- 运行环境风险：安装后 app smoke 曾出现一次“启动 5 秒内退出”的偶发失败，已在 `scripts/check-v4-installer-smoke.ps1` 增加一次启动重试；完整 M3 critic 后续已 PASS。
+
 ## 当前 M3/V5 剩余风险 2026-06-07
 
 - 已解决：Windows snapshot/fill self-test、Codex/Claude Code/Hermes 三工具画像 self-test、真实 Codex 前台窗口 snapshot-only 审计、受控前台窗口写回 guard、local-service 接口、native sidecar 接口、安装包 bundled sidecar smoke 均已通过 M3 critic；报告只保留长度、hash、策略和布尔校验，不保存 raw prompt、窗口标题原文或写入文本。

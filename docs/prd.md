@@ -336,9 +336,9 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 ### M3：桌面输入框
 
 - 状态：进行中。
-- 已完成：Windows UIA self-test、Codex/Claude Code/Hermes 三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回协议、开发路径 `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、native sidecar `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、安装包 bundled native sidecar snapshot/fill smoke、隐私脱敏报告。
-- 待完成：Codex/Claude Code/Hermes 真实工具窗口写回验收报告、剪贴板 fallback 的安全提示。
-- 范围：Windows UIA 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 的安全提示。macOS AX 暂缓到后续跨平台阶段。
+- 已完成：Windows UIA self-test、Codex/Claude Code/Hermes 三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回协议、显式 `allowClipboardFallback` 剪贴板粘贴 self-test、开发路径 `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、native sidecar `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、安装包 bundled native sidecar snapshot/fill smoke、隐私脱敏报告。
+- 待完成：Codex/Claude Code/Hermes 真实工具窗口写回验收报告、真实工具窗口内剪贴板 fallback 成功率记录。
+- 范围：Windows UIA 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 必须显式确认前台窗口身份后才可使用。macOS AX 暂缓到后续跨平台阶段。
 
 ### M4：评估与团队
 
@@ -363,12 +363,12 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 | 竞品快速跟进 | 差异化变弱 | 把环境识别、skill routing 和填入路径做成核心能力 |
 | 新增站点改版频繁 | Insert 失败率上升 | 用 adapter 级 metrics 记录失败原因，优先修复高频失败 selector |
 | provider key 配置失败 | 三模式无法调用真实 LLM | 设置页明确 key 状态，保留 dry-run 降级但不计入真实 LLM 验收 |
-| 桌面输入框权限复杂 | M3 验收延迟 | 当前先做 Windows UIA POC 和真实工具窗口验收，macOS AX 暂缓到后续跨平台阶段 |
+| 桌面输入框权限复杂 | M3 验收延迟 | 当前先做 Windows UIA POC、受控剪贴板 fallback 和真实工具窗口验收，macOS AX 暂缓到后续跨平台阶段 |
 | 发布资产分发不完整 | 内测用户安装成本高 | GitHub Release 上传 MSI/NSIS/checksum，并在 release notes 写清安装与诊断方式 |
 
 ## 16. 开放问题
 
 - workBuddy、Trae、Doubao、DeepSeek 的真实输入框 selector 需要通过内测验证，不能只靠静态假设。
-- Codex、Claude Code、Hermes 已进入 M3 首批桌面/CLI 工具画像；Windows 三工具画像 self-test、写回链路和受控前台窗口写回协议已通过，仍需真实工具窗口写回报告。
+- Codex、Claude Code、Hermes 已进入 M3 首批桌面/CLI 工具画像；Windows 三工具画像 self-test、写回链路、受控前台窗口写回协议和显式剪贴板 fallback self-test 已通过，仍需真实工具窗口写回报告。
 - `gpt-image-2` 在用户实际 API 环境中的可用性仍受 billing/key 限制；项目内小人资产已可先用内置 image_gen 版本推进 UI。
 - 是否允许团队同步 prompts/skills，需要后续商业模式判断。

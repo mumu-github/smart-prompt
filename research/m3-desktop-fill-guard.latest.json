@@ -1,14 +1,17 @@
 ﻿{
     "schemaVersion":  "m3-windows-fill@1",
-    "createdAt":  "2026-06-07T16:17:45.4248735Z",
+    "createdAt":  "2026-06-07T17:07:57.8190489Z",
     "platform":  "win32",
     "selfTest":  false,
     "confirmForeground":  true,
+    "allowClipboardFallback":  false,
     "pass":  false,
     "writeAttempted":  false,
     "verified":  false,
     "strategy":  "",
     "uiaSetValueTried":  false,
+    "clipboardFallbackTried":  false,
+    "clipboardRestored":  false,
     "foreground":  {
                        "processName":  "Codex",
                        "pidPresent":  true,
@@ -28,6 +31,8 @@
                     "elementNamesHashed":  true,
                     "elementValuesNotReadBeforeWrite":  true,
                     "writtenTextNotStored":  true,
+                    "clipboardTextNotStored":  true,
+                    "fallbackRequiresExplicitAllow":  true,
                     "verificationUsesLengthAndHash":  true,
                     "promptTextNotRead":  true,
                     "autoSubmit":  false

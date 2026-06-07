@@ -105,8 +105,17 @@ try {
   $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-port=$RemotePort"
   $env:SMART_PROMPT_PORT = "$ServicePort"
   $env:SMART_PROMPT_DATA_DIR = $ServiceDataDir
-  $appProcess = Start-Process -FilePath $installedExe.FullName -PassThru -WindowStyle Normal
-  Start-Sleep -Seconds 5
+  $startAttempts = 0
+  while ($startAttempts -lt 2) {
+    $startAttempts += 1
+    $appProcess = Start-Process -FilePath $installedExe.FullName -PassThru -WindowStyle Normal
+    Start-Sleep -Seconds 5
+    if (-not $appProcess.HasExited) {
+      break
+    }
+    $reportObject.startRetryCount = $startAttempts
+    Start-Sleep -Seconds 2
+  }
   if ($appProcess.HasExited) {
     throw "Installed app exited before smoke startup window."
   }

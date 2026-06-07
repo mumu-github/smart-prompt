@@ -87,11 +87,14 @@ function sanitizeFillReport(report = {}) {
     platform: report.platform || process.platform,
     selfTest: Boolean(report.selfTest),
     confirmForeground: Boolean(report.confirmForeground),
+    allowClipboardFallback: Boolean(report.allowClipboardFallback),
     pass: Boolean(report.pass),
     writeAttempted: Boolean(report.writeAttempted),
     verified: Boolean(report.verified),
     strategy: String(report.strategy || "").slice(0, 80),
     uiaSetValueTried: Boolean(report.uiaSetValueTried),
+    clipboardFallbackTried: Boolean(report.clipboardFallbackTried),
+    clipboardRestored: Boolean(report.clipboardRestored),
     target: {
       controlType: String(report.target?.controlType || "").slice(0, 80),
       classNameHash: String(report.target?.classNameHash || "").slice(0, 64),
@@ -131,6 +134,8 @@ function sanitizeFillReport(report = {}) {
       elementNamesHashed: true,
       elementValuesNotReadBeforeWrite: true,
       writtenTextNotStored: true,
+      clipboardTextNotStored: true,
+      fallbackRequiresExplicitAllow: true,
       verificationUsesLengthAndHash: true,
       promptTextNotRead: true,
       autoSubmit: false
@@ -174,6 +179,7 @@ async function fillDesktopInput(options = {}) {
   const args = ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script, "-JsonOnly"];
   if (options.selfTest) args.push("-SelfTest");
   if (options.confirmForeground) args.push("-ConfirmForeground");
+  if (options.allowClipboardFallback) args.push("-AllowClipboardFallback");
   if (options.expectedTitleHash) args.push("-ExpectedTitleHash", String(options.expectedTitleHash));
   if (options.expectedToolProfile) args.push("-ExpectedToolProfile", String(options.expectedToolProfile));
   if (Number.isFinite(Number(options.candidateIndex))) args.push("-CandidateIndex", String(Number(options.candidateIndex)));

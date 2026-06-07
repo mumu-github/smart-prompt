@@ -52,6 +52,10 @@ Invoke-Step "M3 Windows desktop fill self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -SelfTest -Report (Join-Path $Root "research/m3-desktop-fill.latest.json")
 }
 
+Invoke-Step "M3 Windows desktop clipboard fallback self-test" {
+  powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -SelfTest -AllowClipboardFallback -Report (Join-Path $Root "research/m3-desktop-fill-clipboard.latest.json")
+}
+
 Invoke-Step "M3 Windows foreground fill guard" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -ConfirmForeground -ExpectedTitleHash "not-a-real-title-hash" -ExpectedToolProfile "codex" -Text "M3 foreground guard raw text" -Report (Join-Path $Root "research/m3-desktop-fill-guard.latest.json")
 }
@@ -137,6 +141,21 @@ if ($desktopFillReport.privacy.autoSubmit) { throw "desktop fill report allows a
 if ($desktopFillReport.summary.autoSubmit) { throw "desktop fill summary indicates auto submit" }
 if ([int]$desktopFillReport.summary.submitSignalCount -ne 0) { throw "desktop fill report emitted submit signals" }
 if (($desktopFillReport | ConvertTo-Json -Depth 10).Contains("Smart Prompt M3 desktop fill self-test")) { throw "desktop fill report leaked self-test text" }
+
+$desktopClipboardFillReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-desktop-fill-clipboard.latest.json") | ConvertFrom-Json
+if ($desktopClipboardFillReport.schemaVersion -ne "m3-windows-fill@1") { throw "desktop clipboard fill report schema mismatch" }
+if (-not $desktopClipboardFillReport.allowClipboardFallback) { throw "desktop clipboard fill did not enable fallback" }
+if (-not $desktopClipboardFillReport.pass) { throw "desktop clipboard fill report did not pass" }
+if (-not $desktopClipboardFillReport.writeAttempted) { throw "desktop clipboard fill report did not attempt write" }
+if (-not $desktopClipboardFillReport.verified) { throw "desktop clipboard fill report did not verify write" }
+if ($desktopClipboardFillReport.strategy -ne "clipboard_paste_fallback") { throw "desktop clipboard fill did not use clipboard strategy" }
+if (-not $desktopClipboardFillReport.clipboardFallbackTried) { throw "desktop clipboard fill did not try clipboard fallback" }
+if (-not $desktopClipboardFillReport.clipboardRestored) { throw "desktop clipboard fill did not restore clipboard" }
+if (-not $desktopClipboardFillReport.privacy.clipboardTextNotStored) { throw "desktop clipboard fill may store clipboard text" }
+if (-not $desktopClipboardFillReport.privacy.fallbackRequiresExplicitAllow) { throw "desktop clipboard fill fallback is not explicitly gated" }
+if ($desktopClipboardFillReport.summary.autoSubmit) { throw "desktop clipboard fill summary indicates auto submit" }
+if ([int]$desktopClipboardFillReport.summary.submitSignalCount -ne 0) { throw "desktop clipboard fill emitted submit signals" }
+if (($desktopClipboardFillReport | ConvertTo-Json -Depth 10).Contains("Smart Prompt M3 desktop fill self-test")) { throw "desktop clipboard fill report leaked self-test text" }
 
 $desktopFillGuardReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-desktop-fill-guard.latest.json") | ConvertFrom-Json
 if ($desktopFillGuardReport.schemaVersion -ne "m3-windows-fill@1") { throw "desktop fill guard report schema mismatch" }
@@ -238,11 +257,15 @@ Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "hermes"
 Assert-Text "apps/local-service/src/server.js" "/desktop/input-snapshot"
 Assert-Text "apps/local-service/src/server.js" "/desktop/fill"
 Assert-Text "apps/local-service/src/server.js" "confirmForeground"
+Assert-Text "apps/local-service/src/server.js" "allowClipboardFallback"
 Assert-Text "apps/local-service-sidecar/src/main.rs" "/desktop/input-snapshot"
 Assert-Text "apps/local-service-sidecar/src/main.rs" "/desktop/fill"
 Assert-Text "apps/local-service-sidecar/src/main.rs" "ConfirmForeground"
+Assert-Text "apps/local-service-sidecar/src/main.rs" "AllowClipboardFallback"
 Assert-Text "scripts/check-m3-desktop-fill.ps1" "m3-windows-fill@1"
 Assert-Text "scripts/check-m3-desktop-fill.ps1" "ExpectedTitleHash"
+Assert-Text "scripts/check-m3-desktop-fill.ps1" "AllowClipboardFallback"
+Assert-Text "scripts/check-m3-desktop-fill.ps1" "clipboard_paste_fallback"
 Assert-Text "scripts/check-m3-desktop-fill.ps1" "foreground_title_hash_mismatch"
 Assert-Text "scripts/check-m3-sidecar-desktop-input.ps1" "m3-sidecar-desktop-input@1"
 Assert-Text "scripts/check-m3-sidecar-desktop-fill.ps1" "m3-sidecar-desktop-fill@1"

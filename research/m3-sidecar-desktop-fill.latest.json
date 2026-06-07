@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-fill@1",
-    "createdAt":  "2026-06-07T16:17:56.8499149Z",
+    "createdAt":  "2026-06-07T17:08:09.5319304Z",
     "pass":  true,
     "port":  17442,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  95,
-                    "sha256":  "a62a10c106dca1c1"
+                    "sha256":  "9bfe0a90f2547175"
                 },
     "requestedText":  {
                           "length":  33,
@@ -31,19 +31,25 @@
                    "rawTextLeak":  false
                },
     "fill":  {
+                 "allowClipboardFallback":  false,
+                 "clipboardFallbackTried":  false,
+                 "clipboardRestored":  false,
                  "confirmForeground":  false,
-                 "createdAt":  "2026-06-07T16:17:56.5188093Z",
+                 "createdAt":  "2026-06-07T17:08:09.0771013Z",
                  "pass":  true,
                  "platform":  "win32",
                  "privacy":  {
                                  "autoSubmit":  false,
+                                 "clipboardTextNotStored":  true,
                                  "elementNamesHashed":  true,
                                  "elementValuesNotReadBeforeWrite":  true,
+                                 "fallbackRequiresExplicitAllow":  true,
                                  "promptTextNotRead":  true,
                                  "titleRedacted":  true,
                                  "verificationUsesLengthAndHash":  true,
                                  "writtenTextNotStored":  true
                              },
+                 "reason":  "",
                  "schemaVersion":  "m3-windows-fill@1",
                  "selfTest":  true,
                  "strategy":  "win32_set_window_text_fallback",
@@ -61,7 +67,7 @@
                                                "hermes"
                                            ],
                  "target":  {
-                                "classNameHash":  "366def011deb14e4",
+                                "classNameHash":  "860e2b6b95413669",
                                 "controlType":  "ControlType.Pane",
                                 "hasNativeWindowHandle":  true,
                                 "hasValuePattern":  false,

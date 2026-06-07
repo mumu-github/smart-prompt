@@ -8,6 +8,13 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 
 ## Windows UIA
 
+2026-06-08 更新：
+
+- 很多桌面/CLI 工具会把输入区渲染在 Terminal、WebView 或自绘容器里。Windows UIA 可能只能看到宿主容器，看不到标准 `ValuePattern` 或原生 Edit 控件，所以会出现“能识别工具窗口，但识别不到可写输入框”的情况。
+- `scripts/check-m3-desktop-fill.ps1` 已新增显式 `-AllowClipboardFallback`：使用临时剪贴板文本加 `Ctrl+V` 写入，随后恢复原剪贴板；报告只保存长度/hash，不保存原文，也不会发送 Enter 或 submit 信号。
+- 真实前台窗口使用仍必须同时满足 `-ConfirmForeground`、`-ExpectedTitleHash`、`-ExpectedToolProfile` 和 `-AllowClipboardFallback`。缺少确认字段或窗口身份不匹配时，必须返回 `writeAttempted:false`。
+- `POST /desktop/fill` 和 native sidecar 也支持 `allowClipboardFallback:true`，用于 Codex、Claude Code、Hermes 这类 UIA 写入 pattern 不可用的终端/WebView 输入区。
+
 已新增 `scripts/check-m3-desktop-input.ps1`：
 
 - `-SelfTest` 会创建临时 WinForms TextBox，并用 UI Automation 枚举输入候选。
