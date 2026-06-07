@@ -2,12 +2,14 @@ const { buildLlmMessages } = require("./smart-prompt-core");
 
 const PROVIDERS = Object.freeze({
   AUTO: "auto",
+  AGNES: "agnes",
   OPENAI_COMPATIBLE: "openai-compatible",
   ANTHROPIC: "anthropic",
   GEMINI: "gemini"
 });
 
 const PROVIDER_ORDER = Object.freeze([
+  PROVIDERS.AGNES,
   PROVIDERS.ANTHROPIC,
   PROVIDERS.GEMINI,
   PROVIDERS.OPENAI_COMPATIBLE
@@ -20,6 +22,8 @@ const DEFAULT_ANTHROPIC_BASE_URL = "https://api.anthropic.com/v1";
 const DEFAULT_ANTHROPIC_VERSION = "2023-06-01";
 const DEFAULT_GEMINI_MODEL = "gemini-2.5-flash";
 const DEFAULT_GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta";
+const DEFAULT_AGNES_MODEL = "agnes-2.0-flash";
+const DEFAULT_AGNES_BASE_URL = "https://apihub.agnes-ai.com/v1";
 
 function redactKey(value) {
   if (!value) return "";
@@ -89,6 +93,15 @@ function createGeminiGenerateContentRequest({ input, context, skills, variantInd
 }
 
 function getProviderDefaults(provider) {
+  if (provider === PROVIDERS.AGNES) {
+    return {
+      provider,
+      label: "Agnes",
+      baseUrl: DEFAULT_AGNES_BASE_URL,
+      model: DEFAULT_AGNES_MODEL,
+      envKeys: ["AGNES_API_KEY"]
+    };
+  }
   if (provider === PROVIDERS.ANTHROPIC) {
     return {
       provider,
@@ -232,10 +245,26 @@ function finishCard(request, prompt) {
 
 async function generateWithOpenAICompatible({ input, context, skills, variantIndex, settings = {}, fetchImpl }) {
   const provider = PROVIDERS.OPENAI_COMPATIBLE;
-  const apiKey = getApiKey(provider, settings);
-  const request = createOpenAIChatRequest({ input, context, skills, variantIndex, settings });
+  return generateWithOpenAIStyleProvider({ provider, input, context, skills, variantIndex, settings, fetchImpl });
+}
+
+async function generateWithAgnes({ input, context, skills, variantIndex, settings = {}, fetchImpl }) {
+  const provider = PROVIDERS.AGNES;
+  return generateWithOpenAIStyleProvider({ provider, input, context, skills, variantIndex, settings, fetchImpl });
+}
+
+async function generateWithOpenAIStyleProvider({ provider, input, context, skills, variantIndex, settings = {}, fetchImpl }) {
+  const defaults = getProviderDefaults(provider);
+  const effectiveSettings = {
+    ...settings,
+    baseUrl: settings.baseUrl || defaults.baseUrl,
+    model: settings.model || defaults.model
+  };
+  const apiKey = getApiKey(provider, effectiveSettings);
+  const request = createOpenAIChatRequest({ input, context, skills, variantIndex, settings: effectiveSettings });
   if (!apiKey) {
-    const error = new Error("Missing API key for real LLM generation.");
+    const label = defaults.label;
+    const error = new Error(`Missing API key for ${label} generation.`);
     error.code = "missing_api_key";
     error.request = { ...request, apiKey: "" };
     throw error;
@@ -331,6 +360,7 @@ function createProviderSettings(settings = {}, provider, requestedProvider) {
 async function generateWithProvider(provider, args, requestedProvider) {
   const settings = createProviderSettings(args.settings, provider, requestedProvider);
   const nextArgs = { ...args, settings };
+  if (provider === PROVIDERS.AGNES) return generateWithAgnes(nextArgs);
   if (provider === PROVIDERS.ANTHROPIC) return generateWithAnthropic(nextArgs);
   if (provider === PROVIDERS.GEMINI) return generateWithGemini(nextArgs);
   return generateWithOpenAICompatible(nextArgs);
@@ -363,6 +393,8 @@ module.exports = {
   PROVIDER_ORDER,
   DEFAULT_BASE_URL,
   DEFAULT_MODEL,
+  DEFAULT_AGNES_BASE_URL,
+  DEFAULT_AGNES_MODEL,
   DEFAULT_ANTHROPIC_BASE_URL,
   DEFAULT_ANTHROPIC_MODEL,
   DEFAULT_GEMINI_BASE_URL,
@@ -371,6 +403,7 @@ module.exports = {
   createGeminiGenerateContentRequest,
   createOpenAIChatRequest,
   chooseConfiguredProvider,
+  generateWithAgnes,
   generateWithAnthropic,
   generateWithConfiguredProvider,
   generateWithGemini,

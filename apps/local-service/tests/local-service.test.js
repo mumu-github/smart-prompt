@@ -12,6 +12,7 @@ const {
   createGeminiGenerateContentRequest,
   createOpenAIChatRequest,
   chooseConfiguredProvider,
+  generateWithAgnes,
   generateWithConfiguredProvider,
   generateWithOpenAICompatible,
   getConfiguredProviderOrder,
@@ -101,23 +102,28 @@ Use for login, auth, and privacy-sensitive flows.
   assert.equal(settings.uploadWholePage, false);
   assert.equal(settings.autoSubmit, false);
   assert.equal(settings.apiKey, "");
+  assert.equal(settings.providerKeys[PROVIDERS.AGNES], "");
   assert.equal(settings.providerKeys[PROVIDERS.OPENAI_COMPATIBLE], "sk-test-secret");
   assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AUTO);
 
+  assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { AGNES_API_KEY: "agnes", ANTHROPIC_API_KEY: "ant" }), PROVIDERS.AGNES);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { ANTHROPIC_API_KEY: "ant" }), PROVIDERS.ANTHROPIC);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { GEMINI_API_KEY: "gem" }), PROVIDERS.GEMINI);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO }, { OPENAI_API_KEY: "openai" }), PROVIDERS.OPENAI_COMPATIBLE);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, apiKey: "stored-openai" }, {}), PROVIDERS.OPENAI_COMPATIBLE);
+  assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, providerKeys: { agnes: "stored-agnes" } }, {}), PROVIDERS.AGNES);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, providerKeys: { anthropic: "stored-ant" } }, {}), PROVIDERS.ANTHROPIC);
   assert.equal(chooseConfiguredProvider({ provider: PROVIDERS.AUTO, providerKeys: { gemini: "stored-gem" } }, {}), PROVIDERS.GEMINI);
   assert.deepEqual(
-    getConfiguredProviderOrder({ provider: PROVIDERS.AUTO, providerKeys: { anthropic: "stored-ant", gemini: "stored-gem" } }, {}),
-    [PROVIDERS.ANTHROPIC, PROVIDERS.GEMINI]
+    getConfiguredProviderOrder({ provider: PROVIDERS.AUTO, providerKeys: { agnes: "stored-agnes", anthropic: "stored-ant", gemini: "stored-gem" } }, {}),
+    [PROVIDERS.AGNES, PROVIDERS.ANTHROPIC, PROVIDERS.GEMINI]
   );
+  assert.equal(getStoredApiKey(PROVIDERS.AGNES, { provider: PROVIDERS.AUTO, providerKeys: { agnes: "stored-agnes" } }), "stored-agnes");
   assert.equal(getStoredApiKey(PROVIDERS.ANTHROPIC, { provider: PROVIDERS.AUTO, providerKeys: { anthropic: "stored-ant" } }), "stored-ant");
-  const providerStatus = getProviderStatuses({ provider: PROVIDERS.AUTO }, { ANTHROPIC_API_KEY: "ant" });
+  const providerStatus = getProviderStatuses({ provider: PROVIDERS.AUTO }, { AGNES_API_KEY: "agnes", ANTHROPIC_API_KEY: "ant" });
   assert.equal(providerStatus.selected, PROVIDERS.AUTO);
-  assert.equal(providerStatus.auto.provider, PROVIDERS.ANTHROPIC);
+  assert.equal(providerStatus.auto.provider, PROVIDERS.AGNES);
+  assert.ok(providerStatus.providers.some((provider) => provider.provider === PROVIDERS.AGNES && provider.keyAvailable));
   assert.ok(providerStatus.providers.some((provider) => provider.provider === PROVIDERS.ANTHROPIC && provider.keyAvailable));
   const storedStatus = getProviderStatuses({ provider: PROVIDERS.AUTO, providerKeys: { gemini: "stored-gem" } }, {});
   assert.equal(storedStatus.auto.provider, PROVIDERS.GEMINI);
@@ -154,6 +160,27 @@ Use for login, auth, and privacy-sensitive flows.
   });
   assert.equal(generated.generatedBy, "llm");
   assert.equal(generated.prompt, "LLM generated prompt");
+
+  const agnesGenerated = await generateWithAgnes({
+    input: "帮我生成一个验收提示词",
+    context: { host: "chatgpt.com", tool: "ChatGPT", inputKind: "textarea" },
+    skills: imported,
+    settings: { provider: PROVIDERS.AGNES, providerKeys: { agnes: "sk-agnes-test" }, model: "agnes-2.0-flash" },
+    fetchImpl: async (url, options) => {
+      assert.equal(url, "https://apihub.agnes-ai.com/v1/chat/completions");
+      assert.equal(options.headers.Authorization, "Bearer sk-agnes-test");
+      const body = JSON.parse(options.body);
+      assert.equal(body.model, "agnes-2.0-flash");
+      return {
+        ok: true,
+        async json() {
+          return { choices: [{ message: { content: "Agnes generated prompt" } }] };
+        }
+      };
+    }
+  });
+  assert.equal(agnesGenerated.provider, PROVIDERS.AGNES);
+  assert.equal(agnesGenerated.prompt, "Agnes generated prompt");
 
   const anthropicShape = createAnthropicMessagesRequest({
     input: "Build a privacy review prompt",
@@ -284,7 +311,7 @@ Use for login, auth, and privacy-sensitive flows.
 
     const providers = await request(port, "GET", "/llm/providers");
     assert.equal(providers.status, 200);
-    assert.ok(providers.body.providers.length >= 3);
+    assert.ok(providers.body.providers.length >= 4);
     assert.ok(providers.body.providers.some((provider) => provider.provider === PROVIDERS.GEMINI && provider.usesStoredKey));
 
     const rec = await request(port, "POST", "/skills/recommend", {

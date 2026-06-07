@@ -125,7 +125,7 @@ if (Test-Path $localServiceClientPath) {
 $localServiceTestPath = Join-Path $Root "apps/local-service/tests/local-service.test.js"
 if (Test-Path $localServiceTestPath) {
   $localServiceTest = Get-Content -Raw -Encoding UTF8 $localServiceTestPath
-  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false", "PROVIDERS.ANTHROPIC", "PROVIDERS.GEMINI", "PROVIDERS.AUTO", "generateWithConfiguredProvider", "chooseConfiguredProvider", "getConfiguredProviderOrder", "getProviderStatuses", "providerKeys", "getStoredApiKey", "defaultDataDir")) {
+  foreach ($token in @("generateWithLlm", "MODE.IDEA", "MODE.CONTINUE", "MODE.POLISH", "allowTemplateFallback: false", "PROVIDERS.AGNES", "PROVIDERS.ANTHROPIC", "PROVIDERS.GEMINI", "PROVIDERS.AUTO", "generateWithAgnes", "generateWithConfiguredProvider", "chooseConfiguredProvider", "getConfiguredProviderOrder", "getProviderStatuses", "providerKeys", "getStoredApiKey", "defaultDataDir")) {
     if (-not $localServiceTest.Contains($token)) {
       Add-Failure "Local-service tests missing three-mode LLM gateway coverage token: $token"
     }
@@ -185,7 +185,7 @@ if (Test-Path $sharedCorePath) {
 $localServiceReadmePath = Join-Path $Root "apps/local-service/README.md"
 if (Test-Path $localServiceReadmePath) {
   $localServiceReadme = Get-Content -Raw -Encoding UTF8 $localServiceReadmePath
-  foreach ($token in @("## API Contract", "GET /settings", "GET /llm/providers", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "DELETE /skills/:id", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit", "providerKeys", "SMART_PROMPT_DATA_DIR", "GET,POST,PUT,DELETE,OPTIONS", "auto", "openai-compatible", "anthropic", "gemini")) {
+  foreach ($token in @("## API Contract", "GET /settings", "GET /llm/providers", "PUT /settings", "GET /prompts", "POST /prompts", "DELETE /prompts/:id", "POST /skills/import-folder", "DELETE /skills/:id", "POST /skills/recommend", "POST /generate", "allowTemplateFallback", "uploadWholePage", "autoSubmit", "providerKeys", "SMART_PROMPT_DATA_DIR", "GET,POST,PUT,DELETE,OPTIONS", "auto", "agnes", "openai-compatible", "anthropic", "gemini")) {
     if (-not $localServiceReadme.Contains($token)) {
       Add-Failure "Local-service API contract missing token: $token"
     }
@@ -195,7 +195,7 @@ if (Test-Path $localServiceReadmePath) {
 $llmGatewayPath = Join-Path $Root "packages/shared/llm-gateway.js"
 if (Test-Path $llmGatewayPath) {
   $llmGateway = Get-Content -Raw -Encoding UTF8 $llmGatewayPath
-  foreach ($token in @("PROVIDERS", "PROVIDER_ORDER", "chooseConfiguredProvider", "getConfiguredProviderOrder", "createProviderSettings", "getProviderStatuses", "getStoredApiKey", "createAnthropicMessagesRequest", "createGeminiGenerateContentRequest", "generateWithConfiguredProvider", "anthropic-version", "x-goog-api-key")) {
+  foreach ($token in @("PROVIDERS", "PROVIDER_ORDER", "AGNES_API_KEY", "agnes-2.0-flash", "apihub.agnes-ai.com", "chooseConfiguredProvider", "getConfiguredProviderOrder", "createProviderSettings", "getProviderStatuses", "getStoredApiKey", "generateWithAgnes", "createAnthropicMessagesRequest", "createGeminiGenerateContentRequest", "generateWithConfiguredProvider", "anthropic-version", "x-goog-api-key")) {
     if (-not $llmGateway.Contains($token)) {
       Add-Failure "LLM gateway missing provider support token: $token"
     }
@@ -215,7 +215,7 @@ if (Test-Path $localServiceServerPath) {
 $desktopAppPath = Join-Path $Root "apps/desktop-shell/src/app.js"
 if (Test-Path $desktopAppPath) {
   $desktopApp = Get-Content -Raw -Encoding UTF8 $desktopAppPath
-  foreach ($token in @("/prompts", "/llm/providers", "renderPrompts", "savePrompt", "deletePrompt", "deleteSkill", "delete-prompt", "delete-skill", "provider", "PROVIDER_DEFAULTS", "applyProviderDefaults", "renderProviderStatus", "providerKeys", "openai-api-key", "anthropic-api-key", "gemini-api-key")) {
+  foreach ($token in @("/prompts", "/llm/providers", "renderPrompts", "savePrompt", "deletePrompt", "deleteSkill", "delete-prompt", "delete-skill", "provider", "PROVIDER_DEFAULTS", "applyProviderDefaults", "renderProviderStatus", "providerKeys", "agnes-api-key", "openai-api-key", "anthropic-api-key", "gemini-api-key")) {
     if (-not $desktopApp.Contains($token)) {
       Add-Failure "Desktop shell prompt library UI missing token: $token"
     }
@@ -275,7 +275,7 @@ if (Test-Path $claudeCdpStartPath) {
 $realLlmProbePath = Join-Path $Root "scripts/check-v2-real-llm.ps1"
 if (Test-Path $realLlmProbePath) {
   $realLlmProbe = Get-Content -Raw -Encoding UTF8 $realLlmProbePath
-  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "SMART_PROMPT_REAL_LLM_DRY_RUN", "SMART_PROMPT_TEST_PROVIDER", "SMART_PROMPT_TEST_MODEL", "SMART_PROMPT_TEST_BASE_URL", "createStore", "defaultDataDir", "getProviderStatuses", "getConfiguredProviderOrder", "configuredProviders", "providerKeysAvailable", "idea", "continue", "polish")) {
+  foreach ($token in @("v2-real-llm.latest.json", "SMART_PROMPT_REAL_LLM_REPORT", "SMART_PROMPT_REAL_LLM_DRY_RUN", "SMART_PROMPT_TEST_PROVIDER", "SMART_PROMPT_TEST_MODEL", "SMART_PROMPT_TEST_BASE_URL", "AGNES_API_KEY", "createStore", "defaultDataDir", "getProviderStatuses", "getConfiguredProviderOrder", "configuredProviders", "providerKeysAvailable", "idea", "continue", "polish")) {
     if (-not $realLlmProbe.Contains($token)) {
       Add-Failure "Real LLM probe missing report or three-mode token: $token"
     }

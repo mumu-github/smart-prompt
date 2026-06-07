@@ -9,12 +9,13 @@ param(
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+$scriptExitCode = 0
 if (-not [System.IO.Path]::IsPathRooted($Report)) {
   $Report = Join-Path $Root $Report
 }
 New-Item -ItemType Directory -Force -Path (Split-Path -Parent $Report) | Out-Null
 
-foreach ($name in @("OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GOOGLE_API_KEY")) {
+foreach ($name in @("AGNES_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY", "GEMINI_API_KEY", "GOOGLE_API_KEY")) {
   if (-not [Environment]::GetEnvironmentVariable($name, "Process")) {
     $userKey = [Environment]::GetEnvironmentVariable($name, "User")
     if ($userKey) {
@@ -91,6 +92,7 @@ function summarizeSettings(settings) {
     model: settings.model,
     apiKeyConfigured: Boolean(settings.apiKey),
     providerKeysAvailable: {
+      agnes: Boolean(settings.providerKeys?.agnes),
       "openai-compatible": Boolean(settings.providerKeys?.["openai-compatible"]),
       anthropic: Boolean(settings.providerKeys?.anthropic),
       gemini: Boolean(settings.providerKeys?.gemini)
@@ -168,11 +170,19 @@ const samples = [
     fs.writeFileSync(process.env.SMART_PROMPT_REAL_LLM_REPORT, `${JSON.stringify(report, null, 2)}\n`, "utf8");
   }
   console.log(JSON.stringify(report, null, 2));
+  if (!report.dryRun && !report.pass) {
+    process.exitCode = 1;
+  }
 })();
 '@ | node -
+  $scriptExitCode = $LASTEXITCODE
 } finally {
   foreach ($entry in $previousEnv.GetEnumerator()) {
     [Environment]::SetEnvironmentVariable($entry.Key, $entry.Value, "Process")
   }
   Pop-Location
+}
+
+if ($scriptExitCode -ne 0) {
+  exit $scriptExitCode
 }

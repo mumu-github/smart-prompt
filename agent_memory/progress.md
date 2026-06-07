@@ -59,16 +59,17 @@
 
 ## 正在进行
 
-- 正在推进 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务、全局快捷键触发、5 个真实站点正式扩展显示、ChatGPT/Gemini/Claude Insert 已通过，真实 LLM DryRun/参数化验收脚本已补齐，但真实 LLM quota 尚未验证。
+- 正在推进 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务、全局快捷键触发、5 个真实站点正式扩展显示、ChatGPT/Gemini/Claude Insert 已通过，真实 LLM DryRun/参数化验收脚本已补齐，且已新增 Agnes provider，但真实 LLM 三模式 pass 证据尚未写入。
 - Claude Insert 已通过专用 CDP profile 真实登录态验证，`research/v2-claude-insert.latest.json` 证明正式 unpacked 扩展加载、小人显示和 Insert 填入均成功，且 `injectedProbe: false`；当前完整 V2 runtime 验收只剩真实 LLM 三模式 quota/billing 证据未通过。
 
 ## 下一步
 
-- 使用 `scripts/check-v2-real-llm.ps1 -DryRun` 预检 provider settings；提供可用 LLM billing/key 后复跑三模式真实 LLM 验收。
+- 使用 `scripts/check-v2-real-llm.ps1 -DryRun -Provider agnes` 预检 Agnes provider settings；设置 `AGNES_API_KEY` 后运行 `scripts/check-v2-real-llm.ps1 -Provider agnes` 复跑三模式真实 LLM 验收。
 - 若真实 LLM 三模式通过，补 `REAL_LLM_3_MODES_PASS`，运行 `scripts/critic-v2.ps1 -RequireRuntimeEvidence`，再记录 OMX pass verdict 并完成 Codex goal。
 
 ## 验证状态
 
+- 本轮新增 Agnes provider：共享 LLM gateway 支持 `agnes`、`AGNES_API_KEY`、默认 `https://apihub.agnes-ai.com/v1` 和 `agnes-2.0-flash`；桌面壳暴露 Agnes Key；local-service/desktop-shell 测试和默认 `scripts/critic-v2.ps1` PASS；`scripts/check-v2-real-llm.ps1 -DryRun -Provider agnes` PASS，真实 Agnes 三模式等待用户本机 key 运行。
 - 本轮绝对路径复跑：`powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\lhy10\Documents\Smart Prompt\scripts\check-v2-real-llm.ps1" -DryRun` 证明脚本路径可达，但仍只发现 `OPENAI_API_KEY`；真实运行同一绝对路径脚本仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing。该条件已多轮重复，当前无法在没有可用 API key/billing 或 Anthropic/Gemini 替代 key 的情况下继续证明 `REAL_LLM_3_MODES_PASS`。
 - 本轮复跑：`scripts/check-v2-real-llm.ps1 -DryRun` 只发现 `OPENAI_API_KEY`，未发现 Anthropic/Gemini 环境变量或桌面壳保存的 provider key；真实运行 `scripts/check-v2-real-llm.ps1` 仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing；`scripts/critic-v2.ps1 -RequireRuntimeEvidence` 当前只失败在缺少 `REAL_LLM_3_MODES_PASS` 和三模式真实 LLM 机器证据。
 - 本轮新增并验证桌面壳交互测试：`apps/desktop-shell/tests/desktop-shell-interaction.test.js` 通过 fake DOM/fetch/Tauri 执行真实 `src/app.js`，覆盖 provider/API key 保存、skill 导入/删除、prompt 保存/删除、本地服务启动和全局快捷键事件；`npm test` in `apps/desktop-shell` PASS，`scripts/critic-v2.ps1` 默认 PASS。

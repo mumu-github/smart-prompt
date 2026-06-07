@@ -51,7 +51,8 @@ Response:
     "model": "gpt-4o-mini",
     "temperature": 0.35,
     "apiKey": "sk-...abcd",
-    "providerKeys": {
+      "providerKeys": {
+      "agnes": "",
       "openai-compatible": "sk-...abcd",
       "anthropic": "",
       "gemini": ""
@@ -88,7 +89,8 @@ Request:
   "settings": {
     "provider": "openai-compatible",
     "apiKey": "sk-test",
-    "providerKeys": {
+      "providerKeys": {
+      "agnes": "sk-agnes-test",
       "anthropic": "sk-ant-test",
       "gemini": "gemini-test"
     },
@@ -103,7 +105,8 @@ Response: same shape as `GET /settings`. The service forces `uploadWholePage` an
 
 Supported `provider` values:
 
-- `auto`: try available provider keys from saved provider keys or environment variables in Anthropic, Gemini, then OpenAI-compatible order. In auto mode, each provider uses its own default base URL/model, and a failed provider request can fall through to the next configured provider.
+- `auto`: try available provider keys from saved provider keys or environment variables in Agnes, Anthropic, Gemini, then OpenAI-compatible order. In auto mode, each provider uses its own default base URL/model, and a failed provider request can fall through to the next configured provider.
+- `agnes`: Agnes OpenAI-compatible chat completions with `AGNES_API_KEY`; default base URL `https://apihub.agnes-ai.com/v1`, default model `agnes-2.0-flash`.
 - `openai-compatible`: OpenAI-compatible chat completions with `OPENAI_API_KEY`.
 - `anthropic`: Anthropic Messages API with `ANTHROPIC_API_KEY`.
 - `gemini`: Gemini `generateContent` API with `GEMINI_API_KEY` or `GOOGLE_API_KEY`.
@@ -218,7 +221,7 @@ Response:
 ```
 
 `/generate` uses the configured provider and can read saved provider-specific keys or environment variables. If the caller passes `allowTemplateFallback: true`, it falls back to local template generation when the LLM gateway is unavailable.
-The gateway supports OpenAI-compatible chat completions, Anthropic Messages, and Gemini `generateContent`; `auto` can choose among all three when keys are available and can try the next configured provider if one fails.
+The gateway supports Agnes/OpenAI-compatible chat completions, OpenAI-compatible chat completions, Anthropic Messages, and Gemini `generateContent`; `auto` can choose among all configured providers when keys are available and can try the next configured provider if one fails.
 
 The service keeps `uploadWholePage` and `autoSubmit` forced to `false`.
 

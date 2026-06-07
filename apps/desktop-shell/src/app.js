@@ -5,6 +5,10 @@ const PROVIDER_DEFAULTS = {
     baseUrl: "https://api.openai.com/v1",
     model: "gpt-4o-mini"
   },
+  agnes: {
+    baseUrl: "https://apihub.agnes-ai.com/v1",
+    model: "agnes-2.0-flash"
+  },
   "openai-compatible": {
     baseUrl: "https://api.openai.com/v1",
     model: "gpt-4o-mini"
@@ -26,6 +30,7 @@ const els = {
   baseUrl: document.getElementById("base-url"),
   model: document.getElementById("model"),
   apiKey: document.getElementById("api-key"),
+  agnesApiKey: document.getElementById("agnes-api-key"),
   openaiApiKey: document.getElementById("openai-api-key"),
   anthropicApiKey: document.getElementById("anthropic-api-key"),
   geminiApiKey: document.getElementById("gemini-api-key"),
@@ -111,6 +116,7 @@ function setKeyPlaceholder(element, redacted, label) {
 
 function collectProviderKeys() {
   const providerKeys = {};
+  if (els.agnesApiKey.value) providerKeys.agnes = els.agnesApiKey.value;
   if (els.openaiApiKey.value) providerKeys["openai-compatible"] = els.openaiApiKey.value;
   if (els.anthropicApiKey.value) providerKeys.anthropic = els.anthropicApiKey.value;
   if (els.geminiApiKey.value) providerKeys.gemini = els.geminiApiKey.value;
@@ -143,6 +149,7 @@ async function loadServiceState() {
     els.baseUrl.value = settings.settings.baseUrl || els.baseUrl.value;
     els.model.value = settings.settings.model || els.model.value;
     setKeyPlaceholder(els.apiKey, settings.settings.apiKey, "Stored by local service");
+    setKeyPlaceholder(els.agnesApiKey, settings.settings.providerKeys?.agnes, "Agnes API key");
     setKeyPlaceholder(els.openaiApiKey, settings.settings.providerKeys?.["openai-compatible"], "OpenAI-compatible API key");
     setKeyPlaceholder(els.anthropicApiKey, settings.settings.providerKeys?.anthropic, "Anthropic API key");
     setKeyPlaceholder(els.geminiApiKey, settings.settings.providerKeys?.gemini, "Gemini API key");
@@ -169,6 +176,7 @@ async function saveSettings() {
     body: JSON.stringify(payload)
   });
   els.apiKey.value = "";
+  els.agnesApiKey.value = "";
   els.openaiApiKey.value = "";
   els.anthropicApiKey.value = "";
   els.geminiApiKey.value = "";

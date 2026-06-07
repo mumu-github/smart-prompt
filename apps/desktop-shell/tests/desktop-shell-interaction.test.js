@@ -13,6 +13,7 @@ const elementIds = [
   "base-url",
   "model",
   "api-key",
+  "agnes-api-key",
   "openai-api-key",
   "anthropic-api-key",
   "gemini-api-key",
@@ -94,6 +95,7 @@ const serviceState = {
     model: "gpt-4o-mini",
     apiKey: "",
     providerKeys: {
+      agnes: "",
       "openai-compatible": "",
       anthropic: "",
       gemini: ""
@@ -139,6 +141,7 @@ async function fakeFetch(url, options = {}) {
       selected: serviceState.settings.provider,
       auto: { provider: "gemini" },
       providers: [
+        { provider: "agnes", label: "Agnes", keyAvailable: Boolean(serviceState.settings.providerKeys.agnes) },
         { provider: "openai-compatible", label: "OpenAI-compatible", keyAvailable: Boolean(serviceState.settings.providerKeys["openai-compatible"]) },
         { provider: "anthropic", label: "Anthropic", keyAvailable: Boolean(serviceState.settings.providerKeys.anthropic) },
         { provider: "gemini", label: "Gemini", keyAvailable: Boolean(serviceState.settings.providerKeys.gemini) }
@@ -237,11 +240,17 @@ context.window = {
   assert.ok(elements["skill-list"].innerHTML.includes("No imported skills"));
   assert.ok(elements["prompt-list"].innerHTML.includes("No saved prompts"));
 
+  elements.provider.value = "agnes";
+  elements.provider.trigger("change");
+  assert.equal(elements["base-url"].value, "https://apihub.agnes-ai.com/v1");
+  assert.equal(elements.model.value, "agnes-2.0-flash");
+
   elements.provider.value = "gemini";
   elements.provider.trigger("change");
   assert.equal(elements["base-url"].value, "https://generativelanguage.googleapis.com/v1beta");
   assert.equal(elements.model.value, "gemini-2.5-flash");
 
+  elements["agnes-api-key"].value = "sk-agnes-test";
   elements["openai-api-key"].value = "sk-openai-test";
   elements["anthropic-api-key"].value = "sk-ant-test";
   elements["gemini-api-key"].value = "sk-gemini-test";
@@ -249,7 +258,9 @@ context.window = {
   await waitFor(() => serviceState.settings.providerKeys.gemini === "sk-gemini-test", "settings save");
   const settingsRequest = serviceRequests.find((request) => request.method === "PUT" && request.path === "/settings");
   assert.equal(settingsRequest.body.provider, "gemini");
+  assert.equal(settingsRequest.body.providerKeys.agnes, "sk-agnes-test");
   assert.equal(settingsRequest.body.providerKeys.anthropic, "sk-ant-test");
+  assert.equal(elements["agnes-api-key"].value, "");
   assert.equal(elements["gemini-api-key"].value, "");
 
   elements["skill-folder"].value = "C:\\Users\\you\\.codex\\skills";

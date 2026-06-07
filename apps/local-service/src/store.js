@@ -9,6 +9,7 @@ const DEFAULT_SETTINGS = Object.freeze({
   temperature: 0.35,
   apiKey: "",
   providerKeys: {
+    agnes: "",
     "openai-compatible": "",
     anthropic: "",
     gemini: ""
@@ -39,7 +40,7 @@ function writeJson(file, value) {
 }
 
 function normalizeProvider(value, fallback = "auto") {
-  return ["auto", "openai-compatible", "anthropic", "gemini"].includes(value) ? value : fallback;
+  return ["auto", "agnes", "openai-compatible", "anthropic", "gemini"].includes(value) ? value : fallback;
 }
 
 function normalizeProviderKeys(current, incoming, provider, legacyApiKey) {
