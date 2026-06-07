@@ -2,9 +2,9 @@
 
 ## 当前任务
 
-- 任务目标：实现 V2：真实 LLM 生成、强化站点适配、本地 prompt/skill 库、Tauri 桌面壳、本地服务桥接，并保持只填入不自动发送。
-- 成功标准：至少 5 个网页 AI 输入框稳定出现小人；三模式调用真实 LLM；ChatGPT/Claude/Gemini Insert 成功；可导入 skill 文件夹并推荐 1-3 个 skill；桌面壳可启动、配置 API key、管理 skill、触发全局快捷键；不自动发送、不默认上传整页。
-- 范围边界：当前先实现可自动验证的代码路径；真实站点与 Tauri runtime 需要后续手测/环境验证后才能完成 goal。
+- 任务目标：将当前 Smart Prompt 仓库发布到 GitHub 私有仓库 `mumu-github/smart-prompt`，刷新 README，并推送当前提交历史。
+- 成功标准：GitHub 私有仓库已创建；`README.md` 已提交；当前 HEAD 已推送到远程 `main`；不误提交用户未确认的 `docs/prd.md` 本地改动。
+- 范围边界：不创建 PR；不修改仓库可见性；不纳入 `docs/prd.md` 当前未确认改动。
 
 ## 已完成
 
@@ -59,12 +59,12 @@
 
 ## 正在进行
 
-- 正在收尾 V2 runtime 验收；当前自动化代码路径、本地服务桥接 demo、Tauri 运行态启动、Tauri 启动本地服务、全局快捷键触发、5 个真实站点正式扩展显示、ChatGPT/Gemini/Claude Insert、Agnes 真实 LLM 三模式均已有机器证据。
-- Claude Insert 已通过专用 CDP profile 真实登录态验证，`research/v2-claude-insert.latest.json` 证明正式 unpacked 扩展加载、小人显示和 Insert 填入均成功，且 `injectedProbe: false`；Agnes 真实 LLM 报告也已严格证明 `idea`、`continue`、`polish` 三模式。
+- GitHub 发布任务已完成：私有仓库 `https://github.com/mumu-github/smart-prompt` 已创建，当前 HEAD 已推送到远程 `main`。
+- 当前仍有用户本地改动 `docs/prd.md` 未提交，本次按范围保留不动。
 
 ## 下一步
 
-- 运行 `scripts/critic-v2.ps1 -RequireRuntimeEvidence`；若通过，记录 OMX pass verdict 并完成 Codex goal。
+- 如需继续协作，可基于远程 `main` 做分支、邀请协作者或补充仓库设置。
 
 ## 验证状态
 
