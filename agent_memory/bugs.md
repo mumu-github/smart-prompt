@@ -1,5 +1,13 @@
 # 问题与风险
 
+## V5 Beta 发布后剩余风险 2026-06-07
+
+- 已解决：V5 不再依赖“Node + JS resources”作为发布 sidecar；当前 beta 包使用 `apps/local-service-sidecar` 编译出的 native executable，并由 Tauri 资源打包。
+- 已解决：V5 release-ready manifest 已通过，`v0.2.0-beta.1` tag 已推送到 GitHub；安装包 checksum 和 release notes 已生成。
+- 仍需内测观察：`research/v5-pilot-loop.md` 是 beta pilot 计划与记录入口，后续真实用户使用后需要继续补 Insert 成功率、保存率、Undo/Retry 使用和失败站点 adapter 修复。
+- 仍需发布形态观察：当前满足“至少打 tag”的 GitHub 发布要求，尚未创建 GitHub Release 页面或上传 installer assets；如要面向更多内测用户分发，下一步可补 release asset 上传。
+- 仍需谨慎处理：`docs/prd.md` 仍有用户未确认本地改动，不要在后续提交中默认纳入。
+
 ## V4 完成后剩余风险 2026-06-07
 
 - 已解决：`INSTALLER_PASS` 现在有安装包 artifact 和安装后 runtime smoke 证据；安装后的桌面壳能从包内 `resources/smart-prompt-sidecar` 使用包内 `node.exe` 启动/停止 local-service，并通过 `/health`。

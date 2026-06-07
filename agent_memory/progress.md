@@ -1,5 +1,14 @@
 # 当前进度
 
+## V5 Beta 发布与真实内测闭环完成进度 2026-06-07
+
+- 已完成分组提交链路，且显式排除 `docs/prd.md`：V3/V4 evidence、desktop shell、local-service、extension、release scripts 已先行分组提交，V5 最终新增 `Ship V5 beta native sidecar release` 与 `Record V5 beta release pass manifest` 两个提交。
+- 已完成 beta release 包证据：`docs/releases/v0.2.0-beta.1.md`、`research/v5-beta-checksums.sha256`、MSI/NSIS installer artifact、`v0.2.0-beta.1` tag。
+- 已完成 V5 技术加固：`apps/local-service-sidecar/` Rust native sidecar、desktop shell native sidecar 启动/重启/端口恢复、local-service 诊断导出与删除全部本地数据、key 迁移状态、桌面壳诊断/清空数据 UX。
+- 已完成内测产品闭环文档：`research/v5-pilot-loop.md` 覆盖 5 个真实使用场景、Insert 成功率、保存率、Undo/Retry 使用情况和 adapter 更新记录。
+- 已验证：`scripts/critic-v5.ps1` PASS；`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`npm test` in `prototypes/browser-extension` PASS；`npm run build` in `apps/desktop-shell` PASS；`scripts/check-v4-installer-smoke.ps1` PASS。
+- 已推送：远程分支 `codex/prompt-automation-research` 和远程 tag `v0.2.0-beta.1` 均已推送到 `origin`。
+
 ## V4 可安装内测版完成进度 2026-06-07
 
 - 已补强发布链路：新增 `apps/desktop-shell/scripts/prepare-sidecar.js`，并把 Tauri `beforeBuildCommand` 改为 `npm run prepare-release`；build 会同时准备 frontend dist 和包内 local-service sidecar resources。

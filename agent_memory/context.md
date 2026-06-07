@@ -1,5 +1,12 @@
 # 项目上下文
 
+## V5 Beta 发布上下文 2026-06-07
+
+- V5 当前已进入 beta 发布闭环：本地 native sidecar、诊断导出、删除全部本地数据、key 迁移状态、崩溃重启/端口恢复、release notes、checksum、pilot-loop 证据均已落地。
+- `v0.2.0-beta.1` 已作为 Git tag 推送到 GitHub private repo；当前至少满足“GitHub 里发布或打 tag”的发布要求。
+- 当前 beta release 证据入口是 `research/v5-beta-manifest.latest.json`，该 manifest 为 `pass:true`、`releaseReady:true`。
+- 当前保留的已知本地未提交改动只有 `docs/prd.md`，这是用户未确认 scope 编辑，后续不要默认 stage 或改写。
+
 ## V4 可安装内测版完成上下文 2026-06-07
 
 - V4 当前 release manifest 已为 `pass:true`、`releaseReady:true`；证据入口是 `research/v4-release-manifest.latest.json`，所有验收门 `INSTALLER_PASS`、`SIDECAR_SERVICE_PASS`、`FIRST_RUN_PASS`、`KEYCHAIN_PASS`、`LIVE_SITE_STABILITY_PASS`、`PROMPT_CARD_UX_PASS`、`LOCAL_DATA_PASS`、`V4_RELEASE_MANIFEST_PASS` 均为 PASS。
