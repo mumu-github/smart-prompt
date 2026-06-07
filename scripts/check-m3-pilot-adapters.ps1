@@ -1,7 +1,7 @@
 param(
   [string]$Report = "",
   [string]$ProfileDir = "",
-  [string[]]$SiteIds = @("workbuddy", "trae", "doubao", "deepseek"),
+  [string[]]$SiteIds = @("doubao"),
   [int]$LoginWaitSeconds = 30,
   [int]$CdpPort = 9235,
   [int]$NoAutoSendWaitMs = 1500,

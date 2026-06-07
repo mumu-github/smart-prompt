@@ -88,7 +88,7 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - `scripts/check-m3-installed-sidecar-desktop-input.ps1` 会构建桌面壳、静默安装 NSIS 包、从安装后的 app 启动 bundled native sidecar，再调用 `GET /desktop/input-snapshot?selfTest=1` 与 `POST /desktop/fill?selfTest=1`。
 - 证据文件：`research/m3-installed-sidecar-desktop-input.latest.json`，当前 `pass:true`。
 
-这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用，并且前台窗口写回已有受控确认协议；真实 Codex 前台窗口 snapshot-only 审计也已通过。M3 仍未完成，因为还缺 Codex/Claude Code/Hermes 真实工具窗口写回验收报告。
+这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用，并且前台窗口写回已有受控确认协议。真实 Codex、Claude Code、Hermes 工具窗口填入矩阵也已补齐，当前桌面工具端验收以 `research/m3-real-desktop-tools-fill-matrix.latest.json` 为准。
 
 ## 工具画像
 
@@ -106,20 +106,20 @@ macOS AXUIElement 仍是后续跨平台方向，但本轮先不做识别实现�
 
 ## Pilot 数据
 
-新增 `scripts/check-m3-pilot-adapters.ps1` 用于四个 beta 网页 adapter：
+新增 `scripts/check-m3-pilot-adapters.ps1` 用于当前 beta 网页 adapter：
 
-- workBuddy
-- Trae
 - Doubao
-- DeepSeek
 
 它生成 `research/m3-pilot-adapters.latest.json`，记录 Insert attempts、Insert success rate、失败原因、no-auto-send 状态、route matrix 和红线隐私检查。登录、地区限制、selector 失败都应记录为真实失败原因，而不是从报告里筛掉。
+
+用户已明确 workBuddy、Trae 是本地工具路径，不作为网页 adapter 验收；DeepSeek 本轮不跑。
 
 当前 pilot 报告已新增 `pageClassification` 与 `routeDiagnostics`，用于区分：
 
 - `no_input_candidates_on_loaded_page`
 - `public_or_marketing_page_no_visible_composer`
 - `login_or_auth_gate_no_visible_composer`
+- `region_or_security_gate_no_visible_composer`
 - `input_candidates_hidden_or_offscreen`
 
-最新结果仍是 4 次 Insert attempts、0 次成功；每站已探测 5 个候选入口。失败原因已从单一 `no visible input candidate` 细化为 `no_input_candidates_on_loaded_page: 2`、`public_or_marketing_page_no_visible_composer: 1` 与 `login_or_auth_gate_no_visible_composer: 1`。当前 route matrix 显示 workBuddy、Trae、Doubao 候选入口都没有可见 composer；DeepSeek 有可见输入，但被识别为登录/认证页，探针不会再把登录框当作 composer 写入。
+最新结果是豆包登录态网页 1 次 Insert attempt、1 次成功，Insert success rate 为 1.0。证据来自用户已登录的现有 Chrome tab，验证了 `https://www.doubao.com/chat/` 上可见 composer、真实填入回读和 no-auto-send；测试文本已在取证后清空。该报告明确标记当前普通 Chrome tab 未加载 Smart Prompt 内容脚本，因此这是登录态 composer/adapter 写入验证，不伪装成 CDP 正式扩展加载。

@@ -349,6 +349,16 @@ function classifyRouteSnapshot({ requestedUrl, actualUrl, title, candidates, vis
     "登陆",
     "注册"
   ]);
+  const regionOrSecurityLike = includesAny(haystack, [
+    "region-ban",
+    "region-restricted",
+    "restricted",
+    "security/",
+    "request could not be satisfied",
+    "cloudfront",
+    "403",
+    "blocked"
+  ]);
   const publicLike = includesAny(haystack, [
     "pricing",
     "download",
@@ -364,7 +374,9 @@ function classifyRouteSnapshot({ requestedUrl, actualUrl, title, candidates, vis
   const actualHost = safeUrlHost(actualUrl);
   const redirectedHost = Boolean(requestedHost && actualHost && requestedHost !== actualHost);
   let pageClassification = "unknown";
-  if (loginLike) {
+  if (regionOrSecurityLike) {
+    pageClassification = "region_or_security_gate";
+  } else if (loginLike) {
     pageClassification = "login_or_auth_gate";
   } else if (totalInputCandidateCount === 0 && publicLike) {
     pageClassification = "public_or_marketing_page";
@@ -389,6 +401,7 @@ function classifyRouteSnapshot({ requestedUrl, actualUrl, title, candidates, vis
     visibleInputCount,
     hiddenInputCandidateCount,
     loginLike,
+    regionOrSecurityLike,
     publicLike,
     pageClassification
   };
@@ -1083,6 +1096,7 @@ function getPilotRouteDiagnostics(result, formalSite) {
 
 function getPilotFailureReason(result, formalSite, routeDiagnostics = getPilotRouteDiagnostics(result, formalSite)) {
   if (!formalSite.formalExtensionLoaded) return "extension_not_loaded";
+  if (routeDiagnostics.regionOrSecurityLike || routeDiagnostics.pageClassification === "region_or_security_gate") return "region_or_security_gate_no_visible_composer";
   if (routeDiagnostics.loginLike) return "login_or_auth_gate_no_visible_composer";
   if (!formalSite.focus.ok) {
     if (routeDiagnostics.pageClassification === "login_or_auth_gate") return "login_or_auth_gate_no_visible_composer";

@@ -22,8 +22,8 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 ### 下一阶段收口
 
-- 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因；当前 beta adapter pilot 已补 route matrix，用于区分无 composer、营销页和登录/认证页。
-- 补 workBuddy、Trae、Doubao、DeepSeek 等新网页站点适配。
+- 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因；当前 beta adapter pilot 已收窄到豆包登录态网页，workBuddy/Trae 按本地工具路径验证，DeepSeek 本轮不跑。
+- 补 Doubao 等新网页站点适配；workBuddy、Trae 归入本地桌面工具/CLI 工具画像，不作为网页 adapter 验收。
 - 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test、三工具画像 self-test、真实 Codex 前台窗口 snapshot-only 审计、Windows 写回 self-test、受控前台窗口写回 guard、source/dev sidecar snapshot/fill 和安装包 bundled sidecar snapshot/fill smoke 已通过，真实工具窗口写回验收仍待完成；macOS AX 暂缓到后续跨平台阶段。
 
 ## 1. 背景
@@ -49,7 +49,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 ### 核心用户
 
-- 高频使用 Cursor、Codex、Claude Code、Windsurf、Lovable、Bolt、v0、Replit、workBuddy、Trae、Doubao、DeepSeek、Hermes 等 vibe coding/AI 构建工具的人。
+- 高频使用 Cursor、Codex、Claude Code、Windsurf、Lovable、Bolt、v0、Replit、workBuddy、Trae、Doubao、Hermes 等 vibe coding/AI 构建工具的人。
 - 高频使用 ChatGPT、Claude、Gemini、Perplexity 等网页 LLM 的产品、运营、设计、研发用户。
 
 ### 次级用户
@@ -116,8 +116,8 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 - 识别当前浏览器 tab host、页面标题、输入框类型和位置。
 - 正式 allowlist：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit。
-- Beta 扩展 allowlist：workBuddy、Trae、Doubao、DeepSeek；进入真实内测后按失败原因调整 selector 和写入策略。
-- 桌面/CLI 工具画像：Codex、Claude Code、Hermes；M3 当前通过 Windows UIA 接入真实输入框。
+- Beta 扩展 allowlist：Doubao；进入真实内测后按失败原因调整 selector 和写入策略。
+- 桌面/CLI 工具画像：Codex、Claude Code、Hermes；workBuddy、Trae 后续按本地工具路径验证；M3 当前通过 Windows UIA 接入真实输入框。
 - 对未知网页回退通用 `textarea/input/contenteditable/role=textbox` 检测。
 - 在桌面 app 中记录当前前台应用名称和窗口标题。
 
@@ -368,7 +368,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 ## 16. 开放问题
 
-- workBuddy、Trae、Doubao、DeepSeek 的真实输入框 selector 需要通过内测验证，不能只靠静态假设。
+- Doubao 的真实输入框 selector 需要通过登录态内测验证，不能只靠静态假设；workBuddy、Trae 按本地工具输入框识别验证，不作为网页 selector 验收。
 - Codex、Claude Code、Hermes 已进入 M3 首批桌面/CLI 工具画像；Windows 三工具画像 self-test、写回链路、受控前台窗口写回协议和显式剪贴板 fallback self-test 已通过，仍需真实工具窗口写回报告。
 - `gpt-image-2` 在用户实际 API 环境中的可用性仍受 billing/key 限制；项目内小人资产已可先用内置 image_gen 版本推进 UI。
 - 是否允许团队同步 prompts/skills，需要后续商业模式判断。

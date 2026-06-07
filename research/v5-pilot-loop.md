@@ -58,12 +58,17 @@ The browser extension records `insert`, `retry`, `undo`, and `favorite/save` fee
 - Strict no-auto-send baseline: 3/3 required Insert sites.
 - Runtime prompt-card baseline: Retry, Insert, Undo, online Save, and offline Save are covered by the extension runtime demo.
 - Desktop baseline: first-run, provider test, skill import, prompt library, diagnostics export, restart, and clear local data are covered by desktop interaction tests.
+- M3 beta adapter baseline: Doubao has a logged-in existing Chrome composer report with 1 Insert attempt, 1 verified fill, and no-auto-send. workBuddy and Trae are treated as local desktop tools, not web adapters; DeepSeek is out of the current M3 web pilot.
 
 ## Adapter Updates From Failures
 
 - Claude: use persistent login profile recovery before formal Insert validation.
 - Replit: use `/agent4` as the formal agent composer route; reject root marketing textareas and `/ai` when no real agent composer is visible.
 - v0: include `v0.app` host coverage in manifest and adapter checks.
+- Doubao: use the logged-in `https://www.doubao.com/chat/` composer route; current evidence verifies fill/no-auto-send in the user's existing Chrome tab and clears the test text afterward.
+- Region/security redirects: classify them as `region_or_security_gate_no_visible_composer` instead of treating them as a selector failure.
+- workBuddy and Trae: validate through the local desktop-tool path, not as web routes.
+- DeepSeek: excluded from the current M3 web pilot.
 - All sites: live-site probe evidence is redacted and records adapter id, selector usage, and failure reason without storing full URL, title, prompt body, or input value.
 
 ## Stop Conditions

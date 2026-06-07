@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T19:00:48.1717635Z",
+    "createdAt":  "2026-06-07T19:40:38.1397106Z",
     "pass":  true,
     "port":  17441,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  90,
-                    "sha256":  "1abba177bc5538f5"
+                    "sha256":  "220a210275406721"
                 },
     "checks":  {
                    "sidecarHealthy":  true,
@@ -24,12 +24,12 @@
     "snapshot":  {
                      "candidates":  [
                                         {
-                                            "automationIdHash":  "478535db79632752",
+                                            "automationIdHash":  "b13da45b56f9f7e5",
                                             "boundingRect":  {
                                                                  "height":  72,
                                                                  "width":  470,
-                                                                 "x":  50,
-                                                                 "y":  73
+                                                                 "x":  206,
+                                                                 "y":  229
                                                              },
                                             "classNameHash":  "ef47f5b6113964e2",
                                             "controlType":  "ControlType.Pane",
@@ -54,8 +54,8 @@
                                    "rect":  {
                                                 "height":  12,
                                                 "width":  1,
-                                                "x":  185,
-                                                "y":  76
+                                                "x":  341,
+                                                "y":  232
                                             },
                                    "source":  "win32_get_gui_thread_info",
                                    "supported":  true,
@@ -63,7 +63,7 @@
                                    "visible":  true,
                                    "windowHandlePresent":  true
                                },
-                     "createdAt":  "2026-06-07T19:00:47.8972414Z",
+                     "createdAt":  "2026-06-07T19:40:37.8131118Z",
                      "foreground":  {
                                         "childProcessCount":  0,
                                         "childToolProcessHintPresent":  false,

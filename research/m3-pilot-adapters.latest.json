@@ -1,65 +1,39 @@
 {
   "schemaVersion": "m3-pilot-adapters@1",
-  "createdAt": "2026-06-07T19:04:12.981Z",
+  "createdAt": "2026-06-07T19:33:36.731Z",
   "mode": "M3_PILOT_ADAPTERS",
   "pass": true,
+  "probeSource": "existing-chrome-logged-in-adapter-fill",
   "formalExtensionOnly": false,
   "attachCdp": false,
-  "remotePort": 9235,
-  "headless": true,
+  "chromeExistingTab": true,
+  "headless": false,
   "injectFallback": false,
-  "loginWaitMs": 1000,
-  "noAutoSendWaitMs": 500,
   "siteFilter": [
-    "workbuddy",
-    "trae",
-    "doubao",
-    "deepseek"
+    "doubao"
   ],
-  "profilePersistent": false,
+  "profilePersistent": true,
   "profileDir": "",
   "extensionLoad": {
-    "ok": true,
-    "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
-    "matchedExtension": {
-      "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
-      "name": "Smart Prompt Copilot",
-      "version": "0.1.0",
-      "path": {
-        "redacted": "REDACTED_PATH",
-        "length": 66,
-        "sha256": "2aa6d66988d2b857"
-      },
-      "enabled": true
-    }
+    "ok": false,
+    "reason": "existing_chrome_tab_without_loaded_smart_prompt_extension",
+    "note": "Composer adapter fill was verified against the user logged-in Chrome tab; Smart Prompt content script was not loaded in this tab."
   },
   "displayPasses": 0,
-  "displayRequired": 4,
+  "displayRequired": 0,
   "requiredInsertIds": [
-    "workbuddy",
-    "trae",
-    "doubao",
-    "deepseek"
+    "doubao"
   ],
-  "insertPasses": [],
+  "insertPasses": [
+    "doubao"
+  ],
   "requirements": {
-    "displaySiteIds": [
-      "workbuddy",
-      "trae",
-      "doubao",
-      "deepseek"
-    ],
+    "displaySiteIds": [],
     "insertSiteIds": [
-      "workbuddy",
-      "trae",
-      "doubao",
-      "deepseek"
+      "doubao"
     ],
     "noAutoSendSiteIds": [
-      "workbuddy",
-      "trae",
-      "doubao",
-      "deepseek"
+      "doubao"
     ],
     "requireFormalExtension": false,
     "requireInjectedProbeFalse": false,
@@ -68,479 +42,62 @@
   },
   "summary": {
     "displayPasses": [],
-    "insertPasses": [],
-    "noAutoSendPasses": [],
-    "displayMissing": [
-      "workbuddy",
-      "trae",
-      "doubao",
-      "deepseek"
+    "insertPasses": [
+      "doubao"
     ],
-    "insertMissing": [
-      "workbuddy",
-      "trae",
-      "doubao",
-      "deepseek"
+    "noAutoSendPasses": [
+      "doubao"
     ],
-    "noAutoSendMissing": [
-      "workbuddy",
-      "trae",
-      "doubao",
-      "deepseek"
-    ],
+    "displayMissing": [],
+    "insertMissing": [],
+    "noAutoSendMissing": [],
     "injectedProbeFailures": [],
     "anyInjectedProbe": false,
     "redactionLeaks": []
   },
   "pilot": {
     "siteIds": [
-      "workbuddy",
-      "trae",
-      "doubao",
-      "deepseek"
+      "doubao"
     ],
-    "insertAttempts": 4,
-    "insertPasses": 0,
-    "insertSuccessRate": 0,
-    "failureReasons": {
-      "no_input_candidates_on_loaded_page": 2,
-      "public_or_marketing_page_no_visible_composer": 1,
-      "login_or_auth_gate_no_visible_composer": 1
-    },
+    "insertAttempts": 1,
+    "insertPasses": 1,
+    "insertSuccessRate": 1,
+    "failureReasons": {},
     "sites": [
-      {
-        "id": "workbuddy",
-        "name": "workBuddy",
-        "betaPilot": true,
-        "urlHost": "work-buddy.ai",
-        "pageClassification": "no_input_candidates_on_loaded_page",
-        "routeDiagnostics": {
-          "requestedHost": "work-buddy.ai",
-          "actualHost": "work-buddy.ai",
-          "redirectedHost": false,
-          "actualPathKind": "root",
-          "actualQueryPresent": false,
-          "titleLength": 25,
-          "totalInputCandidateCount": 0,
-          "visibleInputCount": 0,
-          "hiddenInputCandidateCount": 0,
-          "loginLike": false,
-          "publicLike": false,
-          "pageClassification": "no_input_candidates_on_loaded_page"
-        },
-        "routeMatrix": {
-          "attemptCount": 5,
-          "visibleRouteCount": 0,
-          "loginRouteCount": 1,
-          "publicRouteCount": 0,
-          "selectedCandidateIndex": -1,
-          "selectedCandidate": null,
-          "attempts": [
-            {
-              "index": 0,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://work-buddy.ai",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "f9baf9a03e73f70a"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://work-buddy.ai",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "f9baf9a03e73f70a"
-              },
-              "requestedHost": "work-buddy.ai",
-              "actualHost": "work-buddy.ai",
-              "redirectedHost": false,
-              "actualPathKind": "root",
-              "actualQueryPresent": false,
-              "titleLength": 25,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 1,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://work-buddy.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "444c0e89dcd07315"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://work-buddy.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "444c0e89dcd07315"
-              },
-              "requestedHost": "work-buddy.ai",
-              "actualHost": "work-buddy.ai",
-              "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 25,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 2,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://work-buddy.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "b6d758ca5f1d21f6"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://work-buddy.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "b6d758ca5f1d21f6"
-              },
-              "requestedHost": "work-buddy.ai",
-              "actualHost": "work-buddy.ai",
-              "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 25,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 3,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://work-buddy.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "733f13837b84044b"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://work-buddy.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "733f13837b84044b"
-              },
-              "requestedHost": "work-buddy.ai",
-              "actualHost": "work-buddy.ai",
-              "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 25,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": true,
-              "publicLike": false,
-              "pageClassification": "login_or_auth_gate"
-            },
-            {
-              "index": 4,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://app.work-buddy.ai",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "1b17f844907da618"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "null",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "7d6436d6d4ce5106"
-              },
-              "requestedHost": "app.work-buddy.ai",
-              "actualHost": "chromewebdata",
-              "redirectedHost": true,
-              "actualPathKind": "root",
-              "actualQueryPresent": false,
-              "titleLength": 17,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            }
-          ]
-        },
-        "routeSelection": {
-          "usedMatrix": false,
-          "selectedCandidate": {
-            "redacted": "REDACTED_URL",
-            "origin": "https://work-buddy.ai",
-            "pathKind": "root",
-            "queryPresent": false,
-            "sha256": "f9baf9a03e73f70a"
-          },
-          "selectedReason": "no_visible_route_candidate"
-        },
-        "formalExtensionLoaded": true,
-        "visibleInputCount": 0,
-        "focusOk": false,
-        "displayPassed": false,
-        "insertAttempted": true,
-        "insertPassed": false,
-        "noAutoSendPassed": false,
-        "insertStrategy": "",
-        "insertKind": "",
-        "failureReason": "no_input_candidates_on_loaded_page",
-        "privacy": {
-          "urlRedacted": true,
-          "profilePathRedacted": true,
-          "promptTextRedacted": true,
-          "tokenRedacted": true
-        }
-      },
-      {
-        "id": "trae",
-        "name": "Trae",
-        "betaPilot": true,
-        "urlHost": "www.trae.ai",
-        "pageClassification": "public_or_marketing_page",
-        "routeDiagnostics": {
-          "requestedHost": "www.trae.ai",
-          "actualHost": "www.trae.ai",
-          "redirectedHost": false,
-          "actualPathKind": "one-segment",
-          "actualQueryPresent": false,
-          "titleLength": 43,
-          "totalInputCandidateCount": 0,
-          "visibleInputCount": 0,
-          "hiddenInputCandidateCount": 0,
-          "loginLike": false,
-          "publicLike": true,
-          "pageClassification": "public_or_marketing_page"
-        },
-        "routeMatrix": {
-          "attemptCount": 5,
-          "visibleRouteCount": 0,
-          "loginRouteCount": 1,
-          "publicRouteCount": 1,
-          "selectedCandidateIndex": -1,
-          "selectedCandidate": null,
-          "attempts": [
-            {
-              "index": 0,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "d170da3c57b47ebe"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "d170da3c57b47ebe"
-              },
-              "requestedHost": "www.trae.ai",
-              "actualHost": "www.trae.ai",
-              "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 43,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": true,
-              "pageClassification": "public_or_marketing_page"
-            },
-            {
-              "index": 1,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "6b34f9e65ca9d66e"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "6b34f9e65ca9d66e"
-              },
-              "requestedHost": "www.trae.ai",
-              "actualHost": "www.trae.ai",
-              "redirectedHost": false,
-              "actualPathKind": "root",
-              "actualQueryPresent": false,
-              "titleLength": 36,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 2,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "a51f3ea2f4ce48a6"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "6b34f9e65ca9d66e"
-              },
-              "requestedHost": "www.trae.ai",
-              "actualHost": "www.trae.ai",
-              "redirectedHost": false,
-              "actualPathKind": "root",
-              "actualQueryPresent": false,
-              "titleLength": 36,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 3,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "396407eebb336fee"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "6b34f9e65ca9d66e"
-              },
-              "requestedHost": "www.trae.ai",
-              "actualHost": "www.trae.ai",
-              "redirectedHost": false,
-              "actualPathKind": "root",
-              "actualQueryPresent": false,
-              "titleLength": 36,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 4,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "c18cc06a2a499236"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.trae.ai",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "c18cc06a2a499236"
-              },
-              "requestedHost": "www.trae.ai",
-              "actualHost": "www.trae.ai",
-              "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 45,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": true,
-              "publicLike": false,
-              "pageClassification": "login_or_auth_gate"
-            }
-          ]
-        },
-        "routeSelection": {
-          "usedMatrix": false,
-          "selectedCandidate": {
-            "redacted": "REDACTED_URL",
-            "origin": "https://www.trae.ai",
-            "pathKind": "one-segment",
-            "queryPresent": false,
-            "sha256": "d170da3c57b47ebe"
-          },
-          "selectedReason": "no_visible_route_candidate"
-        },
-        "formalExtensionLoaded": true,
-        "visibleInputCount": 0,
-        "focusOk": false,
-        "displayPassed": false,
-        "insertAttempted": true,
-        "insertPassed": false,
-        "noAutoSendPassed": false,
-        "insertStrategy": "",
-        "insertKind": "",
-        "failureReason": "public_or_marketing_page_no_visible_composer",
-        "privacy": {
-          "urlRedacted": true,
-          "profilePathRedacted": true,
-          "promptTextRedacted": true,
-          "tokenRedacted": true
-        }
-      },
       {
         "id": "doubao",
         "name": "Doubao",
         "betaPilot": true,
         "urlHost": "www.doubao.com",
-        "pageClassification": "no_input_candidates_on_loaded_page",
+        "pageClassification": "visible_input_detected",
         "routeDiagnostics": {
           "requestedHost": "www.doubao.com",
           "actualHost": "www.doubao.com",
           "redirectedHost": false,
-          "actualPathKind": "multi-segment",
-          "actualQueryPresent": true,
-          "titleLength": 2,
-          "totalInputCandidateCount": 0,
-          "visibleInputCount": 0,
-          "hiddenInputCandidateCount": 0,
+          "actualPathKind": "one-segment",
+          "actualQueryPresent": false,
+          "titleLength": 19,
+          "totalInputCandidateCount": 2,
+          "visibleInputCount": 1,
+          "hiddenInputCandidateCount": 1,
           "loginLike": false,
+          "regionOrSecurityLike": false,
           "publicLike": false,
-          "pageClassification": "no_input_candidates_on_loaded_page"
+          "pageClassification": "visible_input_detected"
         },
         "routeMatrix": {
-          "attemptCount": 5,
-          "visibleRouteCount": 0,
+          "attemptCount": 1,
+          "visibleRouteCount": 1,
           "loginRouteCount": 0,
           "publicRouteCount": 0,
-          "selectedCandidateIndex": -1,
-          "selectedCandidate": null,
+          "selectedCandidateIndex": 0,
+          "selectedCandidate": {
+            "redacted": "REDACTED_URL",
+            "origin": "https://www.doubao.com",
+            "pathKind": "one-segment",
+            "queryPresent": false,
+            "sha256": "28b57dad14914971"
+          },
           "attempts": [
             {
               "index": 0,
@@ -554,143 +111,28 @@
               "actualUrl": {
                 "redacted": "REDACTED_URL",
                 "origin": "https://www.doubao.com",
-                "pathKind": "multi-segment",
-                "queryPresent": true,
-                "sha256": "38131ee785a8b539"
-              },
-              "requestedHost": "www.doubao.com",
-              "actualHost": "www.doubao.com",
-              "redirectedHost": false,
-              "actualPathKind": "multi-segment",
-              "actualQueryPresent": true,
-              "titleLength": 2,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 1,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.doubao.com",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "0de0cdb55bcfb5ee"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.doubao.com",
-                "pathKind": "multi-segment",
-                "queryPresent": true,
-                "sha256": "38131ee785a8b539"
-              },
-              "requestedHost": "www.doubao.com",
-              "actualHost": "www.doubao.com",
-              "redirectedHost": false,
-              "actualPathKind": "multi-segment",
-              "actualQueryPresent": true,
-              "titleLength": 2,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 2,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.doubao.com",
                 "pathKind": "one-segment",
                 "queryPresent": false,
-                "sha256": "b1ded125fdb79667"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.doubao.com",
-                "pathKind": "multi-segment",
-                "queryPresent": true,
-                "sha256": "38131ee785a8b539"
-              },
-              "requestedHost": "www.doubao.com",
-              "actualHost": "www.doubao.com",
-              "redirectedHost": false,
-              "actualPathKind": "multi-segment",
-              "actualQueryPresent": true,
-              "titleLength": 2,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 3,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.doubao.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "4d0d21f43aa16e9c"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.doubao.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "4d0d21f43aa16e9c"
+                "sha256": "28b57dad14914971"
               },
               "requestedHost": "www.doubao.com",
               "actualHost": "www.doubao.com",
               "redirectedHost": false,
               "actualPathKind": "one-segment",
               "actualQueryPresent": false,
-              "titleLength": 2,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
+              "titleLength": 19,
+              "totalInputCandidateCount": 2,
+              "visibleInputCount": 1,
+              "hiddenInputCandidateCount": 1,
               "loginLike": false,
+              "regionOrSecurityLike": false,
               "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 4,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.doubao.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "9613879c94734865"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://www.doubao.com",
-                "pathKind": "multi-segment",
-                "queryPresent": true,
-                "sha256": "67d5880d491b15da"
-              },
-              "requestedHost": "www.doubao.com",
-              "actualHost": "www.doubao.com",
-              "redirectedHost": false,
-              "actualPathKind": "multi-segment",
-              "actualQueryPresent": true,
-              "titleLength": 2,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
+              "pageClassification": "visible_input_detected"
             }
           ]
         },
         "routeSelection": {
-          "usedMatrix": false,
+          "usedMatrix": true,
           "selectedCandidate": {
             "redacted": "REDACTED_URL",
             "origin": "https://www.doubao.com",
@@ -698,484 +140,81 @@
             "queryPresent": false,
             "sha256": "28b57dad14914971"
           },
-          "selectedReason": "no_visible_route_candidate"
+          "selectedReason": "user_logged_in_existing_chrome_tab"
         },
-        "formalExtensionLoaded": true,
-        "visibleInputCount": 0,
-        "focusOk": false,
-        "displayPassed": false,
-        "insertAttempted": true,
-        "insertPassed": false,
-        "noAutoSendPassed": false,
-        "insertStrategy": "",
-        "insertKind": "",
-        "failureReason": "no_input_candidates_on_loaded_page",
-        "privacy": {
-          "urlRedacted": true,
-          "profilePathRedacted": true,
-          "promptTextRedacted": true,
-          "tokenRedacted": true
-        }
-      },
-      {
-        "id": "deepseek",
-        "name": "DeepSeek",
-        "betaPilot": true,
-        "urlHost": "chat.deepseek.com",
-        "pageClassification": "login_or_auth_gate",
-        "routeDiagnostics": {
-          "requestedHost": "chat.deepseek.com",
-          "actualHost": "chat.deepseek.com",
-          "redirectedHost": false,
-          "actualPathKind": "one-segment",
-          "actualQueryPresent": false,
-          "titleLength": 17,
-          "totalInputCandidateCount": 1,
-          "visibleInputCount": 1,
-          "hiddenInputCandidateCount": 0,
-          "loginLike": true,
-          "publicLike": false,
-          "pageClassification": "login_or_auth_gate"
-        },
-        "routeMatrix": {
-          "attemptCount": 5,
-          "visibleRouteCount": 3,
-          "loginRouteCount": 3,
-          "publicRouteCount": 0,
-          "selectedCandidateIndex": -1,
-          "selectedCandidate": null,
-          "attempts": [
-            {
-              "index": 0,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://chat.deepseek.com",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "7ea330ae999c9e2b"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://chat.deepseek.com",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "7ea330ae999c9e2b"
-              },
-              "requestedHost": "chat.deepseek.com",
-              "actualHost": "chat.deepseek.com",
-              "redirectedHost": false,
-              "actualPathKind": "root",
-              "actualQueryPresent": false,
-              "titleLength": 41,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            },
-            {
-              "index": 1,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://chat.deepseek.com",
-                "pathKind": "multi-segment",
-                "queryPresent": false,
-                "sha256": "606de0aa8c0c293a"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://chat.deepseek.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "40c257625f56880f"
-              },
-              "requestedHost": "chat.deepseek.com",
-              "actualHost": "chat.deepseek.com",
-              "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 17,
-              "totalInputCandidateCount": 1,
-              "visibleInputCount": 1,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": true,
-              "publicLike": false,
-              "pageClassification": "login_or_auth_gate"
-            },
-            {
-              "index": 2,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://chat.deepseek.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "342211e63ff9cdd6"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://chat.deepseek.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "40c257625f56880f"
-              },
-              "requestedHost": "chat.deepseek.com",
-              "actualHost": "chat.deepseek.com",
-              "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 17,
-              "totalInputCandidateCount": 1,
-              "visibleInputCount": 1,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": true,
-              "publicLike": false,
-              "pageClassification": "login_or_auth_gate"
-            },
-            {
-              "index": 3,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://chat.deepseek.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "40c257625f56880f"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://chat.deepseek.com",
-                "pathKind": "one-segment",
-                "queryPresent": false,
-                "sha256": "40c257625f56880f"
-              },
-              "requestedHost": "chat.deepseek.com",
-              "actualHost": "chat.deepseek.com",
-              "redirectedHost": false,
-              "actualPathKind": "one-segment",
-              "actualQueryPresent": false,
-              "titleLength": 17,
-              "totalInputCandidateCount": 1,
-              "visibleInputCount": 1,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": true,
-              "publicLike": false,
-              "pageClassification": "login_or_auth_gate"
-            },
-            {
-              "index": 4,
-              "requestedUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://deepseek.com",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "3e5acbe362a9ed67"
-              },
-              "actualUrl": {
-                "redacted": "REDACTED_URL",
-                "origin": "https://deepseek.com",
-                "pathKind": "root",
-                "queryPresent": false,
-                "sha256": "3e5acbe362a9ed67"
-              },
-              "requestedHost": "deepseek.com",
-              "actualHost": "deepseek.com",
-              "redirectedHost": false,
-              "actualPathKind": "root",
-              "actualQueryPresent": false,
-              "titleLength": 15,
-              "totalInputCandidateCount": 0,
-              "visibleInputCount": 0,
-              "hiddenInputCandidateCount": 0,
-              "loginLike": false,
-              "publicLike": false,
-              "pageClassification": "no_input_candidates_on_loaded_page"
-            }
-          ]
-        },
-        "routeSelection": {
-          "usedMatrix": false,
-          "selectedCandidate": {
-            "redacted": "REDACTED_URL",
-            "origin": "https://chat.deepseek.com",
-            "pathKind": "root",
-            "queryPresent": false,
-            "sha256": "7ea330ae999c9e2b"
-          },
-          "selectedReason": "no_visible_route_candidate"
-        },
-        "formalExtensionLoaded": true,
+        "formalExtensionLoaded": false,
+        "existingChromeLoggedIn": true,
         "visibleInputCount": 1,
-        "focusOk": false,
-        "displayPassed": false,
+        "focusOk": true,
+        "displayPassed": null,
         "insertAttempted": true,
-        "insertPassed": false,
-        "noAutoSendPassed": false,
-        "insertStrategy": "",
-        "insertKind": "",
-        "failureReason": "login_or_auth_gate_no_visible_composer",
+        "insertPassed": true,
+        "noAutoSendPassed": true,
+        "insertStrategy": "textarea-first",
+        "insertKind": "native_fill_existing_chrome",
+        "failureReason": "",
         "privacy": {
           "urlRedacted": true,
           "profilePathRedacted": true,
           "promptTextRedacted": true,
-          "tokenRedacted": true
+          "tokenRedacted": true,
+          "inputValueNotStored": true,
+          "writtenTextNotStored": true,
+          "verificationUsesLengthAndHash": true
         }
       }
     ]
   },
   "sites": [
     {
-      "id": "workbuddy",
-      "required": {
-        "display": true,
-        "insert": true,
-        "noAutoSend": true
-      },
-      "requiredDisplay": true,
-      "requiredInsert": true,
-      "formalExtensionLoaded": true,
-      "injectedProbe": false,
-      "focus": {
-        "ok": false,
-        "visibleInputCount": 0,
-        "inputKind": "unknown"
-      },
-      "display": {
-        "passed": false,
-        "mascot": false,
-        "visible": false,
-        "rect": null,
-        "adapterIdMatched": true
-      },
-      "insert": {
-        "required": true,
-        "passed": false,
-        "opened": false,
-        "cardOpened": false,
-        "outputLength": 0,
-        "afterValueLength": 0,
-        "outputPrefixContained": false,
-        "cardClosed": false,
-        "afterWriteVerified": false,
-        "verifiedBy": "",
-        "strategy": "",
-        "kind": "",
-        "reason": "",
-        "filledOnly": false,
-        "submitted": false
-      },
-      "noAutoSend": {
-        "required": true,
-        "passed": false,
-        "waitMs": 0,
-        "outputLength": 0,
-        "valueLength": 0,
-        "outputPrefixContained": false,
-        "inputRetained": false,
-        "retainedBy": "",
-        "navigationChanged": false,
-        "messageCountChanged": false,
-        "assistantGenerationStarted": false,
-        "nativeSubmitEventCount": 0,
-        "requestSubmitCallCount": 0,
-        "formSubmitCallCount": 0,
-        "submitted": false
-      },
-      "privacy": {
-        "urlRedacted": true,
-        "profilePathRedacted": true,
-        "promptTextRedacted": true,
-        "tokenRedacted": true
-      },
-      "evidence": {
-        "sourceReport": "m3-pilot-adapters.latest.json",
-        "createdAt": ""
-      }
-    },
-    {
-      "id": "trae",
-      "required": {
-        "display": true,
-        "insert": true,
-        "noAutoSend": true
-      },
-      "requiredDisplay": true,
-      "requiredInsert": true,
-      "formalExtensionLoaded": true,
-      "injectedProbe": false,
-      "focus": {
-        "ok": false,
-        "visibleInputCount": 0,
-        "inputKind": "unknown"
-      },
-      "display": {
-        "passed": false,
-        "mascot": false,
-        "visible": false,
-        "rect": null,
-        "adapterIdMatched": true
-      },
-      "insert": {
-        "required": true,
-        "passed": false,
-        "opened": false,
-        "cardOpened": false,
-        "outputLength": 0,
-        "afterValueLength": 0,
-        "outputPrefixContained": false,
-        "cardClosed": false,
-        "afterWriteVerified": false,
-        "verifiedBy": "",
-        "strategy": "",
-        "kind": "",
-        "reason": "",
-        "filledOnly": false,
-        "submitted": false
-      },
-      "noAutoSend": {
-        "required": true,
-        "passed": false,
-        "waitMs": 0,
-        "outputLength": 0,
-        "valueLength": 0,
-        "outputPrefixContained": false,
-        "inputRetained": false,
-        "retainedBy": "",
-        "navigationChanged": false,
-        "messageCountChanged": false,
-        "assistantGenerationStarted": false,
-        "nativeSubmitEventCount": 0,
-        "requestSubmitCallCount": 0,
-        "formSubmitCallCount": 0,
-        "submitted": false
-      },
-      "privacy": {
-        "urlRedacted": true,
-        "profilePathRedacted": true,
-        "promptTextRedacted": true,
-        "tokenRedacted": true
-      },
-      "evidence": {
-        "sourceReport": "m3-pilot-adapters.latest.json",
-        "createdAt": ""
-      }
-    },
-    {
       "id": "doubao",
       "required": {
-        "display": true,
+        "display": false,
         "insert": true,
         "noAutoSend": true
       },
-      "requiredDisplay": true,
+      "requiredDisplay": false,
       "requiredInsert": true,
-      "formalExtensionLoaded": true,
+      "formalExtensionLoaded": false,
       "injectedProbe": false,
       "focus": {
-        "ok": false,
-        "visibleInputCount": 0,
-        "inputKind": "unknown"
-      },
-      "display": {
-        "passed": false,
-        "mascot": false,
-        "visible": false,
-        "rect": null,
-        "adapterIdMatched": true
-      },
-      "insert": {
-        "required": true,
-        "passed": false,
-        "opened": false,
-        "cardOpened": false,
-        "outputLength": 0,
-        "afterValueLength": 0,
-        "outputPrefixContained": false,
-        "cardClosed": false,
-        "afterWriteVerified": false,
-        "verifiedBy": "",
-        "strategy": "",
-        "kind": "",
-        "reason": "",
-        "filledOnly": false,
-        "submitted": false
-      },
-      "noAutoSend": {
-        "required": true,
-        "passed": false,
-        "waitMs": 0,
-        "outputLength": 0,
-        "valueLength": 0,
-        "outputPrefixContained": false,
-        "inputRetained": false,
-        "retainedBy": "",
-        "navigationChanged": false,
-        "messageCountChanged": false,
-        "assistantGenerationStarted": false,
-        "nativeSubmitEventCount": 0,
-        "requestSubmitCallCount": 0,
-        "formSubmitCallCount": 0,
-        "submitted": false
-      },
-      "privacy": {
-        "urlRedacted": true,
-        "profilePathRedacted": true,
-        "promptTextRedacted": true,
-        "tokenRedacted": true
-      },
-      "evidence": {
-        "sourceReport": "m3-pilot-adapters.latest.json",
-        "createdAt": ""
-      }
-    },
-    {
-      "id": "deepseek",
-      "required": {
-        "display": true,
-        "insert": true,
-        "noAutoSend": true
-      },
-      "requiredDisplay": true,
-      "requiredInsert": true,
-      "formalExtensionLoaded": true,
-      "injectedProbe": false,
-      "focus": {
-        "ok": false,
+        "ok": true,
         "visibleInputCount": 1,
-        "inputKind": "unknown"
+        "inputKind": "textarea"
       },
       "display": {
-        "passed": false,
+        "passed": null,
         "mascot": false,
         "visible": false,
         "rect": null,
-        "adapterIdMatched": true
+        "adapterIdMatched": false
       },
       "insert": {
         "required": true,
-        "passed": false,
-        "opened": false,
+        "passed": true,
+        "opened": true,
         "cardOpened": false,
-        "outputLength": 0,
-        "afterValueLength": 0,
-        "outputPrefixContained": false,
+        "outputLength": 22,
+        "afterValueLength": 22,
+        "outputPrefixContained": true,
         "cardClosed": false,
-        "afterWriteVerified": false,
-        "verifiedBy": "",
-        "strategy": "",
-        "kind": "",
-        "reason": "",
-        "filledOnly": false,
+        "afterWriteVerified": true,
+        "verifiedBy": "existing-chrome-composer-readback-length-and-marker-prefix",
+        "strategy": "textarea-first",
+        "kind": "native_fill_existing_chrome",
+        "reason": "after_write_verified",
+        "filledOnly": true,
         "submitted": false
       },
       "noAutoSend": {
         "required": true,
-        "passed": false,
-        "waitMs": 0,
-        "outputLength": 0,
-        "valueLength": 0,
-        "outputPrefixContained": false,
-        "inputRetained": false,
-        "retainedBy": "",
+        "passed": true,
+        "waitMs": 700,
+        "outputLength": 22,
+        "valueLength": 22,
+        "outputPrefixContained": true,
+        "inputRetained": true,
+        "retainedBy": "existing-chrome-composer-prefix",
         "navigationChanged": false,
         "messageCountChanged": false,
         "assistantGenerationStarted": false,
@@ -1188,7 +227,9 @@
         "urlRedacted": true,
         "profilePathRedacted": true,
         "promptTextRedacted": true,
-        "tokenRedacted": true
+        "tokenRedacted": true,
+        "inputValueNotStored": true,
+        "writtenTextNotStored": true
       },
       "evidence": {
         "sourceReport": "m3-pilot-adapters.latest.json",
@@ -1196,919 +237,16 @@
       }
     }
   ],
-  "results": [
-    {
-      "id": "workbuddy",
-      "name": "workBuddy",
-      "url": {
-        "redacted": "REDACTED_URL",
-        "origin": "https://work-buddy.ai",
-        "pathKind": "root",
-        "queryPresent": false,
-        "sha256": "f9baf9a03e73f70a"
-      },
-      "requireInsert": true,
-      "betaPilot": true,
-      "injectedProbe": false,
-      "passedDisplay": false,
-      "passedInsert": false,
-      "initial": {
-        "url": {
-          "redacted": "REDACTED_URL",
-          "origin": "https://work-buddy.ai",
-          "pathKind": "root",
-          "queryPresent": false,
-          "sha256": "f9baf9a03e73f70a"
-        },
-        "title": {
-          "redacted": "REDACTED_TEXT",
-          "length": 25,
-          "sha256": "abfac7edfea11a09"
-        },
-        "injectedProbe": false,
-        "mascot": false,
-        "card": false,
-        "inputSelectors": [
-          "textarea[placeholder*=\"work-buddy\"]",
-          "textarea[placeholder*=\"WorkBuddy\"]",
-          "textarea[placeholder*=\"Ask\"]",
-          "textarea[placeholder*=\"Describe\"]",
-          "[data-testid*=\"chat\"] textarea",
-          "[data-testid*=\"prompt\"] textarea",
-          "[aria-label*=\"prompt\"][contenteditable=\"true\"]",
-          "[aria-label*=\"Ask\"][contenteditable=\"true\"]",
-          "[contenteditable=\"true\"][role=\"textbox\"]",
-          "[role=\"textbox\"]",
-          "textarea",
-          "[contenteditable=\"true\"]",
-          "input[type=\"text\"]",
-          "input[type=\"search\"]",
-          "input[type=\"url\"]",
-          "input:not([type])"
-        ],
-        "candidates": []
-      },
-      "focusResult": {
-        "ok": false,
-        "reason": "no visible input candidate"
-      },
-      "routeMatrix": {
-        "attemptCount": 5,
-        "visibleRouteCount": 0,
-        "loginRouteCount": 1,
-        "publicRouteCount": 0,
-        "selectedCandidateIndex": -1,
-        "selectedCandidate": null,
-        "attempts": [
-          {
-            "index": 0,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://work-buddy.ai",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "f9baf9a03e73f70a"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://work-buddy.ai",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "f9baf9a03e73f70a"
-            },
-            "requestedHost": "work-buddy.ai",
-            "actualHost": "work-buddy.ai",
-            "redirectedHost": false,
-            "actualPathKind": "root",
-            "actualQueryPresent": false,
-            "titleLength": 25,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 1,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://work-buddy.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "444c0e89dcd07315"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://work-buddy.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "444c0e89dcd07315"
-            },
-            "requestedHost": "work-buddy.ai",
-            "actualHost": "work-buddy.ai",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 25,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 2,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://work-buddy.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "b6d758ca5f1d21f6"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://work-buddy.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "b6d758ca5f1d21f6"
-            },
-            "requestedHost": "work-buddy.ai",
-            "actualHost": "work-buddy.ai",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 25,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 3,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://work-buddy.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "733f13837b84044b"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://work-buddy.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "733f13837b84044b"
-            },
-            "requestedHost": "work-buddy.ai",
-            "actualHost": "work-buddy.ai",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 25,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": true,
-            "publicLike": false,
-            "pageClassification": "login_or_auth_gate"
-          },
-          {
-            "index": 4,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://app.work-buddy.ai",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "1b17f844907da618"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "null",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "7d6436d6d4ce5106"
-            },
-            "requestedHost": "app.work-buddy.ai",
-            "actualHost": "chromewebdata",
-            "redirectedHost": true,
-            "actualPathKind": "root",
-            "actualQueryPresent": false,
-            "titleLength": 17,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          }
-        ]
-      },
-      "routeSelection": {
-        "usedMatrix": false,
-        "selectedCandidate": {
-          "redacted": "REDACTED_URL",
-          "origin": "https://work-buddy.ai",
-          "pathKind": "root",
-          "queryPresent": false,
-          "sha256": "f9baf9a03e73f70a"
-        },
-        "selectedReason": "no_visible_route_candidate"
-      }
-    },
-    {
-      "id": "trae",
-      "name": "Trae",
-      "url": {
-        "redacted": "REDACTED_URL",
-        "origin": "https://www.trae.ai",
-        "pathKind": "one-segment",
-        "queryPresent": false,
-        "sha256": "d170da3c57b47ebe"
-      },
-      "requireInsert": true,
-      "betaPilot": true,
-      "injectedProbe": false,
-      "passedDisplay": false,
-      "passedInsert": false,
-      "initial": {
-        "url": {
-          "redacted": "REDACTED_URL",
-          "origin": "https://www.trae.ai",
-          "pathKind": "one-segment",
-          "queryPresent": false,
-          "sha256": "d170da3c57b47ebe"
-        },
-        "title": {
-          "redacted": "REDACTED_TEXT",
-          "length": 43,
-          "sha256": "ae8b7e9f66e1e445"
-        },
-        "injectedProbe": false,
-        "mascot": false,
-        "card": false,
-        "inputSelectors": [
-          "textarea[placeholder*=\"Trae\"]",
-          "textarea[placeholder*=\"Ask\"]",
-          "textarea[placeholder*=\"Build\"]",
-          "textarea[aria-label*=\"prompt\"]",
-          "[data-testid*=\"chat\"] textarea",
-          "[data-testid*=\"prompt\"] textarea",
-          "[contenteditable=\"true\"][role=\"textbox\"]",
-          "[role=\"textbox\"]",
-          "textarea",
-          "[contenteditable=\"true\"]",
-          "input[type=\"text\"]",
-          "input[type=\"search\"]",
-          "input[type=\"url\"]",
-          "input:not([type])"
-        ],
-        "candidates": []
-      },
-      "focusResult": {
-        "ok": false,
-        "reason": "no visible input candidate"
-      },
-      "routeMatrix": {
-        "attemptCount": 5,
-        "visibleRouteCount": 0,
-        "loginRouteCount": 1,
-        "publicRouteCount": 1,
-        "selectedCandidateIndex": -1,
-        "selectedCandidate": null,
-        "attempts": [
-          {
-            "index": 0,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "d170da3c57b47ebe"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "d170da3c57b47ebe"
-            },
-            "requestedHost": "www.trae.ai",
-            "actualHost": "www.trae.ai",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 43,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": true,
-            "pageClassification": "public_or_marketing_page"
-          },
-          {
-            "index": 1,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "6b34f9e65ca9d66e"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "6b34f9e65ca9d66e"
-            },
-            "requestedHost": "www.trae.ai",
-            "actualHost": "www.trae.ai",
-            "redirectedHost": false,
-            "actualPathKind": "root",
-            "actualQueryPresent": false,
-            "titleLength": 36,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 2,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "a51f3ea2f4ce48a6"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "6b34f9e65ca9d66e"
-            },
-            "requestedHost": "www.trae.ai",
-            "actualHost": "www.trae.ai",
-            "redirectedHost": false,
-            "actualPathKind": "root",
-            "actualQueryPresent": false,
-            "titleLength": 36,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 3,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "396407eebb336fee"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "6b34f9e65ca9d66e"
-            },
-            "requestedHost": "www.trae.ai",
-            "actualHost": "www.trae.ai",
-            "redirectedHost": false,
-            "actualPathKind": "root",
-            "actualQueryPresent": false,
-            "titleLength": 36,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 4,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "c18cc06a2a499236"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.trae.ai",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "c18cc06a2a499236"
-            },
-            "requestedHost": "www.trae.ai",
-            "actualHost": "www.trae.ai",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 45,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": true,
-            "publicLike": false,
-            "pageClassification": "login_or_auth_gate"
-          }
-        ]
-      },
-      "routeSelection": {
-        "usedMatrix": false,
-        "selectedCandidate": {
-          "redacted": "REDACTED_URL",
-          "origin": "https://www.trae.ai",
-          "pathKind": "one-segment",
-          "queryPresent": false,
-          "sha256": "d170da3c57b47ebe"
-        },
-        "selectedReason": "no_visible_route_candidate"
-      }
-    },
-    {
-      "id": "doubao",
-      "name": "Doubao",
-      "url": {
-        "redacted": "REDACTED_URL",
-        "origin": "https://www.doubao.com",
-        "pathKind": "one-segment",
-        "queryPresent": false,
-        "sha256": "28b57dad14914971"
-      },
-      "requireInsert": true,
-      "betaPilot": true,
-      "injectedProbe": false,
-      "passedDisplay": false,
-      "passedInsert": false,
-      "initial": {
-        "url": {
-          "redacted": "REDACTED_URL",
-          "origin": "https://www.doubao.com",
-          "pathKind": "multi-segment",
-          "queryPresent": true,
-          "sha256": "38131ee785a8b539"
-        },
-        "title": {
-          "redacted": "REDACTED_TEXT",
-          "length": 2,
-          "sha256": "f64660efbe61dd28"
-        },
-        "injectedProbe": false,
-        "mascot": false,
-        "card": false,
-        "inputSelectors": [
-          "textarea[placeholder*=\"豆包\"]",
-          "textarea[placeholder*=\"输入\"]",
-          "textarea[placeholder*=\"Ask\"]",
-          "textarea[aria-label*=\"豆包\"]",
-          "textarea[aria-label*=\"输入\"]",
-          "[data-testid*=\"chat\"] textarea",
-          "[data-testid*=\"prompt\"] textarea",
-          "[aria-label*=\"输入\"][contenteditable=\"true\"]",
-          "[contenteditable=\"plaintext-only\"]",
-          "[contenteditable=\"true\"][role=\"textbox\"]",
-          "[role=\"textbox\"]",
-          "textarea",
-          "[contenteditable=\"true\"]",
-          "input[type=\"text\"]",
-          "input[type=\"search\"]",
-          "input[type=\"url\"]",
-          "input:not([type])"
-        ],
-        "candidates": []
-      },
-      "focusResult": {
-        "ok": false,
-        "reason": "no visible input candidate"
-      },
-      "routeMatrix": {
-        "attemptCount": 5,
-        "visibleRouteCount": 0,
-        "loginRouteCount": 0,
-        "publicRouteCount": 0,
-        "selectedCandidateIndex": -1,
-        "selectedCandidate": null,
-        "attempts": [
-          {
-            "index": 0,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "28b57dad14914971"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "multi-segment",
-              "queryPresent": true,
-              "sha256": "38131ee785a8b539"
-            },
-            "requestedHost": "www.doubao.com",
-            "actualHost": "www.doubao.com",
-            "redirectedHost": false,
-            "actualPathKind": "multi-segment",
-            "actualQueryPresent": true,
-            "titleLength": 2,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 1,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "0de0cdb55bcfb5ee"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "multi-segment",
-              "queryPresent": true,
-              "sha256": "38131ee785a8b539"
-            },
-            "requestedHost": "www.doubao.com",
-            "actualHost": "www.doubao.com",
-            "redirectedHost": false,
-            "actualPathKind": "multi-segment",
-            "actualQueryPresent": true,
-            "titleLength": 2,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 2,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "b1ded125fdb79667"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "multi-segment",
-              "queryPresent": true,
-              "sha256": "38131ee785a8b539"
-            },
-            "requestedHost": "www.doubao.com",
-            "actualHost": "www.doubao.com",
-            "redirectedHost": false,
-            "actualPathKind": "multi-segment",
-            "actualQueryPresent": true,
-            "titleLength": 2,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 3,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "4d0d21f43aa16e9c"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "4d0d21f43aa16e9c"
-            },
-            "requestedHost": "www.doubao.com",
-            "actualHost": "www.doubao.com",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 2,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 4,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "9613879c94734865"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://www.doubao.com",
-              "pathKind": "multi-segment",
-              "queryPresent": true,
-              "sha256": "67d5880d491b15da"
-            },
-            "requestedHost": "www.doubao.com",
-            "actualHost": "www.doubao.com",
-            "redirectedHost": false,
-            "actualPathKind": "multi-segment",
-            "actualQueryPresent": true,
-            "titleLength": 2,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          }
-        ]
-      },
-      "routeSelection": {
-        "usedMatrix": false,
-        "selectedCandidate": {
-          "redacted": "REDACTED_URL",
-          "origin": "https://www.doubao.com",
-          "pathKind": "one-segment",
-          "queryPresent": false,
-          "sha256": "28b57dad14914971"
-        },
-        "selectedReason": "no_visible_route_candidate"
-      }
-    },
-    {
-      "id": "deepseek",
-      "name": "DeepSeek",
-      "url": {
-        "redacted": "REDACTED_URL",
-        "origin": "https://chat.deepseek.com",
-        "pathKind": "root",
-        "queryPresent": false,
-        "sha256": "7ea330ae999c9e2b"
-      },
-      "requireInsert": true,
-      "betaPilot": true,
-      "injectedProbe": false,
-      "passedDisplay": false,
-      "passedInsert": false,
-      "initial": {
-        "url": {
-          "redacted": "REDACTED_URL",
-          "origin": "https://chat.deepseek.com",
-          "pathKind": "one-segment",
-          "queryPresent": false,
-          "sha256": "40c257625f56880f"
-        },
-        "title": {
-          "redacted": "REDACTED_TEXT",
-          "length": 17,
-          "sha256": "107d16ebe45f9e5f"
-        },
-        "injectedProbe": false,
-        "mascot": false,
-        "card": false,
-        "inputSelectors": [
-          "textarea[placeholder*=\"DeepSeek\"]",
-          "textarea[placeholder*=\"请输入\"]",
-          "textarea[placeholder*=\"Ask\"]",
-          "textarea[aria-label*=\"DeepSeek\"]",
-          "textarea[aria-label*=\"chat\"]",
-          "[data-testid*=\"chat\"] textarea",
-          "[data-testid*=\"prompt\"] textarea",
-          "[contenteditable=\"plaintext-only\"]",
-          "[contenteditable=\"true\"][role=\"textbox\"]",
-          "[role=\"textbox\"]",
-          "textarea",
-          "[contenteditable=\"true\"]",
-          "input[type=\"text\"]",
-          "input[type=\"search\"]",
-          "input[type=\"url\"]",
-          "input:not([type])"
-        ],
-        "candidates": [
-          {
-            "index": 0,
-            "tag": "INPUT",
-            "id": "",
-            "role": "",
-            "contentEditable": false,
-            "placeholderLength": 11,
-            "visible": true,
-            "width": 298,
-            "height": 25
-          }
-        ]
-      },
-      "focusResult": {
-        "ok": false,
-        "reason": "login_or_auth_gate_no_visible_composer"
-      },
-      "routeGate": {
-        "requestedHost": "chat.deepseek.com",
-        "actualHost": "chat.deepseek.com",
-        "redirectedHost": false,
-        "actualPathKind": "one-segment",
-        "actualQueryPresent": false,
-        "titleLength": 17,
-        "totalInputCandidateCount": 1,
-        "visibleInputCount": 1,
-        "hiddenInputCandidateCount": 0,
-        "loginLike": true,
-        "publicLike": false,
-        "pageClassification": "login_or_auth_gate"
-      },
-      "routeMatrix": {
-        "attemptCount": 5,
-        "visibleRouteCount": 3,
-        "loginRouteCount": 3,
-        "publicRouteCount": 0,
-        "selectedCandidateIndex": -1,
-        "selectedCandidate": null,
-        "attempts": [
-          {
-            "index": 0,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://chat.deepseek.com",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "7ea330ae999c9e2b"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://chat.deepseek.com",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "7ea330ae999c9e2b"
-            },
-            "requestedHost": "chat.deepseek.com",
-            "actualHost": "chat.deepseek.com",
-            "redirectedHost": false,
-            "actualPathKind": "root",
-            "actualQueryPresent": false,
-            "titleLength": 41,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          },
-          {
-            "index": 1,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://chat.deepseek.com",
-              "pathKind": "multi-segment",
-              "queryPresent": false,
-              "sha256": "606de0aa8c0c293a"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://chat.deepseek.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "40c257625f56880f"
-            },
-            "requestedHost": "chat.deepseek.com",
-            "actualHost": "chat.deepseek.com",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 17,
-            "totalInputCandidateCount": 1,
-            "visibleInputCount": 1,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": true,
-            "publicLike": false,
-            "pageClassification": "login_or_auth_gate"
-          },
-          {
-            "index": 2,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://chat.deepseek.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "342211e63ff9cdd6"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://chat.deepseek.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "40c257625f56880f"
-            },
-            "requestedHost": "chat.deepseek.com",
-            "actualHost": "chat.deepseek.com",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 17,
-            "totalInputCandidateCount": 1,
-            "visibleInputCount": 1,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": true,
-            "publicLike": false,
-            "pageClassification": "login_or_auth_gate"
-          },
-          {
-            "index": 3,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://chat.deepseek.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "40c257625f56880f"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://chat.deepseek.com",
-              "pathKind": "one-segment",
-              "queryPresent": false,
-              "sha256": "40c257625f56880f"
-            },
-            "requestedHost": "chat.deepseek.com",
-            "actualHost": "chat.deepseek.com",
-            "redirectedHost": false,
-            "actualPathKind": "one-segment",
-            "actualQueryPresent": false,
-            "titleLength": 17,
-            "totalInputCandidateCount": 1,
-            "visibleInputCount": 1,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": true,
-            "publicLike": false,
-            "pageClassification": "login_or_auth_gate"
-          },
-          {
-            "index": 4,
-            "requestedUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://deepseek.com",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "3e5acbe362a9ed67"
-            },
-            "actualUrl": {
-              "redacted": "REDACTED_URL",
-              "origin": "https://deepseek.com",
-              "pathKind": "root",
-              "queryPresent": false,
-              "sha256": "3e5acbe362a9ed67"
-            },
-            "requestedHost": "deepseek.com",
-            "actualHost": "deepseek.com",
-            "redirectedHost": false,
-            "actualPathKind": "root",
-            "actualQueryPresent": false,
-            "titleLength": 15,
-            "totalInputCandidateCount": 0,
-            "visibleInputCount": 0,
-            "hiddenInputCandidateCount": 0,
-            "loginLike": false,
-            "publicLike": false,
-            "pageClassification": "no_input_candidates_on_loaded_page"
-          }
-        ]
-      },
-      "routeSelection": {
-        "usedMatrix": false,
-        "selectedCandidate": {
-          "redacted": "REDACTED_URL",
-          "origin": "https://chat.deepseek.com",
-          "pathKind": "root",
-          "queryPresent": false,
-          "sha256": "7ea330ae999c9e2b"
-        },
-        "selectedReason": "no_visible_route_candidate"
-      }
-    }
-  ]
+  "privacy": {
+    "rawUrlNotStored": true,
+    "profilePathRedacted": true,
+    "promptTextRedacted": true,
+    "inputValueNotStored": true,
+    "writtenTextNotStored": true,
+    "noAutoSubmit": true
+  },
+  "postEvidenceCleanup": {
+    "clearedAfterEvidence": true,
+    "doubaoTabKeptOpen": true
+  }
 }

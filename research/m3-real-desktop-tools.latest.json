@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-real-desktop-tools@1",
-    "createdAt":  "2026-06-07T19:00:03.4065444Z",
+    "createdAt":  "2026-06-07T19:40:04.0705380Z",
     "platform":  "win32",
     "pass":  true,
     "requestedProfiles":  [
@@ -26,26 +26,26 @@
                    "childToolProcessHintPresent":  false
                },
     "foreground":  {
-                       "processName":  "electron",
+                       "processName":  "explorer",
                        "pidPresent":  true,
-                       "titleLength":  6,
-                       "titleHash":  "66e0988d1198afe0",
-                       "detectedToolProfile":  "hermes",
-                       "hasTargetForeground":  true
+                       "titleLength":  0,
+                       "titleHash":  "",
+                       "detectedToolProfile":  "unknown",
+                       "hasTargetForeground":  false
                    },
     "snapshot":  {
                      "exitCode":  0,
                      "parseOk":  true,
                      "parseError":  "",
                      "probeOk":  true,
-                     "candidateCount":  144,
-                     "valuePatternCandidates":  4,
-                     "textPatternCandidates":  45,
-                     "focusableCandidates":  100,
-                     "focusedCandidateCount":  1,
+                     "candidateCount":  0,
+                     "valuePatternCandidates":  0,
+                     "textPatternCandidates":  0,
+                     "focusableCandidates":  0,
+                     "focusedCandidateCount":  0,
                      "caretCandidateCount":  0,
-                     "bestCandidateIndex":  131,
-                     "bestCandidateScore":  190,
+                     "bestCandidateIndex":  -1,
+                     "bestCandidateScore":  0,
                      "caretVisible":  false,
                      "caretWindowPresent":  false
                  },
@@ -64,7 +64,7 @@
                   "reason":  "real_write_requires_allow_foreground_write",
                   "expectedTitleHashMatched":  false,
                   "expectedToolProfileMatched":  false,
-                  "candidateIndex":  131,
+                  "candidateIndex":  0,
                   "exitCode":  null,
                   "summary":  {
                                   "requestedTextLength":  0,
@@ -94,9 +94,9 @@
                      },
                      {
                          "id":  "hermes",
-                         "status":  "foreground_detected",
-                         "foregroundDetected":  true,
-                         "snapshotCandidateCount":  144,
+                         "status":  "not_foreground",
+                         "foregroundDetected":  false,
+                         "snapshotCandidateCount":  0,
                          "realWindowWriteValidated":  false
                      }
                  ],
@@ -104,7 +104,7 @@
                    "snapshotOk":  true,
                    "supportedProfilesPresent":  true,
                    "foregroundClassified":  true,
-                   "hasTargetForeground":  true,
+                   "hasTargetForeground":  false,
                    "writeAttempted":  false,
                    "writeValidated":  false,
                    "privacyRedacted":  true,
@@ -128,5 +128,5 @@
                     "verificationUsesLengthAndHash":  true,
                     "autoSubmit":  false
                 },
-    "completionImpact":  "real_tool_write_still_pending"
+    "completionImpact":  "target_tool_not_foreground"
 }

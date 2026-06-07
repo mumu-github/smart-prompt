@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-fill@1",
-    "createdAt":  "2026-06-07T19:00:53.7291974Z",
+    "createdAt":  "2026-06-07T19:40:44.6923855Z",
     "pass":  true,
     "port":  17442,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  95,
-                    "sha256":  "22ef68be1c6af08f"
+                    "sha256":  "f13904c4a89b1c44"
                 },
     "requestedText":  {
                           "length":  33,
@@ -36,7 +36,7 @@
                  "clipboardFallbackTried":  false,
                  "clipboardRestored":  false,
                  "confirmForeground":  false,
-                 "createdAt":  "2026-06-07T19:00:53.3333483Z",
+                 "createdAt":  "2026-06-07T19:40:44.2893260Z",
                  "pass":  true,
                  "platform":  "win32",
                  "privacy":  {
@@ -68,7 +68,7 @@
                                                "hermes"
                                            ],
                  "target":  {
-                                "classNameHash":  "6c85818fdde6f842",
+                                "classNameHash":  "9c5c429eb38f31b9",
                                 "controlType":  "ControlType.Pane",
                                 "hasNativeWindowHandle":  true,
                                 "hasValuePattern":  false,

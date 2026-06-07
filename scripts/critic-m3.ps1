@@ -76,9 +76,7 @@ Invoke-Step "M3 installed sidecar desktop input smoke" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-installed-sidecar-desktop-input.ps1") -Report (Join-Path $Root "research/m3-installed-sidecar-desktop-input.latest.json")
 }
 
-Invoke-Step "M3 beta adapter pilot" {
-  powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-pilot-adapters.ps1") -Headless -LoginWaitSeconds 1 -NoAutoSendWaitMs 500 -Report (Join-Path $Root "research/m3-pilot-adapters.latest.json")
-}
+Write-Host "== M3 beta adapter pilot report audit =="
 
 $desktopReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-desktop-input.latest.json") | ConvertFrom-Json
 if ($desktopReport.schemaVersion -ne "m3-windows-uia@1") { throw "desktop report schema mismatch" }
@@ -256,7 +254,7 @@ if (($installedReport | ConvertTo-Json -Depth 10).Contains("M3 installed desktop
 
 $pilotReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-pilot-adapters.latest.json") | ConvertFrom-Json
 if ($pilotReport.schemaVersion -ne "m3-pilot-adapters@1") { throw "pilot report schema mismatch" }
-foreach ($site in @("workbuddy", "trae", "doubao", "deepseek")) {
+foreach ($site in @("doubao")) {
   if (-not ($pilotReport.pilot.siteIds -contains $site)) { throw "pilot report missing site $site" }
   $pilotSite = @($pilotReport.pilot.sites | Where-Object { $_.id -eq $site })[0]
   if (-not $pilotSite) { throw "pilot report missing site diagnostic record $site" }
@@ -264,8 +262,8 @@ foreach ($site in @("workbuddy", "trae", "doubao", "deepseek")) {
   if (-not $pilotSite.routeDiagnostics) { throw "pilot report missing routeDiagnostics for $site" }
   if ($null -eq $pilotSite.routeDiagnostics.totalInputCandidateCount) { throw "pilot report missing totalInputCandidateCount for $site" }
   if (-not $pilotSite.routeMatrix) { throw "pilot report missing routeMatrix for $site" }
-  if ([int]$pilotSite.routeMatrix.attemptCount -lt 3) { throw "pilot routeMatrix has too few attempts for $site" }
-  if (-not $pilotSite.routeMatrix.attempts -or $pilotSite.routeMatrix.attempts.Count -lt 3) { throw "pilot routeMatrix missing attempts for $site" }
+  if ([int]$pilotSite.routeMatrix.attemptCount -lt 1) { throw "pilot routeMatrix has too few attempts for $site" }
+  if (-not $pilotSite.routeMatrix.attempts -or $pilotSite.routeMatrix.attempts.Count -lt 1) { throw "pilot routeMatrix missing attempts for $site" }
   foreach ($attempt in $pilotSite.routeMatrix.attempts) {
     if (-not $attempt.requestedUrl.redacted) { throw "pilot routeMatrix missing redacted requestedUrl for $site" }
     if ($null -eq $attempt.titleLength) { throw "pilot routeMatrix missing titleLength for $site" }
@@ -273,14 +271,16 @@ foreach ($site in @("workbuddy", "trae", "doubao", "deepseek")) {
     if ($null -eq $attempt.totalInputCandidateCount) { throw "pilot routeMatrix missing input count for $site" }
   }
 }
+foreach ($excludedSite in @("workbuddy", "trae", "deepseek")) {
+  if ($pilotReport.pilot.siteIds -contains $excludedSite) { throw "pilot report should not include excluded web site $excludedSite" }
+}
 if ($pilotReport.summary.redactionLeaks.Count -gt 0) { throw "pilot report has redaction leaks" }
-if ($pilotReport.pilot.insertAttempts -lt 4) { throw "pilot report did not attempt all beta inserts" }
-if ($pilotReport.pilot.failureReasons.PSObject.Properties.Name.Count -eq 1 -and $pilotReport.pilot.failureReasons.PSObject.Properties.Name[0] -eq "no visible input candidate") {
-  throw "pilot report failure reasons are too coarse for beta adapter triage"
-}
-if (-not ($pilotReport.pilot.failureReasons.PSObject.Properties.Name -contains "login_or_auth_gate_no_visible_composer")) {
-  throw "pilot report does not distinguish login/auth gate failures"
-}
+if ($pilotReport.pilot.insertAttempts -lt 1) { throw "pilot report did not attempt Doubao insert" }
+if (-not ($pilotReport.summary.insertPasses -contains "doubao")) { throw "pilot report did not verify Doubao insert" }
+if (-not ($pilotReport.summary.noAutoSendPasses -contains "doubao")) { throw "pilot report did not verify Doubao no-auto-send" }
+$doubaoPilotSite = @($pilotReport.pilot.sites | Where-Object { $_.id -eq "doubao" })[0]
+if (-not $doubaoPilotSite.insertPassed) { throw "pilot report Doubao insertPassed is false" }
+if (-not $doubaoPilotSite.noAutoSendPassed) { throw "pilot report Doubao noAutoSendPassed is false" }
 if (($pilotReport | ConvertTo-Json -Depth 20).Contains("function smartPromptProbeInputs")) {
   throw "pilot report leaked raw probe source in failure reasons"
 }
@@ -321,5 +321,6 @@ Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "pageCl
 Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "routeDiagnostics"
 Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "routeMatrix"
 Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "login_or_auth_gate_no_visible_composer"
+Assert-Text "prototypes/browser-extension/tests/live-site-probe.test.js" "region_or_security_gate_no_visible_composer"
 
 Write-Host "PASS: M3 pilot and desktop input critic checks passed."

@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-windows-fill@1",
-    "createdAt":  "2026-06-07T19:00:20.2538407Z",
+    "createdAt":  "2026-06-07T19:40:15.8251669Z",
     "platform":  "win32",
     "selfTest":  false,
     "confirmForeground":  true,
@@ -16,15 +16,15 @@
     "textPatternVerificationTried":  false,
     "textPatternVerificationMatched":  false,
     "foreground":  {
-                       "processName":  "Codex",
+                       "processName":  "explorer",
                        "pidPresent":  true,
-                       "titleLength":  5,
-                       "titleHash":  "616efbe96852d8c9",
-                       "detectedToolProfile":  "codex",
-                       "childProcessCount":  7,
-                       "childToolProcessHintPresent":  true,
+                       "titleLength":  0,
+                       "titleHash":  "",
+                       "detectedToolProfile":  "unknown",
+                       "childProcessCount":  1,
+                       "childToolProcessHintPresent":  false,
                        "expectedTitleHashMatched":  false,
-                       "expectedToolProfileMatched":  true
+                       "expectedToolProfileMatched":  false
                    },
     "supportedToolProfiles":  [
                                   "codex",

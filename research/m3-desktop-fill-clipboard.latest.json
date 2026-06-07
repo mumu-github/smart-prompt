@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-windows-fill@1",
-    "createdAt":  "2026-06-07T19:00:09.1663430Z",
+    "createdAt":  "2026-06-07T19:40:10.7507646Z",
     "platform":  "win32",
     "selfTest":  true,
     "confirmForeground":  false,
@@ -19,7 +19,7 @@
     "target":  {
                    "index":  0,
                    "controlType":  "ControlType.Pane",
-                   "classNameHash":  "48a9b8edb760deb3",
+                   "classNameHash":  "f2a44e79cf42c7d8",
                    "hasValuePattern":  false,
                    "hasNativeWindowHandle":  true,
                    "titleLength":  33,

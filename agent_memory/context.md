@@ -1,11 +1,19 @@
 # 项目上下文
 
+## 当前 M3 收口上下文 2026-06-08
+
+- M3 active goal 的两条验收线都有当前机器证据：`research/m3-pilot-adapters.latest.json` 记录 beta adapter 真实内测数据；`research/m3-real-desktop-tools-fill-matrix.latest.json` 记录 Codex、Claude Code、Hermes 真实桌面工具填入矩阵。
+- 用户已澄清：workBuddy、Trae 是本地工具，不作为网页 adapter 跑；DeepSeek 本轮不跑；网页 pilot 只验证已登录的豆包 `https://www.doubao.com/chat/`。
+- beta adapter pilot 最新结果为豆包登录态网页 1 次 Insert attempt、1 次成功，Insert success rate 1.0。证据来自用户已登录的现有 Chrome tab，验证可见 composer、真实填入回读和 no-auto-send；测试文本已在取证后清空。报告明确标记普通 Chrome tab 未加载 Smart Prompt 内容脚本，因此这是登录态 composer/adapter 写入验证，不伪装成 CDP 正式扩展加载。
+- `scripts/check-m3-pilot-adapters.ps1` 默认 SiteIds 已收窄为 `doubao`；pilot 报告已新增 `region_or_security_gate_no_visible_composer` 分类，避免把地区或安全拦截误判为普通 selector 失败。
+- M3 桌面工具端仍以真实桌面窗口矩阵为准：Codex、Claude Code、Hermes 均 `writeAttempted:true`、`writeVerified:true`、`noAutoSubmit:true`。不要再用 `research/m3-real-desktop-tools.latest.json` 的 snapshot-only 字段推翻矩阵结论，因为 critic 会刷新该 snapshot 报告。
+
 ## 当前 M3 真实桌面工具输入上下文 2026-06-08
 
 - 用户明确要求真实桌面工具端验收，不接受新开 Windows Terminal/PowerShell 命令行窗口作为 Codex/Claude Code/Hermes 的替代证据。
 - `scripts/check-m3-real-desktop-tools.ps1` 支持 `-AttachExistingWindow -AttachProfile <profile>`，只 attach 已打开的真实桌面窗口；真实写入必须显式 `-AllowForegroundWrite`，并匹配 title hash 与 tool profile。
 - `research/m3-real-desktop-tools-fill-matrix.latest.json` 是三工具真实桌面填入矩阵证据：Codex、Claude Code、Hermes 均已在真实桌面窗口完成写入和回读验证，且不自动发送。报告只保存长度/hash/布尔状态/策略，不保存标题原文、输入原文或 prompt 正文。
-- 当前 M3 桌面工具部分可认为已取得实机写入证据；active goal 仍未整体完成，因为 beta adapter 真实内测 Insert 成功率仍需继续观察和修复。
+- 当前 M3 桌面工具部分可认为已取得实机写入证据；beta adapter pilot 已取得真实成功率和失败原因证据，剩余站点属于后续 adapter 继续优化项。
 
 ## 当前 M3 caret/focus 输入信号上下文 2026-06-08
 
