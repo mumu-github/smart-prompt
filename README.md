@@ -1,59 +1,111 @@
 # Smart Prompt
 
-这是一个跨平台提示词自动化生成小工具的研究与 PRD 项目。
+Smart Prompt 是一个面向网页 AI / Agent 工具的提示词协作助手。它在输入框附近显示一个小人入口，帮助用户把模糊想法生成、补全或润色成可直接插入的 prompt。
 
-## 交付物
+当前仓库包含研究文档、UI/UX 资产、Chrome/Edge MV3 浏览器扩展原型、本地服务、共享 prompt/LLM gateway，以及 Tauri 桌面壳 scaffold。
 
-- `docs/research-report.md`：用户痛点、社区证据、技术可行性和 MVP 判断。
-- `docs/competitive-analysis.md`：竞品、相邻产品、差异化与市场判断。
-- `docs/open-source-skills-analysis.md`：GitHub、SkillHub、ClawHub 与 agent skills 实现方式分析。
-- `docs/prd.md`：产品需求文档 v0.1。
-- `assets/ui-ux/prompt-copilot-uiux-v1.png`：第一版 UI/UX 概念图。
-- `assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png`：内置生成并贴入原始小人的当前 UI/UX 概念图。
-- `assets/ui-ux/mascot-states/`：normal、resting、thinking、suggesting、success、clapping 六种小人状态透明 PNG。
-- `assets/ui-ux/mascot-animations/`：Remotion 渲染的轻量小人状态动画。
-- `prototypes/remotion-mascot/`：Remotion 动画原型源码。
-- `prototypes/browser-extension/`：按 PRD M1 实现的 Chrome/Edge MV3 浏览器 MVP 原型。
-- `packages/shared/`：V2 共享 prompt core、站点适配配置和 LLM gateway。
-- `apps/local-service/`：V2 本地服务，负责设置、skill 文件夹导入、skill 推荐和真实 LLM gateway。
-- `apps/desktop-shell/`：V2 Tauri 桌面壳 scaffold，包含设置页、托盘/快捷键 Rust 代码和本地服务入口。
-- `assets/ui-ux/README.md`：图像生成说明与提示词。
-- `research/autoresearch-rubric.md`：autoresearch-goal 验收 rubric。
-- `scripts/critic-autoresearch.ps1`：本地完成门槛检查脚本。
-- `scripts/critic-browser-extension.ps1`：浏览器 MVP 原型检查脚本。
+## V2 能力
 
-## 验证
+- 真实 LLM 三模式生成：`idea`、`continue`、`polish`
+- 多 provider LLM gateway：`agnes`、`openai-compatible`、`anthropic`、`gemini`
+- 站点适配：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit
+- 浏览器扩展：输入框附近小人入口、prompt card、Insert 只填入不发送、本地服务 fallback
+- 本地服务：settings、skill 文件夹导入、skill 推荐、prompt library、`/generate`
+- Tauri 桌面壳：设置页、API key 管理、skill/prompt 管理、托盘、全局快捷键、本地服务启动
+- 隐私边界：不默认上传整页内容，不自动发送消息
 
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-autoresearch.ps1
-```
+## 目录
 
-完整通过时输出：
+- `prototypes/browser-extension/`：Chrome/Edge MV3 浏览器扩展原型
+- `apps/local-service/`：Node 本地服务和 API contract
+- `apps/desktop-shell/`：Tauri 桌面壳 scaffold
+- `packages/shared/`：共享 prompt core、站点配置和 LLM gateway
+- `assets/ui-ux/`：UI/UX 概念图、小人状态图、动画资产
+- `prototypes/remotion-mascot/`：小人动画 Remotion 原型
+- `docs/`：研究、竞品、开源 skills 分析和 PRD
+- `research/`：V2 rubric、验证报告和 runtime evidence
+- `scripts/`：生成、探针、critic 和 runtime 验收脚本
 
-```text
-PASS: autoresearch artifacts meet local critic checks.
-```
+## 快速验证
 
-当前说明：用户已确认不需要严格 `gpt-image-2` API 输出图；完整 critic 以当前内置 `image_gen` UI/UX 图、状态动作、Remotion 动画、研究文档和 git 管理为门槛。显式 `gpt-image-2` 路径仍保留为可选复跑工具；若只检查调用参数，可 dry-run：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\generate-uiux-gpt-image-2.ps1 -DryRun
-```
-
-浏览器 MVP 原型验证：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-browser-extension.ps1
-```
-
-V2 自动化验证：
+默认 V2 自动化检查：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1
 ```
 
-V2 完整验收还需要真实站点和 Tauri runtime 证据；严格检查：
+严格 runtime evidence 检查：
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence
 ```
+
+当前严格验收已通过，证据见：
+
+- `research/v2-verification.md`
+- `research/v2-real-llm.latest.json`
+- `research/v2-live-site-probe.latest.json`
+- `research/v2-claude-insert.latest.json`
+- `research/v2-tauri-runtime.latest.json`
+
+## 真实 LLM
+
+Agnes provider 已接入，可用以下方式验证三模式真实生成：
+
+```powershell
+$env:AGNES_API_KEY="你的 Agnes API key"
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1 -Provider agnes
+```
+
+通过标准：
+
+- `pass: true`
+- `idea`、`continue`、`polish` 都是 `ok: true`
+- 三项均为 `generatedBy: "llm"`
+- 三项 `mode` 与样本名严格一致
+
+## 本地服务
+
+```powershell
+cd apps\local-service
+npm test
+npm start
+```
+
+默认地址：
+
+```text
+http://127.0.0.1:17371
+```
+
+API 说明见 `apps/local-service/README.md`。
+
+## 浏览器扩展
+
+```powershell
+cd prototypes\browser-extension
+npm test
+```
+
+扩展原型在 `prototypes/browser-extension/`，可作为 unpacked extension 加载。
+
+## 桌面壳
+
+```powershell
+cd apps\desktop-shell
+npm test
+cargo check --manifest-path src-tauri\Cargo.toml
+```
+
+Tauri runtime 验收脚本：
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runtime.ps1
+```
+
+## 原则
+
+- Insert 只填入输入框，不自动发送
+- 默认不读取或上传整页文本
+- API key 只用于本地服务和显式配置的 provider
+- 小人角色以 `assets/ui-ux/mascot-token-run.png` 为原型，不重新设计角色
