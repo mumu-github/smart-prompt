@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T16:03:13.3416656Z",
+    "createdAt":  "2026-06-07T16:17:51.2383123Z",
     "pass":  true,
     "port":  17441,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  90,
-                    "sha256":  "03bae04c63ed554e"
+                    "sha256":  "2348ac1ab9419355"
                 },
     "checks":  {
                    "sidecarHealthy":  true,
@@ -24,12 +24,12 @@
     "snapshot":  {
                      "candidates":  [
                                         {
-                                            "automationIdHash":  "88abaaff024e4014",
+                                            "automationIdHash":  "ddddca4031fc3a9c",
                                             "boundingRect":  {
                                                                  "height":  72,
                                                                  "width":  470,
-                                                                 "x":  206,
-                                                                 "y":  229
+                                                                 "x":  180,
+                                                                 "y":  203
                                                              },
                                             "classNameHash":  "3c90891ab8e92fe6",
                                             "controlType":  "ControlType.Pane",
@@ -41,7 +41,7 @@
                                             "nameHash":  ""
                                         }
                                     ],
-                     "createdAt":  "2026-06-07T16:03:13.0744877Z",
+                     "createdAt":  "2026-06-07T16:17:50.8734372Z",
                      "foreground":  {
                                         "detectedToolProfile":  "codex",
                                         "expectedToolProfile":  "codex",

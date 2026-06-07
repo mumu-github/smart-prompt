@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-windows-uia@1",
-    "createdAt":  "2026-06-07T16:02:50.9147885Z",
+    "createdAt":  "2026-06-07T16:17:22.5949723Z",
     "platform":  "win32",
     "selfTest":  true,
     "selfTestProfile":  "codex",
@@ -25,7 +25,7 @@
                            "index":  0,
                            "controlType":  "ControlType.Pane",
                            "nameHash":  "",
-                           "automationIdHash":  "d8bfafcdbbdd275b",
+                           "automationIdHash":  "ad9239dc58e28e53",
                            "classNameHash":  "796703c6b06e3656",
                            "isKeyboardFocusable":  false,
                            "isEnabled":  true,

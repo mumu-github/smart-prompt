@@ -6,7 +6,7 @@
 
 ## 0. 当前 Beta 状态
 
-v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA 竖切验证阶段，源码/dev sidecar、安装包内 bundled sidecar snapshot、Windows 写回 self-test、三工具画像 self-test 与受控前台窗口写回协议均已通过。下一阶段重点是真实内测数据闭环、真实桌面工具窗口写回验收和更多工具适配。
+v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA 竖切验证阶段，源码/dev sidecar、安装包内 bundled sidecar snapshot、Windows 写回 self-test、三工具画像 self-test、真实 Codex 前台窗口 snapshot-only 审计与受控前台窗口写回协议均已通过。下一阶段重点是真实内测数据闭环、真实桌面工具窗口写回验收和更多工具适配。
 
 ### 已完成证据
 
@@ -24,7 +24,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 - 收集真实内测指标：Insert 成功率、保存率、Undo/Retry 使用情况、失败站点原因。
 - 补 workBuddy、Trae、Doubao、DeepSeek 等新网页站点适配。
-- 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test、三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回 guard、source/dev sidecar snapshot/fill 和安装包 bundled sidecar snapshot/fill smoke 已通过，真实工具窗口写回验收仍待完成；macOS AX 暂缓到后续跨平台阶段。
+- 继续补 Codex、Claude Code、Hermes 等桌面/CLI 工具画像与 M3 桌面输入框识别方案；当前 Windows UIA self-test、三工具画像 self-test、真实 Codex 前台窗口 snapshot-only 审计、Windows 写回 self-test、受控前台窗口写回 guard、source/dev sidecar snapshot/fill 和安装包 bundled sidecar snapshot/fill smoke 已通过，真实工具窗口写回验收仍待完成；macOS AX 暂缓到后续跨平台阶段。
 
 ## 1. 背景
 

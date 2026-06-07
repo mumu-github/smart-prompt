@@ -22,6 +22,14 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - 输出 `research/m3-desktop-tool-profiles.latest.json`。
 - 每个工具画像都必须检测到正确 `detectedToolProfile`、至少 1 个 UIA 输入候选，并且不能保存 raw title 或 raw input。
 
+已新增 `scripts/check-m3-real-desktop-tools.ps1`：
+
+- 默认扫描真实前台窗口，但不写入任何文本。
+- 输出 `research/m3-real-desktop-tools.latest.json`。
+- 报告只记录前台窗口的 processName、title 长度/hash、工具画像、候选数量和隐私检查，不保存窗口标题原文、元素名称原文或输入值。
+- 当前实机审计已在 Codex 前台窗口通过 snapshot-only 检测：`detectedToolProfile:"codex"`、候选数 116、`writeAttempted:false`。
+- 如需真实写入，必须显式传入 `-AllowForegroundWrite`、`-ExpectedTitleHash` 和 `-ExpectedToolProfile`，再复用受控前台写回协议。
+
 已新增 `scripts/check-m3-desktop-fill.ps1`：
 
 - `-SelfTest` 会创建临时 WinForms TextBox，并优先使用 UIA `ValuePattern.SetValue` 写入文本。
@@ -64,7 +72,7 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 - `scripts/check-m3-installed-sidecar-desktop-input.ps1` 会构建桌面壳、静默安装 NSIS 包、从安装后的 app 启动 bundled native sidecar，再调用 `GET /desktop/input-snapshot?selfTest=1` 与 `POST /desktop/fill?selfTest=1`。
 - 证据文件：`research/m3-installed-sidecar-desktop-input.latest.json`，当前 `pass:true`。
 
-这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用，并且前台窗口写回已有受控确认协议；M3 仍未完成，因为还缺 Codex/Claude Code/Hermes 真实工具窗口写回验收报告。
+这证明 Windows 安装包内 sidecar snapshot/fill self-test 路径可用，并且前台窗口写回已有受控确认协议；真实 Codex 前台窗口 snapshot-only 审计也已通过。M3 仍未完成，因为还缺 Codex/Claude Code/Hermes 真实工具窗口写回验收报告。
 
 ## 工具画像
 

@@ -44,6 +44,10 @@ Invoke-Step "M3 Windows tool profile self-tests" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-tool-profiles.ps1") -Report (Join-Path $Root "research/m3-desktop-tool-profiles.latest.json")
 }
 
+Invoke-Step "M3 Windows real foreground desktop tool audit" {
+  powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-real-desktop-tools.ps1") -Report (Join-Path $Root "research/m3-real-desktop-tools.latest.json")
+}
+
 Invoke-Step "M3 Windows desktop fill self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-desktop-fill.ps1") -SelfTest -Report (Join-Path $Root "research/m3-desktop-fill.latest.json")
 }
@@ -96,6 +100,28 @@ foreach ($profile in @("codex", "claude-code", "hermes")) {
 if (-not $toolProfileReport.privacy.rawTitlesNotStored) { throw "tool profile report stores raw titles" }
 if (($toolProfileReport | ConvertTo-Json -Depth 10).Contains("Smart Prompt Claude Code UIA Self Test")) { throw "tool profile report leaked Claude Code raw title" }
 if (($toolProfileReport | ConvertTo-Json -Depth 10).Contains("Smart Prompt Hermes UIA Self Test")) { throw "tool profile report leaked Hermes raw title" }
+
+$realDesktopReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-real-desktop-tools.latest.json") | ConvertFrom-Json
+if ($realDesktopReport.schemaVersion -ne "m3-real-desktop-tools@1") { throw "real desktop tools report schema mismatch" }
+if (-not $realDesktopReport.pass) { throw "real desktop tools report did not pass" }
+if (-not $realDesktopReport.snapshot.probeOk) { throw "real desktop tools snapshot did not probe foreground" }
+if (-not $realDesktopReport.checks.snapshotOk) { throw "real desktop tools report missing snapshot ok" }
+if (-not $realDesktopReport.checks.foregroundClassified) { throw "real desktop tools report did not classify foreground" }
+if (-not $realDesktopReport.checks.privacyRedacted) { throw "real desktop tools report privacy redaction missing" }
+if ($realDesktopReport.checks.rawTitleStored) { throw "real desktop tools report stored raw title" }
+if ($realDesktopReport.checks.rawElementNamesStored) { throw "real desktop tools report stored raw element names" }
+if ($realDesktopReport.checks.rawInputValuesStored) { throw "real desktop tools report stored raw input values" }
+if ($realDesktopReport.checks.rawPromptTextStored) { throw "real desktop tools report stored raw prompt text" }
+if (-not $realDesktopReport.checks.noAutoSubmit) { throw "real desktop tools report allows auto submit" }
+if ($realDesktopReport.write.attempted) { throw "real desktop tools default audit attempted write" }
+if ($realDesktopReport.write.reason -ne "real_write_requires_allow_foreground_write") { throw "real desktop tools default audit did not keep write guarded" }
+foreach ($profile in @("codex", "claude-code", "hermes")) {
+  if (-not ($realDesktopReport.supportedToolProfiles -contains $profile)) { throw "real desktop tools report missing supported profile $profile" }
+  if (-not ($realDesktopReport.requestedProfiles -contains $profile)) { throw "real desktop tools report missing requested profile $profile" }
+  $coverage = @($realDesktopReport.coverage | Where-Object { $_.id -eq $profile })[0]
+  if (-not $coverage) { throw "real desktop tools report missing coverage row for $profile" }
+}
+if (($realDesktopReport | ConvertTo-Json -Depth 10).Contains("Smart Prompt M3 real foreground desktop fill probe")) { throw "real desktop tools report leaked raw write probe text" }
 
 $desktopFillReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-desktop-fill.latest.json") | ConvertFrom-Json
 if ($desktopFillReport.schemaVersion -ne "m3-windows-fill@1") { throw "desktop fill report schema mismatch" }
@@ -189,6 +215,8 @@ if ($pilotReport.pilot.failureReasons.PSObject.Properties.Name.Count -eq 1 -and 
 Assert-Text "docs/m3-desktop-input.md" "Windows UIA"
 Assert-Text "docs/m3-desktop-input.md" "workBuddy"
 Assert-Text "packages/shared/desktop-tool-profiles.js" "claude-code"
+Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "m3-real-desktop-tools@1"
+Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "real_write_requires_allow_foreground_write"
 Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "m3-desktop-tool-profiles@1"
 Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "claude-code"
 Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "hermes"
