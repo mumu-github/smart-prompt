@@ -1,0 +1,52 @@
+﻿{
+    "schemaVersion":  "m3-windows-uia@1",
+    "createdAt":  "2026-06-07T14:21:56.2568556Z",
+    "platform":  "win32",
+    "selfTest":  true,
+    "probeOk":  true,
+    "pass":  true,
+    "foreground":  {
+                       "processName":  "powershell",
+                       "pidPresent":  true,
+                       "titleLength":  32,
+                       "titleHash":  "1ce2043d4a53175b",
+                       "detectedToolProfile":  "codex"
+                   },
+    "supportedToolProfiles":  [
+                                  "codex",
+                                  "claude-code",
+                                  "hermes"
+                              ],
+    "candidates":  [
+                       {
+                           "index":  0,
+                           "controlType":  "ControlType.Pane",
+                           "nameHash":  "",
+                           "automationIdHash":  "26f632f11dff2098",
+                           "classNameHash":  "6bde9aeb8f7ca830",
+                           "isKeyboardFocusable":  false,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  128,
+                                                "y":  151,
+                                                "width":  470,
+                                                "height":  72
+                                            }
+                       }
+                   ],
+    "summary":  {
+                    "candidateCount":  1,
+                    "valuePatternCandidates":  0,
+                    "textPatternCandidates":  0,
+                    "focusableCandidates":  0,
+                    "detectedToolProfile":  "codex"
+                },
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "promptTextNotRead":  true
+                }
+}

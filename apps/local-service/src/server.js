@@ -5,6 +5,7 @@ const { buildCard, detectMode, rankSkills } = require("../../../packages/shared/
 const { generateWithConfiguredProvider, getProviderStatuses, redactKey } = require("../../../packages/shared/llm-gateway");
 const { createStore, DEFAULT_PORT } = require("./store");
 const { importSkillFolder } = require("./skill-library");
+const { getDesktopInputSnapshot } = require("./desktop-input-detector");
 
 const DEFAULT_ALLOWED_ORIGINS = Object.freeze([
   /^chrome-extension:\/\/[a-z]{32}$/i,
@@ -107,6 +108,7 @@ function isAuthorized(req, store, options = {}) {
 
 function createApp(store = createStore(), options = {}) {
   const generateWithLlm = options.generateWithLlm || generateWithConfiguredProvider;
+  const desktopInputSnapshot = options.getDesktopInputSnapshot || getDesktopInputSnapshot;
 
   return async function app(req, res) {
     const url = new URL(req.url, "http://127.0.0.1");
@@ -313,6 +315,13 @@ function createApp(store = createStore(), options = {}) {
         return;
       }
 
+      if (req.method === "GET" && url.pathname === "/desktop/input-snapshot") {
+        const selfTest = url.searchParams.get("selfTest") === "1";
+        const snapshot = await desktopInputSnapshot({ selfTest });
+        sendJson(req, res, 200, { ok: true, snapshot }, options);
+        return;
+      }
+
       if (req.method === "GET" && url.pathname === "/metrics") {
         sendJson(req, res, 200, { ok: true, metrics: store.getMetrics() }, options);
         return;
@@ -390,10 +399,11 @@ function startServer({
   port = Number(process.env.SMART_PROMPT_PORT || DEFAULT_PORT),
   store = createStore(),
   generateWithLlm,
+  getDesktopInputSnapshot: desktopInputSnapshot,
   allowedOrigins = [],
   disableAuth = false
 } = {}) {
-  const server = http.createServer(createApp(store, { generateWithLlm, allowedOrigins, disableAuth }));
+  const server = http.createServer(createApp(store, { generateWithLlm, getDesktopInputSnapshot: desktopInputSnapshot, allowedOrigins, disableAuth }));
   server.listen(port, "127.0.0.1");
   return server;
 }

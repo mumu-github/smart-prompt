@@ -20,6 +20,7 @@ const {
   getStoredApiKey
 } = require("../../../packages/shared/llm-gateway");
 const { MODE, buildCard } = require("../../../packages/shared/smart-prompt-core");
+const { detectDesktopTool } = require("../../../packages/shared/desktop-tool-profiles");
 
 function tempDir(name) {
   return fs.mkdtempSync(path.join(os.tmpdir(), name));
@@ -313,6 +314,50 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
         generatedBy: "llm",
         model: settings.model
       };
+    },
+    getDesktopInputSnapshot: async ({ selfTest }) => {
+      assert.equal(selfTest, true);
+      return {
+        schemaVersion: "m3-windows-uia@1",
+        createdAt: new Date().toISOString(),
+        platform: "win32",
+        selfTest,
+        probeOk: true,
+        pass: true,
+        foreground: {
+          processName: "WindowsTerminal",
+          pidPresent: true,
+          titleLength: 32,
+          titleHash: "abc123",
+          detectedToolProfile: "codex"
+        },
+        supportedToolProfiles: ["codex", "claude-code", "hermes"],
+        candidates: [{
+          index: 0,
+          controlType: "ControlType.Edit",
+          nameHash: "name-hash",
+          automationIdHash: "automation-hash",
+          classNameHash: "class-hash",
+          isKeyboardFocusable: true,
+          isEnabled: true,
+          hasValuePattern: true,
+          hasTextPattern: false,
+          boundingRect: { x: 1, y: 2, width: 320, height: 80 }
+        }],
+        summary: {
+          candidateCount: 1,
+          valuePatternCandidates: 1,
+          textPatternCandidates: 0,
+          focusableCandidates: 1,
+          detectedToolProfile: "codex"
+        },
+        privacy: {
+          titleRedacted: true,
+          elementNamesHashed: true,
+          elementValuesNotRead: true,
+          promptTextNotRead: true
+        }
+      };
     }
   });
   await new Promise((resolve) => server.once("listening", resolve));
@@ -349,6 +394,24 @@ assert.equal(store.saveSettings({ provider: "not-real" }).provider, PROVIDERS.AU
     assert.notEqual(options.headers["access-control-allow-origin"], "*");
 
     const authed = (method, route, body) => request(port, method, route, body, authToken);
+
+    assert.equal(detectDesktopTool({ processName: "WindowsTerminal", windowTitle: "codex Smart Prompt" }).id, "codex");
+    assert.equal(detectDesktopTool({ processName: "Code", windowTitle: "Claude Code" }).id, "claude-code");
+    assert.equal(detectDesktopTool({ processName: "powershell", windowTitle: "Hermes console" }).id, "hermes");
+    assert.equal(detectDesktopTool({ processName: "Code", windowTitle: "Plain workspace" }), null);
+
+    const unauthDesktopSnapshot = await request(port, "GET", "/desktop/input-snapshot?selfTest=1");
+    assert.equal(unauthDesktopSnapshot.status, 401);
+    const desktopSnapshot = await authed("GET", "/desktop/input-snapshot?selfTest=1");
+    assert.equal(desktopSnapshot.status, 200);
+    assert.equal(desktopSnapshot.body.snapshot.schemaVersion, "m3-windows-uia@1");
+    assert.equal(desktopSnapshot.body.snapshot.foreground.detectedToolProfile, "codex");
+    assert.deepEqual(desktopSnapshot.body.snapshot.supportedToolProfiles, ["codex", "claude-code", "hermes"]);
+    assert.equal(desktopSnapshot.body.snapshot.summary.candidateCount, 1);
+    assert.equal(desktopSnapshot.body.snapshot.privacy.titleRedacted, true);
+    assert.equal(desktopSnapshot.body.snapshot.privacy.elementValuesNotRead, true);
+    assert.ok(!JSON.stringify(desktopSnapshot.body.snapshot).includes("codex Smart Prompt"));
+    assert.ok(!JSON.stringify(desktopSnapshot.body.snapshot).includes("M3 UIA self test input"));
 
     const providers = await authed("GET", "/llm/providers");
     assert.equal(providers.status, 200);

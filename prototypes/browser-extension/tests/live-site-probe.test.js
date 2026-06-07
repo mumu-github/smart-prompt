@@ -17,6 +17,7 @@ const reportPath = process.env.SMART_PROMPT_LIVE_REPORT || "";
 const injectFallback = process.env.SMART_PROMPT_LIVE_INJECT_FALLBACK !== "0";
 const schemaVersion = process.env.SMART_PROMPT_LIVE_SCHEMA_VERSION || "v2-live-site-probe@1";
 const formalMode = schemaVersion === "v3-live-site-formal@1";
+const pilotMode = schemaVersion === "m3-pilot-adapters@1";
 const noAutoSendWaitMs = Number(process.env.SMART_PROMPT_LIVE_NO_AUTO_SEND_WAIT_MS || 2000);
 const profileDirOverride = process.env.SMART_PROMPT_LIVE_PROFILE_DIR
   ? path.resolve(process.env.SMART_PROMPT_LIVE_PROFILE_DIR)
@@ -82,11 +83,16 @@ const sites = [
   { id: "bolt", name: "Bolt", url: "https://bolt.new/", requireInsert: false },
   { id: "v0", name: "v0", url: "https://v0.dev/chat", requireInsert: false },
   { id: "lovable", name: "Lovable", url: "https://lovable.dev/", requireInsert: false },
-  { id: "replit", name: "Replit", url: "https://replit.com/agent4", requireInsert: false }
+  { id: "replit", name: "Replit", url: "https://replit.com/agent4", requireInsert: false },
+  { id: "workbuddy", name: "workBuddy", url: "https://work-buddy.ai/", requireInsert: true, betaPilot: true },
+  { id: "trae", name: "Trae", url: "https://www.trae.ai/solo", requireInsert: true, betaPilot: true },
+  { id: "doubao", name: "Doubao", url: "https://www.doubao.com/chat/", requireInsert: true, betaPilot: true },
+  { id: "deepseek", name: "DeepSeek", url: "https://chat.deepseek.com/", requireInsert: true, betaPilot: true }
 ];
+const defaultSiteIds = ["chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit"];
 const activeSites = siteFilter.size
   ? sites.filter((site) => siteFilter.has(site.id))
-  : sites;
+  : sites.filter((site) => defaultSiteIds.includes(site.id));
 const missingSiteFilters = Array.from(siteFilter).filter((id) => !sites.some((site) => site.id === id));
 
 function sleep(ms) {
@@ -782,6 +788,39 @@ function toFormalSite(result, extensionLoad) {
   };
 }
 
+function getPilotFailureReason(result, formalSite) {
+  if (!formalSite.formalExtensionLoaded) return "extension_not_loaded";
+  if (!formalSite.focus.ok) return result.focusResult?.reason || result.injectedFocusResult?.reason || "no_visible_input_candidate";
+  if (!formalSite.display.passed) return result.displayError || "mascot_not_visible";
+  if (formalSite.required.insert && !formalSite.insert.passed) {
+    return formalSite.insert.reason || result.insert?.error || "insert_not_verified";
+  }
+  if (formalSite.required.noAutoSend && !formalSite.noAutoSend.passed) return "no_auto_send_failed";
+  return "";
+}
+
+function toPilotSite(result, formalSite) {
+  const insertAttempted = Boolean(formalSite.required.insert);
+  const failureReason = getPilotFailureReason(result, formalSite);
+  return {
+    id: result.id,
+    name: result.name,
+    betaPilot: Boolean(result.betaPilot),
+    urlHost: new URL(result.url).hostname,
+    formalExtensionLoaded: formalSite.formalExtensionLoaded,
+    visibleInputCount: formalSite.focus.visibleInputCount,
+    focusOk: formalSite.focus.ok,
+    displayPassed: formalSite.display.passed,
+    insertAttempted,
+    insertPassed: insertAttempted ? Boolean(formalSite.insert.passed) : null,
+    noAutoSendPassed: insertAttempted ? Boolean(formalSite.noAutoSend.passed) : null,
+    insertStrategy: formalSite.insert.strategy || "",
+    insertKind: formalSite.insert.kind || "",
+    failureReason,
+    privacy: formalSite.privacy
+  };
+}
+
 (async () => {
   if (!attachCdp) assert.ok(fs.existsSync(chromePath), `Chrome not found: ${chromePath}`);
   assert.equal(missingSiteFilters.length, 0, `Unknown SMART_PROMPT_LIVE_SITE_IDS: ${missingSiteFilters.join(", ")}`);
@@ -874,11 +913,23 @@ function toFormalSite(result, extensionLoad) {
       && noAutoSendMissing.length === 0
       && injectedProbeFailures.length === 0
   );
+  const pilotSites = results.map((result, index) => toPilotSite(result, formalSites[index]));
+  const pilotInsertAttempts = pilotSites.filter((site) => site.insertAttempted).length;
+  const pilotInsertPasses = pilotSites.filter((site) => site.insertPassed).length;
+  const pilotFailureReasons = {};
+  for (const site of pilotSites) {
+    if (site.failureReason) pilotFailureReasons[site.failureReason] = (pilotFailureReasons[site.failureReason] || 0) + 1;
+  }
+  const pilotPass = Boolean(extensionLoad.ok && pilotSites.length === activeSites.length);
   const report = {
     schemaVersion,
     createdAt: new Date().toISOString(),
-    mode: formalMode ? "LIVE_SITE_FORMAL_PASS" : "LIVE_SITE_PROBE",
-    pass: formalMode ? formalPass : displayPasses >= displayRequired && requiredInsertIds.every((id) => insertPasses.includes(id)),
+    mode: formalMode ? "LIVE_SITE_FORMAL_PASS" : pilotMode ? "M3_PILOT_ADAPTERS" : "LIVE_SITE_PROBE",
+    pass: formalMode
+      ? formalPass
+      : pilotMode
+        ? pilotPass
+        : displayPasses >= displayRequired && requiredInsertIds.every((id) => insertPasses.includes(id)),
     formalExtensionOnly: formalMode,
     attachCdp,
     remotePort,
@@ -914,6 +965,16 @@ function toFormalSite(result, extensionLoad) {
       anyInjectedProbe: injectedProbeFailures.length > 0,
       redactionLeaks: []
     },
+    pilot: pilotMode
+      ? {
+          siteIds: activeSites.map((site) => site.id),
+          insertAttempts: pilotInsertAttempts,
+          insertPasses: pilotInsertPasses,
+          insertSuccessRate: pilotInsertAttempts ? pilotInsertPasses / pilotInsertAttempts : 0,
+          failureReasons: pilotFailureReasons,
+          sites: pilotSites
+        }
+      : null,
     sites: formalSites,
     results
   };
@@ -927,7 +988,7 @@ function toFormalSite(result, extensionLoad) {
   console.log(JSON.stringify(safeReport, null, 2));
 
   const missingInsert = requiredInsertIds.filter((id) => !insertPasses.includes(id));
-  if ((formalMode && !safeReport.pass) || (!formalMode && (displayPasses < displayRequired || missingInsert.length > 0))) {
+  if ((formalMode && !safeReport.pass) || (!formalMode && !pilotMode && (displayPasses < displayRequired || missingInsert.length > 0))) {
     process.exitCode = 1;
   }
 })();

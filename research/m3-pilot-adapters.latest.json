@@ -1,0 +1,698 @@
+{
+  "schemaVersion": "m3-pilot-adapters@1",
+  "createdAt": "2026-06-07T14:22:33.594Z",
+  "mode": "M3_PILOT_ADAPTERS",
+  "pass": true,
+  "formalExtensionOnly": false,
+  "attachCdp": false,
+  "remotePort": 9235,
+  "headless": true,
+  "injectFallback": false,
+  "loginWaitMs": 1000,
+  "noAutoSendWaitMs": 500,
+  "siteFilter": [
+    "workbuddy",
+    "trae",
+    "doubao",
+    "deepseek"
+  ],
+  "profilePersistent": false,
+  "profileDir": "",
+  "extensionLoad": {
+    "ok": true,
+    "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
+    "matchedExtension": {
+      "id": "fmpikhpnfljkihfefkmlhjhaepkcjpec",
+      "name": "Smart Prompt Copilot",
+      "version": "0.1.0",
+      "path": {
+        "redacted": "REDACTED_PATH",
+        "length": 66,
+        "sha256": "2aa6d66988d2b857"
+      },
+      "enabled": true
+    }
+  },
+  "displayPasses": 0,
+  "displayRequired": 4,
+  "requiredInsertIds": [
+    "workbuddy",
+    "trae",
+    "doubao",
+    "deepseek"
+  ],
+  "insertPasses": [],
+  "requirements": {
+    "displaySiteIds": [
+      "workbuddy",
+      "trae",
+      "doubao",
+      "deepseek"
+    ],
+    "insertSiteIds": [
+      "workbuddy",
+      "trae",
+      "doubao",
+      "deepseek"
+    ],
+    "noAutoSendSiteIds": [
+      "workbuddy",
+      "trae",
+      "doubao",
+      "deepseek"
+    ],
+    "requireFormalExtension": false,
+    "requireInjectedProbeFalse": false,
+    "insertMustNotSubmit": true,
+    "redactionRequired": true
+  },
+  "summary": {
+    "displayPasses": [],
+    "insertPasses": [],
+    "noAutoSendPasses": [],
+    "displayMissing": [
+      "workbuddy",
+      "trae",
+      "doubao",
+      "deepseek"
+    ],
+    "insertMissing": [
+      "workbuddy",
+      "trae",
+      "doubao",
+      "deepseek"
+    ],
+    "noAutoSendMissing": [
+      "workbuddy",
+      "trae",
+      "doubao",
+      "deepseek"
+    ],
+    "injectedProbeFailures": [],
+    "anyInjectedProbe": false,
+    "redactionLeaks": []
+  },
+  "pilot": {
+    "siteIds": [
+      "workbuddy",
+      "trae",
+      "doubao",
+      "deepseek"
+    ],
+    "insertAttempts": 4,
+    "insertPasses": 0,
+    "insertSuccessRate": 0,
+    "failureReasons": {
+      "no visible input candidate": 4
+    },
+    "sites": [
+      {
+        "id": "workbuddy",
+        "name": "workBuddy",
+        "betaPilot": true,
+        "urlHost": "work-buddy.ai",
+        "formalExtensionLoaded": true,
+        "visibleInputCount": 0,
+        "focusOk": false,
+        "displayPassed": false,
+        "insertAttempted": true,
+        "insertPassed": false,
+        "noAutoSendPassed": false,
+        "insertStrategy": "",
+        "insertKind": "",
+        "failureReason": "no visible input candidate",
+        "privacy": {
+          "urlRedacted": true,
+          "profilePathRedacted": true,
+          "promptTextRedacted": true,
+          "tokenRedacted": true
+        }
+      },
+      {
+        "id": "trae",
+        "name": "Trae",
+        "betaPilot": true,
+        "urlHost": "www.trae.ai",
+        "formalExtensionLoaded": true,
+        "visibleInputCount": 0,
+        "focusOk": false,
+        "displayPassed": false,
+        "insertAttempted": true,
+        "insertPassed": false,
+        "noAutoSendPassed": false,
+        "insertStrategy": "",
+        "insertKind": "",
+        "failureReason": "no visible input candidate",
+        "privacy": {
+          "urlRedacted": true,
+          "profilePathRedacted": true,
+          "promptTextRedacted": true,
+          "tokenRedacted": true
+        }
+      },
+      {
+        "id": "doubao",
+        "name": "Doubao",
+        "betaPilot": true,
+        "urlHost": "www.doubao.com",
+        "formalExtensionLoaded": true,
+        "visibleInputCount": 0,
+        "focusOk": false,
+        "displayPassed": false,
+        "insertAttempted": true,
+        "insertPassed": false,
+        "noAutoSendPassed": false,
+        "insertStrategy": "",
+        "insertKind": "",
+        "failureReason": "no visible input candidate",
+        "privacy": {
+          "urlRedacted": true,
+          "profilePathRedacted": true,
+          "promptTextRedacted": true,
+          "tokenRedacted": true
+        }
+      },
+      {
+        "id": "deepseek",
+        "name": "DeepSeek",
+        "betaPilot": true,
+        "urlHost": "chat.deepseek.com",
+        "formalExtensionLoaded": true,
+        "visibleInputCount": 0,
+        "focusOk": false,
+        "displayPassed": false,
+        "insertAttempted": true,
+        "insertPassed": false,
+        "noAutoSendPassed": false,
+        "insertStrategy": "",
+        "insertKind": "",
+        "failureReason": "no visible input candidate",
+        "privacy": {
+          "urlRedacted": true,
+          "profilePathRedacted": true,
+          "promptTextRedacted": true,
+          "tokenRedacted": true
+        }
+      }
+    ]
+  },
+  "sites": [
+    {
+      "id": "workbuddy",
+      "required": {
+        "display": true,
+        "insert": true,
+        "noAutoSend": true
+      },
+      "requiredDisplay": true,
+      "requiredInsert": true,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": false,
+        "visibleInputCount": 0,
+        "inputKind": "unknown"
+      },
+      "display": {
+        "passed": false,
+        "mascot": false,
+        "visible": false,
+        "rect": null,
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": true,
+        "passed": false,
+        "opened": false,
+        "cardOpened": false,
+        "outputLength": 0,
+        "afterValueLength": 0,
+        "outputPrefixContained": false,
+        "cardClosed": false,
+        "afterWriteVerified": false,
+        "verifiedBy": "",
+        "strategy": "",
+        "kind": "",
+        "reason": "",
+        "filledOnly": false,
+        "submitted": false
+      },
+      "noAutoSend": {
+        "required": true,
+        "passed": false,
+        "waitMs": 0,
+        "outputLength": 0,
+        "valueLength": 0,
+        "outputPrefixContained": false,
+        "inputRetained": false,
+        "retainedBy": "",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "m3-pilot-adapters.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "trae",
+      "required": {
+        "display": true,
+        "insert": true,
+        "noAutoSend": true
+      },
+      "requiredDisplay": true,
+      "requiredInsert": true,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": false,
+        "visibleInputCount": 0,
+        "inputKind": "unknown"
+      },
+      "display": {
+        "passed": false,
+        "mascot": false,
+        "visible": false,
+        "rect": null,
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": true,
+        "passed": false,
+        "opened": false,
+        "cardOpened": false,
+        "outputLength": 0,
+        "afterValueLength": 0,
+        "outputPrefixContained": false,
+        "cardClosed": false,
+        "afterWriteVerified": false,
+        "verifiedBy": "",
+        "strategy": "",
+        "kind": "",
+        "reason": "",
+        "filledOnly": false,
+        "submitted": false
+      },
+      "noAutoSend": {
+        "required": true,
+        "passed": false,
+        "waitMs": 0,
+        "outputLength": 0,
+        "valueLength": 0,
+        "outputPrefixContained": false,
+        "inputRetained": false,
+        "retainedBy": "",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "m3-pilot-adapters.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "doubao",
+      "required": {
+        "display": true,
+        "insert": true,
+        "noAutoSend": true
+      },
+      "requiredDisplay": true,
+      "requiredInsert": true,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": false,
+        "visibleInputCount": 0,
+        "inputKind": "unknown"
+      },
+      "display": {
+        "passed": false,
+        "mascot": false,
+        "visible": false,
+        "rect": null,
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": true,
+        "passed": false,
+        "opened": false,
+        "cardOpened": false,
+        "outputLength": 0,
+        "afterValueLength": 0,
+        "outputPrefixContained": false,
+        "cardClosed": false,
+        "afterWriteVerified": false,
+        "verifiedBy": "",
+        "strategy": "",
+        "kind": "",
+        "reason": "",
+        "filledOnly": false,
+        "submitted": false
+      },
+      "noAutoSend": {
+        "required": true,
+        "passed": false,
+        "waitMs": 0,
+        "outputLength": 0,
+        "valueLength": 0,
+        "outputPrefixContained": false,
+        "inputRetained": false,
+        "retainedBy": "",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "m3-pilot-adapters.latest.json",
+        "createdAt": ""
+      }
+    },
+    {
+      "id": "deepseek",
+      "required": {
+        "display": true,
+        "insert": true,
+        "noAutoSend": true
+      },
+      "requiredDisplay": true,
+      "requiredInsert": true,
+      "formalExtensionLoaded": true,
+      "injectedProbe": false,
+      "focus": {
+        "ok": false,
+        "visibleInputCount": 0,
+        "inputKind": "unknown"
+      },
+      "display": {
+        "passed": false,
+        "mascot": false,
+        "visible": false,
+        "rect": null,
+        "adapterIdMatched": true
+      },
+      "insert": {
+        "required": true,
+        "passed": false,
+        "opened": false,
+        "cardOpened": false,
+        "outputLength": 0,
+        "afterValueLength": 0,
+        "outputPrefixContained": false,
+        "cardClosed": false,
+        "afterWriteVerified": false,
+        "verifiedBy": "",
+        "strategy": "",
+        "kind": "",
+        "reason": "",
+        "filledOnly": false,
+        "submitted": false
+      },
+      "noAutoSend": {
+        "required": true,
+        "passed": false,
+        "waitMs": 0,
+        "outputLength": 0,
+        "valueLength": 0,
+        "outputPrefixContained": false,
+        "inputRetained": false,
+        "retainedBy": "",
+        "navigationChanged": false,
+        "messageCountChanged": false,
+        "assistantGenerationStarted": false,
+        "nativeSubmitEventCount": 0,
+        "requestSubmitCallCount": 0,
+        "formSubmitCallCount": 0,
+        "submitted": false
+      },
+      "privacy": {
+        "urlRedacted": true,
+        "profilePathRedacted": true,
+        "promptTextRedacted": true,
+        "tokenRedacted": true
+      },
+      "evidence": {
+        "sourceReport": "m3-pilot-adapters.latest.json",
+        "createdAt": ""
+      }
+    }
+  ],
+  "results": [
+    {
+      "id": "workbuddy",
+      "name": "workBuddy",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://work-buddy.ai",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "f9baf9a03e73f70a"
+      },
+      "requireInsert": true,
+      "betaPilot": true,
+      "injectedProbe": false,
+      "passedDisplay": false,
+      "passedInsert": false,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://work-buddy.ai",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "f9baf9a03e73f70a"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 25,
+          "sha256": "abfac7edfea11a09"
+        },
+        "injectedProbe": false,
+        "mascot": false,
+        "card": false,
+        "inputSelectors": [
+          "textarea[placeholder*=\"work-buddy\"]",
+          "textarea[placeholder*=\"WorkBuddy\"]",
+          "textarea[placeholder*=\"Ask\"]",
+          "textarea[placeholder*=\"Describe\"]",
+          "[data-testid*=\"chat\"] textarea",
+          "[data-testid*=\"prompt\"] textarea",
+          "[aria-label*=\"prompt\"][contenteditable=\"true\"]",
+          "[aria-label*=\"Ask\"][contenteditable=\"true\"]",
+          "[contenteditable=\"true\"][role=\"textbox\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "[contenteditable=\"true\"]",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": []
+      },
+      "focusResult": {
+        "ok": false,
+        "reason": "no visible input candidate"
+      }
+    },
+    {
+      "id": "trae",
+      "name": "Trae",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://www.trae.ai",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "d170da3c57b47ebe"
+      },
+      "requireInsert": true,
+      "betaPilot": true,
+      "injectedProbe": false,
+      "passedDisplay": false,
+      "passedInsert": false,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://www.trae.ai",
+          "pathKind": "one-segment",
+          "queryPresent": false,
+          "sha256": "d170da3c57b47ebe"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 43,
+          "sha256": "ae8b7e9f66e1e445"
+        },
+        "injectedProbe": false,
+        "mascot": false,
+        "card": false,
+        "inputSelectors": [
+          "textarea[placeholder*=\"Trae\"]",
+          "textarea[placeholder*=\"Ask\"]",
+          "textarea[placeholder*=\"Build\"]",
+          "textarea[aria-label*=\"prompt\"]",
+          "[data-testid*=\"chat\"] textarea",
+          "[data-testid*=\"prompt\"] textarea",
+          "[contenteditable=\"true\"][role=\"textbox\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "[contenteditable=\"true\"]",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": []
+      },
+      "focusResult": {
+        "ok": false,
+        "reason": "no visible input candidate"
+      }
+    },
+    {
+      "id": "doubao",
+      "name": "Doubao",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://www.doubao.com",
+        "pathKind": "one-segment",
+        "queryPresent": false,
+        "sha256": "28b57dad14914971"
+      },
+      "requireInsert": true,
+      "betaPilot": true,
+      "injectedProbe": false,
+      "passedDisplay": false,
+      "passedInsert": false,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://www.doubao.com",
+          "pathKind": "multi-segment",
+          "queryPresent": true,
+          "sha256": "38131ee785a8b539"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 2,
+          "sha256": "f64660efbe61dd28"
+        },
+        "injectedProbe": false,
+        "mascot": false,
+        "card": false,
+        "inputSelectors": [
+          "textarea[placeholder*=\"豆包\"]",
+          "textarea[placeholder*=\"输入\"]",
+          "textarea[placeholder*=\"Ask\"]",
+          "textarea[aria-label*=\"豆包\"]",
+          "textarea[aria-label*=\"输入\"]",
+          "[data-testid*=\"chat\"] textarea",
+          "[data-testid*=\"prompt\"] textarea",
+          "[aria-label*=\"输入\"][contenteditable=\"true\"]",
+          "[contenteditable=\"plaintext-only\"]",
+          "[contenteditable=\"true\"][role=\"textbox\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "[contenteditable=\"true\"]",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": []
+      },
+      "focusResult": {
+        "ok": false,
+        "reason": "no visible input candidate"
+      }
+    },
+    {
+      "id": "deepseek",
+      "name": "DeepSeek",
+      "url": {
+        "redacted": "REDACTED_URL",
+        "origin": "https://chat.deepseek.com",
+        "pathKind": "root",
+        "queryPresent": false,
+        "sha256": "7ea330ae999c9e2b"
+      },
+      "requireInsert": true,
+      "betaPilot": true,
+      "injectedProbe": false,
+      "passedDisplay": false,
+      "passedInsert": false,
+      "initial": {
+        "url": {
+          "redacted": "REDACTED_URL",
+          "origin": "https://chat.deepseek.com",
+          "pathKind": "root",
+          "queryPresent": false,
+          "sha256": "7ea330ae999c9e2b"
+        },
+        "title": {
+          "redacted": "REDACTED_TEXT",
+          "length": 41,
+          "sha256": "559b920bdee77de5"
+        },
+        "injectedProbe": false,
+        "mascot": false,
+        "card": false,
+        "inputSelectors": [
+          "textarea[placeholder*=\"DeepSeek\"]",
+          "textarea[placeholder*=\"请输入\"]",
+          "textarea[placeholder*=\"Ask\"]",
+          "textarea[aria-label*=\"DeepSeek\"]",
+          "textarea[aria-label*=\"chat\"]",
+          "[data-testid*=\"chat\"] textarea",
+          "[data-testid*=\"prompt\"] textarea",
+          "[contenteditable=\"plaintext-only\"]",
+          "[contenteditable=\"true\"][role=\"textbox\"]",
+          "[role=\"textbox\"]",
+          "textarea",
+          "[contenteditable=\"true\"]",
+          "input[type=\"text\"]",
+          "input[type=\"search\"]",
+          "input[type=\"url\"]",
+          "input:not([type])"
+        ],
+        "candidates": []
+      },
+      "focusResult": {
+        "ok": false,
+        "reason": "no visible input candidate"
+      }
+    }
+  ]
+}

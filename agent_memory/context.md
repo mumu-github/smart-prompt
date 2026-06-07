@@ -1,5 +1,14 @@
 # 项目上下文
 
+## M3 Pilot 与桌面输入识别上下文 2026-06-07
+
+- 当前 active goal 是 M3：一方面跑真实内测数据观察 workBuddy、Trae、Doubao、DeepSeek 新 adapter 的 Insert 成功率和失败原因；另一方面进入 Windows UIA/macOS AX 桌面输入框识别，覆盖 Codex、Claude Code、Hermes。
+- 已创建 OMX mission：`smart-prompt-m3-pilot-metrics-and-desktop-input-`；critic 命令为 `scripts\critic-m3.ps1`。
+- M3 pilot 证据入口：`research/m3-pilot-adapters.latest.json`。当前四个 beta 站点均有真实 headless Chrome 探针数据，正式扩展加载成功，但 visible input 为 0，Insert 成功率为 0，失败原因是 `no visible input candidate`。
+- M3 Windows UIA 证据入口：`research/m3-desktop-input.latest.json`。当前 self-test 通过，Windows UIA 能枚举临时 TextBox 候选，并匹配 Codex 工具画像；报告不保存 raw title、raw element name 或 input value。
+- 新增 local-service 开发接口：`GET /desktop/input-snapshot`，受 auth 保护；native sidecar 尚未同步该能力。
+- macOS AX 当前只定义契约和 pending guard，未实现；不要把 M3 goal 标记 complete。
+
 ## V5 Beta 发布上下文 2026-06-07
 
 - V5 当前已进入 beta 发布闭环：本地 native sidecar、诊断导出、删除全部本地数据、key 迁移状态、崩溃重启/端口恢复、release notes、checksum、pilot-loop 证据均已落地。

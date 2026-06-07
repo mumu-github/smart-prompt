@@ -1,5 +1,18 @@
 # 当前进度
 
+## M3 Pilot 与桌面输入识别进度 2026-06-07
+
+- 已创建 OMX autoresearch-goal mission：`smart-prompt-m3-pilot-metrics-and-desktop-input-`，critic 命令为 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-m3.ps1`。
+- 已新增 M3 beta adapter pilot 入口：`scripts/check-m3-pilot-adapters.ps1`，它会生成 `research/m3-pilot-adapters.latest.json`，覆盖 workBuddy、Trae、Doubao、DeepSeek 的 Insert attempts、成功率、失败原因和 redaction 检查。
+- 已跑真实 beta pilot：正式扩展加载成功，4 个新站点均尝试 Insert；当前 Insert 成功率为 0，失败原因均为 `no visible input candidate`。这不是 M3 完成，只是明确了下一步需要登录态/路由/selector 修复。
+- 已新增 Windows UIA 桌面输入识别 self-test：`scripts/check-m3-desktop-input.ps1 -SelfTest` 会创建临时 TextBox 并用 UIA 枚举候选，生成 `research/m3-desktop-input.latest.json`；当前报告 `pass:true`，候选数 1，检测到 Codex 工具画像。
+- 已新增开发路径 local-service 接口：`GET /desktop/input-snapshot` 和 `?selfTest=1`，受 auth 保护；返回窗口 title hash/length、UIA 候选和工具画像，不返回标题原文、元素原文或输入值。
+- 已新增 `packages/shared/desktop-tool-profiles.js`，覆盖 Codex、Claude Code、Hermes；VS Code/Windows Terminal/PowerShell/cmd 仅作为宿主，不会单独误报。
+- 已新增文档：`docs/m3-desktop-input.md`，明确 Windows UIA 已有可运行竖切，macOS AX 仍是 guarded/pending，不伪装完成。
+- 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`scripts/check-m3-desktop-input.ps1 -SelfTest` PASS；`scripts/check-m3-pilot-adapters.ps1 -Headless` PASS；`scripts/critic-m3.ps1` PASS。
+- 待提交：当前 M3 pilot/UIA/critic 改动尚未提交。
+- 仍未完成：native sidecar 尚未提供等价 `/desktop/input-snapshot`；macOS AX 未实现；新 beta 站点尚未在登录态/真实 composer 中拿到成功 Insert。
+
 ## V5 PRD 与发布资产收尾 2026-06-07
 
 - 已把 `docs/prd.md` 从 `v0.1` 草案更新为 `v0.2 beta` PRD，补入 V5 已完成项、验收证据、安装包路径、native sidecar、真实 LLM/provider、pilot 指标、里程碑状态和后续 M3 范围。
@@ -8,7 +21,7 @@
 - 已补 beta 站点适配：浏览器扩展和 shared core 新增 workBuddy、Trae、Doubao、DeepSeek；manifest 与测试已同步。Codex/Claude Code/Hermes 已补工具画像，不冒充网页 adapter。
 - 已补真实内测 metrics 链路：扩展把 `card_ready`、`insert`、`save`、`retry`、`undo` 等 privacy-safe feedback 上报到 `/metrics`；local-service 和 native sidecar 汇总 Insert 成功率、保存率、Undo/Retry 使用率、adapter 失败率、失败原因。
 - 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`C:\Users\lhy10\.cargo\bin\cargo.exe check` in `apps/local-service-sidecar` PASS；`git diff --check` 无空白错误。
-- 待提交：当前 PRD、adapter、metrics、release 收尾改动尚未提交。
+- 已提交并推送：`b93e227 Close V5 beta PRD and pilot metrics`。
 - 仍待真实内测：workBuddy、Trae、Doubao、DeepSeek selector 需要在真实登录态页面采集 Insert 成功率和失败原因后继续修正。
 
 ## V5 Beta 发布与真实内测闭环完成进度 2026-06-07
