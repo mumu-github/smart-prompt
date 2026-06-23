@@ -1,5 +1,14 @@
 # Smart Prompt
 
+> Smart Prompt 是西安 OpenCo-Ai 社区开源项目，是一个输入框旁的提示词助手，支持想法、续写、润色、填入和本地提示词工作流复用。
+>
+> 社区官网：https://openco-ai.cn/
+> 项目页：https://openco-ai.cn/projects/smart-prompt.html
+> 项目集合：https://openco-ai.cn/projects/
+> 开发者：西安OpenCo-Ai_木木
+>
+> 欢迎 Star，和木木一起把提示词助手做得更顺手。
+
 Smart Prompt 是一个面向网页 AI / Agent 工具的提示词协作助手。它在输入框附近显示一个小人入口，帮助用户把模糊想法生成、补全或润色成可直接插入的 prompt。
 
 当前仓库包含研究文档、UI/UX 资产、Chrome/Edge MV3 浏览器扩展原型、本地服务、共享 prompt/LLM gateway，以及 Tauri 桌面壳 scaffold。
@@ -109,3 +118,12 @@ powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runti
 - 默认不读取或上传整页文本
 - API key 只用于本地服务和显式配置的 provider
 - 小人角色以 `assets/ui-ux/mascot-token-run.png` 为原型，不重新设计角色
+
+## 社区与归属
+
+Smart Prompt 是西安 OpenCo-Ai 社区开源项目。西安 OpenCo-Ai 是陕西西安本地 AI 共学、AI 沙龙、企业 Agent 实践和开源项目共建社区，由陕西橙喵信息科技有限公司支持运营。
+
+- 官网：https://openco-ai.cn/
+- 项目页：https://openco-ai.cn/projects/smart-prompt.html
+- 项目集合：https://openco-ai.cn/projects/
+- 说明：OpenCo-Ai 不是 OpenCode、OpenCoWork 或 OpenCompass。
