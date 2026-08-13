@@ -25,8 +25,8 @@ jobs:
       - name: Install Chromium headless shell for extension runtime tests
         shell: pwsh
         run: |
-          npx --yes playwright@latest install chrome-headless-shell
-          $shell = Get-ChildItem "$env:LOCALAPPDATA\ms-playwright\chrome-headless-shell-*\chrome-headless-shell-win64\chrome-headless-shell.exe" |
+          npx --yes playwright@latest install chromium-headless-shell
+          $shell = Get-ChildItem "$env:LOCALAPPDATA\ms-playwright" -Recurse -Filter "chrome-headless-shell.exe" -ErrorAction SilentlyContinue |
             Sort-Object LastWriteTime -Descending |
             Select-Object -First 1 -ExpandProperty FullName
           if (-not $shell) { throw "chrome-headless-shell not found after install" }
