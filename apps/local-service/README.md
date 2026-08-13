@@ -55,7 +55,7 @@ Public health check. It does not return the auth token.
 Response:
 
 ```json
-{ "ok": true, "service": "smart-prompt-local-service", "version": "0.3.0", "authRequired": true }
+{ "ok": true, "service": "smart-prompt-local-service", "version": "0.2.0", "authRequired": true }
 ```
 
 ### `GET /auth/bootstrap`

@@ -1222,7 +1222,7 @@ function createAppRoutes({
       json(ctx, 200, {
         ok: true,
         service: "smart-prompt-local-service",
-        version: "0.3.0",
+        version: "0.2.0",
         sidecar: "node",
         runtimeContract: "phase3-node-runtime@1",
         authRequired: true,

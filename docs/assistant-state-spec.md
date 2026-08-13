@@ -1,6 +1,6 @@
 # Assistant 状态与 Prompt Session 契约
 
-版本：`prompt-session@1`  
+版本：`prompt-session@1`（本文档同步 `prompt-session@2` 新增的 `clarification` 状态、Outcome/Candidate 命令与 V2 写入门控）  
 实现：`packages/prompt-session/index.js`  
 运行时副本：`prototypes/browser-extension/src/prompt-session.js`、`apps/desktop-shell/src/prompt-session.js`
 
@@ -14,6 +14,7 @@
 | --- | --- | --- | --- |
 | `idle` | 需要我帮你整理吗 | 生成提示词 | 会话打开，尚无生成结果 |
 | `drafting` | 正在整理你的需求 | 取消 | 生成请求进行中 |
+| `clarification` | 需要确认一个关键点 | 继续生成 | 仅 `prompt-session@2`：生成返回关键澄清问题时 |
 | `review` | 提示词已生成 | 填入输入框 | 结果可审核，目标可尝试写入 |
 | `target_missing` | 请先点击目标输入框 | 重新检测 | 目标不存在或未聚焦 |
 | `copy_only` | 当前工具暂不支持自动填入 | 复制提示词 | 目标不支持安全自动写入 |
@@ -39,11 +40,23 @@
 - `RESET`
 - `TARGET_UPDATED`
 
+### 会话事实命令（V2 学习闭环）
+
+不改变产品状态，只更新 View Model 附属事实：
+
+- `OUTCOME_AVAILABLE`：挂载 Pending Outcome（`outcome`）
+- `OUTCOME_RESOLVED`：清除 Outcome（`outcome: null`）
+- `CANDIDATE_REMINDER`：挂载学习候选提醒（`candidateReminder`）
+- `CANDIDATE_REMINDER_CLEARED`：清除候选提醒
+- `INVALIDATE_UNDO`：撤销资格失效（`canUndo=false`）
+- `COLLAPSE_ACK`：确认自动收起（`collapseRequested=false`）
+
 ### 渐进迁移事件
 
 - `GENERATION_STARTED`
 - `GENERATION_SUCCEEDED`
 - `GENERATION_FAILED`
+- `CLARIFICATION_REQUIRED`
 - `INSERT_STARTED`
 - `INSERT_SUCCEEDED`
 - `INSERT_FAILED`
@@ -59,16 +72,27 @@
 | --- | --- | --- |
 | `idle` / `review` / `error` | `GENERATE` | `drafting` |
 | `drafting` | 生成成功 | `review` |
+| `drafting` | 生成返回关键澄清问题（仅 V2） | `clarification` |
+| `clarification` | `GENERATE`（继续生成） | `drafting` |
 | `drafting` | Provider 或生成失败 | `error` |
 | `review` | `INSERT` | `inserting` |
 | `inserting` | 机器验证成功 | `inserted` + `verification=machine` |
-| `inserting` | 已尝试但不可回读 | `inserted` + `verification=manual-required` |
+| `inserting` | 已尝试但不可回读（仅 V1） | `inserted` + `verification=manual-required` |
 | `inserting` | 目标丢失/未聚焦 | `target_missing` |
 | `inserting` | 不支持安全写入 | `copy_only` |
 | `inserting` | 目标不安全/不可见 | `blocked` |
 | `inserting` | 其他写入失败 | `error` |
 | `inserted` | 撤销成功 | `review` |
+| `inserted` | `COLLAPSE_ACK` | 保持 `inserted`，`collapseRequested=false` |
+| `inserted` | `INVALIDATE_UNDO` | 保持 `inserted`，`canUndo=false` |
+| 任意 | `OUTCOME_AVAILABLE` / `OUTCOME_RESOLVED` / `CANDIDATE_REMINDER` / `CANDIDATE_REMINDER_CLEARED` | 状态不变，仅更新附属事实 |
 | 任意 | `noAutoSubmit=false` | `blocked` + `safety-contract-violated` |
+
+版本门控（`CONTRACT_VERSIONS.V2`）：
+
+- `clarification` 状态与 `CLARIFICATION_REQUIRED` 只在 V2 生效；V1 遇到澄清请求时按普通生成成功处理。
+- V2 的 `INSERT` 要求目标能力为 `verified-write`；`verified !== true` 一律按失败处理，不再进入 `inserted + manual-required`。
+- V2 的 `inserted` 默认 `collapseRequested=true`，确认后由 `COLLAPSE_ACK` 清除。
 
 异步生成、写入和撤销使用 operation id；取消或新操作开始后，旧结果不得覆盖当前 View Model。
 
@@ -92,6 +116,7 @@ View Model 只允许以下 reason：
 | reason | 用户含义 | 默认恢复动作 |
 | --- | --- | --- |
 | `none` | 无异常 | 当前主操作 |
+| `clarification-required` | 生成暂停，需要关键澄清 | 回答澄清问题后继续生成 |
 | `target-missing` | 未找到输入框 | 重新检测 |
 | `target-not-focused` | 输入框未聚焦 | 聚焦后重新检测 |
 | `target-hidden` | 窗口不可见/最小化/cloaked | 恢复并前置窗口 |
@@ -111,6 +136,7 @@ View Model 只允许以下 reason：
 
 原始 token 只用于诊断。典型映射：
 
+- `clarification`、`high-risk-ambiguity`、`project-ambiguity` -> `clarification-required`
 - `missing_input`、`no-candidates` -> `target-missing`
 - `target_tool_not_foreground`、`manual_composer_focus` -> `target-not-focused`
 - `foreground-window-hidden`、`minimized`、`cloaked` -> `target-hidden`
@@ -127,7 +153,7 @@ View Model 只允许以下 reason：
 
 ```js
 {
-  contractVersion: "prompt-session@1",
+  contractVersion: "prompt-session@2",
   state: "review",
   locale: "zh-CN",
   title: "提示词已生成",
@@ -140,9 +166,9 @@ View Model 只允许以下 reason：
   busy: false,
   draft: "...",
   prompt: "...",
-  mode: "idea",
+  mode: "auto",
   reason: { code: "none", label: "", message: "" },
-  target: {
+  targetCapability: {
     status: "ready",
     level: "verified-write",
     canInsert: true,
@@ -152,9 +178,21 @@ View Model 只允许以下 reason：
   verification: "none",
   manualConfirmationRequired: false,
   noAutoSubmit: true,
-  canUndo: false
+  canUndo: false,
+  collapseRequested: false,
+  clarification: { required: false, question: "" },
+  outcome: null,
+  candidateReminder: null
 }
 ```
+
+字段说明：
+
+- `targetCapability`：`status` 为 `ready` / `missing` / `blocked` / `unknown`；`level` 为 `verified-write` / `manual-confirmation-required` / `copy-only` / `unsupported`。
+- `clarification`：V2 生成澄清问题时为 `{ required: true, question: "…" }`，否则 `{ required: false, question: "" }`。
+- `outcome`：V2 学习闭环挂载的 Pending Outcome（`{ id, status, question }`）或 `null`。
+- `candidateReminder`：V2 学习候选提醒（`{ type, id, ignoredCount }`）或 `null`。
+- `collapseRequested`：V2 `inserted` 后请求自动收起，`COLLAPSE_ACK` 清除。
 
 禁止加入 HWND、DOM 节点、selector、candidate、evidence、Provider key、原始错误文本或 Prompt 之外的目标正文。
 
