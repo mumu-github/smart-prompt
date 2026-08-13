@@ -21,16 +21,18 @@ jobs:
           node-version: 22
 
       # 扩展页运行时测试需要 --load-extension：品牌版 Chrome stable（137+）
-      # 已禁用命令行加载扩展，必须使用 Playwright 的 chrome-headless-shell。
-      - name: Install Chromium headless shell for extension runtime tests
+      # 已禁用命令行加载扩展；headless-shell 是旧 headless 实现不支持扩展。
+      # Playwright 的完整 Chromium 构建保留该 flag。
+      - name: Install Chromium for extension runtime tests
         shell: pwsh
         run: |
-          npx --yes playwright@latest install chromium-headless-shell
-          $shell = Get-ChildItem "$env:LOCALAPPDATA\ms-playwright" -Recurse -Filter "chrome-headless-shell.exe" -ErrorAction SilentlyContinue |
+          npx --yes playwright@latest install chromium
+          $chrome = Get-ChildItem "$env:LOCALAPPDATA\ms-playwright" -Recurse -Filter "chrome.exe" -ErrorAction SilentlyContinue |
+            Where-Object { $_.FullName -notmatch 'headless' } |
             Sort-Object LastWriteTime -Descending |
             Select-Object -First 1 -ExpandProperty FullName
-          if (-not $shell) { throw "chrome-headless-shell not found after install" }
-          "CHROME_PATH=$shell" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          if (-not $chrome) { throw "chromium chrome.exe not found after install" }
+          "CHROME_PATH=$chrome" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       # 浏览器扩展 runtime-demo/options-runtime 需要本机 Chrome：
       # 通过上一步安装的 chrome-headless-shell（CHROME_PATH）运行。
@@ -67,4 +69,9 @@ jobs:
         run: node apps/local-service-sidecar/tests/phase3-contract.test.js
 
       - name: Desktop shell Rust check
-        run: cargo check --manifest-path apps/desktop-shell/src-tauri/Cargo.toml
+        shell: pwsh
+        run: |
+          # bundle.resources 指向 prepare-release 生成的 sidecar 目录（gitignored）；
+          # cargo check 只校验资源路径存在，空目录即可满足。
+          New-Item -ItemType Directory -Force -Path apps/desktop-shell/src-tauri/resources/smart-prompt-sidecar | Out-Null
+          cargo check --manifest-path apps/desktop-shell/src-tauri/Cargo.toml
