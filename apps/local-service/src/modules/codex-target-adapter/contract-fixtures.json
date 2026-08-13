@@ -1,0 +1,565 @@
+{
+  "fixtureSetVersion": "codex-target-adapter-fixtures@1",
+  "leaseTtlMs": 30000,
+  "privacySentinels": [
+    "SECRET_CODEX_WINDOW_TITLE",
+    "SECRET_ORIGINAL_DRAFT",
+    "SECRET_CHAT_HISTORY",
+    "FULL_REPLACEMENT_TEXT"
+  ],
+  "baseSnapshot": {
+    "target": "codex",
+    "foregroundHwnd": "0x0000000000001001",
+    "hwnd": "0x0000000000001001",
+    "pid": 4101,
+    "isMainWindow": true,
+    "isVisible": true,
+    "isMinimized": false,
+    "isCloaked": false,
+    "runtimeIdentityHash": "1111111111111111111111111111111111111111111111111111111111111111",
+    "projectIdentityHash": null,
+    "projectIdentityReliable": false,
+    "windowTitle": "SECRET_CODEX_WINDOW_TITLE",
+    "composer": {
+      "ownerHwnd": "0x0000000000001001",
+      "candidateToken": "focused-composer-a",
+      "focused": true,
+      "focusIdentityHash": "2222222222222222222222222222222222222222222222222222222222222222",
+      "canReadExact": true,
+      "canReplaceAll": true,
+      "canSetValue": true,
+      "canControlledClipboard": true,
+      "draftText": "SECRET_ORIGINAL_DRAFT",
+      "nearbyText": "SECRET_CHAT_HISTORY"
+    }
+  },
+  "baseAtomicReply": {
+    "attempted": true,
+    "guardMatched": true,
+    "leaseFreshAtCommit": true,
+    "candidateRemapped": false,
+    "method": "direct",
+    "replacementMode": "set_value",
+    "readbackText": "FULL_REPLACEMENT_TEXT",
+    "clipboardRestored": null,
+    "focusConfirmed": true,
+    "selectAllApplied": false,
+    "pasteApplied": false,
+    "submitCount": 0
+  },
+  "cases": [
+    {
+      "id": "inspect-ready-private",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "inspect", "atMs": 1784419200100 }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        { "command": "inspect", "snapshotPatch": {} }
+      ],
+      "expected": [
+        { "status": "ready", "reasonToken": "ready", "publicReason": "none", "lease": true, "projectScopeKind": "session_opaque", "projectScopeReliable": false },
+        { "status": "ready", "reasonToken": "ready", "publicReason": "none", "lease": true, "projectScopeKind": "session_opaque", "projectScopeReliable": false, "projectScopeChanged": false }
+      ],
+      "expectedProbeCalls": ["inspect", "inspect"]
+    },
+    {
+      "id": "session-scope-rotates-with-window-runtime-identity",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "inspect", "atMs": 1784419200100 },
+        { "operation": "inspect", "atMs": 1784419200200 },
+        { "operation": "inspect", "atMs": 1784419200300 },
+        { "operation": "inspect", "atMs": 1784419200400 }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "inspect",
+          "snapshotPatch": {
+            "foregroundHwnd": "0x0000000000001002",
+            "hwnd": "0x0000000000001002",
+            "composer": { "ownerHwnd": "0x0000000000001002" }
+          }
+        },
+        {
+          "command": "inspect",
+          "snapshotPatch": {
+            "foregroundHwnd": "0x0000000000001002",
+            "hwnd": "0x0000000000001002",
+            "pid": 4102,
+            "composer": { "ownerHwnd": "0x0000000000001002" }
+          }
+        },
+        {
+          "command": "inspect",
+          "snapshotPatch": {
+            "foregroundHwnd": "0x0000000000001002",
+            "hwnd": "0x0000000000001002",
+            "pid": 4102,
+            "runtimeIdentityHash": "5555555555555555555555555555555555555555555555555555555555555555",
+            "composer": { "ownerHwnd": "0x0000000000001002" }
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true, "projectScopeKind": "session_opaque", "projectScopeReliable": false },
+        { "status": "ready", "lease": true, "projectScopeKind": "session_opaque", "projectScopeReliable": false, "projectScopeChanged": false },
+        { "status": "ready", "lease": true, "projectScopeKind": "session_opaque", "projectScopeReliable": false, "projectScopeChanged": true },
+        { "status": "ready", "lease": true, "projectScopeKind": "session_opaque", "projectScopeReliable": false, "projectScopeChanged": true },
+        { "status": "ready", "lease": true, "projectScopeKind": "session_opaque", "projectScopeReliable": false, "projectScopeChanged": true }
+      ],
+      "expectedProbeCalls": ["inspect", "inspect", "inspect", "inspect", "inspect"]
+    },
+    {
+      "id": "reliable-project-hash-uses-process-opaque-scope",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "inspect", "atMs": 1784419200100 }
+      ],
+      "probes": [
+        {
+          "command": "inspect",
+          "snapshotPatch": {
+            "projectIdentityHash": "4444444444444444444444444444444444444444444444444444444444444444",
+            "projectIdentityReliable": true
+          }
+        },
+        {
+          "command": "inspect",
+          "snapshotPatch": {
+            "projectIdentityHash": "4444444444444444444444444444444444444444444444444444444444444444",
+            "projectIdentityReliable": true
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "reasonToken": "ready", "lease": true, "projectScopeKind": "reliable_hash", "projectScopeReliable": true },
+        { "status": "ready", "reasonToken": "ready", "lease": true, "projectScopeKind": "reliable_hash", "projectScopeReliable": true, "projectScopeChanged": false }
+      ],
+      "expectedProbeCalls": ["inspect", "inspect"]
+    },
+    {
+      "id": "background-window-blocked",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 }
+      ],
+      "probes": [
+        {
+          "command": "inspect",
+          "snapshotPatch": { "foregroundHwnd": "0x0000000000002002" }
+        }
+      ],
+      "expected": [
+        { "status": "blocked", "reasonToken": "not_foreground", "publicReason": "target_not_ready", "lease": false }
+      ],
+      "expectedProbeCalls": ["inspect"]
+    },
+    {
+      "id": "non-codex-target-blocked",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 }
+      ],
+      "probes": [
+        {
+          "command": "inspect",
+          "snapshotPatch": { "target": "workbuddy" }
+        }
+      ],
+      "expected": [
+        { "status": "blocked", "reasonToken": "unsupported_target", "publicReason": "target_unavailable", "lease": false }
+      ],
+      "expectedProbeCalls": ["inspect"]
+    },
+    {
+      "id": "read-exact-same-composer",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "read", "atMs": 1784419200200 }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        { "command": "read_exact", "snapshotPatch": {} }
+      ],
+      "expected": [
+        { "status": "ready", "reasonToken": "ready", "lease": true },
+        { "status": "ready", "reasonToken": "ready", "draftText": "SECRET_ORIGINAL_DRAFT", "readbackMatched": true }
+      ],
+      "expectedProbeCalls": ["inspect", "read_exact"]
+    },
+    {
+      "id": "direct-full-replace-and-undo",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false },
+        { "operation": "claim", "atMs": 1784419200250, "binding": "activation" },
+        { "operation": "claim", "atMs": 1784419200300, "binding": "pending_outcome" },
+        { "operation": "undo", "atMs": 1784419200400, "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        { "command": "replace_all_atomic", "beforePatch": {}, "replyPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": { "composer": { "draftText": "FULL_REPLACEMENT_TEXT" } },
+          "replyPatch": { "readbackText": "SECRET_ORIGINAL_DRAFT" }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "ready", "reasonToken": "inserted", "verified": true, "writeMethod": "direct", "readbackMatched": true, "undo": true, "transaction": true, "projectScopeKind": "session_opaque", "projectScopeReliable": false },
+        { "status": "ready", "reasonToken": "ready", "receipt": true, "binding": "activation" },
+        { "status": "ready", "reasonToken": "ready", "receipt": true, "binding": "pending_outcome" },
+        { "status": "ready", "reasonToken": "succeeded", "verified": false, "writeMethod": "direct", "readbackMatched": true }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic", "replace_all_atomic"]
+    },
+    {
+      "id": "same-title-wrong-hwnd-blocked",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": {
+            "foregroundHwnd": "0x0000000000001002",
+            "hwnd": "0x0000000000001002",
+            "windowTitle": "SECRET_CODEX_WINDOW_TITLE",
+            "composer": { "ownerHwnd": "0x0000000000001002" }
+          },
+          "replyPatch": {
+            "attempted": false,
+            "guardMatched": false,
+            "method": "none",
+            "replacementMode": "none",
+            "readbackText": null
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "blocked", "reasonToken": "window_changed", "verified": false, "writeMethod": "none", "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "focus-change-blocked",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": {
+            "composer": { "focusIdentityHash": "3333333333333333333333333333333333333333333333333333333333333333" }
+          },
+          "replyPatch": {
+            "attempted": false,
+            "guardMatched": false,
+            "method": "none",
+            "replacementMode": "none",
+            "readbackText": null
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "blocked", "reasonToken": "focus_changed", "verified": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "draft-change-blocked",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": { "composer": { "draftText": "USER_CHANGED_DRAFT" } },
+          "replyPatch": {
+            "attempted": false,
+            "guardMatched": false,
+            "method": "none",
+            "replacementMode": "none",
+            "readbackText": null
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "blocked", "reasonToken": "draft_changed", "verified": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "stale-lease-blocked-before-probe",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419230001, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "blocked", "reasonToken": "stale_payload", "publicReason": "target_changed", "verified": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect"]
+    },
+    {
+      "id": "lease-expired-at-atomic-commit",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": {},
+          "replyPatch": {
+            "attempted": false,
+            "guardMatched": false,
+            "leaseFreshAtCommit": false,
+            "method": "none",
+            "replacementMode": "none",
+            "readbackText": null
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "blocked", "reasonToken": "stale_payload", "publicReason": "target_changed", "verified": false, "undo": false, "transaction": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "candidate-change-never-remapped",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": { "composer": { "candidateToken": "focused-composer-b" } },
+          "replyPatch": {
+            "attempted": false,
+            "guardMatched": false,
+            "method": "none",
+            "replacementMode": "none",
+            "readbackText": null
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "blocked", "reasonToken": "target_changed_candidate", "verified": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "substring-readback-is-not-verification",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": {},
+          "replyPatch": { "readbackText": "FULL_REPLACEMENT" }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "failed", "reasonToken": "after_write_mismatch", "publicReason": "write_not_verified", "verified": false, "readbackMatched": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "clipboard-fallback-requires-explicit-opt-in",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        {
+          "command": "inspect",
+          "snapshotPatch": { "composer": { "canSetValue": false } }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "copy_only", "reasonToken": "permission_required_clipboard_fallback", "publicReason": "permission_required", "verified": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect"]
+    },
+    {
+      "id": "controlled-clipboard-full-replace-success",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": true }
+      ],
+      "probes": [
+        {
+          "command": "inspect",
+          "snapshotPatch": { "composer": { "canSetValue": false } }
+        },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": { "composer": { "canSetValue": false } },
+          "replyPatch": {
+            "method": "controlled_clipboard",
+            "replacementMode": "ctrl_a_paste",
+            "clipboardRestored": true,
+            "selectAllApplied": true,
+            "pasteApplied": true
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "ready", "reasonToken": "inserted", "verified": true, "writeMethod": "controlled_clipboard", "clipboardRestored": true, "readbackMatched": true, "undo": true }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "clipboard-restore-failure-fails-whole-operation",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": true }
+      ],
+      "probes": [
+        {
+          "command": "inspect",
+          "snapshotPatch": { "composer": { "canSetValue": false } }
+        },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": { "composer": { "canSetValue": false } },
+          "replyPatch": {
+            "method": "controlled_clipboard",
+            "replacementMode": "ctrl_a_paste",
+            "clipboardRestored": false,
+            "selectAllApplied": true,
+            "pasteApplied": true
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "failed", "reasonToken": "write_failed_clipboard_restore", "publicReason": "write_not_verified", "verified": false, "writeMethod": "none", "clipboardRestored": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "undo-invalidated-after-user-edit",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false },
+        { "operation": "undo", "atMs": 1784419200400, "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        { "command": "replace_all_atomic", "beforePatch": {}, "replyPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": { "composer": { "draftText": "USER_EDITED_AFTER_INSERT" } },
+          "replyPatch": {
+            "attempted": false,
+            "guardMatched": false,
+            "method": "none",
+            "replacementMode": "none",
+            "readbackText": null
+          }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "ready", "verified": true, "undo": true },
+        { "status": "blocked", "reasonToken": "target_changed_written_draft", "verified": false, "readbackMatched": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic", "replace_all_atomic"]
+    },
+    {
+      "id": "inspect-requires-exact-read",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 }
+      ],
+      "probes": [
+        {
+          "command": "inspect",
+          "snapshotPatch": { "composer": { "canReadExact": false } }
+        }
+      ],
+      "expected": [
+        { "status": "blocked", "reasonToken": "safety_exact_read_required", "publicReason": "safety_blocked", "lease": false }
+      ],
+      "expectedProbeCalls": ["inspect"]
+    },
+    {
+      "id": "runner-candidate-remap-is-rejected",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": {},
+          "replyPatch": { "candidateRemapped": true }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "failed", "reasonToken": "safety_candidate_remap", "publicReason": "safety_blocked", "verified": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "submit-signal-invalidates-write",
+      "actions": [
+        { "operation": "inspect", "atMs": 1784419200000 },
+        { "operation": "insert", "atMs": 1784419200200, "text": "FULL_REPLACEMENT_TEXT", "allowClipboardFallback": false }
+      ],
+      "probes": [
+        { "command": "inspect", "snapshotPatch": {} },
+        {
+          "command": "replace_all_atomic",
+          "beforePatch": {},
+          "replyPatch": { "submitCount": 1 }
+        }
+      ],
+      "expected": [
+        { "status": "ready", "lease": true },
+        { "status": "failed", "reasonToken": "safety_auto_submit_signal", "publicReason": "safety_blocked", "verified": false, "undo": false }
+      ],
+      "expectedProbeCalls": ["inspect", "replace_all_atomic"]
+    },
+    {
+      "id": "fabricated-transaction-cannot-bind",
+      "actions": [
+        { "operation": "claim", "atMs": 1784419200000, "binding": "activation", "transactionId": "transaction_fabricated" }
+      ],
+      "probes": [],
+      "expected": [
+        { "status": "blocked", "reasonToken": "verified_transaction_missing", "receipt": false }
+      ],
+      "expectedProbeCalls": []
+    }
+  ]
+}

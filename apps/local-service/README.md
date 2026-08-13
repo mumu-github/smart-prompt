@@ -279,6 +279,10 @@ The gateway supports Agnes/OpenAI-compatible chat completions, OpenAI-compatible
 
 The service keeps `uploadWholePage` and `autoSubmit` forced to `false`.
 
+### Desktop input APIs
+
+Protected desktop input APIs are currently Windows-only. On non-Windows platforms, `GET /desktop/input-snapshot` and `POST /desktop/fill` return `pass:false`, `writeAttempted:false` for fill, and a `capability` object with `supported:false`, `requiredPlatform:"win32"`, `snapshotBackend:"none"`, `fillBackend:"none"`, and `unsupportedReason:"desktop_input_requires_windows_uia"`. macOS AXUIElement and Linux AT-SPI remain tracked as future backends, not current runtime behavior.
+
 ## Test
 
 ```powershell

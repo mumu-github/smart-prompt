@@ -2,29 +2,14 @@ const childProcess = require("node:child_process");
 const crypto = require("node:crypto");
 const fs = require("node:fs");
 const path = require("node:path");
+const { ensureDir, hashTextSha, readJson, writeJson } = require("../../../packages/shared/utils");
 
 const VAULT_FILE = "provider-keys.json";
+const KEY_SECRET_FILE = "key-secret.json";
 const VAULT_VERSION = 1;
 
-function ensureDir(dir) {
-  fs.mkdirSync(dir, { recursive: true });
-}
-
-function readJson(file, fallback) {
-  try {
-    return JSON.parse(fs.readFileSync(file, "utf8"));
-  } catch {
-    return fallback;
-  }
-}
-
-function writeJson(file, value) {
-  ensureDir(path.dirname(file));
-  fs.writeFileSync(file, `${JSON.stringify(value, null, 2)}\n`, "utf8");
-}
-
 function hashValue(value) {
-  return crypto.createHash("sha256").update(String(value || "")).digest("hex").slice(0, 16);
+  return hashTextSha(value);
 }
 
 function powershellDpapi(mode, text) {
@@ -96,6 +81,32 @@ function getFallbackSecret(dataDir) {
       value: process.env.SMART_PROMPT_KEY_ENCRYPTION_SECRET
     };
   }
+  const secretFile = path.join(dataDir, KEY_SECRET_FILE);
+  const existing = readJson(secretFile, {});
+  if (existing?.secret) {
+    return {
+      source: "machine-random-key-file",
+      value: existing.secret
+    };
+  }
+  const record = {
+    version: 1,
+    created_at: new Date().toISOString(),
+    secret: crypto.randomBytes(32).toString("hex")
+  };
+  writeJson(secretFile, record);
+  try {
+    fs.chmodSync(secretFile, 0o600);
+  } catch {
+    // Best effort on Windows and restricted filesystems; the secret remains per-machine random.
+  }
+  return {
+    source: "machine-random-key-file",
+    value: record.secret
+  };
+}
+
+function getLegacyFallbackSecret(dataDir) {
   return {
     source: "local-install-fallback",
     value: `${dataDir}:${process.env.USERNAME || process.env.USER || "smart-prompt"}`
@@ -131,7 +142,14 @@ function createCredentialVault(dataDir) {
     if (record.storage === "aes-256-gcm") {
       const secret = getFallbackSecret(dataDir);
       lastStorage = `aes-256-gcm:${secret.source}`;
-      return aesDecrypt(record.value, secret.value);
+      try {
+        return aesDecrypt(record.value, secret.value);
+      } catch (error) {
+        if (record.keySource !== "local-install-fallback") throw error;
+        const legacySecret = getLegacyFallbackSecret(dataDir);
+        lastStorage = `aes-256-gcm:${legacySecret.source}`;
+        return aesDecrypt(record.value, legacySecret.value);
+      }
     }
     return "";
   }

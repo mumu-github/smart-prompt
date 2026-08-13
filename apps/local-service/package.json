@@ -6,6 +6,6 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "node tests/local-service.test.js"
+    "test": "node tests/local-service.test.js && node tests/activation.test.js && node tests/codex-activation-v2.test.js && node tests/codex-target-adapter.test.js && node tests/codex-target-adapter-windows-driver.test.js && node tests/codex-target-routes-v1.test.js && node tests/pending-outcomes-v2.test.js && node tests/outcome-routes-v2.test.js && node tests/learning-artifacts-v1.test.js && node tests/generation-policy-v1.test.js && node tests/policy-rollout-learning-loop.test.js && node tests/learning-loop-integration.test.js && node tests/token-accounting.test.js"
   }
 }
