@@ -1225,6 +1225,21 @@ fn parse_shortcut(value: &str) -> Option<Shortcut> {
 }
 
 fn main() {
+    // CDP 调试端口：WebView2 需要在应用进程内、首次创建环境前设置
+    // WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS。生产默认不设置；
+    // 仅 SMART_PROMPT_CDP_PORT 存在时注入。
+    // 注意：Evergreen Runtime 147+ 已忽略该 env（且 additionalBrowserArgs
+    // 会导致环境创建失败），需要配合固定版本 Runtime 133 + 环境变量
+    // WEBVIEW2_BROWSER_EXECUTABLE_FOLDER 使用，见 agent_memory。
+    if let Some(port) = std::env::var_os("SMART_PROMPT_CDP_PORT") {
+        let value = port.to_string_lossy();
+        if !value.trim().is_empty() {
+            std::env::set_var(
+                "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS",
+                format!("--remote-debugging-port={}", value.trim()),
+            );
+        }
+    }
     tauri::Builder::default()
         .plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
             let _ = focus_main_window(app);
