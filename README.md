@@ -1,69 +1,78 @@
-# Smart Prompt
+# 提笔（Tibi）
 
-Smart Prompt 是一个面向网页 AI / Agent 工具的提示词协作助手。它在输入框附近显示一个小人入口，帮助用户把模糊想法生成、补全或润色成可直接插入的 prompt。
+提笔是**输入框旁的上下文提示词编辑器**：把当前输入框里的模糊草稿，整理成你看得懂、改得动、敢于提交的提示词，填回原输入框——但**永不替你发送**。
 
-当前仓库包含研究文档、UI/UX 资产、Chrome/Edge MV3 浏览器扩展原型、本地服务、共享 prompt/LLM gateway，以及 Tauri 桌面壳 scaffold。
+它不是 prompt 库，不是 prompt 市场，也不是单纯的改写工具；它是输入瞬间的 context engineering 就地增强层。
 
-## V2 能力
+## 三条信任承诺
 
-- 真实 LLM 三模式生成：`idea`、`continue`、`polish`
-- 多 provider LLM gateway：`agnes`、`openai-compatible`、`anthropic`、`gemini`
-- 站点适配：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit
-- 浏览器扩展：输入框附近小人入口、prompt card、Insert 只填入不发送、本地服务 fallback
-- 本地服务：settings、skill 文件夹导入、skill 推荐、prompt library、`/generate`
-- Tauri 桌面壳：设置页、API key 管理、skill/prompt 管理、托盘、全局快捷键、本地服务启动
-- 隐私边界：不默认上传整页内容，不自动发送消息
+- **你控制**：只填入、不发送。`no-auto-submit` 由状态机代码强制，违反即进入阻断状态。
+- **你拥有**：BYOK（自带 API Key），数据默认本地存储，无云端账号。
+- **会学习**：从你的真实任务结果（Outcome、Token、时间、返工）中学习，形成可审核的 Memory / Rule / Skill / Generation Policy，而不是套模板。
+
+## 能力
+
+- 三模式自动判定：空输入求思路（idea）、半成品续写（continue）、完整输入优化（polish）
+- 多 provider LLM gateway：`agnes`、`openai-compatible`、`anthropic`、`gemini`（BYOK，凭证本机加密）
+- 网页与桌面共享同一张 Assistant Card：`prompt-session@2` 状态机 + Shadow DOM 单源 UI，hash 校验防分叉
+- 站点适配：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit、DeepSeek、豆包等
+- 桌面壳：透明小人入口（72×72）、托盘运行、四页控制中心、Windows UIA 写回守卫
+- Codex Outcome Learning Loop v1：verified insert → 脱敏 Outcome 回流 → 四类学习候选 → 用户审核；Policy 灰度与回滚
+- 隐私边界：不默认上传整页内容、正文不入长期存储、证据只留元数据、数据重置可恢复
+
+## 真实闭环状态（诚实记录）
+
+| 项 | 状态 |
+| --- | --- |
+| ChatGPT 浏览器 verified insert | ✅ 真实闭环通过（单次观测 144s，`research/phase3-activation-acceptance.latest.json`） |
+| Codex 桌面真实闭环 | ⏳ 差最后一步 machine-verified insert（`research/codex-outcome-learning-loop-v1-real-closure.latest.json`） |
+| 真实付费 benchmark | ⏳ 未运行（需预算授权） |
+| 分发 | 本机 NSIS/MSI 未签名；扩展为 unpacked 加载，未上架商店 |
 
 ## 目录
 
-- `prototypes/browser-extension/`：Chrome/Edge MV3 浏览器扩展原型
-- `apps/local-service/`：Node 本地服务和 API contract
-- `apps/desktop-shell/`：Tauri 桌面壳 scaffold
-- `packages/shared/`：共享 prompt core、站点配置和 LLM gateway
-- `packages/prompt-session/`：网页与桌面共用的状态机、reason、核心文案和 Assistant View Model
-- `assets/ui-ux/`：UI/UX 概念图、小人状态图、动画资产
-- `prototypes/remotion-mascot/`：小人动画 Remotion 原型
-- `docs/`：研究、竞品、开源 skills 分析和 PRD
-- `research/`：V2 rubric、验证报告和 runtime evidence
+- `prototypes/browser-extension/`：Chrome/Edge MV3 浏览器扩展
+- `apps/local-service/`：Node 本地服务（activation、outcomes、learning、policies 模块）
+- `apps/local-service-sidecar/`：Rust native sidecar（写回事务、学习契约、DPAPI 凭证）
+- `apps/desktop-shell/`：Tauri 桌面壳（控制中心、透明 overlay、托盘）
+- `packages/prompt-session/`：共享状态机、reason、文案与 Assistant View Model
+- `packages/assistant-ui/`：共享 Shadow DOM Assistant Card（唯一 UI 源码）
+- `packages/outcome-learning/`：学习契约与 Node/Rust 共享 fixtures
+- `packages/shared/`：prompt core、prompt quality、LLM gateway、证据脱敏
+- `benchmarks/codex-outcome-v1/`：隔离基准 harness
+- `docs/`：PRD、产品契约、第一性原理复盘、对抗审查、`roadmap-2026-08-13-shrink-and-launch.md`
+- `research/`：runtime evidence（只读证据，过期报告不代表当前状态）
 - `scripts/`：生成、探针、critic 和 runtime 验收脚本
 
 ## 快速验证
 
-默认 V2 自动化检查：
+各包测试：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1
+npm test --prefix packages/prompt-session
+npm test --prefix packages/assistant-ui
+npm test --prefix apps/local-service
+npm test --prefix prototypes/browser-extension
+npm test --prefix apps/desktop-shell
+cargo test --manifest-path apps/local-service-sidecar/Cargo.toml
 ```
 
-严格 runtime evidence 检查：
+关键 critic 入口：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-m3.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-phase3-activation.ps1
+node scripts/check-codex-outcome-learning-loop-v1.js
 ```
 
-当前严格验收已通过，证据见：
-
-- `research/v2-verification.md`
-- `research/v2-real-llm.latest.json`
-- `research/v2-live-site-probe.latest.json`
-- `research/v2-claude-insert.latest.json`
-- `research/v2-tauri-runtime.latest.json`
+真实 GUI 写入、真实 benchmark 均需单独授权，未授权前不得执行。
 
 ## 真实 LLM
-
-Agnes provider 已接入，可用以下方式验证三模式真实生成：
 
 ```powershell
 $env:AGNES_API_KEY="你的 Agnes API key"
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1 -Provider agnes
 ```
-
-通过标准：
-
-- `pass: true`
-- `idea`、`continue`、`polish` 都是 `ok: true`
-- 三项均为 `generatedBy: "llm"`
-- 三项 `mode` 与样本名严格一致
 
 ## 本地服务
 
@@ -73,48 +82,30 @@ npm test
 npm start
 ```
 
-默认地址：
-
-```text
-http://127.0.0.1:17371
-```
-
-API 说明见 `apps/local-service/README.md`。
+默认地址 `http://127.0.0.1:17371`，API 说明见 `apps/local-service/README.md`。
 
 ## 浏览器扩展
 
-```powershell
-cd prototypes\browser-extension
-npm test
-```
-
-扩展原型在 `prototypes/browser-extension/`，可作为 unpacked extension 加载。
+`prototypes/browser-extension/` 可作为 unpacked extension 加载（`chrome://extensions` → 开发者模式 → 加载已解压的扩展程序）。
 
 ## 桌面壳
 
 ```powershell
-cd apps\desktop-shell
-npm test
-cargo check --manifest-path src-tauri\Cargo.toml
-```
-
-生产桌面壳请使用仓库约定的 Tauri 构建入口：
-
-```powershell
+npm test --prefix apps/desktop-shell
 npm run build --prefix apps/desktop-shell
 ```
 
-不要把 `cargo build --release --manifest-path apps/desktop-shell/src-tauri/Cargo.toml` 的直产物用于真实桌面验收，因为该路径会加载 `tauri.conf.json` 中的 `devUrl`，在 dev server 未运行时可能只得到 WebView 错误页。
-
-Tauri runtime 验收脚本：
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runtime.ps1
-```
+不要把普通 `cargo build --release` 直产物用于真实桌面验收（会加载 devUrl）；安装包在 `apps/desktop-shell/src-tauri/target/release/bundle/`。
 
 ## 原则
 
-- Insert 只填入输入框，不自动发送
-- 默认不读取或上传整页文本
-- API key 只用于本地服务和显式配置的 provider
+- Insert 只填入输入框，绝不自动发送
+- 默认不读取或上传整页/整屏/聊天历史
+- API key 只用于本地服务和显式配置的 provider，本机加密保存
+- 无法机器回读时不宣称成功，只降级为复制或人工确认
+- 证据分层：单元、视觉、安装包 smoke、真实检测、真实写入、机器回读、no-auto-submit 分开报告，不互相冒充
 - 小人角色以 `assets/ui-ux/mascot-token-run.png` 为原型，不重新设计角色
+
+## 路线图
+
+收缩、命名与 30 天启动计划见 `docs/roadmap-2026-08-13-shrink-and-launch.md`；继续任务前请先读 `PROJECT.md` 与 `agent_memory/` 三件套。
