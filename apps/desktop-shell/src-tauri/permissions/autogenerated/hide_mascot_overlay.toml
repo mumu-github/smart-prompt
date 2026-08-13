@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-hide-mascot-overlay"
+description = "Enables the hide_mascot_overlay command without any pre-configured scope."
+commands.allow = ["hide_mascot_overlay"]
+
+[[permission]]
+identifier = "deny-hide-mascot-overlay"
+description = "Denies the hide_mascot_overlay command without any pre-configured scope."
+commands.deny = ["hide_mascot_overlay"]

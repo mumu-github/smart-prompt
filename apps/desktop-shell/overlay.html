@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN" data-state="resting" data-overlay-mode="compact">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smart Prompt Mascot</title>
+    <style>
+      html,
+      body {
+        width: 72px;
+        height: 72px;
+        margin: 0;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0) !important;
+      }
+
+      html[data-overlay-mode="compact"],
+      html[data-overlay-mode="compact"] body {
+        display: block;
+        contain: strict;
+      }
+
+      html[data-overlay-mode="compact"] .mascot-overlay-card {
+        position: absolute;
+        inset: 0;
+        display: block;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        box-shadow: none;
+        clip-path: inset(0);
+      }
+
+      html[data-overlay-mode="compact"] .mascot-overlay-button {
+        display: grid;
+        place-items: center;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+      }
+
+      html[data-overlay-mode="compact"] .mascot-overlay-avatar {
+        display: grid;
+        place-items: center;
+        width: 72px;
+        height: 72px;
+      }
+
+      html[data-overlay-mode="compact"] #mascot-overlay-image {
+        display: block;
+        width: 78px;
+        height: 78px;
+        object-fit: contain;
+        transform: translate(-1px, 1px);
+      }
+
+      html[data-overlay-mode="compact"] body {
+        min-width: 72px;
+        max-width: 72px;
+        min-height: 72px;
+        max-height: 72px;
+      }
+
+      html[data-overlay-mode="compact"] .mascot-overlay-card,
+      html[data-overlay-mode="compact"] .mascot-overlay-button {
+        width: 72px;
+        height: 72px;
+        overflow: hidden;
+        background: rgba(0, 0, 0, 0) !important;
+      }
+
+      html[data-overlay-mode="compact"] #mascot-overlay-badge {
+        top: 7px;
+        right: 8px;
+        bottom: auto;
+        width: 11px;
+        min-width: 11px;
+        max-width: 11px;
+        height: 11px;
+        min-height: 11px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: #2e8f8c;
+        box-shadow: 0 0 0 4px rgba(46, 143, 140, 0.16);
+        color: transparent;
+        font-size: 0;
+        line-height: 0;
+      }
+
+      html[data-overlay-mode="compact"] .mascot-overlay-turns,
+      html[data-overlay-mode="compact"] .mascot-overlay-chat,
+      html[data-overlay-mode="compact"] .mascot-overlay-mood-strip,
+      html[data-overlay-mode="compact"] .mascot-overlay-thread,
+      html[data-overlay-mode="compact"] .mascot-overlay-modes,
+      html[data-overlay-mode="compact"] .mascot-overlay-locales,
+      html[data-overlay-mode="compact"] .mascot-overlay-actions,
+      html[data-overlay-mode="compact"] .mascot-overlay-replies,
+      html[data-overlay-mode="compact"] .mascot-overlay-draft-form,
+      html[data-overlay-mode="compact"] .mascot-overlay-preview-panel,
+      html[data-overlay-mode="compact"] .mascot-overlay-primary,
+      html[data-overlay-mode="compact"] .mascot-overlay-close {
+        display: none;
+      }
+
+      html[data-overlay-mode="compact"] #smart-prompt-assistant-host {
+        display: none !important;
+      }
+
+      .mascot-overlay-mood-strip,
+      .mascot-overlay-mood-dot {
+        display: none;
+      }
+
+      html[data-overlay-mode="expanded"] .mascot-overlay-mood-strip {
+        display: grid;
+        position: absolute;
+        left: 11px;
+        right: 11px;
+        bottom: 6px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 3px;
+        height: 3px;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      html[data-overlay-mode="expanded"] .mascot-overlay-mood-dot {
+        display: block;
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        height: 3px;
+        min-height: 3px;
+        max-height: 3px;
+        border-radius: 999px;
+        background: rgba(130, 138, 147, 0.28);
+      }
+    </style>
+    <link rel="stylesheet" href="src/overlay.css">
+  </head>
+  <body>
+    <section id="mascot-overlay-card" class="mascot-overlay-card" aria-label="Smart Prompt">
+      <button id="mascot-overlay-close" class="mascot-overlay-close" type="button" aria-label="Collapse">×</button>
+      <button id="mascot-overlay-button" class="mascot-overlay-button" type="button" aria-label="Smart Prompt">
+        <span class="mascot-overlay-avatar" aria-hidden="true">
+          <img id="mascot-overlay-image" src="src/assets/mascot-states/resting.png" alt="">
+          <span id="mascot-overlay-badge">ready</span>
+        </span>
+        <span id="mascot-overlay-mood-strip" aria-hidden="true" class="mascot-overlay-mood-strip">
+          <span class="mascot-overlay-mood-dot"></span>
+          <span class="mascot-overlay-mood-dot"></span>
+          <span class="mascot-overlay-mood-dot"></span>
+        </span>
+        <span id="mascot-overlay-chat" class="mascot-overlay-chat">
+          <span id="mascot-overlay-message">Watching input</span>
+          <span id="mascot-overlay-meta">tool no-submit</span>
+          <span id="mascot-overlay-hint">Draft then Make</span>
+        </span>
+      </button>
+      <div class="mascot-overlay-turns" aria-hidden="true">
+        <span id="mascot-overlay-user-turn">You: ask here</span>
+        <span id="mascot-overlay-assistant-turn">Smart: draft first</span>
+      </div>
+      <div class="mascot-overlay-thread mascot-overlay-evidence-row" aria-hidden="true">
+        <span id="mascot-overlay-tool-chip">tool</span>
+        <span id="mascot-overlay-prompt-chip">draft</span>
+        <span id="mascot-overlay-submit-chip">no-submit</span>
+      </div>
+      <div class="mascot-overlay-modes" aria-label="Prompt mode">
+        <button id="mascot-overlay-mode-idea" class="mascot-overlay-mode" type="button" data-prompt-mode="idea">Idea</button>
+        <button id="mascot-overlay-mode-continue" class="mascot-overlay-mode" type="button" data-prompt-mode="continue">Cont</button>
+        <button id="mascot-overlay-mode-polish" class="mascot-overlay-mode" type="button" data-prompt-mode="polish">Polish</button>
+      </div>
+      <div class="mascot-overlay-locales" aria-label="Input language">
+        <button id="mascot-overlay-locale-zh" class="mascot-overlay-locale" type="button" data-locale="zh-CN">中文</button>
+        <button id="mascot-overlay-locale-en" class="mascot-overlay-locale" type="button" data-locale="en">EN</button>
+      </div>
+      <div class="mascot-overlay-actions" aria-label="Smart Prompt actions">
+        <button id="mascot-overlay-draft" class="mascot-overlay-secondary" type="button">Draft</button>
+        <button id="mascot-overlay-generate" class="mascot-overlay-secondary" type="button">Make</button>
+        <button id="mascot-overlay-refresh" class="mascot-overlay-secondary" type="button">Scan</button>
+      </div>
+      <div class="mascot-overlay-replies" aria-label="Quick replies">
+        <button id="mascot-overlay-reply-short" class="mascot-overlay-reply" type="button" data-reply="brief" data-draft="Turn this into a concise prompt brief">Brief</button>
+        <button id="mascot-overlay-reply-clear" class="mascot-overlay-reply" type="button" data-reply="angle" data-draft="Give this a sharper angle and concrete constraints">Angle</button>
+        <button id="mascot-overlay-reply-steps" class="mascot-overlay-reply" type="button" data-reply="steps" data-draft="Turn this into concrete next steps">Steps</button>
+      </div>
+      <form id="mascot-overlay-draft-form" class="mascot-overlay-draft-form" autocomplete="off">
+        <textarea id="mascot-overlay-draft-input" class="mascot-overlay-draft-input" rows="2" maxlength="400" placeholder="Ask Smart Prompt" aria-label="Quick draft"></textarea>
+        <button id="mascot-overlay-draft-send" class="mascot-overlay-draft-send" type="submit" aria-label="Send draft">&gt;</button>
+      </form>
+      <section id="mascot-overlay-preview-panel" class="mascot-overlay-preview-panel" aria-label="Prompt preview">
+        <textarea id="mascot-overlay-preview-input" class="mascot-overlay-preview-input" rows="2" maxlength="8000" aria-label="Prompt preview" spellcheck="false"></textarea>
+        <div class="mascot-overlay-preview-actions" aria-label="Prompt review actions">
+          <button id="mascot-overlay-preview-copy" class="mascot-overlay-preview-action" type="button" aria-label="Copy prompt">Copy</button>
+          <button id="mascot-overlay-preview-review" class="mascot-overlay-preview-action" type="button" aria-label="Review prompt">Review</button>
+          <button id="mascot-overlay-preview-undo" class="mascot-overlay-preview-action" type="button" aria-label="Undo edits">Undo</button>
+          <button id="mascot-overlay-preview-clear" class="mascot-overlay-preview-action" type="button" aria-label="Clear prompt">Clear</button>
+        </div>
+      </section>
+      <button id="mascot-overlay-primary" class="mascot-overlay-primary" type="button">Open</button>
+    </section>
+    <div id="smart-prompt-assistant-host" aria-label="Smart Prompt"></div>
+    <script defer src="src/prompt-session.js"></script>
+    <script defer src="src/assistant-card.js"></script>
+    <script defer src="src/overlay.js"></script>
+  </body>
+</html>

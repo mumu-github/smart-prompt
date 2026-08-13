@@ -10,8 +10,11 @@
     "prepare-release": "npm run prepare-dist && npm run prepare-sidecar",
     "build": "node scripts/tauri-command.js build",
     "preview": "node tests/static-preview.js",
+    "visual-test": "node tests/control-center-visual.test.js",
     "runtime-test": "node tests/tauri-runtime.test.js",
-    "test": "node tests/desktop-shell.test.js && node tests/desktop-shell-interaction.test.js"
+    "single-instance-runtime-test": "node tests/single-instance-runtime.test.js",
+    "prompt-session-runtime-test": "node tests/prompt-session-overlay-runtime.test.js",
+    "test": "node tests/control-center.test.js && node tests/desktop-shell.test.js && node tests/desktop-shell-interaction.test.js"
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.0.0"

@@ -6,47 +6,526 @@
     <title>Smart Prompt Desktop</title>
     <link rel="stylesheet" href="src/styles.css">
   </head>
-  <body>
-    <main class="shell">
-      <header class="topbar">
-        <div>
-          <h1>Smart Prompt</h1>
-          <p>V2 desktop shell</p>
+  <body data-phase3-control-center="true">
+    <main id="phase3-control-center" class="phase3-shell">
+      <header class="control-header">
+        <div class="brand-lockup">
+          <span class="brand-mark">SP</span>
+          <div>
+            <p class="eyebrow">Smart Prompt</p>
+            <p class="caption" data-cc-copy="brandSubtitle">本地 Prompt 助手</p>
+          </div>
         </div>
-        <div class="status-actions">
-          <span id="service-status" class="status-pill">checking</span>
-          <button id="start-service" type="button">Start Service</button>
-          <button id="stop-service" type="button">Stop Service</button>
-          <button id="restart-service" type="button">Restart Service</button>
+        <div class="header-actions">
+          <label class="control-locale-control">
+            <span class="visually-hidden" data-cc-copy="language">界面语言</span>
+            <select id="control-locale" class="control-locale" data-cc-aria="language" aria-label="界面语言">
+              <option value="zh-CN" data-cc-copy="languageZh">中文</option>
+              <option value="en" data-cc-copy="languageEn">English</option>
+            </select>
+          </label>
+          <span id="runtime-status" class="runtime-status" data-tone="neutral" data-cc-copy="checking">正在检查</span>
+          <button id="minimize-to-tray" class="icon-button" type="button" data-cc-title="tray" data-cc-aria="tray" title="收起到托盘" aria-label="收起到托盘">−</button>
         </div>
       </header>
 
-      <section id="first-run-panel" class="panel setup-panel">
-        <h2>First Run</h2>
-        <div id="first-run-progress" class="setup-progress">0/5 ready</div>
+      <section id="activation-wizard" class="activation-view" aria-labelledby="wizard-title">
+        <div class="view-heading">
+          <div>
+            <p class="eyebrow" data-cc-copy="activationEyebrow">首次激活</p>
+            <h1 id="wizard-title" data-cc-copy="activationTitle">两步开始使用</h1>
+          </div>
+          <span id="wizard-progress" class="step-count">1 / 2　Provider</span>
+        </div>
+
+        <section id="wizard-provider-step" class="control-panel wizard-step" aria-labelledby="wizard-provider-title">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow" data-cc-copy="step1">第 1 步</p>
+              <h2 id="wizard-provider-title" data-cc-copy="connectModel">连接你的模型</h2>
+            </div>
+            <span class="panel-note" data-cc-copy="localConnectivity">只测试本地连通性</span>
+          </div>
+          <div class="provider-form" data-provider-form="wizard">
+            <label>
+              <span data-cc-copy="provider">Provider</span>
+              <select id="wizard-provider">
+                <option value="agnes">Agnes</option>
+                <option value="openai-compatible">OpenAI-compatible</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="gemini">Gemini</option>
+                <option value="custom" data-cc-copy="customProvider">自定义 Provider</option>
+              </select>
+            </label>
+            <label data-custom-provider-field hidden>
+              <span data-cc-copy="providerName">Provider 名称</span>
+              <input id="wizard-custom-name" autocomplete="organization" maxlength="80" data-cc-placeholder="providerNamePlaceholder" placeholder="例如：公司模型网关">
+            </label>
+            <label data-custom-provider-field hidden>
+              <span data-cc-copy="protocol">接口协议</span>
+              <select id="wizard-custom-protocol">
+                <option value="openai-compatible">OpenAI-compatible</option>
+                <option value="anthropic">Anthropic Messages</option>
+                <option value="gemini">Gemini GenerateContent</option>
+              </select>
+            </label>
+            <label data-custom-provider-field data-custom-provider-wide hidden>
+              <span>Base URL</span>
+              <input id="wizard-custom-base-url" autocomplete="url" placeholder="https://provider.example/v1">
+            </label>
+            <label>
+              <span data-provider-key-label data-cc-copy="apiKey">Provider API Key</span>
+              <input id="wizard-key" type="password" autocomplete="new-password" data-cc-placeholder="apiKeyPlaceholder" placeholder="输入当前 Provider Key">
+              <small class="field-state" data-provider-key-state data-cc-copy="credentialMissing">尚未保存</small>
+            </label>
+            <label data-model-choice-field>
+              <span data-cc-copy="model">模型</span>
+              <select id="wizard-model-choice" data-cc-aria="model" aria-label="模型"></select>
+            </label>
+            <label data-custom-model-field hidden>
+              <span data-cc-copy="customModelId">自定义模型 ID</span>
+              <input id="wizard-model" autocomplete="off" maxlength="200" spellcheck="false" data-cc-placeholder="customModelPlaceholder" placeholder="输入完整模型 ID">
+            </label>
+            <details class="provider-advanced" data-fixed-provider-advanced>
+              <summary data-cc-copy="advanced">高级设置</summary>
+              <div class="provider-advanced-grid">
+                <label>
+                  <span>Base URL</span>
+                  <input id="wizard-base-url" autocomplete="url">
+                </label>
+              </div>
+            </details>
+          </div>
+          <div id="wizard-provider-status" class="inline-status" role="status" data-cc-copy="saveTestReady">保存并测试模型连通性</div>
+          <div class="action-row">
+            <button id="save-wizard-provider" class="button-primary" type="button" data-cc-copy="saveAndTest">保存并测试</button>
+          </div>
+        </section>
+
+        <section id="wizard-browser-step" class="control-panel wizard-step" aria-labelledby="wizard-browser-title" hidden>
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow" data-cc-copy="step2">第 2 步</p>
+              <h2 id="wizard-browser-title" data-cc-copy="firstLoop">完成一次真实核心循环</h2>
+            </div>
+            <span class="panel-note" data-cc-copy="neverSend">不会自动发送</span>
+          </div>
+          <div class="browser-target-row">
+            <div class="target-icon" aria-hidden="true">↗</div>
+            <div>
+              <strong>Codex</strong>
+              <p data-cc-copy="browserTargetDescription">聚焦 Codex 输入框，点击旁边的小人生成并填入一次；系统会机器回读，且绝不自动发送。</p>
+            </div>
+          </div>
+          <div id="wizard-browser-status" class="inline-status" role="status" data-cc-copy="browserReady">模型已就绪，下一步在 Codex 完成一次安全写回</div>
+          <div class="action-row">
+            <button id="open-wizard-codex" class="button-primary" type="button" data-cc-copy="openChatgpt">收起并去 Codex 验证</button>
+            <button id="refresh-wizard-activation" class="button-secondary" type="button" data-cc-copy="redetect" data-cc-title="redetectTitle" title="重新检测激活状态">重新检测</button>
+          </div>
+        </section>
+      </section>
+
+      <section id="runtime-repair" class="control-panel repair-panel" hidden aria-labelledby="runtime-repair-title">
+        <div>
+          <p class="eyebrow" data-cc-copy="localRuntime">本地运行</p>
+          <h2 id="runtime-repair-title" data-cc-copy="reconnectTitle">需要重新连接</h2>
+          <p data-cc-copy="reconnectDescription">当前功能暂时不可用。重新连接后会继续保留已有设置。</p>
+        </div>
+        <button id="retry-runtime" class="button-primary" type="button" data-cc-copy="reconnect">重新连接</button>
+      </section>
+
+      <section id="control-center" class="control-view" hidden aria-labelledby="control-center-title">
+        <div class="control-heading">
+          <div>
+            <p class="eyebrow" data-cc-copy="controlCenter">控制中心</p>
+            <h1 id="control-center-title">Smart Prompt</h1>
+          </div>
+          <span id="activation-badge" class="activation-badge" data-cc-copy="activated">已激活</span>
+        </div>
+        <nav class="control-nav" data-cc-aria="navLabel" aria-label="控制中心页面">
+          <button type="button" data-control-page="overview" data-cc-copy="overview" aria-current="page">概览</button>
+          <button type="button" data-control-page="model" data-cc-copy="modelPage" aria-current="false">模型</button>
+          <button type="button" data-control-page="learning" data-cc-copy="learning" aria-current="false">学习</button>
+          <button type="button" data-control-page="privacy" data-cc-copy="privacy" aria-current="false">隐私</button>
+          <button type="button" data-control-page="diagnostics" data-cc-copy="diagnostics" aria-current="false">诊断</button>
+        </nav>
+
+        <section data-control-page-view="overview" class="control-page" aria-labelledby="overview-title">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" data-cc-copy="currentStatus">当前状态</p>
+              <h2 id="overview-title" tabindex="-1" data-cc-copy="overviewTitle">Codex 使用状态</h2>
+            </div>
+            <span id="overview-status" class="inline-status" role="status">尚未验证</span>
+          </div>
+          <div id="overview-details" class="metric-list"></div>
+          <div class="control-panel quiet-panel">
+            <div>
+              <strong data-cc-copy="codexCompanionTitle">日常使用在 Codex 输入框旁完成</strong>
+              <p data-cc-copy="codexCompanionDescription">控制中心只处理模型、学习内容、隐私和诊断，不提供第二个 Prompt 工作台。</p>
+            </div>
+          </div>
+        </section>
+
+        <section data-control-page-view="model" class="control-page" aria-labelledby="model-title" hidden>
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" data-cc-copy="modelEyebrow">Provider</p>
+              <h2 id="model-title" tabindex="-1" data-cc-copy="modelTitle">模型连接</h2>
+            </div>
+            <span class="panel-note" data-cc-copy="currentProviderOnly">只显示当前 Provider</span>
+          </div>
+          <div class="control-panel provider-form" data-provider-form="model">
+            <label>
+              <span data-cc-copy="provider">Provider</span>
+              <select id="model-provider">
+                <option value="agnes">Agnes</option>
+                <option value="openai-compatible">OpenAI-compatible</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="gemini">Gemini</option>
+                <option value="custom" data-cc-copy="customProvider">自定义 Provider</option>
+              </select>
+            </label>
+            <label data-custom-provider-field hidden>
+              <span data-cc-copy="providerName">Provider 名称</span>
+              <input id="model-custom-name" autocomplete="organization" maxlength="80" data-cc-placeholder="providerNamePlaceholder" placeholder="例如：公司模型网关">
+            </label>
+            <label data-custom-provider-field hidden>
+              <span data-cc-copy="protocol">接口协议</span>
+              <select id="model-custom-protocol">
+                <option value="openai-compatible">OpenAI-compatible</option>
+                <option value="anthropic">Anthropic Messages</option>
+                <option value="gemini">Gemini GenerateContent</option>
+              </select>
+            </label>
+            <label data-custom-provider-field data-custom-provider-wide hidden>
+              <span>Base URL</span>
+              <input id="model-custom-base-url" autocomplete="url" placeholder="https://provider.example/v1">
+            </label>
+            <label>
+              <span data-provider-key-label data-cc-copy="apiKey">Provider API Key</span>
+              <input id="model-key" type="password" autocomplete="new-password" data-cc-placeholder="apiKeyPlaceholder" placeholder="输入当前 Provider Key">
+              <small class="field-state" data-provider-key-state data-cc-copy="credentialMissing">尚未保存</small>
+            </label>
+            <label data-model-choice-field>
+              <span data-cc-copy="model">模型</span>
+              <select id="model-model-choice" data-cc-aria="model" aria-label="模型"></select>
+            </label>
+            <label data-custom-model-field hidden>
+              <span data-cc-copy="customModelId">自定义模型 ID</span>
+              <input id="model-model" autocomplete="off" maxlength="200" spellcheck="false" data-cc-placeholder="customModelPlaceholder" placeholder="输入完整模型 ID">
+            </label>
+            <details class="provider-advanced" data-fixed-provider-advanced>
+              <summary data-cc-copy="advanced">高级设置</summary>
+              <div class="provider-advanced-grid">
+                <label>
+                  <span>Base URL</span>
+                  <input id="model-base-url" autocomplete="url">
+                </label>
+              </div>
+            </details>
+            <div id="model-provider-status" class="inline-status" role="status" data-cc-copy="saveTestReady">保存并测试模型连通性</div>
+            <div class="action-row">
+              <button id="save-model-provider" class="button-primary" type="button" data-cc-copy="saveAndTest">保存并测试</button>
+            </div>
+          </div>
+        </section>
+
+        <section data-control-page-view="learning" class="control-page" aria-labelledby="learning-title" hidden>
+          <div class="page-heading learning-page-heading">
+            <div>
+              <p class="eyebrow" data-cc-copy="learningEyebrow">已学到的内容</p>
+              <h2 id="learning-title" tabindex="-1" data-cc-copy="learningTitle">学习管理</h2>
+              <p class="page-description" data-cc-copy="learningDescription">在这里审核项目经验、确认全局使用，并查看可回滚的生成策略。</p>
+            </div>
+            <span id="learning-status" class="inline-status" role="status" data-cc-copy="learningStatusEmpty">暂无学习内容</span>
+          </div>
+          <div id="learning-content" class="learning-content" aria-live="polite"></div>
+        </section>
+
+        <section data-control-page-view="privacy" class="control-page" aria-labelledby="privacy-title" hidden>
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" data-cc-copy="privacyEyebrow">边界</p>
+              <h2 id="privacy-title" tabindex="-1" data-cc-copy="privacyTitle">隐私与本地数据</h2>
+            </div>
+          </div>
+          <div class="privacy-list">
+            <div><span class="privacy-mark">✓</span><strong data-cc-copy="privacyPrompt">Prompt 正文不进入激活状态</strong></div>
+            <div><span class="privacy-mark">✓</span><strong data-cc-copy="privacyPage">页面正文、标题和 DOM 文本不上传</strong></div>
+            <div><span class="privacy-mark">✓</span><strong data-cc-copy="privacyMetadata">激活只记录脱敏状态和有限事件 ID</strong></div>
+            <div><span class="privacy-mark">✓</span><strong data-cc-copy="privacySubmit">任何写回都不自动提交</strong></div>
+          </div>
+          <div class="control-panel danger-panel">
+            <div>
+              <strong data-cc-copy="resetTitle">重新开始激活</strong>
+              <p data-cc-copy="resetDescription">当前数据会先移动到本地可恢复归档，不会永久删除。</p>
+            </div>
+            <button id="reset-local-data" class="button-danger" type="button" data-cc-copy="recoverableReset">可恢复重置</button>
+          </div>
+          <div id="privacy-status" class="inline-status" role="status" data-cc-copy="resetIdle">没有执行重置</div>
+        </section>
+
+        <section data-control-page-view="diagnostics" class="control-page" aria-labelledby="diagnostics-title" hidden>
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" data-cc-copy="diagnosticsEyebrow">应用状态</p>
+              <h2 id="diagnostics-title" tabindex="-1" data-cc-copy="diagnosticsTitle">诊断</h2>
+            </div>
+            <button id="refresh-diagnostics" class="button-secondary" type="button" data-cc-copy="refresh">刷新</button>
+          </div>
+          <div class="control-panel diagnostics-panel-v2">
+            <div id="diagnostics-status" class="inline-status" role="status" data-cc-copy="diagnosticsIdle">尚未加载诊断</div>
+            <p class="panel-note" data-cc-copy="diagnosticsDescription">导出内容只包含运行元数据、计数和隐私边界，不包含 Prompt、输入或 API Key。</p>
+            <button id="export-diagnostics-v2" class="button-secondary" type="button" data-cc-copy="exportDiagnostics">导出诊断</button>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <main class="shell legacy-shell">
+      <header class="hero-panel">
+        <nav class="topbar" aria-label="Smart Prompt">
+          <div class="brand-lockup">
+            <span class="brand-mark">SP</span>
+            <div>
+              <p class="eyebrow" data-i18n="brandTitle">Smart Prompt Desktop</p>
+              <p class="caption" data-i18n="brandSubtitle">Local prompt copilot</p>
+            </div>
+          </div>
+          <div class="status-actions">
+            <select id="ui-locale" class="locale-select" aria-label="Interface language" data-i18n-aria="uiLocale">
+              <option value="auto" data-i18n="localeAuto">Auto</option>
+              <option value="zh-CN" data-i18n="localeZh">中文</option>
+              <option value="en" data-i18n="localeEn">英文</option>
+            </select>
+            <span id="service-status" class="status-pill" data-i18n="checking">checking</span>
+            <button id="start-service" class="button-primary" type="button" data-i18n="startService">Start Service</button>
+            <button id="stop-service" class="button-secondary" type="button" data-i18n="stopService">Stop Service</button>
+            <button id="restart-service" class="button-secondary" type="button" data-i18n="restartService">Restart Service</button>
+          </div>
+        </nav>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow" data-i18n="heroEyebrow">Minimal, local, learning</p>
+            <h1><span data-i18n="heroTitleLine1">让提示词在你的</span><span data-i18n="heroTitleLine2">工具里变好。</span></h1>
+            <p class="hero-text" data-i18n="heroText">真实 LLM、技能库、桌面输入守卫和自学习证据，都收在一个本地工作台里。</p>
+            <div class="hero-proof">
+              <span data-i18n="proofPromptFirst">Prompt-first</span>
+              <span data-i18n="proofAggregateOnly">Aggregate-only</span>
+              <span data-i18n="proofNoAutoSubmit">No auto-submit</span>
+            </div>
+          </div>
+          <div class="hero-visual" aria-label="Mascot assistant preview">
+            <div class="device-surface">
+              <div class="device-header">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="device-line is-long"></div>
+              <div class="device-line"></div>
+              <div class="device-line is-short"></div>
+              <img id="desktop-mascot-image" src="src/assets/mascot-states/suggesting.png" alt="">
+              <div id="desktop-mascot-state" class="mascot-state" data-i18n="stateSuggesting">suggesting</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <section id="first-run-panel" class="section-band setup-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow" data-i18n="firstRunEyebrow">First Run</p>
+            <h2 data-i18n="firstRunTitle">Start clean</h2>
+          </div>
+          <button id="test-provider" class="button-primary" type="button" data-i18n="testProvider">Test Provider</button>
+        </div>
+        <div id="first-run-progress" class="setup-progress" data-i18n="firstRunProgressInitial">0/5 ready</div>
         <div id="privacy-boundary" class="privacy-boundary">
-          <span>No full page body</span>
-          <span>No page title</span>
-          <span>No auto-submit</span>
-          <span>Keys encrypted</span>
+          <span data-i18n="privacyNoBody">No full page body</span>
+          <span data-i18n="privacyNoTitle">No page title</span>
+          <span data-i18n="privacyNoSubmit">No auto-submit</span>
+          <span data-i18n="privacyKeys">Keys encrypted</span>
         </div>
-        <div id="provider-test-status" class="skill-row">Provider test not run.</div>
-        <button id="test-provider" type="button">Test Provider</button>
+        <div id="provider-test-status" class="skill-row" data-i18n="providerTestNotRun">Provider test not run.</div>
       </section>
 
-      <section class="panel diagnostics-panel">
-        <h2>Diagnostics</h2>
-        <div class="diagnostics-actions">
-          <button id="export-diagnostics" type="button">Export Diagnostics</button>
-          <button id="clear-local-data" type="button">Clear Local Data</button>
+      <section class="section-band desktop-companion-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow" data-i18n="desktopCompanionEyebrow">Desktop Companion</p>
+            <h2 data-i18n="desktopCompanionTitle">Tool input fusion</h2>
+          </div>
+          <button id="refresh-desktop-snapshot" class="button-secondary" type="button" data-i18n="inspectForeground">Inspect Foreground</button>
         </div>
-        <pre id="diagnostics-output" class="diagnostics-output">No diagnostics exported.</pre>
-      </section>
-
-      <section class="panel">
-        <h2>LLM Settings</h2>
+        <div id="desktop-companion-status" class="setup-progress" data-i18n="desktopSnapshotMissing">No desktop input snapshot loaded.</div>
+        <div id="desktop-fusion-console" class="desktop-fusion-console" data-fusion-state="idle">
+          <button id="desktop-mascot-button" class="desktop-mascot-button" type="button" aria-label="Inspect foreground tool" data-i18n-aria="desktopMascotAction">
+            <img id="desktop-fusion-mascot-image" src="src/assets/mascot-states/resting.png" alt="">
+            <span id="desktop-fusion-mascot-state" class="mascot-state-inline" data-i18n="stateResting">resting</span>
+          </button>
+          <div class="desktop-fusion-main">
+            <div id="desktop-input-surface" class="desktop-input-surface" data-i18n="desktopSurfaceWaiting">No foreground tool locked.</div>
+            <div class="desktop-fusion-fields">
+              <label>
+                <span data-i18n="desktopDraftLabel">Draft</span>
+                <textarea id="desktop-draft-input" rows="4" placeholder="Write what you want to ask the current tool." data-i18n-placeholder="desktopDraftPlaceholder"></textarea>
+              </label>
+              <label>
+                <span data-i18n="desktopPromptLabel">Prompt</span>
+                <textarea id="desktop-generated-prompt" rows="5" placeholder="Generated prompt stays editable before foreground fill." data-i18n-placeholder="desktopPromptPlaceholder"></textarea>
+              </label>
+            </div>
+            <div id="desktop-prompt-handoff" class="desktop-prompt-handoff" data-i18n="desktopPromptHandoffIdle">Add prompt</div>
+            <div class="inline-actions">
+              <button id="generate-desktop-prompt" class="button-primary" type="button" data-i18n="generateDesktopPrompt">Generate</button>
+              <button id="fill-foreground-input" class="button-secondary" type="button" data-i18n="fillForegroundInput">Fill Foreground</button>
+            </div>
+            <div id="desktop-fusion-evidence" class="desktop-evidence-row" data-i18n="desktopFusionIdle">Waiting for a foreground tool.</div>
+          </div>
+        </div>
+        <div class="companion-grid">
+          <div id="desktop-tool-summary" class="signal-card" data-i18n="targetToolNotInspected">Target tool not inspected.</div>
+          <div id="desktop-signal-summary" class="signal-card" data-i18n="signalsPending">Caret and focus signals pending.</div>
+          <div id="desktop-guard-summary" class="signal-card" data-i18n="guardPending">Foreground guard pending.</div>
+        </div>
+        <div id="desktop-supported-profiles" class="chip-list"></div>
         <label>
-          Provider
+          <span data-i18n="safeFillText">Safe fill self-test text</span>
+          <textarea id="desktop-fill-text" rows="3" placeholder="Used only for local self-test unless a guarded foreground fill is explicitly wired." data-i18n-placeholder="safeFillPlaceholder"></textarea>
+        </label>
+        <div class="inline-actions">
+          <button id="run-desktop-self-test" class="button-primary" type="button" data-i18n="runSafeFillTest">Run Safe Fill Test</button>
+        </div>
+        <div id="desktop-fill-result" class="skill-row" data-i18n="fillTestNotRun">No fill test run.</div>
+      </section>
+
+      <section class="section-band learning-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow" data-i18n="learningEyebrow">Learning Loop</p>
+            <h2 data-i18n="learningTitle">Self-reflection</h2>
+          </div>
+          <button id="refresh-learning" class="button-secondary" type="button" data-i18n="refresh">Refresh</button>
+        </div>
+        <div id="learning-status" class="setup-progress" data-i18n="learningMissing">No learning report loaded.</div>
+        <div class="outcome-columns">
+          <div>
+            <h3 data-i18n="reflections">Reflections</h3>
+            <div id="self-improvement-summary" class="skill-list"></div>
+          </div>
+          <div>
+            <h3 data-i18n="evolutionCandidates">Evolution Candidates</h3>
+            <div id="evolution-candidate-summary" class="skill-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-band pilot-outcome-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow" data-i18n="evidenceEyebrow">Evidence</p>
+            <h2 data-i18n="pilotOutcomes">Pilot Outcomes</h2>
+          </div>
+          <button id="refresh-pilot-outcomes" class="button-secondary" type="button" data-i18n="refresh">Refresh</button>
+        </div>
+        <div id="pilot-outcome-status" class="setup-progress" data-i18n="noPilotOutcome">No pilot outcome report loaded.</div>
+        <div id="pilot-outcome-summary" class="outcome-grid"></div>
+        <div class="outcome-columns">
+          <div>
+            <h3 data-i18n="strategies">Strategies</h3>
+            <div id="pilot-outcome-strategies" class="skill-list"></div>
+          </div>
+          <div>
+            <h3 data-i18n="collectionTargets">Collection Targets</h3>
+            <div id="pilot-outcome-targets" class="skill-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-band quality-lift-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow" data-i18n="qualityEyebrow">Quality</p>
+            <h2 data-i18n="qualityLift">Quality Lift</h2>
+          </div>
+          <button id="refresh-quality-lift" class="button-secondary" type="button" data-i18n="refresh">Refresh</button>
+        </div>
+        <div id="quality-lift-status" class="setup-progress" data-i18n="noQualityLift">No quality lift report loaded.</div>
+        <div id="quality-lift-summary" class="outcome-grid"></div>
+        <div class="outcome-columns">
+          <div>
+            <h3 data-i18n="cohorts">Cohorts</h3>
+            <div id="quality-lift-cohorts" class="skill-list"></div>
+          </div>
+          <div>
+            <h3 data-i18n="liftDeltas">Lift Deltas</h3>
+            <div id="quality-lift-comparisons" class="skill-list"></div>
+          </div>
+        </div>
+        <div>
+          <h3 data-i18n="recommendations">Recommendations</h3>
+          <div id="quality-lift-recommendations" class="skill-list"></div>
+        </div>
+      </section>
+
+      <section class="section-band quality-lift-segments-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow" data-i18n="segmentsEyebrow">Segments</p>
+            <h2 data-i18n="qualitySegments">Quality Segments</h2>
+          </div>
+          <button id="refresh-quality-lift-segments" class="button-secondary" type="button" data-i18n="refresh">Refresh</button>
+        </div>
+        <div id="quality-lift-segments-status" class="setup-progress" data-i18n="noQualitySegments">No quality lift segments loaded.</div>
+        <div class="outcome-columns">
+          <div>
+            <h3 data-i18n="improving">Improving</h3>
+            <div id="quality-lift-segments-improving" class="skill-list"></div>
+          </div>
+          <div>
+            <h3 data-i18n="regressing">Regressing</h3>
+            <div id="quality-lift-segments-regressing" class="skill-list"></div>
+          </div>
+        </div>
+        <div>
+          <h3 data-i18n="collecting">Collecting</h3>
+          <div id="quality-lift-segments-collecting" class="skill-list"></div>
+        </div>
+      </section>
+
+      <section class="section-band outcome-followup-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow" data-i18n="feedbackEyebrow">Feedback</p>
+            <h2 data-i18n="outcomeFollowup">Outcome Follow-up</h2>
+          </div>
+          <button id="refresh-outcome-followups" class="button-secondary" type="button" data-i18n="refresh">Refresh</button>
+        </div>
+        <div id="outcome-followup-status" class="setup-progress" data-i18n="noPendingOutcomes">No pending outcomes loaded.</div>
+        <div id="outcome-followup-list" class="skill-list"></div>
+      </section>
+
+      <section class="section-band diagnostics-panel">
+        <div>
+          <p class="eyebrow" data-i18n="diagnosticsEyebrow">Diagnostics</p>
+          <h2 data-i18n="diagnosticsTitle">Export and reset</h2>
+        </div>
+        <div class="diagnostics-actions">
+          <button id="export-diagnostics" class="button-secondary" type="button" data-i18n="exportDiagnostics">Export Diagnostics</button>
+          <button id="clear-local-data" class="button-danger" type="button" data-i18n="clearLocalData">Clear Local Data</button>
+        </div>
+        <pre id="diagnostics-output" class="diagnostics-output" data-i18n="diagnosticsEmpty">No diagnostics exported.</pre>
+      </section>
+
+      <section class="section-band settings-panel">
+        <div>
+          <p class="eyebrow" data-i18n="providerEyebrow">Provider</p>
+          <h2 data-i18n="llmSettings">LLM Settings</h2>
+        </div>
+        <label>
+          <span data-i18n="providerLabel">Provider</span>
           <select id="provider">
             <option value="auto">Auto</option>
             <option value="agnes">Agnes</option>
@@ -55,71 +534,82 @@
             <option value="gemini">Gemini</option>
           </select>
         </label>
-        <div id="provider-status" class="skill-row">Provider status unavailable.</div>
+        <div id="provider-status" class="skill-row" data-i18n="providerStatusUnavailable">Provider status unavailable.</div>
         <label>
-          Base URL
+          <span data-i18n="baseUrl">Base URL</span>
           <input id="base-url" value="https://api.openai.com/v1">
         </label>
         <label>
-          Model
+          <span data-i18n="model">Model</span>
           <input id="model" value="gpt-4o-mini">
         </label>
         <label>
-          API Key
-          <input id="api-key" type="password" placeholder="Stored by local service">
+          <span data-i18n="apiKey">API Key</span>
+          <input id="api-key" type="password" placeholder="Stored by local service" data-i18n-placeholder="storedByService">
         </label>
         <label>
-          Agnes Key
-          <input id="agnes-api-key" type="password" placeholder="Stored by local service">
+          <span data-i18n="agnesKey">Agnes Key</span>
+          <input id="agnes-api-key" type="password" placeholder="Stored by local service" data-i18n-placeholder="storedByService">
         </label>
         <label>
-          OpenAI-compatible Key
-          <input id="openai-api-key" type="password" placeholder="Stored by local service">
+          <span data-i18n="openaiKey">OpenAI-compatible Key</span>
+          <input id="openai-api-key" type="password" placeholder="Stored by local service" data-i18n-placeholder="storedByService">
         </label>
         <label>
-          Anthropic Key
-          <input id="anthropic-api-key" type="password" placeholder="Stored by local service">
+          <span data-i18n="anthropicKey">Anthropic Key</span>
+          <input id="anthropic-api-key" type="password" placeholder="Stored by local service" data-i18n-placeholder="storedByService">
         </label>
         <label>
-          Gemini Key
-          <input id="gemini-api-key" type="password" placeholder="Stored by local service">
+          <span data-i18n="geminiKey">Gemini Key</span>
+          <input id="gemini-api-key" type="password" placeholder="Stored by local service" data-i18n-placeholder="storedByService">
         </label>
-        <button id="save-settings" type="button">Save Settings</button>
+        <button id="save-settings" class="button-primary" type="button" data-i18n="saveSettings">Save Settings</button>
       </section>
 
-      <section class="panel">
-        <h2>Skill Library</h2>
+      <section class="section-band library-panel">
+        <div>
+          <p class="eyebrow" data-i18n="libraryEyebrow">Library</p>
+          <h2 data-i18n="skillLibrary">Skill Library</h2>
+        </div>
         <label>
-          Folder path
-          <input id="skill-folder" placeholder="C:\\Users\\you\\.codex\\skills">
+          <span data-i18n="folderPath">Folder path</span>
+          <input id="skill-folder" placeholder="C:\\Users\\you\\.codex\\skills" data-i18n-placeholder="skillFolderPlaceholder">
         </label>
-        <button id="import-folder" type="button">Import Folder</button>
+        <button id="import-folder" class="button-primary" type="button" data-i18n="importFolder">Import Folder</button>
         <div id="skill-list" class="skill-list"></div>
       </section>
 
-      <section class="panel">
-        <h2>Prompt Library</h2>
+      <section class="section-band library-panel">
+        <div>
+          <p class="eyebrow" data-i18n="libraryEyebrow">Library</p>
+          <h2 data-i18n="promptLibrary">Prompt Library</h2>
+        </div>
         <label>
-          Title
-          <input id="prompt-title" placeholder="Reusable prompt title">
+          <span data-i18n="title">Title</span>
+          <input id="prompt-title" placeholder="Reusable prompt title" data-i18n-placeholder="promptTitlePlaceholder">
         </label>
         <label>
-          Prompt
-          <textarea id="prompt-body" rows="5" placeholder="Save a reusable prompt locally"></textarea>
+          <span data-i18n="prompt">Prompt</span>
+          <textarea id="prompt-body" rows="5" placeholder="Save a reusable prompt locally" data-i18n-placeholder="promptBodyPlaceholder"></textarea>
         </label>
-        <button id="save-prompt" type="button">Save Prompt</button>
+        <button id="save-prompt" class="button-primary" type="button" data-i18n="savePrompt">Save Prompt</button>
         <div id="prompt-list" class="skill-list"></div>
       </section>
 
-      <section class="panel">
-        <h2>Shortcut</h2>
+      <section class="section-band shortcut-panel">
+        <div>
+          <p class="eyebrow" data-i18n="shortcutEyebrow">Companion Trigger</p>
+          <h2 data-i18n="shortcut">Shortcut</h2>
+        </div>
         <label>
-          Global shortcut
+          <span data-i18n="globalShortcut">Global shortcut</span>
           <input id="shortcut" value="CmdOrCtrl+Shift+Space">
         </label>
-        <button id="save-shortcut" type="button">Save Shortcut</button>
+        <button id="save-shortcut" class="button-primary" type="button" data-i18n="saveShortcut">Save Shortcut</button>
       </section>
     </main>
+    <script src="src/desktop-overlay-logic.js"></script>
     <script src="src/app.js"></script>
+    <script src="src/control-center-app.js"></script>
   </body>
 </html>

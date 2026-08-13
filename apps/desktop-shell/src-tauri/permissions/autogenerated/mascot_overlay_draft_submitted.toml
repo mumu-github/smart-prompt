@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-mascot-overlay-draft-submitted"
+description = "Enables the mascot_overlay_draft_submitted command without any pre-configured scope."
+commands.allow = ["mascot_overlay_draft_submitted"]
+
+[[permission]]
+identifier = "deny-mascot-overlay-draft-submitted"
+description = "Denies the mascot_overlay_draft_submitted command without any pre-configured scope."
+commands.deny = ["mascot_overlay_draft_submitted"]

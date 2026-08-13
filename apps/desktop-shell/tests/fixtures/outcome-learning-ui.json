@@ -1,0 +1,89 @@
+{
+  "assets": [
+    {
+      "artifactId": "memory_project_build",
+      "artifactType": "memory",
+      "status": "active",
+      "title": "记住项目使用的构建入口",
+      "summary": "检查安装行为时使用经过验证的构建命令。",
+      "scope": { "kind": "project" },
+      "effective": true
+    },
+    {
+      "artifactId": "rule_no_auto_submit",
+      "artifactType": "rule",
+      "status": "active",
+      "title": "填入后不自动发送",
+      "summary": "所有写回都等待用户自行提交。",
+      "scope": { "kind": "project" },
+      "effective": true
+    },
+    {
+      "artifactId": "skill_release_check",
+      "artifactType": "skill",
+      "status": "paused",
+      "title": "发布前检查流程",
+      "summary": "按既定步骤完成测试、构建与结果核对。",
+      "scope": { "kind": "project" },
+      "effective": false
+    }
+  ],
+  "candidates": [
+    {
+      "artifactId": "candidate_test_scope",
+      "artifactType": "rule",
+      "status": "pending_review",
+      "title": "测试只覆盖本次改动范围",
+      "summary": "先运行最小测试，再根据风险扩大验证。",
+      "scope": { "kind": "project" },
+      "review": { "ignoredCount": 1 },
+      "evidenceSummary": {
+        "successfulOutcomeCount": 4,
+        "evidenceTokenCount": 99
+      },
+      "strategyScore": 0.91,
+      "projectScopeToken": "must_not_render"
+    },
+    {
+      "artifactId": "candidate_policy_compact",
+      "artifactType": "generation_policy",
+      "status": "pending_review",
+      "title": "减少重复说明",
+      "summary": "保持任务约束和验收标准，压缩重复上下文。",
+      "scope": { "kind": "project" },
+      "review": { "ignoredCount": 0 },
+      "evidenceSummary": { "successfulOutcomeCount": 3 }
+    }
+  ],
+  "promotions": [
+    {
+      "proposalId": "promotion_no_auto_submit",
+      "artifactType": "rule",
+      "status": "pending_review",
+      "title": "在所有项目中保持不自动发送",
+      "summary": "这条安全规则已在多个项目中重复验证。",
+      "scope": { "kind": "global_proposal" },
+      "projectCount": 3,
+      "evidenceSummary": { "successfulOutcomeCount": 7 }
+    }
+  ],
+  "policies": [
+    {
+      "policyId": "policy_codex_brief",
+      "policyVersion": 3,
+      "baselineVersion": 2,
+      "status": "benchmarked",
+      "title": "更简洁的任务说明",
+      "summary": "保留验收标准，同时减少重复说明。"
+    },
+    {
+      "policyId": "policy_codex_structure",
+      "policyVersion": 4,
+      "baselineVersion": 3,
+      "status": "canary",
+      "canaryShareBps": 1000,
+      "title": "按任务风险安排说明顺序",
+      "summary": "当前只用于少量生成，可随时恢复上一版。"
+    }
+  ]
+}

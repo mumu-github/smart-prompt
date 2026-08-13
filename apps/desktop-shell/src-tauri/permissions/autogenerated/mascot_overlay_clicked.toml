@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-mascot-overlay-clicked"
+description = "Enables the mascot_overlay_clicked command without any pre-configured scope."
+commands.allow = ["mascot_overlay_clicked"]
+
+[[permission]]
+identifier = "deny-mascot-overlay-clicked"
+description = "Denies the mascot_overlay_clicked command without any pre-configured scope."
+commands.deny = ["mascot_overlay_clicked"]

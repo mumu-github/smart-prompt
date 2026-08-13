@@ -6,14 +6,37 @@ const { spawn, spawnSync } = require("node:child_process");
 
 const root = path.resolve(__dirname, "..");
 const remotePort = Number(process.env.SMART_PROMPT_WEBVIEW_CDP_PORT || 9228);
-const servicePort = Number(process.env.SMART_PROMPT_RUNTIME_SERVICE_PORT || 17381);
+const servicePort = 17371;
+const activationContract = "phase3-activation@1";
+const nativeServiceVersion = "0.5.0-native";
+const nativeRuntimeContract = "phase3-native-runtime@1";
+const nativeBuildId = "phase3-native-sidecar-20260719-r18";
+const sidecarRoot = path.resolve(root, "..", "local-service-sidecar");
+const sidecarTargetRoot = path.join(sidecarRoot, "target");
+
+function buildNativeSidecar() {
+  const cargo = process.platform === "win32"
+    ? path.join(os.homedir(), ".cargo", "bin", "cargo.exe")
+    : "cargo";
+  const result = spawnSync(cargo, [
+    "build",
+    "--manifest-path",
+    path.join(sidecarRoot, "Cargo.toml"),
+    "--target-dir",
+    sidecarTargetRoot
+  ], {
+    cwd: sidecarRoot,
+    encoding: "utf8"
+  });
+  assert.equal(result.status, 0, `native sidecar build failed\n${result.stderr || result.stdout}`);
+}
 
 function sleep(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-async function getJson(url) {
-  const response = await fetch(url);
+async function getJson(url, options) {
+  const response = await fetch(url, options);
   if (!response.ok) throw new Error(`GET ${url} failed: ${response.status}`);
   return response.json();
 }
@@ -38,7 +61,15 @@ async function waitForService() {
   while (Date.now() < deadline) {
     try {
       const health = await getJson(`http://127.0.0.1:${servicePort}/health`);
-      if (health.ok) return health;
+      if (
+        health.ok
+        && health.service === "smart-prompt-local-service"
+        && health.sidecar === "native"
+        && health.version === nativeServiceVersion
+        && health.activationContract === activationContract
+        && health.runtimeContract === nativeRuntimeContract
+        && health.buildId === nativeBuildId
+      ) return health;
     } catch {
       // Service is still starting.
     }
@@ -131,7 +162,7 @@ function findPidOnPort(port) {
   const result = spawnSync("powershell", [
     "-NoProfile",
     "-Command",
-    `$line = netstat -ano | Select-String -Pattern ":${port}\\s" | Select-Object -First 1; if ($line) { (($line.ToString().Trim() -split "\\s+")[-1]) }`
+    `$connection = Get-NetTCPConnection -LocalPort ${port} -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1; if ($connection) { $connection.OwningProcess }`
   ], { encoding: "utf8" });
   const value = result.stdout.trim();
   return value ? Number(value) : null;
@@ -151,11 +182,21 @@ function taskkillTree(processId) {
 }
 
 (async () => {
+  buildNativeSidecar();
+  const occupiedPid = findPidOnPort(servicePort);
+  assert.equal(
+    occupiedPid,
+    null,
+    `runtime test refused to attach to the existing listener on fixed service port ${servicePort}`
+  );
+  const dataDir = fs.mkdtempSync(path.join(os.tmpdir(), "smart-prompt-tauri-phase3-"));
   const cargoBin = path.join(os.homedir(), ".cargo", "bin");
   const env = {
     ...process.env,
     PATH: `${cargoBin}${path.delimiter}${process.env.PATH || ""}`,
     SMART_PROMPT_PORT: String(servicePort),
+    SMART_PROMPT_DATA_DIR: dataDir,
+    SMART_PROMPT_ALLOW_DEV_BOOTSTRAP: "1",
     WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS: `--remote-debugging-port=${remotePort}`
   };
   const executable = process.platform === "win32" ? "cmd.exe" : "npm";
@@ -170,11 +211,18 @@ function taskkillTree(processId) {
     pass: false,
     remotePort,
     servicePort,
+    dataDirConfigured: true,
     checks: {
       webviewTarget: false,
       tauriApi: false,
+      phase3ControlCenter: false,
+      controlCenterHealthy: false,
       shortcutRegistered: false,
+      sidecarSource: false,
       localServiceStarted: false,
+      localServiceIdentity: false,
+      activationContract: false,
+      isolatedDataDir: false,
       localServiceStopped: false,
       globalShortcutTriggered: false
     }
@@ -198,6 +246,21 @@ function taskkillTree(processId) {
     }))()`, (value) => value.hasTauri && value.hasEvents && value.status.length > 0);
     report.checks.tauriApi = Boolean(tauriState.hasTauri && tauriState.hasEvents);
 
+    const phase3Ui = await waitFor(client, `(() => ({
+      phase3: document.body?.dataset?.phase3ControlCenter === "true",
+      wizard: Boolean(document.getElementById("activation-wizard")),
+      controlPages: document.querySelectorAll("[data-control-page-view]").length,
+      legacyHidden: getComputedStyle(document.querySelector(".legacy-shell"))?.display === "none"
+    }))()`, (value) => value.phase3 && value.wizard && value.controlPages === 4 && value.legacyHidden);
+    report.phase3Ui = phase3Ui;
+    report.checks.phase3ControlCenter = true;
+
+    const sidecarSource = await evaluate(client, `window.__TAURI__.core.invoke("get_local_service_source")`);
+    assert.match(sidecarSource, /local-service-sidecar=source/);
+    assert.match(sidecarSource, /target[\\/]debug[\\/]local-service-sidecar/);
+    report.sidecar = { source: "source", binaryConfigured: true };
+    report.checks.sidecarSource = true;
+
     const registered = await evaluate(client, `window.__TAURI__.core.invoke("set_global_shortcut", { shortcut: "Ctrl+Alt+P" })`);
     assert.equal(registered, "Ctrl+Alt+P");
     report.shortcut = registered;
@@ -208,8 +271,44 @@ function taskkillTree(processId) {
     const health = await waitForService();
     servicePid = findPidOnPort(servicePort);
     assert.equal(health.service, "smart-prompt-local-service");
+    assert.equal(health.sidecar, "native");
+    assert.equal(health.version, nativeServiceVersion);
+    assert.equal(health.activationContract, activationContract);
+    assert.equal(health.runtimeContract, nativeRuntimeContract);
+    assert.equal(health.buildId, nativeBuildId);
     report.service = health;
     report.checks.localServiceStarted = true;
+    report.checks.localServiceIdentity = true;
+    report.checks.activationContract = true;
+
+    const controlCenter = await waitFor(client, `(() => ({
+      status: document.getElementById("runtime-status")?.textContent || "",
+      tone: document.getElementById("runtime-status")?.dataset?.tone || "",
+      repairHidden: document.getElementById("runtime-repair")?.hidden === true,
+      wizardVisible: document.getElementById("activation-wizard")?.hidden === false
+    }))()`, (value) => value.tone === "success" && value.repairHidden && value.wizardVisible, 20000);
+    report.controlCenter = controlCenter;
+    report.checks.controlCenterHealthy = true;
+
+    const bootstrap = await getJson(`http://127.0.0.1:${servicePort}/auth/bootstrap`, {
+      headers: { Origin: "http://tauri.localhost" }
+    });
+    const token = bootstrap.auth?.token;
+    assert.equal(typeof token, "string");
+    assert.ok(token.length >= 32);
+    const activation = await getJson(`http://127.0.0.1:${servicePort}/activation/status`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    assert.equal(activation.activation?.schemaVersion, activationContract);
+    assert.equal(activation.activation?.progress, "not_started");
+    report.activation = {
+      schemaVersion: activation.activation.schemaVersion,
+      progress: activation.activation.progress,
+      runtimeHealth: activation.activation.runtimeHealth
+    };
+    assert.ok(fs.existsSync(path.join(dataDir, "activation.json")));
+    assert.ok(fs.existsSync(path.join(dataDir, "security.json")));
+    report.checks.isolatedDataDir = true;
 
     const runningStatus = await evaluate(client, `window.__TAURI__.core.invoke("get_local_service_status")`);
     assert.equal(runningStatus, "running");
@@ -228,7 +327,7 @@ function taskkillTree(processId) {
     report.checks.localServiceStopped = true;
     report.pass = Object.values(report.checks).every(Boolean);
   } catch (error) {
-    report.error = error.message;
+    report.error = "runtime_test_failed";
     error.message = `${error.message}\n--- tauri dev output ---\n${output.slice(-4000)}`;
     throw error;
   } finally {

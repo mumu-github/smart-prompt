@@ -15,6 +15,7 @@ const server = http.createServer((req, res) => {
   res.end(fs.readFileSync(filePath));
 });
 
-server.listen(17372, "127.0.0.1", () => {
-  console.log("Desktop shell static preview: http://127.0.0.1:17372");
+const port = Number(process.env.SMART_PROMPT_PREVIEW_PORT || 17372);
+server.listen(port, "127.0.0.1", () => {
+  console.log(`Desktop shell static preview: http://127.0.0.1:${port}`);
 });

@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-get-shortcut-hits"
+description = "Enables the get_shortcut_hits command without any pre-configured scope."
+commands.allow = ["get_shortcut_hits"]
+
+[[permission]]
+identifier = "deny-get-shortcut-hits"
+description = "Denies the get_shortcut_hits command without any pre-configured scope."
+commands.deny = ["get_shortcut_hits"]

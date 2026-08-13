@@ -3,9 +3,27 @@
   "identifier": "main-window",
   "description": "Main desktop shell window with only event listening for shortcut notifications. Custom Rust commands are exposed through the explicit invoke handler.",
   "windows": [
-    "main"
+    "main",
+    "mascot-overlay"
   ],
   "permissions": [
+    "allow-set-global-shortcut",
+    "allow-get-shortcut-hits",
+    "allow-get-local-service-status",
+    "allow-get-local-service-source",
+    "allow-get-foreground-window-state",
+    "allow-show-main-window",
+    "allow-hide-main-window",
+    "allow-open-chatgpt",
+    "allow-show-mascot-overlay",
+    "allow-hide-mascot-overlay",
+    "allow-set-mascot-overlay-state",
+    "allow-mascot-overlay-clicked",
+    "allow-mascot-overlay-draft-submitted",
+    "allow-trace-runtime-event",
+    "allow-start-local-service",
+    "allow-stop-local-service",
+    "allow-restart-local-service",
     "core:event:allow-listen",
     "core:event:allow-unlisten"
   ]
