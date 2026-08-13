@@ -2,6 +2,10 @@
 
 This Remotion prototype renders lightweight animation concepts for the Prompt Copilot floating mascot.
 
+## Integration status
+
+This is an archived, non-integrated animation prototype. The desktop shell does not load this Remotion project or the rendered MP4 previews at runtime; production UI currently uses the checked-in mascot image assets directly.
+
 ## Compositions
 
 - `MascotStateLoop`: cycles through normal, resting, thinking, suggesting, success, and clapping states.

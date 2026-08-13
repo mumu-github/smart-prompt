@@ -10,7 +10,7 @@
 - Prompt card：Refresh、Edit、Copy、Save、Insert。
 - 一键填入：DOM 写入并触发 `input` / `change`，不自动发送。
 - 本地 skill 导入：options 页支持粘贴或选择 Markdown / rules 文本，默认只作为文本建议引用。
-- V3 本地服务桥接：先向可信本地服务执行 `/auth/bootstrap`，再带 `Authorization: Bearer <token>` 请求 `http://127.0.0.1:17371/generate`；服务不可用时回退本地模板。
+- V3 本地服务桥接：由 MV3 background service worker 在内存中获取并持有本地服务令牌，再代理 `http://127.0.0.1:17371` 请求；网页 content script 不接触令牌，服务端也不依赖 wildcard CORS。
 - 站点适配器：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit。
 - 无依赖测试：prompt engine 和 manifest 结构校验。
 
@@ -47,9 +47,11 @@ V3 bridge behavior:
 - The local bridge bootstraps a per-install auth token and does not rely on wildcard CORS.
 - Insert records an after-write verification result with strategy, input kind, and reason. A failed verification leaves the card open.
 - Prompt cards show a skill basis line and a privacy summary based on origin/pathKind only, without page title or page body.
+- The bridge accepts only the fixed local service port `17371`; `/auth/bootstrap` is an internal worker operation and is not exposed as a content-script route.
 
 ## 当前边界
 
+- 当前激活闭环只支持带固定扩展 ID 的 Chrome/Edge MV3；Firefox/Safari 尚未实现，不应按已支持发布。
 - 这是浏览器 MVP，不包含 Tauri/Electron 桌面壳。
 - 未实现 Windows UI Automation / macOS AXUIElement。
 - prompt 生成先使用本地模板与 skill routing，不调用 LLM。

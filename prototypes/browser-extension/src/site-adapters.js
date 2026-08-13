@@ -1,169 +1,52 @@
-(function initSmartPromptSiteAdapters(root) {
-  const SITE_ADAPTERS = Object.freeze([
-    {
-      id: "chatgpt",
-      tool: "ChatGPT",
-      hostnames: ["chatgpt.com", "chat.openai.com"],
-      inputSelectors: ['#prompt-textarea', 'textarea[data-id="prompt-textarea"]', '[contenteditable="true"][data-id]', '[contenteditable="true"][role="textbox"]', '[role="textbox"]'],
-      insertStrategy: "contenteditable-or-textarea"
-    },
-    {
-      id: "claude",
-      tool: "Claude",
-      hostnames: ["claude.ai"],
-      inputSelectors: ['[data-testid="chat-input"] div[contenteditable="true"]', 'div[contenteditable="true"][role="textbox"]', 'div[contenteditable="true"]', '[role="textbox"]', 'textarea'],
-      insertStrategy: "contenteditable-or-textarea"
-    },
-    {
-      id: "gemini",
-      tool: "Gemini",
-      hostnames: ["gemini.google.com"],
-      inputSelectors: ['rich-textarea div[contenteditable="true"]', 'div[aria-label][contenteditable="true"]', 'div[contenteditable="true"]', '[role="textbox"]'],
-      insertStrategy: "contenteditable"
-    },
-    {
-      id: "perplexity",
-      tool: "Perplexity",
-      hostnames: ["perplexity.ai", "www.perplexity.ai"],
-      inputSelectors: ['textarea[placeholder*="Ask"]', 'textarea[aria-label*="Ask"]', '[data-testid*="composer"] textarea', '[contenteditable="true"][role="textbox"]', '[contenteditable="true"]', '[role="textbox"]', 'textarea'],
-      insertStrategy: "contenteditable-or-textarea"
-    },
-    {
-      id: "lovable",
-      tool: "Lovable",
-      hostnames: ["lovable.dev"],
-      inputSelectors: ['[role="textbox"][aria-label="Chat input"]', '[contenteditable="true"][aria-label="Chat input"]', '[data-testid*="chat"] [role="textbox"]', 'textarea[placeholder*="Build"]', '[contenteditable="true"]', '[role="textbox"]', 'textarea'],
-      insertStrategy: "textarea-first"
-    },
-    {
-      id: "bolt",
-      tool: "Bolt",
-      hostnames: ["bolt.new"],
-      inputSelectors: ['[role="textbox"][aria-label*="Type your idea"]', '[contenteditable="true"][aria-label*="Type your idea"]', 'textarea[placeholder*="Type your idea"]', '[data-testid*="chat"] [role="textbox"]', '[contenteditable="true"]', '[role="textbox"]', 'textarea'],
-      insertStrategy: "textarea-first"
-    },
-    {
-      id: "v0",
-      tool: "v0",
-      hostnames: ["v0.dev", "v0.app"],
-      inputSelectors: ['textarea[id^="prompt-textarea"]', 'textarea[placeholder*="v0"]', '[data-testid*="prompt"] textarea', 'textarea', '[contenteditable="true"]', '[role="textbox"]'],
-      insertStrategy: "textarea-first"
-    },
-    {
-      id: "replit",
-      tool: "Replit",
-      hostnames: ["replit.com"],
-      inputSelectors: [
-        'textarea[placeholder*="Replit"]',
-        'textarea[placeholder*="Ask"]',
-        'textarea[placeholder*="Describe"]',
-        'textarea[placeholder*="Build"]',
-        'textarea[aria-label*="Ask"]',
-        'textarea[aria-label*="prompt"]',
-        '[data-cy*="ai"] textarea',
-        '[data-testid*="ai"] textarea',
-        '[data-testid*="prompt"] textarea',
-        '[aria-label*="prompt"][contenteditable="true"]',
-        '[aria-label*="Ask"][contenteditable="true"]',
-        '[contenteditable="plaintext-only"]',
-        '[contenteditable="true"][role="textbox"]',
-        '[role="textbox"]',
-        'textarea',
-        '[contenteditable="true"]'
-      ],
-      insertStrategy: "textarea-first"
-    },
-    {
-      id: "workbuddy",
-      tool: "workBuddy",
-      hostnames: ["work-buddy.ai", "www.work-buddy.ai"],
-      inputSelectors: [
-        'textarea[placeholder*="work-buddy"]',
-        'textarea[placeholder*="WorkBuddy"]',
-        'textarea[placeholder*="Ask"]',
-        'textarea[placeholder*="Describe"]',
-        '[data-testid*="chat"] textarea',
-        '[data-testid*="prompt"] textarea',
-        '[aria-label*="prompt"][contenteditable="true"]',
-        '[aria-label*="Ask"][contenteditable="true"]',
-        '[contenteditable="true"][role="textbox"]',
-        '[role="textbox"]',
-        'textarea',
-        '[contenteditable="true"]'
-      ],
-      insertStrategy: "textarea-first"
-    },
-    {
-      id: "trae",
-      tool: "Trae",
-      hostnames: ["trae.ai", "www.trae.ai"],
-      inputSelectors: [
-        'textarea[placeholder*="Trae"]',
-        'textarea[placeholder*="Ask"]',
-        'textarea[placeholder*="Build"]',
-        'textarea[aria-label*="prompt"]',
-        '[data-testid*="chat"] textarea',
-        '[data-testid*="prompt"] textarea',
-        '[contenteditable="true"][role="textbox"]',
-        '[role="textbox"]',
-        'textarea',
-        '[contenteditable="true"]'
-      ],
-      insertStrategy: "textarea-first"
-    },
-    {
-      id: "doubao",
-      tool: "Doubao",
-      hostnames: ["doubao.com", "www.doubao.com", "dola.com", "www.dola.com"],
-      inputSelectors: [
-        'textarea[placeholder*="豆包"]',
-        'textarea[placeholder*="输入"]',
-        'textarea[placeholder*="Ask"]',
-        'textarea[aria-label*="豆包"]',
-        'textarea[aria-label*="输入"]',
-        '[data-testid*="chat"] textarea',
-        '[data-testid*="prompt"] textarea',
-        '[aria-label*="输入"][contenteditable="true"]',
-        '[contenteditable="plaintext-only"]',
-        '[contenteditable="true"][role="textbox"]',
-        '[role="textbox"]',
-        'textarea',
-        '[contenteditable="true"]'
-      ],
-      insertStrategy: "contenteditable-or-textarea"
-    },
-    {
-      id: "deepseek",
-      tool: "DeepSeek",
-      hostnames: ["chat.deepseek.com", "deepseek.com", "www.deepseek.com"],
-      inputSelectors: [
-        'textarea[placeholder*="DeepSeek"]',
-        'textarea[placeholder*="请输入"]',
-        'textarea[placeholder*="Ask"]',
-        'textarea[aria-label*="DeepSeek"]',
-        'textarea[aria-label*="chat"]',
-        '[data-testid*="chat"] textarea',
-        '[data-testid*="prompt"] textarea',
-        '[contenteditable="plaintext-only"]',
-        '[contenteditable="true"][role="textbox"]',
-        '[role="textbox"]',
-        'textarea',
-        '[contenteditable="true"]'
-      ],
-      insertStrategy: "textarea-first"
-    }
-  ]);
+﻿(function initSmartPromptSiteAdapters(root) {
+  const WRITE_CONTRACT_VERSION = "chatgpt-stable-write@1";
 
+  function loadSharedCore() {
+    if (root.SmartPromptCore) return root.SmartPromptCore;
+    if (typeof module !== "undefined" && module.exports && typeof require === "function") {
+      try {
+        return require("./smart-prompt-core.js");
+      } catch {
+        return require("../../../packages/shared/smart-prompt-core.js");
+      }
+    }
+    return null;
+  }
+
+  const sharedCore = loadSharedCore();
+  const SITE_ADAPTERS = Object.freeze((sharedCore?.SITE_ADAPTERS || []).map((adapter) => Object.freeze({
+    ...adapter,
+    hostnames: Object.freeze([...(adapter.hostnames || [])]),
+    inputSelectors: Object.freeze([...(adapter.inputSelectors || [])])
+  })));
+  if (!SITE_ADAPTERS.length) {
+    throw new Error("Smart Prompt shared core SITE_ADAPTERS must be loaded before site-adapters.js");
+  }
   function detectSiteAdapter(hostname) {
     const host = String(hostname || "").toLowerCase();
     return SITE_ADAPTERS.find((adapter) => adapter.hostnames.some((name) => host === name || host.endsWith(`.${name}`))) || null;
+  }
+
+  function isChatgptComposerCandidate(element) {
+    if (!element) return false;
+    const id = String(element.id || "");
+    const dataId = String(element.getAttribute?.("data-id") || "");
+    const testId = String(element.getAttribute?.("data-testid") || "");
+    return id === "prompt-textarea" || dataId === "prompt-textarea" || testId === "prompt-textarea";
+  }
+
+  function isWritableInputCandidate(element, adapter) {
+    if (adapter?.id === "chatgpt") return isChatgptComposerCandidate(element);
+    return Boolean(element);
   }
 
   function queryInputCandidates(documentRef, adapter) {
     const selectors = adapter?.inputSelectors?.length
       ? adapter.inputSelectors
       : ['textarea', 'input[type="text"]', 'input[type="search"]', '[contenteditable="true"]', '[role="textbox"]'];
-    return selectors.flatMap((selector) => querySelectorAllDeep(documentRef, selector));
+    return [...new Set(selectors.flatMap((selector) => querySelectorAllDeep(documentRef, selector)))].filter((element) =>
+      isWritableInputCandidate(element, adapter)
+    );
   }
 
   function querySelectorAllDeep(root, selector, results = []) {
@@ -193,7 +76,22 @@
   function setContentEditableValue(element, value) {
     if (!isEditableElement(element)) return false;
     element.focus?.();
-    element.textContent = value;
+    const normalizedValue = String(value ?? "").replace(/\r\n?/g, "\n");
+    const ownerDocument = element.ownerDocument || (typeof document !== "undefined" ? document : null);
+    if (
+      ownerDocument?.createElement
+      && ownerDocument?.createTextNode
+      && typeof element.replaceChildren === "function"
+    ) {
+      const paragraph = ownerDocument.createElement("p");
+      normalizedValue.split("\n").forEach((line, index) => {
+        if (index > 0) paragraph.appendChild(ownerDocument.createElement("br"));
+        if (line) paragraph.appendChild(ownerDocument.createTextNode(line));
+      });
+      element.replaceChildren(paragraph);
+    } else {
+      element.textContent = normalizedValue;
+    }
     const selection = typeof window !== "undefined" && window.getSelection ? window.getSelection() : null;
     if (selection && typeof document !== "undefined" && document.createRange) {
       const range = document.createRange();
@@ -202,13 +100,18 @@
       selection.removeAllRanges();
       selection.addRange(range);
     }
-    dispatchInputEvents(element, value);
+    dispatchInputEvents(element, normalizedValue, { replacement: true });
     return true;
   }
 
-  function createEvent(type, value) {
+  function createEvent(type, value, { replacement = false } = {}) {
     if (type === "input" && typeof InputEvent !== "undefined") {
-      return new InputEvent("input", { bubbles: true, composed: true, inputType: "insertText", data: value });
+      return new InputEvent("input", {
+        bubbles: true,
+        composed: true,
+        inputType: replacement ? "insertReplacementText" : "insertText",
+        data: replacement ? null : value
+      });
     }
     if (typeof Event !== "undefined") {
       return new Event(type, { bubbles: true, composed: true });
@@ -216,9 +119,9 @@
     return { type, bubbles: true, composed: true, inputType: type === "input" ? "insertText" : undefined, data: value };
   }
 
-  function dispatchInputEvents(element, value) {
-    element.dispatchEvent?.(createEvent("input", value));
-    element.dispatchEvent?.(createEvent("change", value));
+  function dispatchInputEvents(element, value, options) {
+    element.dispatchEvent?.(createEvent("input", value, options));
+    element.dispatchEvent?.(createEvent("change", value, options));
   }
 
   function isEditableElement(element) {
@@ -260,28 +163,55 @@
   }
 
   function writeInput(element, value, adapter) {
+    const targetKind = adapter?.id === "chatgpt" ? "chatgpt-composer" : `${adapter?.id || "generic"}-input`;
+    if (!isWritableInputCandidate(element, adapter)) {
+      return {
+        ok: false,
+        verified: false,
+        kind: "",
+        strategy: adapter?.insertStrategy || "contenteditable-or-textarea",
+        targetKind: "unknown",
+        reason: adapter?.id === "chatgpt" ? "chatgpt_target_not_composer" : "unsupported_target"
+      };
+    }
     element?.focus?.();
     const strategy = adapter?.insertStrategy || "contenteditable-or-textarea";
     for (const kind of getWritePlan(adapter, element)) {
       const result = attemptWrite(kind, element, value);
-      if (result.verified) return { ...result, strategy };
+      if (result.verified) return { ...result, strategy, targetKind };
     }
     return {
       ok: false,
       verified: false,
       kind: "",
       strategy,
+      targetKind,
       reason: "no_supported_write_strategy",
       valueLength: String(value || "").length
     };
   }
 
+  function verifyStableWrite(result, element, expectedValue) {
+    if (!result?.verified) return result;
+    const stableReadback = readInputValue(element) === String(expectedValue ?? "");
+    return {
+      ...result,
+      ok: stableReadback,
+      verified: stableReadback,
+      stableReadback,
+      reason: stableReadback ? "stable_readback_verified" : "stable_readback_mismatch"
+    };
+  }
+
   const api = {
+    WRITE_CONTRACT_VERSION,
     SITE_ADAPTERS,
     detectSiteAdapter,
+    isWritableInputCandidate,
     queryInputCandidates,
     querySelectorAllDeep,
     readInputValue,
+    verifyStableWrite,
     writeInput
   };
 

@@ -1,0 +1,8 @@
+{
+  "extensionName": {
+    "message": "Smart Prompt Copilot"
+  },
+  "extensionDescription": {
+    "message": "A floating prompt assistant for vibe coding and web LLM input boxes."
+  }
+}

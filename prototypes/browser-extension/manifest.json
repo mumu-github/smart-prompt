@@ -1,9 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "Smart Prompt Copilot",
-  "description": "A floating prompt assistant for vibe coding and web LLM input boxes.",
-  "version": "0.1.0",
+  "name": "__MSG_extensionName__",
+  "description": "__MSG_extensionDescription__",
+  "version": "0.2.6",
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8QVoXC4gZ7L/ekysmZdEUnhdCEwweXX9i+GRTK/BLaHQlxqnvQWe3pfUvmByyhxcZ13aPkQO035QQWG4F+KFFS1aa/TdockzCDDmrNTELdG0Egy3AmVfZH6t67bj/CI5UIFbg78di92hO8V0BexJorfFNZ0zhn7KMD1o8P+sYiDNek/siYvuAQ5DvdPzb2gwbG+Dcucyxs9bAzlMYSb8AD8DPzugd79/CRO5OewCS8qt05aeFpbcs45zxMHtZZ0F13axW+QHyFEhE1jvKOImzxgGSL6x7voCrrgLZ4glGpIfTmwD2Laavth9cOMZbC1nF2UhJHEC6i2fpLKywqIAPQIDAQAB",
+  "default_locale": "en",
   "minimum_chrome_version": "116",
+  "icons": {
+    "16": "assets/icons/icon-16.png",
+    "32": "assets/icons/icon-32.png",
+    "48": "assets/icons/icon-48.png",
+    "128": "assets/icons/icon-128.png"
+  },
   "permissions": [
     "storage",
     "activeTab"
@@ -34,6 +42,9 @@
     "http://127.0.0.1:17371/*",
     "http://localhost:17371/*"
   ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -61,8 +72,12 @@
         "https://www.deepseek.com/*"
       ],
       "js": [
+        "src/smart-prompt-core.js",
+        "src/prompt-session.js",
+        "src/assistant-card.js",
         "src/site-adapters.js",
         "src/local-service-client.js",
+        "src/activation-evidence.js",
         "src/prompt-engine.js",
         "src/content.js"
       ],
@@ -74,13 +89,20 @@
   ],
   "options_page": "options/options.html",
   "action": {
-    "default_title": "Smart Prompt Copilot",
-    "default_popup": "popup/popup.html"
+    "default_title": "__MSG_extensionName__",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "assets/icons/icon-16.png",
+      "32": "assets/icons/icon-32.png",
+      "48": "assets/icons/icon-48.png",
+      "128": "assets/icons/icon-128.png"
+    }
   },
   "web_accessible_resources": [
     {
       "resources": [
-        "assets/mascot-states/*.png"
+        "assets/mascot-states/*.png",
+        "src/assistant-card.css"
       ],
       "matches": [
         "<all_urls>"

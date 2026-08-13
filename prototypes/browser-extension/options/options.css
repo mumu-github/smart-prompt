@@ -95,6 +95,18 @@ textarea:focus {
   box-shadow: 0 0 0 3px rgba(46, 143, 140, 0.13);
 }
 
+select {
+  min-width: 180px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+}
+
 .row {
   display: flex;
   align-items: center;

@@ -121,7 +121,8 @@
       if (demoParams.has("serviceUrl") || demoParams.has("preferLocalService")) {
         window.__demoStorage.smartPromptSettings = {
           ...(demoParams.has("serviceUrl") ? { serviceUrl: demoParams.get("serviceUrl") } : {}),
-          ...(demoParams.has("preferLocalService") ? { preferLocalService: demoParams.get("preferLocalService") !== "false" } : {})
+          ...(demoParams.has("preferLocalService") ? { preferLocalService: demoParams.get("preferLocalService") !== "false" } : {}),
+          ...(demoParams.has("uiLocale") ? { uiLocale: demoParams.get("uiLocale") } : {})
         };
       }
       window.chrome = {
@@ -158,8 +159,12 @@
         }
       };
     </script>
+    <script src="../src/smart-prompt-core.js"></script>
+    <script src="../src/prompt-session.js"></script>
+    <script src="../src/assistant-card.js"></script>
     <script src="../src/site-adapters.js"></script>
     <script src="../src/local-service-client.js"></script>
+    <script src="../src/activation-evidence.js"></script>
     <script src="../src/prompt-engine.js"></script>
     <script src="../src/content.js"></script>
     <script>

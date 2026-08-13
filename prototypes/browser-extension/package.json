@@ -1,9 +1,9 @@
 {
   "name": "smart-prompt-browser-extension",
-  "version": "0.1.0",
+  "version": "0.2.6",
   "private": true,
   "description": "Chrome/Edge MV3 prototype for Smart Prompt Copilot.",
   "scripts": {
-    "test": "node tests/prompt-engine.test.js && node tests/manifest.test.js && node tests/site-adapters.test.js && node tests/runtime-demo.test.js"
+    "test": "node tests/prompt-engine.test.js && node tests/manifest.test.js && node tests/site-adapters.test.js && node tests/activation-evidence.test.js && node tests/activation-client.test.js && node tests/background-bridge.test.js && node tests/options-runtime.test.js && node tests/runtime-demo.test.js"
   }
 }

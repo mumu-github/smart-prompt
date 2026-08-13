@@ -1,21 +1,28 @@
 (function initOptions() {
   const engine = globalThis.SmartPromptEngine;
   const key = "smartPromptSkills";
+  const settingsKey = "smartPromptSettings";
 
   const els = {
     count: document.getElementById("skill-count"),
     list: document.getElementById("skill-list"),
     text: document.getElementById("skill-text"),
     file: document.getElementById("skill-file"),
-    importButton: document.getElementById("import-button")
+    importButton: document.getElementById("import-button"),
+    uiLocale: document.getElementById("ui-locale"),
+    saveSettings: document.getElementById("save-settings")
   };
 
   function storageGet() {
-    return new Promise((resolve) => chrome.storage.local.get([key], resolve));
+    return new Promise((resolve) => chrome.storage.local.get([key, settingsKey], resolve));
   }
 
   function storageSet(skills) {
     return new Promise((resolve) => chrome.storage.local.set({ [key]: skills }, resolve));
+  }
+
+  function storageSetSettings(settings) {
+    return new Promise((resolve) => chrome.storage.local.set({ [settingsKey]: settings }, resolve));
   }
 
   function escapeHtml(value) {
@@ -33,7 +40,10 @@
   }
 
   async function render() {
-    const skills = await getSkills();
+    const values = await storageGet();
+    const skills = Array.isArray(values[key]) ? values[key] : [];
+    const settings = values[settingsKey] || {};
+    els.uiLocale.value = settings.uiLocale || "auto";
     els.count.textContent = `${skills.length} skills`;
     if (!skills.length) {
       els.list.innerHTML = '<div class="empty">暂无导入内容</div>';
@@ -86,7 +96,16 @@
     await render();
   }
 
+  async function saveSettings() {
+    const values = await storageGet();
+    await storageSetSettings({
+      ...(values[settingsKey] || {}),
+      uiLocale: els.uiLocale.value || "auto"
+    });
+  }
+
   els.importButton.addEventListener("click", importSkills);
+  els.saveSettings.addEventListener("click", saveSettings);
   els.list.addEventListener("click", (event) => {
     const button = event.target.closest("button[data-id]");
     if (button) removeSkill(button.dataset.id);

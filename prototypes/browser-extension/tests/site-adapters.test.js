@@ -4,6 +4,7 @@ const path = require("node:path");
 const adapters = require("../src/site-adapters.js");
 const sharedCore = require("../../../packages/shared/smart-prompt-core.js");
 
+assert.equal(adapters.WRITE_CONTRACT_VERSION, "chatgpt-stable-write@1");
 assert.ok(adapters.SITE_ADAPTERS.length >= 12);
 const expectedAdapterIds = ["chatgpt", "claude", "gemini", "perplexity", "lovable", "bolt", "v0", "replit", "workbuddy", "trae", "doubao", "deepseek"];
 assert.deepEqual(adapters.SITE_ADAPTERS.map((adapter) => adapter.id), expectedAdapterIds);
@@ -96,6 +97,7 @@ function createFakeInput(tagName, attrs = {}) {
   const events = [];
   return {
     tagName,
+    id: attrs.id || "",
     value: "",
     textContent: "",
     innerText: "",
@@ -138,6 +140,43 @@ const failedResult = adapters.writeInput(fakeUnsupported, "Prompt", { insertStra
 assert.equal(failedResult.ok, false);
 assert.equal(failedResult.verified, false);
 
+const chatgptAdapter = adapters.SITE_ADAPTERS.find((adapter) => adapter.id === "chatgpt");
+const chatgptDecoy = createFakeInput("DIV", { role: "textbox", contenteditable: "true" });
+const decoyResult = adapters.writeInput(chatgptDecoy, "Prompt", chatgptAdapter);
+assert.equal(decoyResult.ok, false);
+assert.equal(decoyResult.verified, false);
+assert.equal(decoyResult.reason, "chatgpt_target_not_composer");
+assert.equal(adapters.isWritableInputCandidate(chatgptDecoy, chatgptAdapter), false);
+
+const chatgptComposer = createFakeInput("DIV", { id: "prompt-textarea", role: "textbox", contenteditable: "true" });
+const composerResult = adapters.writeInput(chatgptComposer, "Composer prompt", chatgptAdapter);
+assert.equal(composerResult.ok, true);
+assert.equal(composerResult.verified, true);
+assert.equal(composerResult.targetKind, "chatgpt-composer");
+assert.equal(adapters.isWritableInputCandidate(chatgptComposer, chatgptAdapter), true);
+
+assert.equal(typeof adapters.verifyStableWrite, "function");
+const stableComposerResult = adapters.verifyStableWrite(
+  composerResult,
+  chatgptComposer,
+  "Composer prompt"
+);
+assert.equal(stableComposerResult.ok, true);
+assert.equal(stableComposerResult.verified, true);
+assert.equal(stableComposerResult.stableReadback, true);
+assert.equal(stableComposerResult.reason, "stable_readback_verified");
+
+chatgptComposer.innerText = "Framework-reconciled value";
+const reconciledComposerResult = adapters.verifyStableWrite(
+  composerResult,
+  chatgptComposer,
+  "Composer prompt"
+);
+assert.equal(reconciledComposerResult.ok, false);
+assert.equal(reconciledComposerResult.verified, false);
+assert.equal(reconciledComposerResult.stableReadback, false);
+assert.equal(reconciledComposerResult.reason, "stable_readback_mismatch");
+
 const content = fs.readFileSync(path.join(__dirname, "../src/content.js"), "utf8");
 assert.ok(content.includes("localService.generate"));
 assert.ok(content.includes("localService.savePrompt"));
@@ -150,15 +189,22 @@ assert.ok(content.includes("composedPath"));
 assert.ok(content.includes("lastInsertResult"));
 assert.ok(content.includes("smartPromptInsert"));
 assert.ok(content.includes("smartprompt:insert-result"));
-assert.ok(content.includes("spc-mode-selector"));
-assert.ok(content.includes("data-action=\"retry\""));
+assert.ok(content.includes("SmartPromptAssistantUI"));
+assert.ok(content.includes("mountAssistantCard"));
+assert.ok(content.includes("onModeChange"));
+assert.ok(content.includes('action === "regenerate"'));
+assert.ok(content.includes('action === "retry-target"'));
 assert.ok(content.includes("data-action=\"undo\""));
 assert.ok(content.includes("smartPromptUndo"));
-assert.ok(content.includes("spc-source-badge"));
+assert.ok(content.includes('assetUrl("src/assistant-card.css")'));
 assert.ok(content.includes("setCardStatus"));
 assert.ok(content.includes("recordFeedbackEvent"));
-assert.ok(content.includes("spc-evidence"));
+assert.ok(content.includes("syncProductSession"));
+assert.ok(content.includes("syncProductSnapshot"));
 assert.ok(content.includes("lastAdapterId"));
+assert.ok(content.includes("isWritableInputCandidate"));
+assert.ok(content.includes("verifyStableInputWrite"));
+assert.ok(content.includes("STABLE_READBACK_DELAYS_MS"));
 assert.ok(content.includes("bindShadowRootEvents"));
 assert.ok(content.includes("bindInputElementEvents"));
 assert.ok(content.includes("MutationObserver"));
@@ -207,5 +253,10 @@ assert.ok(liveProbe.includes("dom-evidence"));
 const replit = adapters.SITE_ADAPTERS.find((adapter) => adapter.id === "replit");
 assert.ok(replit.inputSelectors.some((selector) => selector.includes("Describe")));
 assert.ok(replit.inputSelectors.some((selector) => selector.includes("plaintext-only")));
+
+const doubao = adapters.SITE_ADAPTERS.find((adapter) => adapter.id === "doubao");
+assert.ok(doubao.inputSelectors.includes('textarea.semi-input-textarea'));
+assert.ok(doubao.inputSelectors.includes('textarea[placeholder*="发消息"]'));
+assert.ok(doubao.inputSelectors.includes('textarea[placeholder*="按住空格"]'));
 
 console.log("site-adapters tests passed");
