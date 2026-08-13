@@ -76,8 +76,8 @@
 ### 阶段 A：入库与基线（第 1 周）
 
 - [x] 分批 git commit + push（当前 75 modified + 209 untracked，7 周工作未入库；详见第 6 节提交方案）。
-- [x] 根级测试聚合入口 + CI 骨架（根 `package.json` 的 `npm test` + `.github/workflows/ci.yml`）。
-- [ ] 修文档漂移与版本号。
+- [x] 根级测试聚合入口 + CI 骨架（根 `package.json` 的 `npm test` + `.github/workflows/ci.yml`；远程 GitHub Actions 首次全绿 2026-08-13）。
+- [x] 修文档漂移与版本号（`assistant-state-spec.md` 对齐实现；`/health` 版本对齐 0.2.0）。
 - **退出标准**：`git status` 干净（或仅剩明确忽略项）；CI 绿灯；README 与界面一致。
 
 ### 阶段 B：单人可用（第 2-4 周）
