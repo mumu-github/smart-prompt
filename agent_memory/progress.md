@@ -1,5 +1,22 @@
 # 当前进度
 
+## 2026-08-13 阶段 A 收口与真实闭环准备
+
+- 已完成：7 周工作分批入库（8 批 371 文件）、根级 `npm test` 聚合入口、GitHub Actions CI（远程全绿）、文档漂移修复、视觉测试 Chrome 路径可配置化、官网单页与上架/招募材料。
+- CI 上线首跑抓出并修复 5 个问题：假时钟时间炸弹、模型错误抢占 review 主操作、verified 事务期间 legacy 轮询争夺、CRLF checkout 破坏 Rust 断言、品牌版 Chrome 137+ 禁用 --load-extension（CI 改用 Playwright 完整 Chromium）。
+- 当前重点回到闭环：Codex 真实闭环是"单人可用"的最后一块。上次（7-19）失败在 machine-verified insert（回读 529 vs 558），现行脚本已改为信任适配器归一化机器回读，原始长度对比仅信息性。
+- 今日修复改变了 app.js/assistant-card.js/server.js，r10 安装包已过期；新安装包已重新构建（`npm run build --prefix apps/desktop-shell`，2026-08-14T01:28Z）：
+  - NSIS `4ADD0FF50A891143097AAF80ED86F8B9ABDA8C9EF1643DDFFD7C4667F84A3255`
+  - sidecar `08CE1DB7418245845945867C9BB22BC9894DBB62A44C63B96DA0826085621F3C`
+  - desktop exe `0673CA41316A7C881D23003303957D66F0575603481B68392933646F15D08FDC`
+  - 真实闭环必须用新包。
+- 真实闭环执行序列（等待用户授权口令「授权本轮真实闭环」）：
+  1. 覆盖安装新 NSIS 到 `C:\Users\lhy10\AppData\Local\Programs\Smart Prompt`；
+  2. `$env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-port=9239"` 后启动安装版 exe；
+  3. 用户打开 Codex 并聚焦输入框，写入非敏感合成草稿；
+  4. `node scripts/check-codex-outcome-real-closure.js`（真实 LLM 生成 + verified insert + 自动收起 + 60s Pending Outcome 复开 + 撤销）。
+- 边界不变：真实 GUI 写入必须 foreground + safe candidate + 用户明确授权同时成立；不得自动安装、自动切换前台。
+
 ## 2026-07-19 Codex Outcome Learning Loop v1 实现收尾
 
 - 已完成共享 Outcome/Learning 契约、Codex target 事务、Pending Outcome、最终编辑摘要、四类候选、Policy canary/回滚/晋升、项目清除与恢复去信任。
