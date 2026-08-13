@@ -49,7 +49,7 @@
 
 - [ ] **Node/Rust 双实现收敛**：Rust sidecar 退化为薄代理（凭证 DPAPI、写回事务、隐私守卫、健康接口）；学习/策略逻辑只保留 Node 一份。消除 `main.rs`（6765 行）与 `learning_policy.rs`（5394 行）的业务逻辑重复，并消除 phase3 契约只测 sidecar 的行为漂移风险。
 - [ ] **验证脚本收敛**：165k 行 PowerShell 从"每次人肉跑 30 个"收敛为 5-8 个 key critics（critic-v2、critic-m3、phase3、privacy、installer、visual），其余归档为历史；新增根级 `npm test` 聚合入口。
-- [ ] **补 CI**：GitHub Actions 跑聚合测试 + key critics；视觉测试的硬编码 `chrome-headless-shell` 路径改为可配置。
+- [x] **补 CI**：GitHub Actions 聚合测试入口（根 `npm test`，`.github/workflows/ci.yml`）；[ ] key critics 接入与视觉测试 `chrome-headless-shell` 路径可配置化。
 - [ ] **同步机制收口**：`smart-prompt-core` 无 sync 脚本，要么补 sync，要么合并进 `packages/prompt-session`，禁止第三份裸奔拷贝。
 - [ ] 拆分 God files（`app.js` 3761 行、`server.js`、`store.js`），小步提交，以 phase3 契约测试为安全网。
 
@@ -73,8 +73,8 @@
 
 ### 阶段 A：入库与基线（第 1 周）
 
-- [ ] 分批 git commit + push（当前 75 modified + 209 untracked，7 周工作未入库；详见第 6 节提交方案）。
-- [ ] 根级测试聚合入口 + CI 骨架。
+- [x] 分批 git commit + push（当前 75 modified + 209 untracked，7 周工作未入库；详见第 6 节提交方案）。
+- [x] 根级测试聚合入口 + CI 骨架（根 `package.json` 的 `npm test` + `.github/workflows/ci.yml`）。
 - [ ] 修文档漂移与版本号。
 - **退出标准**：`git status` 干净（或仅剩明确忽略项）；CI 绿灯；README 与界面一致。
 

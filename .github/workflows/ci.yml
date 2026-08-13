@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - "codex/**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  node-tests:
+    name: Node tests (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # 浏览器扩展 runtime-demo/options-runtime 需要本机 Chrome：
+      # windows-latest 镜像自带 Google Chrome；若镜像变化需另装或改 CHROME_PATH。
+      - name: Run all Node test suites
+        shell: pwsh
+        run: npm run test:node
+
+  rust-tests:
+    name: Rust tests (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: |
+            apps/local-service-sidecar -> target
+            apps/desktop-shell/src-tauri -> target
+
+      - name: Sidecar unit + contract tests
+        run: cargo test --manifest-path apps/local-service-sidecar/Cargo.toml
+
+      - name: Sidecar formatting
+        run: cargo fmt --check --manifest-path apps/local-service-sidecar/Cargo.toml
+
+      # 真实二进制 HTTP 契约：编译 sidecar 到临时 target 后拉起并验证。
+      - name: Real-binary phase3 contract
+        run: node apps/local-service-sidecar/tests/phase3-contract.test.js
+
+      - name: Desktop shell Rust check
+        run: cargo check --manifest-path apps/desktop-shell/src-tauri/Cargo.toml

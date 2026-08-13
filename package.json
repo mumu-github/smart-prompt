@@ -1,0 +1,13 @@
+{
+  "name": "smart-prompt",
+  "version": "0.2.0",
+  "private": true,
+  "description": "提笔（Tibi）——输入框旁的上下文提示词编辑器。根级测试聚合入口，不做发布。",
+  "scripts": {
+    "test": "npm run test:node && npm run test:rust",
+    "test:node": "npm --prefix packages/prompt-session test && npm --prefix packages/assistant-ui test && npm --prefix apps/local-service test && npm --prefix prototypes/browser-extension test && npm --prefix apps/desktop-shell test",
+    "test:rust": "cargo test --manifest-path apps/local-service-sidecar/Cargo.toml",
+    "check:desktop-rust": "cargo check --manifest-path apps/desktop-shell/src-tauri/Cargo.toml",
+    "fmt:rust": "cargo fmt --check --manifest-path apps/local-service-sidecar/Cargo.toml"
+  }
+}

@@ -39,7 +39,8 @@
 ## 验证
 
 - 命令已验证：共享 UI/Session 契约测试、浏览器扩展全量测试、桌面静态与交互测试、桌面 Session 运行时测试、共享视觉报告、运行时同步 hash、`prepare-dist`、PowerShell parser、`node --check` 和 `git diff --check` 均通过。
-- 建议命令：先看 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-m3.ps1`、`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-p25-overlay-click-chain.ps1`、`node scripts/check-p25-overlay-chat-visual.js`。
+- 统一测试入口：根目录 `npm test`（`test:node` 聚合五个 Node 包测试 + `test:rust` sidecar 契约测试）；CI 见 `.github/workflows/ci.yml`（push 到 main/codex/** 与 PR 时运行）。
+- 建议命令：先看 `npm test`、`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-m3.ps1`、`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-p25-overlay-click-chain.ps1`、`node scripts/check-p25-overlay-chat-visual.js`。
 - GUI 已验证：浏览器 Demo 与桌面离线 Overlay 已通过无头浏览器截图检查；未启动真实 Tauri 前台窗口，也未对真实工具输入框执行写入。
 - 线上闭环已验证：不适用；真实 LLM/API provider 可用性需按配置和授权单独验证。
 - 未验证及原因：P25 runtime readiness、真实 overlay click、WorkBuddy 机器读回或人工确认、macOS/Linux 桌面输入；阶段 2 不重跑真实前台写回。
