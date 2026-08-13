@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>提笔 Tibi —— 输入框旁的上下文提示词编辑器</title>
+<meta name="description" content="提笔（Tibi）在 AI 输入框旁帮你把模糊草稿整理成可审核、可填入的提示词——永不替你发送。BYOK、本地优先、从你的任务结果学习。">
+<style>
+  :root {
+    --ink: #172326;
+    --muted: #5b6b6e;
+    --accent: #2e8f8c;
+    --accent-soft: #e8f4f3;
+    --line: #e2e9e8;
+    --bg: #fbfdfc;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "PingFang SC", "Microsoft YaHei", "Segoe UI", system-ui, sans-serif;
+    color: var(--ink);
+    background: var(--bg);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  header { padding: 64px 0 40px; text-align: center; }
+  .brand { display: flex; align-items: center; justify-content: center; gap: 14px; }
+  .brand img { width: 64px; height: 64px; }
+  .brand h1 { font-size: 40px; letter-spacing: 2px; }
+  .brand .en { color: var(--accent); font-weight: 600; }
+  .tagline { margin-top: 18px; font-size: 22px; font-weight: 500; }
+  .subtag { margin-top: 8px; color: var(--muted); font-size: 15px; }
+  .hero-note {
+    margin-top: 26px; display: inline-block;
+    background: var(--accent-soft); color: var(--accent);
+    border-radius: 999px; padding: 6px 18px; font-size: 13px;
+  }
+  section { margin: 56px 0; }
+  h2 { font-size: 22px; margin-bottom: 20px; text-align: center; }
+  .promises { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .promise {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 14px; padding: 24px 20px;
+  }
+  .promise .num { color: var(--accent); font-weight: 700; font-size: 14px; }
+  .promise h3 { margin: 8px 0 6px; font-size: 17px; }
+  .promise p { color: var(--muted); font-size: 14px; }
+  .steps { counter-reset: step; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .step { position: relative; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 24px 20px 20px; }
+  .step::before {
+    counter-increment: step; content: counter(step);
+    position: absolute; top: -14px; left: 20px;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: var(--accent); color: #fff; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; font-size: 14px;
+  }
+  .step h3 { font-size: 16px; margin-bottom: 6px; }
+  .step p { color: var(--muted); font-size: 14px; }
+  .targets { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .target {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 999px; padding: 6px 16px; font-size: 13px; color: var(--ink);
+  }
+  .status { max-width: 720px; margin: 0 auto; background: var(--card); border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
+  .status table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .status th, .status td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--line); }
+  .status th { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .status tr:last-child td { border-bottom: none; }
+  .ok { color: var(--accent); }
+  .pending { color: #b87820; }
+  .cta { text-align: center; }
+  .cta a {
+    display: inline-block; background: var(--accent); color: #fff;
+    border-radius: 10px; padding: 14px 34px; font-size: 16px; text-decoration: none;
+  }
+  .cta .hint { margin-top: 12px; color: var(--muted); font-size: 13px; }
+  footer { padding: 40px 0 56px; text-align: center; color: var(--muted); font-size: 13px; }
+  footer a { color: var(--accent); text-decoration: none; }
+  @media (max-width: 720px) {
+    .promises, .steps { grid-template-columns: 1fr; }
+    .brand h1 { font-size: 32px; }
+    .tagline { font-size: 19px; }
+  }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <div class="brand">
+    <img src="../../assets/ui-ux/mascot-token-run.png" alt="提笔小人">
+    <h1>提笔 <span class="en">Tibi</span></h1>
+  </div>
+  <div class="tagline">写清楚，你决定发送。</div>
+  <div class="subtag">输入框旁的上下文提示词编辑器：把模糊草稿整理成可审核、可填入的提示词，填回原输入框。</div>
+  <div class="hero-note">不是提示词库，不是改写工具——是输入瞬间的 context engineering 就地增强层</div>
+</header>
+
+<section class="wrap">
+  <h2>三条信任承诺</h2>
+  <div class="promises">
+    <div class="promise">
+      <div class="num">01 / 你控制</div>
+      <h3>永不自动发送</h3>
+      <p>只填入、不发送。<code>no-auto-submit</code> 由状态机代码强制，违反即进入阻断状态。发送权永远在你手里。</p>
+    </div>
+    <div class="promise">
+      <div class="num">02 / 你拥有</div>
+      <h3>BYOK + 本地优先</h3>
+      <p>自带 API Key（Agnes / OpenAI 兼容 / Anthropic / Gemini），凭证本机加密；正文不入长期存储，无云端账号。</p>
+    </div>
+    <div class="promise">
+      <div class="num">03 / 会学习</div>
+      <h3>从结果学习，不是套模板</h3>
+      <p>从你的真实任务结果（Outcome、Token、时间、返工）形成可审核的 Memory / Rule / Skill / Generation Policy。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>三步完成一次提示词</h2>
+  <div class="steps">
+    <div class="step">
+      <h3>写下想法，点击小人</h3>
+      <p>在 AI 输入框旁，小人安静出现。空想法、半成品、完整草稿都能开始——自动判断该构思、续写还是优化。</p>
+    </div>
+    <div class="step">
+      <h3>审核生成结果</h3>
+      <p>结果是可直接交给当前 AI 工具的任务说明，可直接编辑；必要时提醒你用上已有的 skill。</p>
+    </div>
+    <div class="step">
+      <h3>填入，然后你自己发送</h3>
+      <p>机器回读确认填入成功，随时可撤销；绝不会替你按发送。</p>
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>在哪里出现</h2>
+  <div class="targets">
+    <span class="target">ChatGPT</span>
+    <span class="target">Claude</span>
+    <span class="target">Gemini</span>
+    <span class="target">Perplexity</span>
+    <span class="target">DeepSeek</span>
+    <span class="target">豆包</span>
+    <span class="target">Lovable</span>
+    <span class="target">Bolt</span>
+    <span class="target">v0</span>
+    <span class="target">Replit</span>
+    <span class="target">Codex（桌面）</span>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>真实状态（诚实记录）</h2>
+  <div class="status">
+    <table>
+      <tr><th>项目</th><th>状态</th></tr>
+      <tr><td>ChatGPT 浏览器 verified insert 真实闭环</td><td class="ok">✅ 已通过（单次观测 144 秒）</td></tr>
+      <tr><td>Codex 桌面真实闭环</td><td class="pending">⏳ 差最后一步 machine-verified insert</td></tr>
+      <tr><td>真实付费 benchmark</td><td class="pending">⏳ 未运行（需预算授权）</td></tr>
+      <tr><td>分发</td><td class="pending">⏳ 内测中：安装包未签名，扩展未上架商店</td></tr>
+    </table>
+  </div>
+</section>
+
+<section class="wrap cta">
+  <a href="https://github.com/mumu-github/smart-prompt">GitHub 仓库（内测中）</a>
+  <div class="hint">BYOK · 本地优先 · 永不自动发送 · Windows / Chrome / Edge</div>
+</section>
+
+<footer class="wrap">
+  <p>提笔 Tibi · Write it clear. You decide to send.</p>
+  <p><a href="https://github.com/mumu-github/smart-prompt">github.com/mumu-github/smart-prompt</a></p>
+</footer>
+</body>
+</html>
