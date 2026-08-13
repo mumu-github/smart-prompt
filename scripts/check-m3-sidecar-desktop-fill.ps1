@@ -62,13 +62,14 @@ function Invoke-Json {
     [string]$Method,
     [string]$Url,
     [hashtable]$Headers = @{},
-    [object]$Body = $null
+    [object]$Body = $null,
+    [int]$TimeoutSec = 8
   )
   if ($null -eq $Body) {
-    return Invoke-RestMethod -Method $Method -Uri $Url -Headers $Headers -TimeoutSec 8
+    return Invoke-RestMethod -Method $Method -Uri $Url -Headers $Headers -TimeoutSec $TimeoutSec
   }
   $jsonBody = $Body | ConvertTo-Json -Depth 8
-  Invoke-RestMethod -Method $Method -Uri $Url -Headers $Headers -Body $jsonBody -ContentType "application/json" -TimeoutSec 8
+  Invoke-RestMethod -Method $Method -Uri $Url -Headers $Headers -Body $jsonBody -ContentType "application/json" -TimeoutSec $TimeoutSec
 }
 
 function Set-ContentWithRetry {
@@ -121,7 +122,7 @@ try {
 
   $auth = Invoke-Json -Method GET -Url "http://127.0.0.1:$selectedPort/auth/bootstrap"
   $headers = @{ Authorization = "Bearer $($auth.auth.token)" }
-  $fillResponse = Invoke-Json -Method POST -Url "http://127.0.0.1:$selectedPort/desktop/fill?selfTest=1" -Headers $headers -Body @{ text = $FillText }
+  $fillResponse = Invoke-Json -Method POST -Url "http://127.0.0.1:$selectedPort/desktop/fill?selfTest=1" -Headers $headers -Body @{ text = $FillText } -TimeoutSec 20
   $fill = $fillResponse.fill
   $fillJson = $fill | ConvertTo-Json -Depth 10
 

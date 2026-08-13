@@ -1,0 +1,65 @@
+﻿{
+    "schemaVersion":  "p25-desktop-shell-start@1",
+    "createdAt":  "2026-06-17T16:10:47.5478355Z",
+    "pass":  false,
+    "completionReady":  false,
+    "completionImpact":  "start_not_allowed",
+    "status":  "start_not_allowed",
+    "candidate":  {
+                      "path":  "apps/desktop-shell/src-tauri/target/release/smart-prompt-desktop.exe",
+                      "present":  true,
+                      "sizeBytes":  12056064,
+                      "lastWriteUtc":  "2026-06-16T17:06:35.9339958Z",
+                      "sha256Prefix":  "631badaf60b95f54"
+                  },
+    "process":  {
+                    "processName":  "smart-prompt-desktop.exe",
+                    "beforeCount":  0,
+                    "afterCount":  0,
+                    "launchedProcessId":  null,
+                    "startError":  null,
+                    "before":  [
+
+                               ],
+                    "after":  [
+
+                              ]
+                },
+    "diagnostics":  {
+                        "candidateReady":  false,
+                        "existingProcessBlocksStart":  false,
+                        "safeToStartWithoutStoppingExisting":  true,
+                        "startSkippedReason":  "start_not_allowed",
+                        "startAttemptedOnlyWithExplicitAllow":  true,
+                        "runtimeProcessCount":  0,
+                        "runtimeMatchingProcessCount":  0,
+                        "runtimeMatchesCandidate":  false,
+                        "nextAction":  "explicitly_allow_start_to_verify_real_overlay"
+                    },
+    "runtimeReadiness":  {
+                             "report":  "research/p25-runtime-readiness.latest.json",
+                             "ran":  true,
+                             "exitCode":  0,
+                             "completionReady":  false,
+                             "processCount":  0,
+                             "matchingProcessCount":  0
+                         },
+    "safety":  {
+                   "startRequiresExplicitAllow":  true,
+                   "startAllowed":  false,
+                   "startAttempted":  false,
+                   "stopAttempted":  false,
+                   "killAttempted":  false,
+                   "replaceAttempted":  false,
+                   "realOverlayClickAttempted":  false,
+                   "writeAttempted":  false
+               },
+    "privacy":  {
+                    "noPromptTextRead":  true,
+                    "noTargetInputRead":  true,
+                    "noRawTitlesRead":  true,
+                    "rawUiaNamesNotRead":  true,
+                    "clipboardTextNotRead":  true,
+                    "onlyMetadataStored":  true
+                }
+}

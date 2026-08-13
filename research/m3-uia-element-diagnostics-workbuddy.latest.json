@@ -1,0 +1,126 @@
+﻿{
+    "schemaVersion":  "m3-uia-element-diagnostics@1",
+    "createdAt":  "2026-06-17T17:46:50.9528305Z",
+    "platform":  "win32",
+    "pass":  true,
+    "foreground":  {
+                       "processName":  "WorkBuddy",
+                       "pidPresent":  true,
+                       "titleLength":  9,
+                       "titleHash":  "d754cc54dc1de6d8",
+                       "detectedToolProfile":  "workbuddy",
+                       "isVisible":  true,
+                       "isMinimized":  false,
+                       "isCloaked":  false,
+                       "boundingRect":  {
+                                            "x":  412,
+                                            "y":  87,
+                                            "width":  1002,
+                                            "height":  804
+                                        }
+                   },
+    "summary":  {
+                    "rootAvailable":  true,
+                    "inspectedElementCount":  3,
+                    "traversalTimedOut":  false,
+                    "controlTypeCounts":  {
+                                              "ControlType.Window":  1,
+                                              "ControlType.Pane":  2
+                                          },
+                    "nearBottomCount":  3,
+                    "composerGeometryCount":  0,
+                    "strongSignalCount":  1,
+                    "cursorSupported":  true
+                },
+    "elements":  [
+                     {
+                         "index":  0,
+                         "depth":  0,
+                         "controlType":  "ControlType.Window",
+                         "isEnabled":  true,
+                         "isKeyboardFocusable":  false,
+                         "hasKeyboardFocus":  true,
+                         "focusedElementMatch":  true,
+                         "hasValuePattern":  false,
+                         "hasTextPattern":  false,
+                         "cursorWithinBounds":  false,
+                         "nearWindowBottom":  true,
+                         "broadDocument":  false,
+                         "composerGeometry":  false,
+                         "boundingRect":  {
+                                              "x":  824,
+                                              "y":  174,
+                                              "width":  2004,
+                                              "height":  1608
+                                          },
+                         "hashes":  {
+                                        "nameHash":  "d754cc54dc1de6d8",
+                                        "automationIdHash":  "",
+                                        "classNameHash":  "407621191f8b8a0b",
+                                        "runtimeIdHash":  "438938df41301fcf"
+                                    }
+                     },
+                     {
+                         "index":  2,
+                         "depth":  1,
+                         "controlType":  "ControlType.Pane",
+                         "isEnabled":  false,
+                         "isKeyboardFocusable":  false,
+                         "hasKeyboardFocus":  false,
+                         "focusedElementMatch":  false,
+                         "hasValuePattern":  false,
+                         "hasTextPattern":  false,
+                         "cursorWithinBounds":  false,
+                         "nearWindowBottom":  true,
+                         "broadDocument":  false,
+                         "composerGeometry":  false,
+                         "boundingRect":  {
+                                              "x":  824,
+                                              "y":  174,
+                                              "width":  2004,
+                                              "height":  1608
+                                          },
+                         "hashes":  {
+                                        "nameHash":  "",
+                                        "automationIdHash":  "",
+                                        "classNameHash":  "62756ac20282dc11",
+                                        "runtimeIdHash":  "0bb097618d8a1391"
+                                    }
+                     },
+                     {
+                         "index":  1,
+                         "depth":  1,
+                         "controlType":  "ControlType.Pane",
+                         "isEnabled":  true,
+                         "isKeyboardFocusable":  false,
+                         "hasKeyboardFocus":  false,
+                         "focusedElementMatch":  false,
+                         "hasValuePattern":  false,
+                         "hasTextPattern":  false,
+                         "cursorWithinBounds":  false,
+                         "nearWindowBottom":  true,
+                         "broadDocument":  false,
+                         "composerGeometry":  false,
+                         "boundingRect":  {
+                                              "x":  824,
+                                              "y":  174,
+                                              "width":  2004,
+                                              "height":  1608
+                                          },
+                         "hashes":  {
+                                        "nameHash":  "1a913d78310e7023",
+                                        "automationIdHash":  "05f63b00082aaa64",
+                                        "classNameHash":  "9f09cdf28cf58f4e",
+                                        "runtimeIdHash":  "5ccc4846213f2257"
+                                    }
+                     }
+                 ],
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "promptTextNotRead":  true,
+                    "rawTextNotStored":  true,
+                    "geometryAndBooleansOnly":  true
+                }
+}

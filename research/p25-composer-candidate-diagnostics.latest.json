@@ -1,0 +1,923 @@
+﻿{
+    "schemaVersion":  "p25-composer-candidate-diagnostics@1",
+    "createdAt":  "2026-06-14T06:40:52.9112989Z",
+    "pass":  true,
+    "completionReady":  false,
+    "completionImpact":  "composer_candidate_ready_needs_real_overlay_click",
+    "refreshedSnapshot":  false,
+    "reports":  {
+                    "snapshotReport":  "research/m3-desktop-input.latest.json",
+                    "targetsReport":  "research/p25-real-desktop-targets.latest.json",
+                    "outputReport":  "research/p25-composer-candidate-diagnostics.latest.json"
+                },
+    "summary":  {
+                    "detectedToolProfile":  "codex",
+                    "selectionSource":  "foreground_window",
+                    "candidateCount":  186,
+                    "safeCandidateCount":  1,
+                    "browserLikeComposerCandidateCount":  1,
+                    "semanticCandidateCount":  0,
+                    "focusedCandidateCount":  0,
+                    "caretCandidateCount":  0,
+                    "bestCandidateIndex":  185,
+                    "topReasonCounts":  {
+                                            "browser_like_composer_blocked":  1,
+                                            "button_or_hyperlink":  81,
+                                            "disabled":  1,
+                                            "static_text":  96,
+                                            "no_safe_writable_signal":  2,
+                                            "not_near_window_bottom":  3,
+                                            "offscreen_or_negative_bounds":  2
+                                        },
+                    "browserLikeDeficitSummary":  {
+                                                      "blockedCandidateCount":  1,
+                                                      "missingEnabledCount":  0,
+                                                      "missingKeyboardFocusableCount":  0,
+                                                      "missingWritableTypeCount":  0,
+                                                      "missingStrongInputSignalCount":  0,
+                                                      "missingBroadDocumentGuardCount":  1,
+                                                      "missingWritableControlPatternCount":  0,
+                                                      "missingSignalCandidatesCount":  1,
+                                                      "preferredWritableEligibleCount":  0
+                                                  }
+                },
+    "targets":  [
+                    {
+                        "id":  "codex",
+                        "windowFound":  true,
+                        "strictForegroundDetected":  true,
+                        "selectionSource":  "foreground_window",
+                        "targetSnapshotApplies":  true,
+                        "targetCandidateCount":  185,
+                        "targetSafeCandidateCount":  0,
+                        "targetBestCandidateIndex":  -1,
+                        "writeVerified":  false
+                    }
+                ],
+    "candidates":  [
+                       {
+                           "index":  185,
+                           "reason":  "no_safe_writable_signal",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "VisualWebViewComposer",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  957,
+                                                "y":  1438,
+                                                "width":  1420,
+                                                "height":  88
+                                            },
+                           "inputSignals":  {
+                                                "score":  80,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  true
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "aac15feaab998dc3"
+                                      }
+                       },
+                       {
+                           "index":  0,
+                           "reason":  "browser_like_composer_blocked",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  true,
+                           "browserLikeDeficitSignals":  {
+                                                             "preferredWritableEligible":  false,
+                                                             "strongSignalPresent":  true,
+                                                             "hasKeyboardFocus":  false,
+                                                             "focusedElementMatch":  false,
+                                                             "caretWithinBounds":  false,
+                                                             "caretWindowMatch":  false,
+                                                             "cursorWithinBounds":  true,
+                                                             "nearWindowBottom":  true,
+                                                             "broadDocument":  true,
+                                                             "missingEnabled":  false,
+                                                             "missingKeyboardFocusable":  false,
+                                                             "missingWritableType":  false,
+                                                             "missingWritableControlPattern":  false,
+                                                             "missingStrongInputSignal":  false,
+                                                             "missingBroadDocumentGuard":  true,
+                                                             "missingSignalCount":  1
+                                                         },
+                           "controlType":  "ControlType.Document",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  true,
+                           "hasTextPattern":  true,
+                           "boundingRect":  {
+                                                "x":  0,
+                                                "y":  0,
+                                                "width":  2560,
+                                                "height":  1640
+                                            },
+                           "inputSignals":  {
+                                                "score":  45,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  true,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  true,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "3c73e21a09012d7b",
+                                          "classNameHash":  ""
+                                      }
+                       },
+                       {
+                           "index":  8,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  16,
+                                                "y":  1561,
+                                                "width":  676,
+                                                "height":  62
+                                            },
+                           "inputSignals":  {
+                                                "score":  30,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "015c20a4bb83769c",
+                                          "classNameHash":  "daba8745091a05b0"
+                                      }
+                       },
+                       {
+                           "index":  9,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  694,
+                                                "y":  1560,
+                                                "width":  64,
+                                                "height":  64
+                                            },
+                           "inputSignals":  {
+                                                "score":  30,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "1482ab49d4f50281"
+                                      }
+                       },
+                       {
+                           "index":  18,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  32,
+                                                "y":  2638,
+                                                "width":  568,
+                                                "height":  50
+                                            },
+                           "inputSignals":  {
+                                                "score":  30,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "728cffef654ec961"
+                                      }
+                       },
+                       {
+                           "index":  19,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  676,
+                                                "y":  2639,
+                                                "width":  48,
+                                                "height":  48
+                                            },
+                           "inputSignals":  {
+                                                "score":  30,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "3328ff58b425b16f"
+                                      }
+                       },
+                       {
+                           "index":  24,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  1245,
+                                                "y":  1534,
+                                                "width":  128,
+                                                "height":  56
+                                            },
+                           "inputSignals":  {
+                                                "score":  30,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "56b6155e2956a355"
+                                      }
+                       },
+                       {
+                           "index":  25,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  2257,
+                                                "y":  1534,
+                                                "width":  56,
+                                                "height":  56
+                                            },
+                           "inputSignals":  {
+                                                "score":  30,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "3b550576acf9b5de"
+                                      }
+                       },
+                       {
+                           "index":  35,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  616,
+                                                "y":  2639,
+                                                "width":  48,
+                                                "height":  48
+                                            },
+                           "inputSignals":  {
+                                                "score":  30,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "3328ff58b425b16f"
+                                      }
+                       },
+                       {
+                           "index":  1,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  0,
+                                                "y":  8,
+                                                "width":  56,
+                                                "height":  56
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "ad3300e3465ba844"
+                                      }
+                       },
+                       {
+                           "index":  2,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  64,
+                                                "y":  8,
+                                                "width":  56,
+                                                "height":  56
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "ad3300e3465ba844"
+                                      }
+                       },
+                       {
+                           "index":  4,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  192,
+                                                "y":  12,
+                                                "width":  100,
+                                                "height":  48
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "7bcab4d33deb4697"
+                                      }
+                       },
+                       {
+                           "index":  5,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  296,
+                                                "y":  12,
+                                                "width":  100,
+                                                "height":  48
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "7bcab4d33deb4697"
+                                      }
+                       },
+                       {
+                           "index":  6,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  400,
+                                                "y":  12,
+                                                "width":  100,
+                                                "height":  48
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "7bcab4d33deb4697"
+                                      }
+                       },
+                       {
+                           "index":  7,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  504,
+                                                "y":  12,
+                                                "width":  100,
+                                                "height":  48
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "7bcab4d33deb4697"
+                                      }
+                       },
+                       {
+                           "index":  10,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  16,
+                                                "y":  88,
+                                                "width":  742,
+                                                "height":  62
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "c71ec40fe09d64c8"
+                                      }
+                       },
+                       {
+                           "index":  11,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  16,
+                                                "y":  152,
+                                                "width":  742,
+                                                "height":  62
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "c71ec40fe09d64c8"
+                                      }
+                       },
+                       {
+                           "index":  12,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  16,
+                                                "y":  216,
+                                                "width":  742,
+                                                "height":  62
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "56003e4415b0a3eb"
+                                      }
+                       },
+                       {
+                           "index":  13,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  16,
+                                                "y":  280,
+                                                "width":  742,
+                                                "height":  62
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "56003e4415b0a3eb"
+                                      }
+                       },
+                       {
+                           "index":  14,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  32,
+                                                "y":  -426,
+                                                "width":  692,
+                                                "height":  50
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "728cffef654ec961"
+                                      }
+                       },
+                       {
+                           "index":  15,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  32,
+                                                "y":  176,
+                                                "width":  512,
+                                                "height":  50
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "728cffef654ec961"
+                                      }
+                       },
+                       {
+                           "index":  16,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  560,
+                                                "y":  177,
+                                                "width":  48,
+                                                "height":  48
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "3328ff58b425b16f"
+                                      }
+                       },
+                       {
+                           "index":  17,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  676,
+                                                "y":  177,
+                                                "width":  48,
+                                                "height":  48
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "23fea8eb8628d994",
+                                          "classNameHash":  "974fed749edafb4d"
+                                      }
+                       },
+                       {
+                           "index":  21,
+                           "reason":  "button_or_hyperlink",
+                           "safeCandidate":  false,
+                           "isBrowserLikeComposerCandidate":  false,
+                           "browserLikeDeficitSignals":  null,
+                           "controlType":  "ControlType.Button",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  2420,
+                                                "y":  90,
+                                                "width":  56,
+                                                "height":  56
+                                            },
+                           "inputSignals":  {
+                                                "score":  25,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  false,
+                                                "nearWindowBottom":  false,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "profileComposerCandidate":  false
+                                            },
+                           "hashes":  {
+                                          "nameHash":  "",
+                                          "automationIdHash":  "",
+                                          "classNameHash":  "ad3300e3465ba844"
+                                      }
+                       }
+                   ],
+    "privacy":  {
+                    "targetTitlesRedacted":  true,
+                    "targetInputsNotStored":  true,
+                    "elementValuesNotRead":  true,
+                    "promptTextNotStored":  true,
+                    "onlyHashesGeometryAndBooleans":  true
+                }
+}

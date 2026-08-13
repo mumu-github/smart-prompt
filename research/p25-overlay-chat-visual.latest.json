@@ -1,0 +1,218 @@
+{
+  "schemaVersion": "p25-overlay-chat-visual@2",
+  "createdAt": "2026-07-19T08:53:08.585Z",
+  "pass": true,
+  "contractVersion": "prompt-session@2",
+  "runtimeTest": {
+    "pass": true,
+    "command": "node.exe apps/desktop-shell/tests/prompt-session-overlay-runtime.test.js",
+    "status": 0,
+    "signal": "",
+    "error": "",
+    "stderr": ""
+  },
+  "sharedCardContract": {
+    "contractVersion": "prompt-session@2",
+    "canonicalStatesCovered": true,
+    "onePrimaryAction": true,
+    "secondaryActionLimit": true,
+    "safetyLinePresent": true,
+    "legacyExpandedHidden": true,
+    "noOverflow": true,
+    "targetMissingAction": true
+  },
+  "guardedFillRouting": {
+    "command": "mascot_overlay_clicked",
+    "overlayAction": "fill",
+    "promptTextLength": 61,
+    "noAutoSubmit": true,
+    "pass": true
+  },
+  "regenerateRouting": {
+    "command": "mascot_overlay_clicked",
+    "overlayAction": "generate",
+    "promptTextLength": 61,
+    "noAutoSubmit": true,
+    "pass": true
+  },
+  "modeRouting": {
+    "command": "mascot_overlay_clicked",
+    "overlayAction": "mode",
+    "promptMode": "polish",
+    "noAutoSubmit": true,
+    "pass": true
+  },
+  "initialCompactProbe": {
+    "screenshot": "outputs/assistant-card-phase2/desktop-compact.png",
+    "viewport": {
+      "width": 384,
+      "height": 380
+    },
+    "defaultCompact": true,
+    "compactBody": true,
+    "compactCard": true,
+    "compactButton": true,
+    "compactBadgeDot": true,
+    "compactChatHidden": true,
+    "compactBackdropTransparent": true,
+    "compactScreenshotTransparent": true,
+    "screenshotTransparency": {
+      "file": "outputs/assistant-card-phase2/desktop-compact.png",
+      "width": 384,
+      "height": 380,
+      "alphaChannel": true,
+      "opaqueRatio": 0.0084,
+      "nonOpaqueRatio": 0.9916
+    },
+    "largeWhiteBlockAbsent": true
+  },
+  "compactThinkingProbe": {
+    "screenshot": "outputs/assistant-card-phase2/desktop-compact.png",
+    "viewport": {
+      "width": 384,
+      "height": 380
+    },
+    "defaultCompact": true,
+    "compactBody": true,
+    "compactCard": true,
+    "compactButton": true,
+    "compactBadgeDot": true,
+    "compactChatHidden": true,
+    "compactBackdropTransparent": true,
+    "compactScreenshotTransparent": true,
+    "screenshotTransparency": {
+      "file": "outputs/assistant-card-phase2/desktop-compact.png",
+      "width": 384,
+      "height": 380,
+      "alphaChannel": true,
+      "opaqueRatio": 0.0084,
+      "nonOpaqueRatio": 0.9916
+    },
+    "largeWhiteBlockAbsent": true
+  },
+  "whiteBlockRegressionProbe": {
+    "screenshot": "outputs/assistant-card-phase2/desktop-compact.png",
+    "viewport": {
+      "width": 384,
+      "height": 380
+    },
+    "defaultCompact": true,
+    "compactBody": true,
+    "compactCard": true,
+    "compactButton": true,
+    "compactBadgeDot": true,
+    "compactChatHidden": true,
+    "compactBackdropTransparent": true,
+    "compactScreenshotTransparent": true,
+    "screenshotTransparency": {
+      "file": "outputs/assistant-card-phase2/desktop-compact.png",
+      "width": 384,
+      "height": 380,
+      "alphaChannel": true,
+      "opaqueRatio": 0.0084,
+      "nonOpaqueRatio": 0.9916
+    },
+    "largeWhiteBlockAbsent": true
+  },
+  "screenshots": {
+    "review": {
+      "file": "outputs/assistant-card-phase2/desktop-review.png",
+      "width": 320,
+      "height": 360,
+      "alphaChannel": true,
+      "opaqueRatio": 0.907,
+      "nonOpaqueRatio": 0.093
+    },
+    "targetMissing": {
+      "file": "outputs/assistant-card-phase2/desktop-target-missing.png",
+      "width": 320,
+      "height": 360,
+      "alphaChannel": true,
+      "opaqueRatio": 0.907,
+      "nonOpaqueRatio": 0.093
+    },
+    "compact": {
+      "file": "outputs/assistant-card-phase2/desktop-compact.png",
+      "width": 384,
+      "height": 380,
+      "alphaChannel": true,
+      "opaqueRatio": 0.0084,
+      "nonOpaqueRatio": 0.9916
+    }
+  },
+  "checks": [
+    {
+      "name": "shared-review",
+      "pass": true,
+      "contractVersion": "prompt-session@2",
+      "canonicalStatesCovered": true,
+      "onePrimaryAction": true,
+      "secondaryActionLimit": true,
+      "safetyLinePresent": true,
+      "legacyExpandedHidden": true,
+      "noOverflow": true,
+      "targetMissingAction": true
+    },
+    {
+      "name": "target-missing",
+      "pass": true
+    },
+    {
+      "name": "guarded-fill-routing",
+      "command": "mascot_overlay_clicked",
+      "overlayAction": "fill",
+      "promptTextLength": 61,
+      "noAutoSubmit": true,
+      "pass": true
+    },
+    {
+      "name": "regenerate-routing",
+      "command": "mascot_overlay_clicked",
+      "overlayAction": "generate",
+      "promptTextLength": 61,
+      "noAutoSubmit": true,
+      "pass": true
+    },
+    {
+      "name": "mode-routing",
+      "command": "mascot_overlay_clicked",
+      "overlayAction": "mode",
+      "promptMode": "polish",
+      "noAutoSubmit": true,
+      "pass": true
+    },
+    {
+      "name": "compact-transparency",
+      "pass": true,
+      "screenshot": "outputs/assistant-card-phase2/desktop-compact.png",
+      "viewport": {
+        "width": 384,
+        "height": 380
+      },
+      "defaultCompact": true,
+      "compactBody": true,
+      "compactCard": true,
+      "compactButton": true,
+      "compactBadgeDot": true,
+      "compactChatHidden": true,
+      "compactBackdropTransparent": true,
+      "compactScreenshotTransparent": true,
+      "screenshotTransparency": {
+        "file": "outputs/assistant-card-phase2/desktop-compact.png",
+        "width": 384,
+        "height": 380,
+        "alphaChannel": true,
+        "opaqueRatio": 0.0084,
+        "nonOpaqueRatio": 0.9916
+      },
+      "largeWhiteBlockAbsent": true
+    }
+  ],
+  "privacy": {
+    "promptTextNotStored": true,
+    "targetInputsNotStored": true,
+    "targetTitlesRedacted": true,
+    "overlayUsesMetadataOnly": true,
+    "reportStoresOnlyPromptLength": true
+  }
+}

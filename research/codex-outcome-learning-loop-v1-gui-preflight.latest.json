@@ -1,0 +1,83 @@
+﻿{
+    "schemaVersion":  "p25-real-desktop-targets@1",
+    "createdAt":  "2026-07-19T09:55:49.6675868Z",
+    "pass":  true,
+    "completionReady":  false,
+    "completionImpact":  "real_write_not_requested",
+    "requestedProfiles":  [
+                              "codex"
+                          ],
+    "allowForegroundWrite":  false,
+    "allowClipboardFallback":  false,
+    "allowTextPatternVerification":  false,
+    "summary":  {
+                    "profileCount":  1,
+                    "windowFoundCount":  1,
+                    "foregroundDetectedCount":  1,
+                    "strictForegroundDetectedCount":  1,
+                    "safeCandidateTargetCount":  1,
+                    "writeAttemptedCount":  0,
+                    "writeVerifiedCount":  0,
+                    "noAutoSubmit":  true,
+                    "privacyOk":  true
+                },
+    "targets":  [
+                    {
+                        "id":  "codex",
+                        "report":  "research/p25-real-desktop-target-codex.latest.json",
+                        "exitCode":  0,
+                        "parseOk":  true,
+                        "parseError":  "",
+                        "windowFound":  true,
+                        "restoreWindow":  true,
+                        "setForeground":  true,
+                        "foregroundActivation":  {
+                                                     "initialSetForeground":  false,
+                                                     "initialForeground":  false,
+                                                     "attachAttempted":  true,
+                                                     "attachCurrentToForeground":  true,
+                                                     "attachCurrentToTarget":  true,
+                                                     "attachBringToTop":  true,
+                                                     "attachSetForeground":  true,
+                                                     "attachForeground":  true,
+                                                     "altUnlockAttempted":  false,
+                                                     "altUnlockSent":  false,
+                                                     "altSetForeground":  false,
+                                                     "altForeground":  false,
+                                                     "switchAttempted":  false,
+                                                     "switchForeground":  false,
+                                                     "isForeground":  true
+                                                 },
+                        "cursorInsideTargetWindow":  true,
+                        "foregroundDetected":  true,
+                        "strictForegroundDetected":  true,
+                        "selectionSource":  "foreground_window",
+                        "hasTargetForeground":  true,
+                        "detectedForegroundProfile":  "codex",
+                        "foregroundTitleHash":  "50a4122943273ad2",
+                        "foregroundTitleLength":  7,
+                        "targetSnapshotApplies":  true,
+                        "targetCandidateCount":  167,
+                        "targetSafeCandidateCount":  1,
+                        "targetBestCandidateIndex":  166,
+                        "writeAllowed":  false,
+                        "writeAttempted":  false,
+                        "writePass":  false,
+                        "writeVerified":  false,
+                        "writeReason":  "real_write_requires_allow_foreground_write",
+                        "autoSubmit":  false,
+                        "submitSignalCount":  0,
+                        "privacyRedacted":  true,
+                        "rawProbeTextLeaked":  false,
+                        "outputTail":  "                    \"nearbyTextVerificationRequiresExplicitAllow\":  true,\n                    \"verificationTextNotStored\":  true,\n                    \"verificationUsesLengthAndHash\":  true,\n                    \"autoSubmit\":  false\n                },\n    \"completionImpact\":  \"real_tool_write_still_pending\"\n}\n"
+                    }
+                ],
+    "privacy":  {
+                    "targetTitlesRedacted":  true,
+                    "targetInputsNotStored":  true,
+                    "promptTextNotStored":  true,
+                    "probeTextNotStored":  true,
+                    "verificationUsesLengthAndHash":  true,
+                    "noAutoSubmit":  true
+                }
+}

@@ -1,0 +1,27 @@
+{
+  "schemaVersion": "p25-desktop-shell-draft-cdp@1",
+  "createdAt": "2026-06-16T16:29:24.265Z",
+  "pass": false,
+  "remotePort": 9228,
+  "servicePort": 17371,
+  "draftPrepared": false,
+  "promptStateReady": false,
+  "checks": {
+    "cdpTargetFound": false,
+    "desktopShellDomFound": false,
+    "draftInputUpdated": false,
+    "generatedPromptCleared": false,
+    "inputEventDispatched": false,
+    "shellSyncFunctionUsed": false,
+    "servicePromptStateReady": false,
+    "servicePromptStateMatchesDraft": false,
+    "privacyOk": false
+  },
+  "privacy": {
+    "draftTextNotStored": true,
+    "promptTextNotStored": true,
+    "onlyLengthAndHash": true,
+    "targetInputsNotStored": true
+  },
+  "errorCode": "Smart Prompt desktop shell CDP target not found on port 9228."
+}

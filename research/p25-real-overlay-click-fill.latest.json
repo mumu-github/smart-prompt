@@ -1,0 +1,130 @@
+﻿{
+    "schemaVersion":  "p25-real-overlay-click-fill@1",
+    "createdAt":  "2026-06-16T16:41:23.2032159Z",
+    "pass":  true,
+    "completionReady":  false,
+    "completionImpact":  "real_overlay_click_requires_explicit_allow",
+    "requestedProfiles":  [
+                              "codex"
+                          ],
+    "allowRealOverlayClick":  false,
+    "desktopPromptPrepared":  true,
+    "manualDesktopPromptPrepared":  false,
+    "refreshedTargets":  false,
+    "reports":  {
+                    "targetsReport":  "research/p25-real-desktop-targets.latest.json",
+                    "overlayNoActivateReport":  "research/p25-mascot-overlay-noactivate.latest.json",
+                    "composerDiagnosticsReport":  "research/p25-composer-candidate-diagnostics.latest.json",
+                    "outputReport":  "research/p25-real-overlay-click-fill.latest.json"
+                },
+    "prerequisites":  {
+                          "targetsReportPresent":  true,
+                          "targetRowsPresent":  true,
+                          "targetPrivacyOk":  true,
+                          "strictForegroundReady":  true,
+                          "safeCandidatesReady":  true,
+                          "composerDiagnosticsReportPresent":  true,
+                          "browserLikeComposerBlocked":  false,
+                          "overlayNoActivateReportPresent":  true,
+                          "overlayNoActivateReady":  true,
+                          "desktopPromptStatePresent":  true,
+                          "desktopPromptStateReady":  true,
+                          "manualDesktopPromptPrepared":  false,
+                          "explicitClickAllowed":  false,
+                          "clickPreconditionsReady":  false
+                      },
+    "safeCandidateDiagnostics":  {
+                                     "reportPresent":  true,
+                                     "completionImpact":  "composer_candidate_ready_needs_real_overlay_click",
+                                     "completionReady":  false,
+                                     "safeCandidateCount":  1,
+                                     "browserLikeComposerCandidateCount":  1,
+                                     "focusedCandidateCount":  0,
+                                     "caretCandidateCount":  0,
+                                     "semanticCandidateCount":  0,
+                                     "bestCandidateIndex":  185,
+                                     "topReasonCounts":  {
+                                                             "browser_like_composer_blocked":  1,
+                                                             "button_or_hyperlink":  81,
+                                                             "disabled":  1,
+                                                             "static_text":  96,
+                                                             "no_safe_writable_signal":  2,
+                                                             "not_near_window_bottom":  3,
+                                                             "offscreen_or_negative_bounds":  2
+                                                         },
+                                     "browserLikeComposerBlocked":  false,
+                                     "browserLikeDeficitSummary":  {
+                                                                       "blockedCandidateCount":  1,
+                                                                       "missingEnabledCount":  0,
+                                                                       "missingKeyboardFocusableCount":  0,
+                                                                       "missingWritableTypeCount":  0,
+                                                                       "missingStrongInputSignalCount":  0,
+                                                                       "missingBroadDocumentGuardCount":  1,
+                                                                       "missingWritableControlPatternCount":  0,
+                                                                       "missingSignalCandidatesCount":  1,
+                                                                       "preferredWritableEligibleCount":  0
+                                                                   },
+                                     "broadDocumentNotPromoted":  false,
+                                     "privacyOk":  true
+                                 },
+    "desktopPromptState":  {
+                               "schemaVersion":  "p25-desktop-prompt-state@1",
+                               "recordedAtPresent":  true,
+                               "source":  "desktop-overlay-real-generate-prep",
+                               "prepared":  true,
+                               "activeTextKind":  "generated",
+                               "activeTextLength":  167,
+                               "activeTextHashPresent":  true,
+                               "generatedBy":  "llm",
+                               "readiness":  {
+                                                 "candidateIndex":  180,
+                                                 "noAutoSubmit":  true,
+                                                 "overlayReadinessReason":  "ready",
+                                                 "overlayReady":  true,
+                                                 "profile":  "codex",
+                                                 "readinessReason":  "ready",
+                                                 "ready":  true,
+                                                 "titleHash":  ""
+                                             }
+                           },
+    "overlayWindow":  null,
+    "click":  {
+                  "attempted":  false,
+                  "sent":  false,
+                  "reason":  "preconditions_not_ready"
+              },
+    "verification":  {
+                         "servicePort":  17371,
+                         "serviceReachable":  true,
+                         "desktopPromptStateReady":  true,
+                         "beforeFillRecordedAtPresent":  false,
+                         "latestFillObserved":  false,
+                         "fillVerified":  false,
+                         "noAutoSubmit":  false,
+                         "confirmForeground":  false,
+                         "expectedTitleHashMatched":  false,
+                         "expectedToolProfileMatched":  false
+                     },
+    "targetSummary":  {
+                          "profileCount":  1,
+                          "windowFoundCount":  1,
+                          "foregroundDetectedCount":  1,
+                          "strictForegroundDetectedCount":  1,
+                          "safeCandidateTargetCount":  1,
+                          "writeAttemptedCount":  0,
+                          "writeVerifiedCount":  0,
+                          "noAutoSubmit":  true,
+                          "privacyOk":  true
+                      },
+    "privacy":  {
+                    "targetTitlesRedacted":  true,
+                    "targetInputsNotStored":  true,
+                    "promptTextNotStored":  true,
+                    "composerDiagnosticsIsSanitized":  true,
+                    "desktopPromptStateIsSanitized":  true,
+                    "clipboardTextNotStored":  true,
+                    "latestFillIsSanitized":  true,
+                    "verificationUsesLengthAndHash":  true,
+                    "noAutoSubmitRequired":  true
+                }
+}

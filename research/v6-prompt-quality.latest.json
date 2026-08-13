@@ -1,0 +1,1131 @@
+{
+  "schemaVersion": "v6-prompt-quality@1",
+  "createdAt": "2026-06-17T16:11:34.278Z",
+  "pass": true,
+  "fixtureCount": 30,
+  "averageScore": 0.963,
+  "byMode": {
+    "continue": {
+      "total": 17,
+      "pass": 17
+    },
+    "idea": {
+      "total": 6,
+      "pass": 6
+    },
+    "polish": {
+      "total": 7,
+      "pass": 7
+    }
+  },
+  "structuredProbe": {
+    "structured": true,
+    "keysPresent": true,
+    "qualityPass": true,
+    "qualityScore": 0.846,
+    "promptLength": 386
+  },
+  "feedbackProfileProbe": {
+    "schemaVersion": "v6-prompt-quality@1",
+    "confidence": "medium",
+    "hasAdaptiveDirectives": true,
+    "promptIncludesGuidance": true,
+    "profileTextRedacted": true,
+    "directiveCount": 6
+  },
+  "qualityExperimentProbe": {
+    "schemaVersion": "v6-prompt-quality@1",
+    "hasGenerationId": true,
+    "hasStrategyId": true,
+    "carriesQualityScore": true,
+    "linksFeedbackDirectives": true,
+    "experimentTextRedacted": true
+  },
+  "promptStrategyProbe": {
+    "schemaVersion": "v6-prompt-quality@1",
+    "policyVersion": "v6-strategy-policy@3",
+    "selectedStrategy": "preserve_winning_strategy",
+    "selectedStrategyVersion": "v6-strategy-policy@3",
+    "selectedDecision": "exploit",
+    "hasWinningCandidate": true,
+    "winningCandidateReliable": true,
+    "winningCandidateCohortMatched": true,
+    "hasAvoidRiskDirective": true,
+    "promptIncludesStrategyPlan": true,
+    "experimentUsesStrategy": true,
+    "strategyTextRedacted": true
+  },
+  "strategyExplorationProbe": {
+    "policyVersion": "v6-strategy-policy@3",
+    "selectedStrategy": "cold_start_structure",
+    "selectedDecision": "explore",
+    "lowSampleCandidate": true,
+    "lowSampleNotReliable": true,
+    "explorationEnabled": true,
+    "explorationCandidate": true,
+    "hasSampleGuardDirective": true,
+    "promptIncludesExplorationPolicy": true,
+    "experimentCarriesVersion": true,
+    "strategyTextRedacted": true
+  },
+  "strategyInsightsProbe": {
+    "schemaVersion": "v6-prompt-quality@1",
+    "insightVersion": "v6-strategy-insights@1",
+    "policyVersion": "v6-strategy-policy@3",
+    "readinessStatus": "ready",
+    "hasReliableWinner": true,
+    "hasLowSampleCandidate": true,
+    "hasRiskSignal": true,
+    "hasModeToolAdapterSiteCohorts": true,
+    "hasRecommendations": true,
+    "promptIncludesStrategyInsights": true,
+    "insightTextMentionsSamples": true,
+    "insightsTextRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "experimentOutcomeProbe": {
+    "assignmentVersion": "v6-prompt-experiment@1",
+    "assignmentArm": "strategy_guided",
+    "assignmentEligible": true,
+    "assignmentHasBucket": true,
+    "assignmentHasComparisonKey": true,
+    "experimentVersion": "v6-prompt-experiment-1",
+    "experimentArm": "strategy_guided",
+    "experimentCarriesComparisonKey": true,
+    "experimentCarriesStrategyInsights": true,
+    "outcomeVersion": "v6-prompt-experiment@1",
+    "outcomeReadiness": "ready",
+    "outcomeComparable": true,
+    "hasBaselineArm": true,
+    "hasStrategyGuidedArm": true,
+    "comparisonReady": true,
+    "comparisonShowsGuidedLift": true,
+    "hasOutcomeRecommendation": true,
+    "outcomeTextRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "outcomeFeedbackProbe": {
+    "winningPolicyVersion": "v6-strategy-policy@3",
+    "winningOutcomeReady": true,
+    "winningDecision": "prefer_strategy_guided",
+    "winningRecommendation": "prefer_strategy_guided",
+    "winningSelectsStrategy": true,
+    "winningHasOutcomeDirective": true,
+    "winningTextMentionsOutcome": true,
+    "promptIncludesExperimentOutcomes": true,
+    "losingOutcomeReady": true,
+    "losingDecision": "prefer_baseline",
+    "losingRecommendation": "prefer_baseline_until_reviewed",
+    "losingSelectsBaseline": true,
+    "losingHasBaselineDirective": true,
+    "losingTextMentionsOutcome": true,
+    "outcomeFeedbackRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "scenarioLearningProbe": {
+    "inferredScenario": "security-review",
+    "feedbackCohortScenario": "security-review",
+    "insightsCohortScenario": "security-review",
+    "outcomeCohortScenario": "security-review",
+    "assignmentCohortScenario": "security-review",
+    "experimentTaskScenario": "security-review",
+    "hasScenarioCohorts": true,
+    "scenarioWinnerSelected": true,
+    "scenarioCandidateMatched": true,
+    "uiStrategyExcludedFromScenarioSource": true,
+    "comparisonKeyIncludesScenario": true,
+    "outcomeUsesScenarioArms": true,
+    "promptIncludesScenario": true,
+    "llmContextScenarioReady": true,
+    "scenarioTextRedacted": true
+  },
+  "taskOutcomeProbe": {
+    "reportVersion": "v6-task-outcome@1",
+    "readinessStatus": "ready",
+    "outcomeCount": 9,
+    "hasOutcomeWinner": true,
+    "hasOutcomeRisk": true,
+    "recommendation": "prefer_task_outcome_winner",
+    "planPolicyDecision": "prefer_task_outcome_winner",
+    "planSelectsOutcomeWinner": true,
+    "hasOutcomeDirective": true,
+    "promptIncludesTaskOutcomes": true,
+    "taskOutcomeTextReady": true,
+    "taskOutcomeRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "strategyWeightProbe": {
+    "weightVersion": "v6-strategy-weighting@1",
+    "pilotVersion": "v6-pilot-outcome-readiness@1",
+    "readinessStatus": "ready",
+    "totalOutcomeEvents": 7,
+    "promotedCount": 1,
+    "suppressedCount": 1,
+    "exploringCount": 1,
+    "selectedPromotion": "llm:continue:medium:security-weight-winner",
+    "selectedSuppression": "llm:continue:medium:security-weight-risk",
+    "planPolicyWeightVersion": "v6-strategy-weighting@1",
+    "planDecision": "outcome_weight",
+    "planSelectsWeightedWinner": true,
+    "hasPromotionDirective": true,
+    "hasSuppressionDirective": true,
+    "hasExplorationDirective": true,
+    "promptIncludesStrategyWeights": true,
+    "llmIncludesStrategyWeights": true,
+    "weightTextReady": true,
+    "strategyWeightRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "qualityLiftProbe": {
+    "reportVersion": "v6-quality-lift@1",
+    "readinessStatus": "ready",
+    "comparable": true,
+    "primaryDecision": "quality_lift_positive",
+    "baselineOutcomeCount": 3,
+    "strategyGuidedOutcomeCount": 3,
+    "outcomeWeightedOutcomeCount": 3,
+    "hasAllCohorts": true,
+    "positiveSuccessLift": true,
+    "positiveAvgLift": true,
+    "reducedRetryUndo": true,
+    "hasKeepRecommendation": true,
+    "regressionStatus": "regression",
+    "regressionDecision": "quality_lift_regression",
+    "regressionComparisonDecision": "quality_lift_regression",
+    "hasRegressionRecommendation": true,
+    "collectingStatus": "collecting",
+    "collectingComparable": false,
+    "promptIncludesQualityLift": true,
+    "llmIncludesQualityLift": true,
+    "qualityLiftTextReady": true,
+    "qualityLiftRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "qualityLiftSegmentsProbe": {
+    "reportVersion": "v6-quality-lift-segments@1",
+    "sourceReportVersion": "v6-quality-lift@1",
+    "readinessStatus": "review",
+    "segmentCount": 12,
+    "readySegmentCount": 8,
+    "improvingSegmentCount": 4,
+    "regressingSegmentCount": 4,
+    "collectingSegmentCount": 4,
+    "hasToolDimension": true,
+    "hasSiteDimension": true,
+    "hasScenarioDimension": true,
+    "hasModeDimension": true,
+    "topImprovingKey": "chatgpt",
+    "topRegressingKey": "claude",
+    "hasCollectingSegment": true,
+    "segmentTextReady": true,
+    "segmentsRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "qualityLiftSegmentPolicyProbe": {
+    "policyVersion": "v6-quality-lift-segment-policy@1",
+    "sourceReportVersion": "v6-quality-lift-segments@1",
+    "positiveDecision": "preserve_segment_winner",
+    "positiveMatchedSegments": 4,
+    "positivePlanDecision": "outcome_weight",
+    "positivePreservesOutcomeWeight": true,
+    "regressionDecision": "segment_regression_guardrail",
+    "regressionMatchedSegments": 4,
+    "regressionSuppressesOutcomeWeight": true,
+    "regressionHasAvoidDirective": true,
+    "collectingDecision": "collect_segment_samples",
+    "collectingMatchedSegments": 4,
+    "collectingKeepsExploration": true,
+    "planPolicyVersion": "v6-quality-lift-segment-policy@1",
+    "planTextMentionsPolicy": true,
+    "promptIncludesSegmentPolicy": true,
+    "llmIncludesSegmentPolicy": true,
+    "policyTextReady": true,
+    "policyRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "failureReasonPolicyProbe": {
+    "reportVersion": "v6-failure-reasons@1",
+    "policyVersion": "v6-failure-reason-policy@1",
+    "normalizedWrongFormat": true,
+    "normalizedInsertFailure": true,
+    "normalizedNeedsWork": true,
+    "readinessStatus": "ready",
+    "topReason": "wrong_format",
+    "policyDecision": "strengthen_output_format",
+    "hasFormatDirective": true,
+    "planPolicyVersion": "v6-failure-reason-policy@1",
+    "planHasFormatDirective": true,
+    "planTextMentionsPolicy": true,
+    "promptIncludesFailurePolicy": true,
+    "llmIncludesFailurePolicy": true,
+    "policyTextReady": true,
+    "insertDecision": "reduce_insert_fragility",
+    "insertPlanSelectsGuardrail": true,
+    "reportRedacted": true,
+    "privacyAggregateOnly": true
+  },
+  "selfImprovementProbe": {
+    "reportVersion": "v6-self-improvement@1",
+    "candidateVersion": "v6-evolution-candidates@1",
+    "readinessStatus": "ready",
+    "outcomeCount": 12,
+    "hasPositiveReflection": true,
+    "hasRegressionReflection": true,
+    "hasCollectingReflection": true,
+    "hasPromoteCandidate": true,
+    "hasSuppressCandidate": true,
+    "hasFailureRepairCandidate": true,
+    "hasCollectCandidate": true,
+    "mutationGated": true,
+    "promptIncludesSelfImprovement": true,
+    "promptIncludesEvolutionCandidates": true,
+    "llmIncludesSelfImprovement": true,
+    "llmIncludesEvolutionCandidates": true,
+    "textReady": true,
+    "redacted": true,
+    "privacyAggregateOnly": true
+  },
+  "privacy": {
+    "promptTextRedacted": true,
+    "inputTextRedacted": true,
+    "onlyHashesAndLengthsStored": true
+  },
+  "results": [
+    {
+      "id": "crm-dashboard-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "ChatGPT",
+      "inputLength": 79,
+      "inputHash": "ac141a238b6b4784",
+      "promptLength": 627,
+      "promptHash": "f5c9cc8eef0a3213",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "login-security-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Codex",
+      "inputLength": 99,
+      "inputHash": "f80904e2b9bd253e",
+      "promptLength": 645,
+      "promptHash": "b756330c0b916527",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "security-review",
+          "score": 2.3
+        },
+        {
+          "name": "code-review",
+          "score": 1.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "lovable-ui-idea",
+      "ok": true,
+      "mode": "idea",
+      "tool": "Lovable",
+      "inputLength": 48,
+      "inputHash": "8d47ac50bfcb1d16",
+      "promptLength": 474,
+      "promptHash": "c6c18285d0e3ab85",
+      "score": 0.92,
+      "failedChecks": [
+        "context"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "ui-ux",
+          "score": 2.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "flaky-test-debug-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Codex",
+      "inputLength": 80,
+      "inputHash": "cddfd565fa3d3c0d",
+      "promptLength": 626,
+      "promptHash": "96f8fdbb5f69529e",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "test-plan",
+          "score": 1.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "analytics-dashboard-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Gemini",
+      "inputLength": 77,
+      "inputHash": "c7c231dfec7631c2",
+      "promptLength": 624,
+      "promptHash": "3110f2290e1a87d8",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "pull-request-review-polish",
+      "ok": true,
+      "mode": "polish",
+      "tool": "Claude",
+      "inputLength": 205,
+      "inputHash": "62cf21a23c53808b",
+      "promptLength": 753,
+      "promptHash": "2db56b80232f2a85",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 1.3
+        },
+        {
+          "name": "security-review",
+          "score": 1.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "auth-threat-model-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Claude",
+      "inputLength": 59,
+      "inputHash": "115597c891c1772b",
+      "promptLength": 606,
+      "promptHash": "9d63d9d77a29d0c2",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "security-review",
+          "score": 2.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "onboarding-doc-idea",
+      "ok": true,
+      "mode": "idea",
+      "tool": "ChatGPT",
+      "inputLength": 55,
+      "inputHash": "88111b00093c2395",
+      "promptLength": 485,
+      "promptHash": "9aa72fb665c13db2",
+      "score": 0.92,
+      "failedChecks": [
+        "context"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "desktop-input-adapter-polish",
+      "ok": true,
+      "mode": "polish",
+      "tool": "Codex",
+      "inputLength": 266,
+      "inputHash": "cc67e20b89609ea4",
+      "promptLength": 813,
+      "promptHash": "adc64921b50522ca",
+      "score": 0.846,
+      "failedChecks": [
+        "missing_info",
+        "privacy_boundary"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "test-plan",
+          "score": 1.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "prompt-library-taxonomy-idea",
+      "ok": true,
+      "mode": "idea",
+      "tool": "ChatGPT",
+      "inputLength": 67,
+      "inputHash": "79a43960b7791a30",
+      "promptLength": 497,
+      "promptHash": "2800931418455009",
+      "score": 0.92,
+      "failedChecks": [
+        "context"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "mobile-ui-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Lovable",
+      "inputLength": 80,
+      "inputHash": "e8cc557e5c9030f1",
+      "promptLength": 624,
+      "promptHash": "59243b5ca064938c",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "ui-ux",
+          "score": 2.3
+        },
+        {
+          "name": "security-review",
+          "score": 1.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "release-notes-polish",
+      "ok": true,
+      "mode": "polish",
+      "tool": "ChatGPT",
+      "inputLength": 227,
+      "inputHash": "7cf10face9d3ce48",
+      "promptLength": 776,
+      "promptHash": "fa5eb42123c86d54",
+      "score": 0.923,
+      "failedChecks": [
+        "missing_info"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "metric-diagnostics-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Gemini",
+      "inputLength": 69,
+      "inputHash": "504db6bd6b4cc735",
+      "promptLength": 616,
+      "promptHash": "b3f56b8a7a823b5c",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "extension-selector-failure-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Codex",
+      "inputLength": 100,
+      "inputHash": "98db19a23ac2c3aa",
+      "promptLength": 642,
+      "promptHash": "a0897b0864d35262",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "ui-ux",
+          "score": 1.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "privacy-settings-polish",
+      "ok": true,
+      "mode": "polish",
+      "tool": "Claude",
+      "inputLength": 254,
+      "inputHash": "181a76cb445842a1",
+      "promptLength": 796,
+      "promptHash": "c2aef88d4aaf8e83",
+      "score": 0.846,
+      "failedChecks": [
+        "missing_info",
+        "privacy_boundary"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "ui-ux",
+          "score": 4.3
+        },
+        {
+          "name": "security-review",
+          "score": 1.3
+        },
+        {
+          "name": "test-plan",
+          "score": 1.3
+        }
+      ]
+    },
+    {
+      "id": "tauri-installer-smoke-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Codex",
+      "inputLength": 100,
+      "inputHash": "2cced7195bb12613",
+      "promptLength": 646,
+      "promptHash": "e714b591a1f42c92",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "test-plan",
+          "score": 2.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "skill-recommendation-idea",
+      "ok": true,
+      "mode": "idea",
+      "tool": "ChatGPT",
+      "inputLength": 75,
+      "inputHash": "69969c8fac93d7a5",
+      "promptLength": 505,
+      "promptHash": "9b18c0e16fed35de",
+      "score": 0.92,
+      "failedChecks": [
+        "context"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "product-pitch-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "ChatGPT",
+      "inputLength": 66,
+      "inputHash": "29f54f00a233b2ae",
+      "promptLength": 610,
+      "promptHash": "7db40e22878ea1dc",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "ui-ux",
+          "score": 2.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "prd-polish",
+      "ok": true,
+      "mode": "polish",
+      "tool": "Claude",
+      "inputLength": 217,
+      "inputHash": "9f0bba19695ffe0b",
+      "promptLength": 765,
+      "promptHash": "60f8dc4b7fe9eb25",
+      "score": 0.923,
+      "failedChecks": [
+        "missing_info"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "web-app-ui-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Lovable",
+      "inputLength": 87,
+      "inputHash": "66863e811afa6c01",
+      "promptLength": 631,
+      "promptHash": "d9bb789bfbaa1d06",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "ui-ux",
+          "score": 1.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "code-migration-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Codex",
+      "inputLength": 94,
+      "inputHash": "4e6b2e22e4566d60",
+      "promptLength": 640,
+      "promptHash": "46b6032fb9036d37",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "api-spec-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Gemini",
+      "inputLength": 72,
+      "inputHash": "502c5b5402fdd84d",
+      "promptLength": 619,
+      "promptHash": "3f4ede589871e817",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "security-review",
+          "score": 1.3
+        },
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "security-incident-idea",
+      "ok": true,
+      "mode": "idea",
+      "tool": "Claude",
+      "inputLength": 66,
+      "inputHash": "4b44da1af75caea0",
+      "promptLength": 495,
+      "promptHash": "df76600eb901bf00",
+      "score": 0.92,
+      "failedChecks": [
+        "context"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "security-review",
+          "score": 2.3
+        },
+        {
+          "name": "code-review",
+          "score": 1.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "user-interview-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "ChatGPT",
+      "inputLength": 85,
+      "inputHash": "df9ba924b3fb20f7",
+      "promptLength": 633,
+      "promptHash": "790aff6c2f1562d1",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "prompt-polish-polish",
+      "ok": true,
+      "mode": "polish",
+      "tool": "ChatGPT",
+      "inputLength": 219,
+      "inputHash": "c272a763c731f108",
+      "promptLength": 768,
+      "promptHash": "3244aced39ec864e",
+      "score": 0.923,
+      "failedChecks": [
+        "missing_info"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "hermes-fill-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Codex",
+      "inputLength": 72,
+      "inputHash": "c3540fc1951ef189",
+      "promptLength": 618,
+      "promptHash": "f47cde72e1cad7b6",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 1.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "doubao-adapter-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "ChatGPT",
+      "inputLength": 79,
+      "inputHash": "7add3a1fb5c6456f",
+      "promptLength": 627,
+      "promptHash": "63e5647c569e945c",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "gemini-output-polish",
+      "ok": true,
+      "mode": "polish",
+      "tool": "Gemini",
+      "inputLength": 218,
+      "inputHash": "2b4936402ec5cb31",
+      "promptLength": 766,
+      "promptHash": "18317a91d52e3a16",
+      "score": 0.923,
+      "failedChecks": [
+        "missing_info"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "clear-data-test-plan-continue",
+      "ok": true,
+      "mode": "continue",
+      "tool": "Codex",
+      "inputLength": 76,
+      "inputHash": "befae713b853e30a",
+      "promptLength": 622,
+      "promptHash": "ab8fd1fd16f9e543",
+      "score": 1,
+      "failedChecks": [],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    },
+    {
+      "id": "retry-ux-idea",
+      "ok": true,
+      "mode": "idea",
+      "tool": "Lovable",
+      "inputLength": 49,
+      "inputHash": "cf66b4ef377d0be3",
+      "promptLength": 479,
+      "promptHash": "69ee3a31e527a8fd",
+      "score": 0.92,
+      "failedChecks": [
+        "context"
+      ],
+      "expectedSkillMatched": true,
+      "selectedSkills": [
+        {
+          "name": "code-review",
+          "score": 0.3
+        },
+        {
+          "name": "security-review",
+          "score": 0.3
+        },
+        {
+          "name": "test-plan",
+          "score": 0.3
+        }
+      ]
+    }
+  ]
+}

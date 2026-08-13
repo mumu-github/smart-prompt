@@ -1,6 +1,6 @@
 {
     "schemaVersion":  "m3-installed-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T19:40:46.7785054Z",
+    "createdAt":  "2026-06-18T03:29:39.9624193Z",
     "pass":  true,
     "remotePort":  9241,
     "servicePort":  17461,
@@ -37,7 +37,9 @@
                                  "supportedToolProfiles":  [
                                                                "codex",
                                                                "claude-code",
-                                                               "hermes"
+                                                               "hermes",
+                                                               "workbuddy",
+                                                               "trae"
                                                            ],
                                  "privacy":  {
                                                  "elementNamesHashed":  true,
@@ -59,7 +61,9 @@
                         "supportedToolProfiles":  [
                                                       "codex",
                                                       "claude-code",
-                                                      "hermes"
+                                                      "hermes",
+                                                      "workbuddy",
+                                                      "trae"
                                                   ],
                         "privacy":  {
                                         "autoSubmit":  false,

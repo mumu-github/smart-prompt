@@ -1,0 +1,153 @@
+{
+  "schemaVersion": "phase3-activation-acceptance@1",
+  "createdAt": "2026-07-18T02:00:00.000Z",
+  "verdict": "pass",
+  "scope": "phase3-desktop-activation-control-center",
+  "blockingReason": "",
+  "release": {
+    "extensionVersion": "0.2.6",
+    "extensionBuildId": "phase3-extension-20260717-r5",
+    "nativeBuildId": "phase3-native-sidecar-20260717-r6",
+    "desktopSha256": "98665F7F7793A8FEABE814E7E8B0AC9AE9EA08FD0FDDC72E12FAD739EF4462D9",
+    "msiSha256": "3E96E40FBAAF4E360BB808003A01DA8A333021FC168D6AEEF1E1AC734F99C7E8",
+    "nsisSha256": "F8AADC5C6CECBDC2C0DD11A7441A544E9143A4BC91F0CDA3036AE80DB6719861",
+    "sidecarSha256": "6C3ABF85149C1952C16CBAD1D4AA085ECF819CF2A91D8AA3F0FDD64EDF1AC88D"
+  },
+  "checks": {
+    "activationContract": {
+      "status": "pass",
+      "progressStates": 5,
+      "runtimeHealthStates": 3,
+      "idempotentComplete": true,
+      "recoverableReset": true,
+      "activatedHealthDoesNotRegress": true
+    },
+    "provider": {
+      "status": "pass",
+      "providerCount": 4,
+      "fieldIsolation": true,
+      "realTestRoute": true,
+      "errorClasses": 4,
+      "crossProviderKeyIsolation": true
+    },
+    "migration": {
+      "status": "pass",
+      "legacyPaths": 3,
+      "desktopAttemptCannotActivate": true,
+      "desktopCopyCannotActivate": true
+    },
+    "privacy": {
+      "status": "pass",
+      "activationMetadataOnly": true,
+      "activationModelNotStored": true,
+      "apiKeyNotInActivationOrDiagnostics": true,
+      "promptTextNotStored": true,
+      "draftTextNotStored": true,
+      "targetInputTextNotStored": true,
+      "clipboardTextNotStored": true,
+      "rawTitleNotStored": true,
+      "rawDomOrUiaTextNotStored": true,
+      "privacyScanReport": "phase3-privacy-scan@1",
+      "forbiddenArtifactKeys": 0,
+      "absoluteArtifactPaths": 0
+    },
+    "desktopStaticInteraction": {
+      "status": "pass",
+      "freshWizard": true,
+      "configuredWizard": true,
+      "activatedControlCenter": true,
+      "controlPages": 4,
+      "legacyUiHidden": true,
+      "closeToTrayContract": true,
+      "repairFailureShowsMainWindow": true
+    },
+    "runtime": {
+      "status": "pass",
+      "nativeSidecarStarted": true,
+      "nativeSidecarStopped": true,
+      "boundedRepairPath": true,
+      "globalShortcut": true,
+      "tauriApi": true
+    },
+    "browserDemo": {
+      "status": "pass",
+      "generateReviewInsert": true,
+      "copyFallback": true,
+      "noAutoSubmit": true,
+      "activationBridge": true
+    },
+    "browserFailures": {
+      "status": "pass",
+      "untrustedPageDenied": true,
+      "untrustedExtensionDenied": true,
+      "authTokenWorkerOnly": true,
+      "fixedServicePort": true,
+      "targetMissingSafe": true,
+      "decoyTextboxDenied": true,
+      "missingTargetKindDenied": true,
+      "duplicateCompletionIdempotent": true
+    },
+    "visual": {
+      "status": "pass",
+      "desktopViewport": "1120x760",
+      "minimumViewport": "390x844",
+      "horizontalOverflow": false,
+      "criticalOverlap": false,
+      "legacyUiVisible": false,
+      "screenshots": 8
+    },
+    "realChatgpt": {
+      "status": "pass",
+      "authorized": true,
+      "extensionContractObserved": true,
+      "extensionBuildId": "phase3-extension-20260717-r5",
+      "runtimeState": "ready",
+      "assistantEntryObserved": true,
+      "generationAttempted": true,
+      "generatedBy": "llm",
+      "reviewEdited": true,
+      "generatedLength": 1354,
+      "editedLength": 1409,
+      "insertedLength": 1409,
+      "insertedSha256": "09671cd08768b88acbba0883ee5ef447de043dc6e3f6c9dcfb4b04756fd255cd",
+      "completionKind": "verified_insert",
+      "completionVerified": true,
+      "stableReadback": true,
+      "targetKind": "chatgpt-composer",
+      "noAutoSubmitVerified": true,
+      "sendClicked": false,
+      "stopButtonObserved": false,
+      "messageCountUnchanged": true,
+      "pathUnchanged": true,
+      "reason": "verified_insert_stable_readback"
+    },
+    "activatedDesktopRestart": {
+      "status": "pass",
+      "realProcessRestarted": true,
+      "finalRelease": true,
+      "tauriWindowCount": 2,
+      "visibleTauriWindowCount": 0,
+      "mainWindowStayedHidden": true,
+      "trayContractPresent": true,
+      "globalHotkeyContractPresent": true,
+      "nativeBuildId": "phase3-native-sidecar-20260717-r6",
+      "activationStayedActivated": true
+    },
+    "timing": {
+      "status": "pass",
+      "sampleCount": 1,
+      "elapsedMs": 144446,
+      "underThreeMinutes": true,
+      "isMedian": false,
+      "interpretation": "single_observed_run"
+    }
+  },
+  "review": {
+    "status": "pass",
+    "verdict": "pass",
+    "rounds": 3,
+    "p0": 0,
+    "p1": 0,
+    "p2": 0
+  }
+}

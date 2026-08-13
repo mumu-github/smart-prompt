@@ -1,0 +1,18 @@
+﻿{
+    "schemaVersion":  "p24-desktop-mascot-input-fusion@1",
+    "createdAt":  "2026-06-09T05:22:10.1904932Z",
+    "pass":  true,
+    "checks":  {
+                   "desktopFusionHtml":  true,
+                   "mascotButton":  true,
+                   "desktopGenerate":  true,
+                   "foregroundFillGuard":  true,
+                   "noAutoSubmitEvidence":  true,
+                   "desktopTests":  true,
+                   "documented":  true
+               },
+    "failures":  [
+
+                 ],
+    "testOutputTail":  "\n\u003e smart-prompt-desktop-shell@0.2.0 test\n\u003e node tests/desktop-shell.test.js \u0026\u0026 node tests/desktop-shell-interaction.test.js\n\ndesktop-shell static tests passed\ndesktop-shell interaction tests passed\n"
+}

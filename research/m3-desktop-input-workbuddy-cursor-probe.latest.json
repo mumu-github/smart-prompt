@@ -1,0 +1,89 @@
+﻿{
+    "schemaVersion":  "m3-windows-uia@1",
+    "createdAt":  "2026-06-17T17:49:49.5538933Z",
+    "platform":  "win32",
+    "selfTest":  false,
+    "selfTestProfile":  "",
+    "probeOk":  true,
+    "pass":  true,
+    "foreground":  {
+                       "processName":  "WorkBuddy",
+                       "pidPresent":  true,
+                       "isVisible":  true,
+                       "isMinimized":  false,
+                       "isCloaked":  false,
+                       "isUsable":  true,
+                       "boundingRect":  {
+                                            "x":  412,
+                                            "y":  87,
+                                            "width":  1002,
+                                            "height":  804
+                                        },
+                       "titleLength":  9,
+                       "titleHash":  "d754cc54dc1de6d8",
+                       "detectedToolProfile":  "workbuddy",
+                       "expectedToolProfile":  "",
+                       "expectedToolProfileMatched":  true,
+                       "childProcessCount":  1,
+                       "childToolProcessHintPresent":  false
+                   },
+    "caret":  {
+                  "source":  "win32_get_gui_thread_info",
+                  "supported":  true,
+                  "visible":  false,
+                  "windowHandlePresent":  false,
+                  "rect":  {
+                               "x":  0,
+                               "y":  0,
+                               "width":  0,
+                               "height":  0
+                           },
+                  "virtualCaretMayBeHidden":  true
+              },
+    "cursor":  {
+                   "source":  "win32_get_cursor_pos",
+                   "supported":  true,
+                   "windowHandlePresent":  true,
+                   "rootWindowHandlePresent":  true,
+                   "rect":  {
+                                "x":  778,
+                                "y":  889,
+                                "width":  1,
+                                "height":  1
+                            }
+               },
+    "supportedToolProfiles":  [
+                                  "codex",
+                                  "claude-code",
+                                  "hermes",
+                                  "workbuddy",
+                                  "trae"
+                              ],
+    "candidates":  [
+
+                   ],
+    "summary":  {
+                    "candidateCount":  0,
+                    "valuePatternCandidates":  0,
+                    "textPatternCandidates":  0,
+                    "focusableCandidates":  0,
+                    "safeCandidateCount":  0,
+                    "focusedCandidateCount":  0,
+                    "caretCandidateCount":  0,
+                    "semanticCandidateCount":  0,
+                    "traversalTimedOut":  false,
+                    "inspectedElementCount":  3,
+                    "bestCandidateIndex":  -1,
+                    "bestCandidateScore":  0,
+                    "caretVisible":  false,
+                    "caretWindowPresent":  false,
+                    "detectedToolProfile":  "workbuddy"
+                },
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "caretTextNotRead":  true,
+                    "promptTextNotRead":  true
+                }
+}

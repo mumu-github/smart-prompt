@@ -5,11 +5,12 @@ $Root = Split-Path -Parent $ScriptDir
 function Invoke-Step {
   param(
     [string]$Name,
-    [scriptblock]$Command
+    [scriptblock]$Command,
+    [int[]]$AllowedExitCodes = @(0)
   )
   Write-Host "== $Name =="
   & $Command
-  if ($LASTEXITCODE -ne 0) {
+  if ($LASTEXITCODE -notin $AllowedExitCodes) {
     throw "$Name failed with exit code $LASTEXITCODE"
   }
 }
@@ -62,7 +63,7 @@ Invoke-Step "M3 Windows foreground fill guard" {
 
 Invoke-Step "M3 Windows real foreground clipboard guard" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-real-desktop-tools.ps1") -AllowForegroundWrite -AllowClipboardFallback -ExpectedTitleHash "not-a-real-title-hash" -ExpectedToolProfile "codex" -Text "M3 real foreground clipboard guard raw text" -Report (Join-Path $Root "research/m3-real-desktop-clipboard-guard.latest.json")
-}
+} -AllowedExitCodes @(0, 1)
 
 Invoke-Step "M3 native sidecar desktop input self-test" {
   powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $ScriptDir "check-m3-sidecar-desktop-input.ps1") -Report (Join-Path $Root "research/m3-sidecar-desktop-input.latest.json")
@@ -194,6 +195,7 @@ if (($desktopFillGuardReport | ConvertTo-Json -Depth 10).Contains("M3 foreground
 
 $realDesktopClipboardGuardReport = Get-Content -Raw -Encoding UTF8 (Join-Path $Root "research/m3-real-desktop-clipboard-guard.latest.json") | ConvertFrom-Json
 if ($realDesktopClipboardGuardReport.schemaVersion -ne "m3-real-desktop-tools@1") { throw "real desktop clipboard guard schema mismatch" }
+if ($realDesktopClipboardGuardReport.pass) { throw "real desktop clipboard guard unexpectedly passed" }
 if (-not $realDesktopClipboardGuardReport.write.allowed) { throw "real desktop clipboard guard did not exercise write path" }
 if (-not $realDesktopClipboardGuardReport.write.clipboardFallbackAllowed) { throw "real desktop clipboard guard did not allow fallback" }
 if ($realDesktopClipboardGuardReport.write.attempted) { throw "real desktop clipboard guard attempted write before target match" }
@@ -293,8 +295,9 @@ Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "real_write_requires_allow
 Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "AllowClipboardFallback"
 Assert-Text "scripts/check-m3-real-desktop-tools.ps1" "clipboardFallbackAllowed"
 Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "m3-desktop-tool-profiles@1"
-Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "claude-code"
-Assert-Text "scripts/check-m3-desktop-tool-profiles.ps1" "hermes"
+Assert-Text "packages/shared/desktop-tool-profiles.json" "claude-code"
+Assert-Text "packages/shared/desktop-tool-profiles.json" "hermes"
+Assert-Text "packages/shared/desktop-tool-profiles.json" "workbuddy"
 Assert-Text "apps/local-service/src/server.js" "/desktop/input-snapshot"
 Assert-Text "apps/local-service/src/server.js" "/desktop/fill"
 Assert-Text "apps/local-service/src/server.js" "confirmForeground"

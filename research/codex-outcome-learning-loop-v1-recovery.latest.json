@@ -1,0 +1,35 @@
+{
+  "schemaVersion": "codex-outcome-learning-loop-real-closure@1",
+  "createdAt": "2026-07-19T12:36:29.014Z",
+  "pass": false,
+  "installedRuntime": true,
+  "realProviderGeneration": false,
+  "resumedFromExistingGeneration": false,
+  "outcomeWaitMs": 0,
+  "checks": {
+    "cdpTargetsReady": true,
+    "pendingInsertRecovered": false
+  },
+  "privacy": {
+    "promptTextNotStored": true,
+    "draftTextNotStored": true,
+    "clipboardTextNotStored": true,
+    "rawTitleNotStored": true,
+    "rawUiaTextNotStored": true,
+    "absoluteProjectPathNotStored": true,
+    "apiKeyNotStored": true,
+    "onlyLengthsHashesAndStateTokens": true
+  },
+  "recovery": {
+    "transactionPresent": false,
+    "ok": false,
+    "openingLength": 70,
+    "openingHash": "30d40a80",
+    "restoredLength": 0,
+    "restoredHash": "811c9dc5",
+    "undoCleared": true,
+    "transactionCleared": true,
+    "pendingOutcomeCleared": false
+  },
+  "completedAt": "2026-07-19T12:36:31.902Z"
+}

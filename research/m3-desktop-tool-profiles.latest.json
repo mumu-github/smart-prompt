@@ -1,16 +1,18 @@
 ﻿{
     "schemaVersion":  "m3-desktop-tool-profiles@1",
-    "createdAt":  "2026-06-07T19:39:56.7402848Z",
+    "createdAt":  "2026-06-18T03:29:00.0940945Z",
     "platform":  "win32",
     "pass":  true,
     "requiredProfiles":  [
                              "codex",
                              "claude-code",
-                             "hermes"
+                             "hermes",
+                             "workbuddy",
+                             "trae"
                          ],
     "summary":  {
-                    "profileCount":  3,
-                    "passedProfiles":  3,
+                    "profileCount":  5,
+                    "passedProfiles":  5,
                     "rawLeakCount":  0
                 },
     "profiles":  [
@@ -64,6 +66,44 @@
                          "focusableCandidates":  0,
                          "titleHash":  "cb687f6e770f2321",
                          "titleLength":  33,
+                         "privacy":  {
+                                         "titleRedacted":  true,
+                                         "elementNamesHashed":  true,
+                                         "elementValuesNotRead":  true,
+                                         "rawTitleLeak":  false
+                                     }
+                     },
+                     {
+                         "id":  "workbuddy",
+                         "ok":  true,
+                         "schemaVersion":  "m3-windows-uia@1",
+                         "detectedToolProfile":  "workbuddy",
+                         "expectedToolProfileMatched":  true,
+                         "candidateCount":  1,
+                         "valuePatternCandidates":  0,
+                         "textPatternCandidates":  0,
+                         "focusableCandidates":  0,
+                         "titleHash":  "ca66833df2f51377",
+                         "titleLength":  36,
+                         "privacy":  {
+                                         "titleRedacted":  true,
+                                         "elementNamesHashed":  true,
+                                         "elementValuesNotRead":  true,
+                                         "rawTitleLeak":  false
+                                     }
+                     },
+                     {
+                         "id":  "trae",
+                         "ok":  true,
+                         "schemaVersion":  "m3-windows-uia@1",
+                         "detectedToolProfile":  "trae",
+                         "expectedToolProfileMatched":  true,
+                         "candidateCount":  1,
+                         "valuePatternCandidates":  0,
+                         "textPatternCandidates":  0,
+                         "focusableCandidates":  0,
+                         "titleHash":  "936832a1925b8540",
+                         "titleLength":  31,
                          "privacy":  {
                                          "titleRedacted":  true,
                                          "elementNamesHashed":  true,

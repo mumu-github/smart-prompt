@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-windows-fill@1",
-    "createdAt":  "2026-06-07T19:40:06.8875625Z",
+    "createdAt":  "2026-06-18T03:29:10.1602814Z",
     "platform":  "win32",
     "selfTest":  true,
     "confirmForeground":  false,
@@ -16,10 +16,14 @@
     "clipboardRestored":  false,
     "textPatternVerificationTried":  false,
     "textPatternVerificationMatched":  false,
+    "valuePatternVerificationTried":  false,
+    "valuePatternVerificationMatched":  false,
+    "nearbyTextVerificationTried":  false,
+    "nearbyTextVerificationMatched":  false,
     "target":  {
                    "index":  0,
                    "controlType":  "ControlType.Pane",
-                   "classNameHash":  "48a9b8edb760deb3",
+                   "classNameHash":  "c56a45c842dc68ca",
                    "hasValuePattern":  false,
                    "hasNativeWindowHandle":  true,
                    "titleLength":  33,
@@ -36,7 +40,9 @@
     "supportedToolProfiles":  [
                                   "codex",
                                   "claude-code",
-                                  "hermes"
+                                  "hermes",
+                                  "workbuddy",
+                                  "trae"
                               ],
     "privacy":  {
                     "titleRedacted":  true,
@@ -46,6 +52,8 @@
                     "clipboardTextNotStored":  true,
                     "fallbackRequiresExplicitAllow":  true,
                     "textPatternVerificationRequiresExplicitAllow":  true,
+                    "valuePatternVerificationRequiresExplicitAllow":  true,
+                    "nearbyTextVerificationRequiresExplicitAllow":  true,
                     "verificationTextNotStored":  true,
                     "verificationUsesLengthAndHash":  true,
                     "caretTextNotRead":  true,

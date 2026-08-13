@@ -1,0 +1,57 @@
+{
+  "createdAt": "2026-07-18T01:33:13.863Z",
+  "pass": true,
+  "remotePort": 9228,
+  "servicePort": 17371,
+  "dataDirConfigured": true,
+  "checks": {
+    "webviewTarget": true,
+    "tauriApi": true,
+    "phase3ControlCenter": true,
+    "controlCenterHealthy": true,
+    "shortcutRegistered": true,
+    "sidecarSource": true,
+    "localServiceStarted": true,
+    "localServiceIdentity": true,
+    "activationContract": true,
+    "isolatedDataDir": true,
+    "localServiceStopped": true,
+    "globalShortcutTriggered": true
+  },
+  "phase3Ui": {
+    "phase3": true,
+    "wizard": true,
+    "controlPages": 4,
+    "legacyHidden": true
+  },
+  "sidecar": {
+    "source": "source",
+    "binaryConfigured": true
+  },
+  "shortcut": "Ctrl+Alt+P",
+  "service": {
+    "activationContract": "phase3-activation@1",
+    "authRequired": true,
+    "buildId": "phase3-native-sidecar-20260717-r6",
+    "ok": true,
+    "port": 17371,
+    "runtimeContract": "phase3-native-runtime@1",
+    "service": "smart-prompt-local-service",
+    "sidecar": "native",
+    "version": "0.5.0-native"
+  },
+  "controlCenter": {
+    "status": "本地服务正常",
+    "tone": "success",
+    "repairHidden": true,
+    "wizardVisible": true
+  },
+  "activation": {
+    "schemaVersion": "phase3-activation@1",
+    "progress": "not_started",
+    "runtimeHealth": "healthy"
+  },
+  "serviceStatus": "running",
+  "shortcutHits": 1,
+  "serviceStopStatus": "stopped"
+}

@@ -1,0 +1,55 @@
+{
+    "schemaVersion":  "p25-overlay-window-visual-attach@1",
+    "createdAt":  "2026-06-17T16:06:13.4060042Z",
+    "pass":  false,
+    "completionReady":  false,
+    "completionImpact":  "overlay_window_missing",
+    "report":  "research/p25-overlay-background-hide-attach.latest.json",
+    "wait":  {
+                 "timeoutSeconds":  0,
+                 "pollCount":  1
+             },
+    "windowCount":  0,
+    "primaryWindow":  null,
+    "windows":  [
+
+                ],
+    "visualEvidence":  null,
+    "checks":  {
+                   "overlayWindowFound":  false,
+                   "overlayWindowVisible":  false,
+                   "noActivateStyle":  false,
+                   "geometryMatchesExpectedOverlaySize":  false,
+                   "screenPixelsCapturedForRatios":  false,
+                   "largeWhiteBlockAbsent":  false,
+                   "screenshotSaved":  false
+               },
+    "safety":  {
+                   "attachOnly":  true,
+                   "processStartAttempted":  false,
+                   "stopAttempted":  false,
+                   "killAttempted":  false,
+                   "replaceAttempted":  false,
+                   "realOverlayClickAttempted":  false,
+                   "targetWriteAttempted":  false,
+                   "screenshotWriteRequiresExplicitAllow":  true,
+                   "screenshotWriteAttempted":  false
+               },
+    "privacy":  {
+                    "noPromptTextRead":  true,
+                    "noTargetInputRead":  true,
+                    "noRawTitlesStored":  true,
+                    "rawUiaNamesNotRead":  true,
+                    "clipboardTextNotRead":  true,
+                    "screenPixelsReadForRatios":  false,
+                    "rawDesktopPixelsPersisted":  false,
+                    "onlyMetadataStored":  true
+                },
+    "scope":  {
+                  "verifiesExistingOverlayWindowOnly":  true,
+                  "doesNotStartDesktopShell":  true,
+                  "doesNotVerifyRealOverlayClick":  true,
+                  "doesNotVerifyRealFill":  true,
+                  "doesNotVerifySafeCandidate":  true
+              }
+}

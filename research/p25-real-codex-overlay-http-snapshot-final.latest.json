@@ -1,0 +1,86 @@
+﻿{
+    "ok":  true,
+    "snapshot":  {
+                     "candidates":  [
+
+                                    ],
+                     "caret":  {
+                                   "rect":  {
+                                                "height":  0,
+                                                "width":  0,
+                                                "x":  0,
+                                                "y":  0
+                                            },
+                                   "source":  "win32_get_gui_thread_info",
+                                   "supported":  true,
+                                   "virtualCaretMayBeHidden":  true,
+                                   "visible":  false,
+                                   "windowHandlePresent":  false
+                               },
+                     "createdAt":  "2026-06-09T07:52:33.7965597Z",
+                     "cursor":  {
+                                    "rect":  {
+                                                 "height":  1,
+                                                 "width":  1,
+                                                 "x":  1573,
+                                                 "y":  1766
+                                             },
+                                    "rootWindowHandlePresent":  true,
+                                    "source":  "win32_get_cursor_pos",
+                                    "supported":  true,
+                                    "windowHandlePresent":  true
+                                },
+                     "foreground":  {
+                                        "childProcessCount":  8,
+                                        "childToolProcessHintPresent":  true,
+                                        "detectedToolProfile":  "hermes",
+                                        "expectedToolProfile":  "",
+                                        "expectedToolProfileMatched":  true,
+                                        "pidPresent":  true,
+                                        "processName":  "explorer",
+                                        "titleHash":  "1d897bca25b19ce8",
+                                        "titleLength":  15
+                                    },
+                     "pass":  true,
+                     "platform":  "win32",
+                     "privacy":  {
+                                     "elementNamesHashed":  true,
+                                     "elementValuesNotRead":  true,
+                                     "promptTextNotRead":  true,
+                                     "titleRedacted":  true
+                                 },
+                     "probeOk":  true,
+                     "schemaVersion":  "m3-windows-uia@1",
+                     "selection":  {
+                                       "cursorProfile":  "hermes",
+                                       "foregroundProfile":  "unknown",
+                                       "source":  "cursor_window_fallback"
+                                   },
+                     "selfTest":  false,
+                     "selfTestProfile":  "",
+                     "summary":  {
+                                     "bestCandidateIndex":  -1,
+                                     "bestCandidateScore":  0,
+                                     "candidateCount":  0,
+                                     "caretCandidateCount":  0,
+                                     "caretVisible":  false,
+                                     "caretWindowPresent":  false,
+                                     "detectedToolProfile":  "hermes",
+                                     "focusableCandidates":  0,
+                                     "focusedCandidateCount":  0,
+                                     "inspectedElementCount":  1,
+                                     "safeCandidateCount":  0,
+                                     "semanticCandidateCount":  0,
+                                     "textPatternCandidates":  0,
+                                     "traversalTimedOut":  false,
+                                     "valuePatternCandidates":  0
+                                 },
+                     "supportedToolProfiles":  [
+                                                   "codex",
+                                                   "claude-code",
+                                                   "hermes",
+                                                   "workbuddy",
+                                                   "trae"
+                                               ]
+                 }
+}

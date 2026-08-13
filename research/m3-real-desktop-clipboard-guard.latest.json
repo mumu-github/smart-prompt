@@ -1,8 +1,8 @@
 ﻿{
     "schemaVersion":  "m3-real-desktop-tools@1",
-    "createdAt":  "2026-06-07T19:40:28.3566426Z",
+    "createdAt":  "2026-06-18T03:29:33.8992695Z",
     "platform":  "win32",
-    "pass":  true,
+    "pass":  false,
     "requestedProfiles":  [
                               "codex",
                               "claude-code",
@@ -11,43 +11,104 @@
     "supportedToolProfiles":  [
                                   "codex",
                                   "claude-code",
-                                  "hermes"
+                                  "hermes",
+                                  "workbuddy",
+                                  "trae"
                               ],
     "attach":  {
                    "requested":  "",
                    "attempted":  false,
                    "windowFound":  false,
+                   "restoreWindow":  false,
                    "setForeground":  false,
+                   "foregroundActivation":  {
+                                                "initialSetForeground":  false,
+                                                "initialForeground":  false,
+                                                "attachAttempted":  false,
+                                                "attachCurrentToForeground":  false,
+                                                "attachCurrentToTarget":  false,
+                                                "attachBringToTop":  false,
+                                                "attachSetForeground":  false,
+                                                "attachForeground":  false,
+                                                "altUnlockAttempted":  false,
+                                                "altUnlockSent":  false,
+                                                "altSetForeground":  false,
+                                                "altForeground":  false,
+                                                "switchAttempted":  false,
+                                                "switchForeground":  false,
+                                                "isForeground":  false
+                                            },
+                   "cursorInsideTargetWindow":  false,
+                   "cursorPlacement":  {
+                                           "attempted":  false,
+                                           "strategy":  "none",
+                                           "toolProfile":  "unknown",
+                                           "setCursor":  false,
+                                           "cursorSupported":  false,
+                                           "cursorWithinCandidate":  false,
+                                           "ok":  false,
+                                           "targetPoint":  {
+                                                               "x":  0,
+                                                               "y":  0
+                                                           },
+                                           "cursorPoint":  {
+                                                               "x":  0,
+                                                               "y":  0
+                                                           }
+                                       },
                    "processName":  "",
                    "titleLength":  0,
                    "titleHash":  "",
                    "detectedToolProfile":  "unknown",
+                   "isVisible":  false,
+                   "isMinimized":  false,
+                   "isCloaked":  false,
+                   "isUsable":  false,
+                   "boundingRect":  {
+                                        "x":  0,
+                                        "y":  0,
+                                        "width":  0,
+                                        "height":  0
+                                    },
                    "childProcessCount":  0,
                    "childToolProcessHintPresent":  false
                },
     "foreground":  {
-                       "processName":  "explorer",
+                       "processName":  "Codex",
                        "pidPresent":  true,
-                       "titleLength":  0,
-                       "titleHash":  "",
-                       "detectedToolProfile":  "unknown",
-                       "hasTargetForeground":  false
+                       "titleLength":  5,
+                       "titleHash":  "616efbe96852d8c9",
+                       "detectedToolProfile":  "codex",
+                       "selectionSource":  "foreground_window",
+                       "hasTargetForeground":  true,
+                       "isVisible":  true,
+                       "isMinimized":  false,
+                       "isCloaked":  false,
+                       "isUsable":  true,
+                       "boundingRect":  {
+                                            "x":  -7,
+                                            "y":  -7,
+                                            "width":  1613,
+                                            "height":  965
+                                        }
                    },
     "snapshot":  {
                      "exitCode":  0,
                      "parseOk":  true,
                      "parseError":  "",
                      "probeOk":  true,
-                     "candidateCount":  0,
-                     "valuePatternCandidates":  0,
-                     "textPatternCandidates":  0,
-                     "focusableCandidates":  0,
+                     "candidateCount":  214,
+                     "safeCandidateCount":  1,
+                     "valuePatternCandidates":  1,
+                     "textPatternCandidates":  121,
+                     "focusableCandidates":  87,
                      "focusedCandidateCount":  0,
                      "caretCandidateCount":  0,
-                     "bestCandidateIndex":  -1,
-                     "bestCandidateScore":  0,
+                     "bestCandidateIndex":  213,
+                     "bestCandidateScore":  80,
                      "caretVisible":  false,
-                     "caretWindowPresent":  false
+                     "caretWindowPresent":  false,
+                     "selectionSource":  "foreground_window"
                  },
     "write":  {
                   "allowed":  true,
@@ -61,18 +122,30 @@
                   "textPatternVerificationAllowed":  false,
                   "textPatternVerificationTried":  false,
                   "textPatternVerificationMatched":  false,
+                  "valuePatternVerificationTried":  false,
+                  "valuePatternVerificationMatched":  false,
+                  "nearbyTextVerificationTried":  false,
+                  "nearbyTextVerificationMatched":  false,
                   "reason":  "foreground_title_hash_mismatch",
                   "expectedTitleHashMatched":  false,
-                  "expectedToolProfileMatched":  false,
-                  "candidateIndex":  0,
+                  "expectedToolProfileMatched":  true,
+                  "candidateIndex":  213,
                   "exitCode":  0,
                   "summary":  {
+                                  "safeCandidateCount":  0,
                                   "requestedTextLength":  0,
                                   "requestedTextHash":  "",
                                   "verifiedTextLength":  0,
                                   "verifiedTextHash":  "",
                                   "textPatternVerificationReadLength":  0,
                                   "textPatternVerificationTextHash":  "",
+                                  "valuePatternVerificationReadLength":  0,
+                                  "valuePatternVerificationTextHash":  "",
+                                  "nearbyTextVerificationInspectedElementCount":  0,
+                                  "nearbyTextVerificationReadableElementCount":  0,
+                                  "nearbyTextVerificationReadLength":  0,
+                                  "nearbyTextVerificationTextHash":  "",
+                                  "nearbyTextVerificationSource":  "",
                                   "autoSubmit":  false,
                                   "submitSignalCount":  0
                               }
@@ -80,9 +153,9 @@
     "coverage":  [
                      {
                          "id":  "codex",
-                         "status":  "not_foreground",
-                         "foregroundDetected":  false,
-                         "snapshotCandidateCount":  0,
+                         "status":  "foreground_detected",
+                         "foregroundDetected":  true,
+                         "snapshotCandidateCount":  214,
                          "realWindowWriteValidated":  false
                      },
                      {
@@ -104,7 +177,8 @@
                    "snapshotOk":  true,
                    "supportedProfilesPresent":  true,
                    "foregroundClassified":  true,
-                   "hasTargetForeground":  false,
+                   "hasTargetForeground":  true,
+                   "foregroundUsableForWrite":  true,
                    "writeAttempted":  false,
                    "writeValidated":  false,
                    "privacyRedacted":  true,
@@ -124,9 +198,11 @@
                     "clipboardTextNotStored":  true,
                     "fallbackRequiresExplicitAllow":  true,
                     "textPatternVerificationRequiresExplicitAllow":  true,
+                    "valuePatternVerificationRequiresExplicitAllow":  true,
+                    "nearbyTextVerificationRequiresExplicitAllow":  true,
                     "verificationTextNotStored":  true,
                     "verificationUsesLengthAndHash":  true,
                     "autoSubmit":  false
                 },
-    "completionImpact":  "target_tool_not_foreground"
+    "completionImpact":  "real_tool_write_still_pending"
 }

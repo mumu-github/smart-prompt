@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-fill@1",
-    "createdAt":  "2026-06-07T19:40:44.6923855Z",
+    "createdAt":  "2026-06-18T03:29:39.5896044Z",
     "pass":  true,
     "port":  17442,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  95,
-                    "sha256":  "f13904c4a89b1c44"
+                    "sha256":  "42411c1b4c64f0d8"
                 },
     "requestedText":  {
                           "length":  33,
@@ -36,7 +36,9 @@
                  "clipboardFallbackTried":  false,
                  "clipboardRestored":  false,
                  "confirmForeground":  false,
-                 "createdAt":  "2026-06-07T19:40:44.2893260Z",
+                 "createdAt":  "2026-06-18T03:29:39.4755043Z",
+                 "nearbyTextVerificationMatched":  false,
+                 "nearbyTextVerificationTried":  false,
                  "pass":  true,
                  "platform":  "win32",
                  "privacy":  {
@@ -65,10 +67,12 @@
                  "supportedToolProfiles":  [
                                                "codex",
                                                "claude-code",
-                                               "hermes"
+                                               "hermes",
+                                               "workbuddy",
+                                               "trae"
                                            ],
                  "target":  {
-                                "classNameHash":  "9c5c429eb38f31b9",
+                                "classNameHash":  "687eb9d0bf057c78",
                                 "controlType":  "ControlType.Pane",
                                 "hasNativeWindowHandle":  true,
                                 "hasValuePattern":  false,
@@ -79,6 +83,8 @@
                  "textPatternVerificationMatched":  false,
                  "textPatternVerificationTried":  false,
                  "uiaSetValueTried":  false,
+                 "valuePatternVerificationMatched":  false,
+                 "valuePatternVerificationTried":  false,
                  "verified":  true,
                  "writeAttempted":  true
              }

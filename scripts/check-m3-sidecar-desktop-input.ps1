@@ -60,9 +60,10 @@ function Invoke-Json {
   param(
     [string]$Method,
     [string]$Url,
-    [hashtable]$Headers = @{}
+    [hashtable]$Headers = @{},
+    [int]$TimeoutSec = 5
   )
-  Invoke-RestMethod -Method $Method -Uri $Url -Headers $Headers -TimeoutSec 5
+  Invoke-RestMethod -Method $Method -Uri $Url -Headers $Headers -TimeoutSec $TimeoutSec
 }
 
 function Set-ContentWithRetry {
@@ -115,7 +116,7 @@ try {
 
   $auth = Invoke-Json -Method GET -Url "http://127.0.0.1:$selectedPort/auth/bootstrap"
   $headers = @{ Authorization = "Bearer $($auth.auth.token)" }
-  $snapshotResponse = Invoke-Json -Method GET -Url "http://127.0.0.1:$selectedPort/desktop/input-snapshot?selfTest=1" -Headers $headers
+  $snapshotResponse = Invoke-Json -Method GET -Url "http://127.0.0.1:$selectedPort/desktop/input-snapshot?selfTest=1" -Headers $headers -TimeoutSec 20
   $snapshot = $snapshotResponse.snapshot
 
   $checks = [ordered]@{

@@ -1,0 +1,94 @@
+{
+  "schemaVersion": "codex-outcome-learning-loop-v1-benchmark-report@1",
+  "createdAt": "2026-07-19T06:23:49.013Z",
+  "verdict": "pass",
+  "productionPromotionEligible": false,
+  "fakeBenchmark": {
+    "status": "passed",
+    "evidenceClass": "harness_only",
+    "zeroPaidRequests": true,
+    "result": {
+      "contractVersion": "benchmark-result@1",
+      "benchmarkId": "benchmark_codex_outcome_v1_fake",
+      "status": "passed",
+      "executor": "fake",
+      "initiatedBy": "test",
+      "authorization": {
+        "required": false,
+        "granted": false
+      },
+      "modelFamilyToken": "model_family_codex_fixture",
+      "fixtureSetToken": "codex_benchmark_fixtures_v1",
+      "taskCount": 12,
+      "categoryCounts": {
+        "feature_development": 2,
+        "bug_fix": 2,
+        "refactor": 2,
+        "test_completion": 2,
+        "code_review": 2,
+        "documentation": 2
+      },
+      "comparability": {
+        "sameModelFamily": true,
+        "sameStartingPoint": true,
+        "samePermissions": true,
+        "sameBudget": true,
+        "deterministicAcceptance": true
+      },
+      "budget": {
+        "tokenLimit": 120000,
+        "maxAgentTurns": 6,
+        "maxRetries": 2,
+        "estimatedCostMicros": 0,
+        "consumedTokens": 43884,
+        "exhausted": false
+      },
+      "arms": {
+        "baseline": {
+          "completedTasks": 12,
+          "safetyPassedTasks": 12,
+          "totalTokens": 23322,
+          "totalDurationMs": 13458,
+          "totalRetries": 3,
+          "totalToolCalls": 48
+        },
+        "candidate": {
+          "completedTasks": 12,
+          "safetyPassedTasks": 12,
+          "totalTokens": 20562,
+          "totalDurationMs": 11898,
+          "totalRetries": 0,
+          "totalToolCalls": 36
+        }
+      },
+      "safety": {
+        "qualityGatePassed": true,
+        "noAutoSubmitPassed": true,
+        "privacyPassed": true,
+        "permissionPassed": true
+      },
+      "startedAt": "2026-01-01T00:00:00.000Z",
+      "finishedAt": "2026-01-01T00:00:25.356Z",
+      "publicReason": "none",
+      "privacyFlags": {
+        "rawInputStored": false,
+        "generatedPromptStored": false,
+        "chatContentStored": false,
+        "clipboardContentStored": false,
+        "windowTitleStored": false,
+        "absoluteProjectPathStored": false,
+        "credentialStored": false,
+        "rawEvidenceStored": false
+      }
+    }
+  },
+  "realBenchmark": {
+    "status": "not_run",
+    "reasonToken": "separate_budget_confirmation_not_granted",
+    "paidRequests": 0
+  },
+  "limitations": [
+    "Fake-executor evidence validates harness behavior only.",
+    "It cannot benchmark real Codex quality or promote a production policy."
+  ]
+}

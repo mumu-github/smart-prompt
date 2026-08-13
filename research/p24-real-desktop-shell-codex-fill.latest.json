@@ -1,0 +1,73 @@
+{
+  "schemaVersion": "p24-real-desktop-shell-fill@1",
+  "createdAt": "2026-06-09T06:53:22.644Z",
+  "app": {
+    "process": "smart-prompt-desktop",
+    "cdpTarget": {
+      "title": "Smart Prompt Desktop",
+      "url": "http://tauri.localhost/"
+    }
+  },
+  "targetTool": {
+    "requested": "codex",
+    "realWindowRequired": true
+  },
+  "buttonPath": {
+    "mascotButtonClicked": true,
+    "fillForegroundButtonClicked": true,
+    "via": "real_tauri_webview_cdp_dom_click"
+  },
+  "text": {
+    "probe": {
+      "length": 56,
+      "hash": "faed8025fb04f880"
+    },
+    "draft": {
+      "length": 61,
+      "hash": "c1bab3d65e70cc73"
+    },
+    "rawStored": false
+  },
+  "initial": {
+    "readyState": "complete",
+    "url": "http://tauri.localhost/",
+    "title": "Smart Prompt Desktop",
+    "hasMascot": true,
+    "hasFill": true
+  },
+  "snapshot": {
+    "state": "ready",
+    "profile": "codex",
+    "candidateCount": "185",
+    "safeCandidateCount": "185",
+    "bestCandidateIndex": "0",
+    "noAutoSubmit": "true",
+    "statusText": "桌面输入已识别",
+    "evidenceText": "codex | 候选 185 | 安全 185 | 最佳 0 | no-submit true",
+    "surfaceText": "codex 已锁定；候选 185；安全候选 185；标题 hash 616efbe96852d8c9"
+  },
+  "beforeFill": {
+    "fillDisabled": false,
+    "fusionState": "ready",
+    "detectedToolProfile": "codex"
+  },
+  "fill": {
+    "state": "filled",
+    "text": "已填入前台；未自动提交。",
+    "fillPass": "true",
+    "writeAttempted": "true",
+    "verified": "true",
+    "noAutoSubmit": "true",
+    "strategy": "clipboard_paste_fallback",
+    "foregroundFill": "true",
+    "serviceStatus": "已填入前台；未自动提交。"
+  },
+  "finalDom": {
+    "fusionState": "filled",
+    "mascotState": "success",
+    "status": "已填入前台；未自动提交。",
+    "promptLength": 56,
+    "draftLength": 61
+  },
+  "pass": true
+}

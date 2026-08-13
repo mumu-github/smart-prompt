@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "codex-outcome-learning-loop-v1-acceptance@1",
+  "createdAt": "2026-07-19T09:23:56.262Z",
+  "verdict": "partial",
+  "scannerPass": true,
+  "checks": {
+    "contractFixtures": true,
+    "contextSourceInjectionGate": true,
+    "fourCandidateTypes": true,
+    "fourCandidateTypesFromVerifiedOutcomes": true,
+    "openCardReminderResolvedWithoutModel": true,
+    "candidatesInactiveBeforeReview": true,
+    "rawSessionTextRejected": true,
+    "credentialsRejected": true,
+    "absoluteProjectPathsRejected": true,
+    "persistedRuntimeDataRedacted": true,
+    "publicApiRedacted": true,
+    "semanticFingerprintProjectScoped": true,
+    "semanticFingerprintNotExported": true,
+    "diagnosticsRedacted": true,
+    "researchArtifactsRedacted": true
+  },
+  "counts": {
+    "observations": 12,
+    "candidateTypes": 4,
+    "rejectedRawInputs": 3,
+    "researchArtifacts": 1
+  },
+  "externalVerification": {
+    "node": "pass",
+    "shared": "pass",
+    "desktop": "pass",
+    "native": "pass",
+    "package": "pass",
+    "gui": "not_run",
+    "adversarial": "pass"
+  },
+  "realBenchmark": {
+    "status": "not_run",
+    "reasonToken": "separate_budget_confirmation_not_granted",
+    "paidRequests": 0
+  }
+}

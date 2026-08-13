@@ -1,0 +1,242 @@
+[
+  {
+    "id": "crm-dashboard-continue",
+    "mode": "continue",
+    "input": "Build a CRM dashboard with customer list, follow-up notes, and team assignment.",
+    "context": { "tool": "ChatGPT", "host": "chatgpt.com", "inputKind": "textarea", "locale": "en", "adapterId": "chatgpt" },
+    "expectedSkills": ["test-plan", "ui-ux"],
+    "minScore": 0.72
+  },
+  {
+    "id": "login-security-continue",
+    "mode": "continue",
+    "input": "Refactor login module, keep API stable, pay attention to auth, privacy, tests, and regression risk.",
+    "context": { "tool": "Codex", "host": "local", "inputKind": "desktop", "locale": "en", "adapterId": "codex" },
+    "expectedSkills": ["security-review", "code-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "lovable-ui-idea",
+    "mode": "idea",
+    "input": "A better onboarding screen for a small SaaS app.",
+    "context": { "tool": "Lovable", "host": "lovable.dev", "inputKind": "textarea", "locale": "en", "adapterId": "lovable" },
+    "expectedSkills": ["ui-ux"],
+    "minScore": 0.72
+  },
+  {
+    "id": "flaky-test-debug-continue",
+    "mode": "continue",
+    "input": "Investigate a flaky Playwright test that fails on Windows CI but passes locally.",
+    "context": { "tool": "Codex", "host": "local", "inputKind": "desktop", "locale": "en", "adapterId": "codex" },
+    "expectedSkills": ["code-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "analytics-dashboard-continue",
+    "mode": "continue",
+    "input": "Create a weekly usage dashboard and explain why retention dropped last month.",
+    "context": { "tool": "Gemini", "host": "gemini.google.com", "inputKind": "contenteditable", "locale": "en", "adapterId": "gemini" },
+    "expectedSkills": ["test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "pull-request-review-polish",
+    "mode": "polish",
+    "input": "Goal: review this pull request. Context: new local service endpoints. Constraints: focus on regressions and missing tests. Output: findings first, then summary. Acceptance: every finding has file and line.",
+    "context": { "tool": "Claude", "host": "claude.ai", "inputKind": "contenteditable", "locale": "en", "adapterId": "claude" },
+    "expectedSkills": ["code-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "auth-threat-model-continue",
+    "mode": "continue",
+    "input": "Threat model the API key storage and local auth token flow.",
+    "context": { "tool": "Claude", "host": "claude.ai", "inputKind": "contenteditable", "locale": "en", "adapterId": "claude" },
+    "expectedSkills": ["security-review"],
+    "minScore": 0.72
+  },
+  {
+    "id": "onboarding-doc-idea",
+    "mode": "idea",
+    "input": "Help a new contributor understand this project quickly.",
+    "context": { "tool": "ChatGPT", "host": "chatgpt.com", "inputKind": "textarea", "locale": "en", "adapterId": "chatgpt" },
+    "expectedSkills": ["test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "desktop-input-adapter-polish",
+    "mode": "polish",
+    "input": "Goal: improve desktop input detection. Context: Windows UIA sees a broad Document instead of a real Edit control. Constraints: never write without foreground confirmation. Output: implementation plan and tests. Acceptance: no auto-submit and no raw prompt persisted.",
+    "context": { "tool": "Codex", "host": "local", "inputKind": "desktop", "locale": "en", "adapterId": "codex" },
+    "expectedSkills": ["code-review", "security-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "prompt-library-taxonomy-idea",
+    "mode": "idea",
+    "input": "Organize saved prompts and local skills so suggestions are smarter.",
+    "context": { "tool": "ChatGPT", "host": "chatgpt.com", "inputKind": "textarea", "locale": "en", "adapterId": "chatgpt" },
+    "expectedSkills": ["test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "mobile-ui-continue",
+    "mode": "continue",
+    "input": "Design a mobile settings page for provider keys, language, and privacy switches.",
+    "context": { "tool": "Lovable", "host": "lovable.dev", "inputKind": "textarea", "locale": "en", "adapterId": "lovable" },
+    "expectedSkills": ["ui-ux", "security-review"],
+    "minScore": 0.72
+  },
+  {
+    "id": "release-notes-polish",
+    "mode": "polish",
+    "input": "Goal: write beta release notes. Context: installer, desktop shell, extension, local service, sidecar. Constraints: do not overclaim stable adapters. Output: concise release notes. Acceptance: includes known risks and checksums.",
+    "context": { "tool": "ChatGPT", "host": "chatgpt.com", "inputKind": "textarea", "locale": "en", "adapterId": "chatgpt" },
+    "expectedSkills": ["test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "metric-diagnostics-continue",
+    "mode": "continue",
+    "input": "Diagnose why insert success rate fell after adding new site adapters.",
+    "context": { "tool": "Gemini", "host": "gemini.google.com", "inputKind": "contenteditable", "locale": "en", "adapterId": "gemini" },
+    "expectedSkills": ["test-plan", "code-review"],
+    "minScore": 0.72
+  },
+  {
+    "id": "extension-selector-failure-continue",
+    "mode": "continue",
+    "input": "Fix browser extension selector failures on a logged-in chat site without reading the full page body.",
+    "context": { "tool": "Codex", "host": "local", "inputKind": "desktop", "locale": "en", "adapterId": "codex" },
+    "expectedSkills": ["code-review", "security-review"],
+    "minScore": 0.72
+  },
+  {
+    "id": "privacy-settings-polish",
+    "mode": "polish",
+    "input": "Goal: improve privacy settings UX. Context: users can configure provider keys and local service. Constraints: no default full-page upload, no auto-submit, no plaintext keys. Output: product copy and acceptance checks. Acceptance: test verifies redaction.",
+    "context": { "tool": "Claude", "host": "claude.ai", "inputKind": "contenteditable", "locale": "en", "adapterId": "claude" },
+    "expectedSkills": ["security-review", "ui-ux", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "tauri-installer-smoke-continue",
+    "mode": "continue",
+    "input": "Create a smoke test plan for a Windows Tauri installer that starts the sidecar and opens one window.",
+    "context": { "tool": "Codex", "host": "local", "inputKind": "desktop", "locale": "en", "adapterId": "codex" },
+    "expectedSkills": ["test-plan", "code-review"],
+    "minScore": 0.72
+  },
+  {
+    "id": "skill-recommendation-idea",
+    "mode": "idea",
+    "input": "Recommend the right local skill when the user types a vague coding request.",
+    "context": { "tool": "ChatGPT", "host": "chatgpt.com", "inputKind": "textarea", "locale": "en", "adapterId": "chatgpt" },
+    "expectedSkills": ["code-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "product-pitch-continue",
+    "mode": "continue",
+    "input": "Turn Smart Prompt into a short product pitch for early beta users.",
+    "context": { "tool": "ChatGPT", "host": "chatgpt.com", "inputKind": "textarea", "locale": "en", "adapterId": "chatgpt" },
+    "expectedSkills": ["ui-ux"],
+    "minScore": 0.72
+  },
+  {
+    "id": "prd-polish",
+    "mode": "polish",
+    "input": "Goal: update the PRD for V6. Context: prompt quality eval, structured LLM output, skill routing, feedback loop. Constraints: keep beta risks honest. Output: PRD section. Acceptance: every claim has evidence or a TODO.",
+    "context": { "tool": "Claude", "host": "claude.ai", "inputKind": "contenteditable", "locale": "en", "adapterId": "claude" },
+    "expectedSkills": ["test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "web-app-ui-continue",
+    "mode": "continue",
+    "input": "Build a clean web UI for viewing saved prompts, quality scores, and recommended skills.",
+    "context": { "tool": "Lovable", "host": "lovable.dev", "inputKind": "textarea", "locale": "en", "adapterId": "lovable" },
+    "expectedSkills": ["ui-ux", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "code-migration-continue",
+    "mode": "continue",
+    "input": "Migrate duplicated prompt engine logic into a shared package without breaking extension tests.",
+    "context": { "tool": "Codex", "host": "local", "inputKind": "desktop", "locale": "en", "adapterId": "codex" },
+    "expectedSkills": ["code-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "api-spec-continue",
+    "mode": "continue",
+    "input": "Design an API contract for structured prompt output and quality scoring.",
+    "context": { "tool": "Gemini", "host": "gemini.google.com", "inputKind": "contenteditable", "locale": "en", "adapterId": "gemini" },
+    "expectedSkills": ["test-plan", "security-review"],
+    "minScore": 0.72
+  },
+  {
+    "id": "security-incident-idea",
+    "mode": "idea",
+    "input": "What should we ask an AI to review after a leaked local API token?",
+    "context": { "tool": "Claude", "host": "claude.ai", "inputKind": "contenteditable", "locale": "en", "adapterId": "claude" },
+    "expectedSkills": ["security-review"],
+    "minScore": 0.72
+  },
+  {
+    "id": "user-interview-continue",
+    "mode": "continue",
+    "input": "Prepare questions for beta users about whether generated prompts are actually better.",
+    "context": { "tool": "ChatGPT", "host": "chatgpt.com", "inputKind": "textarea", "locale": "en", "adapterId": "chatgpt" },
+    "expectedSkills": ["test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "prompt-polish-polish",
+    "mode": "polish",
+    "input": "Goal: improve this prompt. Context: user wants a coding agent to implement fixes. Constraints: do not ask for permission every step, but do not auto-send. Output: copy-ready prompt. Acceptance: includes tests and risks.",
+    "context": { "tool": "ChatGPT", "host": "chatgpt.com", "inputKind": "textarea", "locale": "en", "adapterId": "chatgpt" },
+    "expectedSkills": ["code-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "hermes-fill-continue",
+    "mode": "continue",
+    "input": "Create a safe desktop fill validation prompt for Hermes and Claude Code.",
+    "context": { "tool": "Codex", "host": "local", "inputKind": "desktop", "locale": "en", "adapterId": "codex" },
+    "expectedSkills": ["security-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "doubao-adapter-continue",
+    "mode": "continue",
+    "input": "Debug why the mascot does not appear on Doubao even though the textarea exists.",
+    "context": { "tool": "ChatGPT", "host": "doubao.com", "inputKind": "textarea", "locale": "en", "adapterId": "doubao" },
+    "expectedSkills": ["code-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "gemini-output-polish",
+    "mode": "polish",
+    "input": "Goal: get Gemini to return valid JSON. Context: structured prompt output parser. Constraints: robust to markdown fences and text fallback. Output: implementation checklist. Acceptance: malformed JSON falls back safely.",
+    "context": { "tool": "Gemini", "host": "gemini.google.com", "inputKind": "contenteditable", "locale": "en", "adapterId": "gemini" },
+    "expectedSkills": ["code-review", "test-plan"],
+    "minScore": 0.72
+  },
+  {
+    "id": "clear-data-test-plan-continue",
+    "mode": "continue",
+    "input": "Write tests for deleting all local data while preserving a fresh auth token.",
+    "context": { "tool": "Codex", "host": "local", "inputKind": "desktop", "locale": "en", "adapterId": "codex" },
+    "expectedSkills": ["test-plan", "security-review"],
+    "minScore": 0.72
+  },
+  {
+    "id": "retry-ux-idea",
+    "mode": "idea",
+    "input": "Make retry useful when a generated prompt is bad.",
+    "context": { "tool": "Lovable", "host": "lovable.dev", "inputKind": "textarea", "locale": "en", "adapterId": "lovable" },
+    "expectedSkills": ["ui-ux", "test-plan"],
+    "minScore": 0.72
+  }
+]

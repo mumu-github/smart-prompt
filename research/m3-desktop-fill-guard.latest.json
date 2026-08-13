@@ -1,6 +1,6 @@
 ﻿{
     "schemaVersion":  "m3-windows-fill@1",
-    "createdAt":  "2026-06-07T19:40:15.8251669Z",
+    "createdAt":  "2026-06-18T03:29:18.4153470Z",
     "platform":  "win32",
     "selfTest":  false,
     "confirmForeground":  true,
@@ -15,21 +15,38 @@
     "clipboardRestored":  false,
     "textPatternVerificationTried":  false,
     "textPatternVerificationMatched":  false,
+    "valuePatternVerificationTried":  false,
+    "valuePatternVerificationMatched":  false,
+    "nearbyTextVerificationTried":  false,
+    "nearbyTextVerificationMatched":  false,
     "foreground":  {
-                       "processName":  "explorer",
+                       "processName":  "Codex",
                        "pidPresent":  true,
-                       "titleLength":  0,
-                       "titleHash":  "",
-                       "detectedToolProfile":  "unknown",
-                       "childProcessCount":  1,
-                       "childToolProcessHintPresent":  false,
+                       "isVisible":  true,
+                       "isMinimized":  false,
+                       "isCloaked":  false,
+                       "isUsable":  true,
+                       "boundingRect":  {
+                                            "x":  -7,
+                                            "y":  -7,
+                                            "width":  1613,
+                                            "height":  965
+                                        },
+                       "titleLength":  5,
+                       "titleHash":  "616efbe96852d8c9",
+                       "detectedToolProfile":  "codex",
+                       "childProcessCount":  10,
+                       "childToolProcessHintPresent":  true,
+                       "selectionSource":  "foreground_window",
                        "expectedTitleHashMatched":  false,
-                       "expectedToolProfileMatched":  false
+                       "expectedToolProfileMatched":  true
                    },
     "supportedToolProfiles":  [
                                   "codex",
                                   "claude-code",
-                                  "hermes"
+                                  "hermes",
+                                  "workbuddy",
+                                  "trae"
                               ],
     "privacy":  {
                     "titleRedacted":  true,
@@ -39,6 +56,8 @@
                     "clipboardTextNotStored":  true,
                     "fallbackRequiresExplicitAllow":  true,
                     "textPatternVerificationRequiresExplicitAllow":  true,
+                    "valuePatternVerificationRequiresExplicitAllow":  true,
+                    "nearbyTextVerificationRequiresExplicitAllow":  true,
                     "verificationTextNotStored":  true,
                     "verificationUsesLengthAndHash":  true,
                     "caretTextNotRead":  true,

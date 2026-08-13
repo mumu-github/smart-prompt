@@ -6,6 +6,7 @@ param(
 $ErrorActionPreference = "Stop"
 $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Root = Split-Path -Parent $ScriptDir
+. (Join-Path $ScriptDir "desktop-tool-profile-config.ps1")
 
 if (-not $Report) {
   $Report = Join-Path $Root "research/m3-desktop-tool-profiles.latest.json"
@@ -13,7 +14,7 @@ if (-not $Report) {
   $Report = Join-Path $Root $Report
 }
 
-$profiles = @("codex", "claude-code", "hermes")
+$profiles = Get-SmartPromptSupportedToolProfiles
 $results = @()
 
 foreach ($profile in $profiles) {
@@ -28,6 +29,8 @@ foreach ($profile in $profiles) {
     $rawTitleLeak = $rawOutput.Contains("Smart Prompt Codex UIA Self Test") `
       -or $rawOutput.Contains("Smart Prompt Claude Code UIA Self Test") `
       -or $rawOutput.Contains("Smart Prompt Hermes UIA Self Test") `
+      -or $rawOutput.Contains("Smart Prompt workBuddy UIA Self Test") `
+      -or $rawOutput.Contains("Smart Prompt Trae UIA Self Test") `
       -or $rawOutput.Contains("M3 UIA self test input")
     $ok = [bool](
       $snapshot.schemaVersion -eq "m3-windows-uia@1" `

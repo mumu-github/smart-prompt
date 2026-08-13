@@ -1,0 +1,192 @@
+﻿{
+    "schemaVersion":  "m3-real-desktop-tools@1",
+    "createdAt":  "2026-06-18T02:13:45.3337435Z",
+    "platform":  "win32",
+    "pass":  true,
+    "requestedProfiles":  [
+                              "workbuddy"
+                          ],
+    "supportedToolProfiles":  [
+                                  "codex",
+                                  "claude-code",
+                                  "hermes",
+                                  "workbuddy",
+                                  "trae"
+                              ],
+    "attach":  {
+                   "requested":  "",
+                   "attempted":  false,
+                   "windowFound":  false,
+                   "restoreWindow":  false,
+                   "setForeground":  false,
+                   "foregroundActivation":  {
+                                                "initialSetForeground":  false,
+                                                "initialForeground":  false,
+                                                "attachAttempted":  false,
+                                                "attachCurrentToForeground":  false,
+                                                "attachCurrentToTarget":  false,
+                                                "attachBringToTop":  false,
+                                                "attachSetForeground":  false,
+                                                "attachForeground":  false,
+                                                "altUnlockAttempted":  false,
+                                                "altUnlockSent":  false,
+                                                "altSetForeground":  false,
+                                                "altForeground":  false,
+                                                "switchAttempted":  false,
+                                                "switchForeground":  false,
+                                                "isForeground":  false
+                                            },
+                   "cursorInsideTargetWindow":  false,
+                   "cursorPlacement":  {
+                                           "attempted":  false,
+                                           "strategy":  "none",
+                                           "toolProfile":  "unknown",
+                                           "setCursor":  false,
+                                           "cursorSupported":  false,
+                                           "cursorWithinCandidate":  false,
+                                           "ok":  false,
+                                           "targetPoint":  {
+                                                               "x":  0,
+                                                               "y":  0
+                                                           },
+                                           "cursorPoint":  {
+                                                               "x":  0,
+                                                               "y":  0
+                                                           }
+                                       },
+                   "processName":  "",
+                   "titleLength":  0,
+                   "titleHash":  "",
+                   "detectedToolProfile":  "unknown",
+                   "isVisible":  false,
+                   "isMinimized":  false,
+                   "isCloaked":  false,
+                   "isUsable":  false,
+                   "boundingRect":  {
+                                        "x":  0,
+                                        "y":  0,
+                                        "width":  0,
+                                        "height":  0
+                                    },
+                   "childProcessCount":  0,
+                   "childToolProcessHintPresent":  false
+               },
+    "foreground":  {
+                       "processName":  "WorkBuddy",
+                       "pidPresent":  true,
+                       "titleLength":  9,
+                       "titleHash":  "d754cc54dc1de6d8",
+                       "detectedToolProfile":  "workbuddy",
+                       "selectionSource":  "foreground_window",
+                       "hasTargetForeground":  true,
+                       "isVisible":  true,
+                       "isMinimized":  false,
+                       "isCloaked":  false,
+                       "isUsable":  true,
+                       "boundingRect":  {
+                                            "x":  412,
+                                            "y":  87,
+                                            "width":  1002,
+                                            "height":  804
+                                        }
+                   },
+    "snapshot":  {
+                     "exitCode":  0,
+                     "parseOk":  true,
+                     "parseError":  "",
+                     "probeOk":  true,
+                     "candidateCount":  1,
+                     "safeCandidateCount":  1,
+                     "valuePatternCandidates":  0,
+                     "textPatternCandidates":  0,
+                     "focusableCandidates":  1,
+                     "focusedCandidateCount":  0,
+                     "caretCandidateCount":  0,
+                     "bestCandidateIndex":  0,
+                     "bestCandidateScore":  80,
+                     "caretVisible":  false,
+                     "caretWindowPresent":  false,
+                     "selectionSource":  "foreground_window"
+                 },
+    "write":  {
+                  "allowed":  true,
+                  "attempted":  true,
+                  "pass":  false,
+                  "verified":  false,
+                  "strategy":  "clipboard_paste_fallback",
+                  "clipboardFallbackAllowed":  true,
+                  "clipboardFallbackTried":  true,
+                  "clipboardRestored":  true,
+                  "textPatternVerificationAllowed":  true,
+                  "textPatternVerificationTried":  false,
+                  "textPatternVerificationMatched":  false,
+                  "valuePatternVerificationTried":  false,
+                  "valuePatternVerificationMatched":  false,
+                  "nearbyTextVerificationTried":  false,
+                  "nearbyTextVerificationMatched":  false,
+                  "reason":  "foreground_after_clipboard_paste_verification_unavailable",
+                  "expectedTitleHashMatched":  true,
+                  "expectedToolProfileMatched":  true,
+                  "candidateIndex":  0,
+                  "exitCode":  0,
+                  "summary":  {
+                                  "safeCandidateCount":  0,
+                                  "requestedTextLength":  63,
+                                  "requestedTextHash":  "60b0fcc569e3b7b0",
+                                  "verifiedTextLength":  0,
+                                  "verifiedTextHash":  "",
+                                  "textPatternVerificationReadLength":  0,
+                                  "textPatternVerificationTextHash":  "",
+                                  "valuePatternVerificationReadLength":  0,
+                                  "valuePatternVerificationTextHash":  "",
+                                  "nearbyTextVerificationInspectedElementCount":  0,
+                                  "nearbyTextVerificationReadableElementCount":  0,
+                                  "nearbyTextVerificationReadLength":  0,
+                                  "nearbyTextVerificationTextHash":  "",
+                                  "nearbyTextVerificationSource":  "",
+                                  "autoSubmit":  false,
+                                  "submitSignalCount":  0
+                              }
+              },
+    "coverage":  [
+                     {
+                         "id":  "workbuddy",
+                         "status":  "foreground_detected",
+                         "foregroundDetected":  true,
+                         "snapshotCandidateCount":  1,
+                         "realWindowWriteValidated":  false
+                     }
+                 ],
+    "checks":  {
+                   "snapshotOk":  true,
+                   "supportedProfilesPresent":  true,
+                   "foregroundClassified":  true,
+                   "hasTargetForeground":  true,
+                   "foregroundUsableForWrite":  true,
+                   "writeAttempted":  true,
+                   "writeValidated":  false,
+                   "privacyRedacted":  true,
+                   "rawTitleStored":  false,
+                   "rawElementNamesStored":  false,
+                   "rawInputValuesStored":  false,
+                   "rawPromptTextStored":  false,
+                   "noAutoSubmit":  true
+               },
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "caretTextNotRead":  true,
+                    "promptTextNotRead":  true,
+                    "writtenTextNotStored":  true,
+                    "clipboardTextNotStored":  true,
+                    "fallbackRequiresExplicitAllow":  true,
+                    "textPatternVerificationRequiresExplicitAllow":  true,
+                    "valuePatternVerificationRequiresExplicitAllow":  true,
+                    "nearbyTextVerificationRequiresExplicitAllow":  true,
+                    "verificationTextNotStored":  true,
+                    "verificationUsesLengthAndHash":  true,
+                    "autoSubmit":  false
+                },
+    "completionImpact":  "real_tool_write_still_pending"
+}

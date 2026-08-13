@@ -1,0 +1,118 @@
+﻿{
+    "schemaVersion":  "p25-desktop-shell-visual-runtime@1",
+    "createdAt":  "2026-06-17T16:10:49.5991771Z",
+    "pass":  false,
+    "visualRuntimeReady":  false,
+    "completionReady":  false,
+    "completionImpact":  "start_not_allowed",
+    "steps":  {
+                  "startGate":  0,
+                  "noActivateAttachOnly":  null,
+                  "overlayVisualAttach":  0,
+                  "overlayClickChain":  1
+              },
+    "startGate":  {
+                      "report":  "research/p25-desktop-shell-start.latest.json",
+                      "status":  "start_not_allowed",
+                      "startAllowed":  false,
+                      "startAttempted":  false,
+                      "beforeCount":  0,
+                      "afterCount":  0
+                  },
+    "runtimeReadiness":  {
+                             "report":  "research/p25-runtime-readiness.latest.json",
+                             "completionReady":  false,
+                             "processCount":  0,
+                             "matchingProcessCount":  0,
+                             "overlayWindowCount":  0,
+                             "overlayMatchesDesktopShellProcess":  false
+                         },
+    "overlayNoActivate":  {
+                              "report":  "research/p25-mascot-overlay-noactivate.latest.json",
+                              "ran":  false,
+                              "pass":  false,
+                              "attachedExisting":  false,
+                              "attachOnly":  false,
+                              "launchedProcessId":  null
+                          },
+    "overlayVisualAttach":  {
+                                "report":  "research/p25-overlay-window-visual-attach.latest.json",
+                                "ran":  true,
+                                "timeoutSeconds":  0,
+                                "pass":  false,
+                                "completionImpact":  "overlay_window_missing",
+                                "windowCount":  0,
+                                "noActivateStyle":  false,
+                                "geometryMatchesExpectedOverlaySize":  false,
+                                "largeWhiteBlockAbsent":  false,
+                                "screenshotSaved":  false
+                            },
+    "overlayClickChain":  {
+                              "report":  "research/p25-overlay-click-chain.latest.json",
+                              "completionReady":  false,
+                              "completionImpact":  "runtime_readiness_missing",
+                              "overlayChatVisualPass":  true,
+                              "overlayChatVisualRetryWorks":  true,
+                              "overlayChatVisualWhiteBlockRegressionOk":  true,
+                              "realOverlayClickVerified":  false,
+                              "autoDetectBootstrapsOnAppLoad":  true,
+                              "autoDetectStartsLocalService":  true,
+                              "autoDetectPollsSnapshot":  true,
+                              "autoDetectDoesInitialRefresh":  true,
+                              "interactionTestCoversAutoShow":  true
+                          },
+    "frontendAutoDetect":  {
+                               "bootstrapsOnAppLoad":  true,
+                               "startsLocalService":  true,
+                               "pollsSnapshot":  true,
+                               "doesInitialRefresh":  true,
+                               "interactionTestCoversAutoShow":  true,
+                               "readyForAuthorizedStart":  true
+                           },
+    "diagnostics":  {
+                        "candidateReady":  false,
+                        "startStatus":  "start_not_allowed",
+                        "startAttempted":  false,
+                        "startAllowed":  false,
+                        "existingProcessBlocksStart":  false,
+                        "runtimeProcessMissing":  true,
+                        "runtimeMatchesCandidate":  false,
+                        "overlayAutoDetectStaticEvidence":  true,
+                        "overlayWindowMissing":  true,
+                        "overlayWindowGeometryUnexpected":  false,
+                        "overlayWhiteBlockSuspected":  false,
+                        "overlayNoActivateMissing":  false,
+                        "realOverlayClickStillBlocked":  true,
+                        "visualRunDoesNotAttemptRealClickOrFill":  true,
+                        "targetSafeCandidatesReady":  true,
+                        "nextAction":  "explicitly_allow_start_to_verify_real_overlay_window"
+                    },
+    "safety":  {
+                   "startRequiresExplicitAllow":  true,
+                   "startAllowed":  false,
+                   "stopAttempted":  false,
+                   "killAttempted":  false,
+                   "replaceAttempted":  false,
+                   "realOverlayClickAttempted":  false,
+                   "foregroundFillAttempted":  false,
+                   "fillLatestReadAttempted":  false,
+                   "targetWriteAttempted":  false,
+                   "visualScreenshotAllowed":  false
+               },
+    "scope":  {
+                  "verifiesVisualRuntimeOnly":  true,
+                  "doesNotVerifyRealOverlayClick":  true,
+                  "doesNotVerifyRealFill":  true,
+                  "doesNotPollLatestFill":  true,
+                  "doesNotVerifySafeCandidate":  true
+              },
+    "privacy":  {
+                    "noPromptTextRead":  true,
+                    "noTargetInputRead":  true,
+                    "noRawTitlesRead":  true,
+                    "rawUiaNamesNotRead":  true,
+                    "clipboardTextNotRead":  true,
+                    "rawDesktopPixelsPersisted":  false,
+                    "onlyMetadataStored":  true
+                }
+}

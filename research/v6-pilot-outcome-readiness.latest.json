@@ -1,0 +1,1247 @@
+{
+  "createdAt": "2026-06-08T12:28:30.674Z",
+  "pass": true,
+  "report": {
+    "schemaVersion": "v6-prompt-quality@1",
+    "reportVersion": "v6-pilot-outcome-readiness@1",
+    "createdAt": "2026-06-08T12:28:30.672Z",
+    "readiness": {
+      "status": "ready",
+      "minOutcomeEvents": 3,
+      "totalOutcomeEvents": 7,
+      "readyTaskScenarioCohorts": 2,
+      "collectingTaskScenarioCohorts": 1,
+      "emptyTaskScenarioCohorts": 6,
+      "outcomeSuccessRate": 0.571,
+      "avgOutcomeScore": 0.56
+    },
+    "byTaskScenario": [
+      {
+        "dimension": "taskScenario",
+        "key": "security-review",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 3,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.913,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 3
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:security-winner",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "chatgpt",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "chatgpt.com",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "security-review",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "ui-ux",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 3,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": 0.133,
+        "outcomeLabels": [
+          {
+            "key": "failed",
+            "value": 2
+          },
+          {
+            "key": "needs-work",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:ui-risk",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "lovable",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "lovable.dev",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "ui-ux",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "data-analysis",
+        "status": "collecting",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 1,
+        "successfulOutcomeCount": 1,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 2,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.78,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:data-collecting",
+            "value": 1
+          }
+        ],
+        "topTools": [
+          {
+            "key": "gemini",
+            "value": 1
+          }
+        ],
+        "topSites": [
+          {
+            "key": "gemini.google.com",
+            "value": 1
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 1
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "data-analysis",
+            "value": 1
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "baseline_structure",
+            "value": 1
+          }
+        ]
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "code-review",
+        "status": "empty",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 0,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": null,
+        "outcomeLabels": [],
+        "topStrategies": [],
+        "topTools": [],
+        "topSites": [],
+        "topModes": [],
+        "topTaskScenarios": [],
+        "topExperimentArms": []
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "general",
+        "status": "empty",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 0,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": null,
+        "outcomeLabels": [],
+        "topStrategies": [],
+        "topTools": [],
+        "topSites": [],
+        "topModes": [],
+        "topTaskScenarios": [],
+        "topExperimentArms": []
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "product-idea",
+        "status": "empty",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 0,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": null,
+        "outcomeLabels": [],
+        "topStrategies": [],
+        "topTools": [],
+        "topSites": [],
+        "topModes": [],
+        "topTaskScenarios": [],
+        "topExperimentArms": []
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "prompt-engineering",
+        "status": "empty",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 0,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": null,
+        "outcomeLabels": [],
+        "topStrategies": [],
+        "topTools": [],
+        "topSites": [],
+        "topModes": [],
+        "topTaskScenarios": [],
+        "topExperimentArms": []
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "release-ops",
+        "status": "empty",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 0,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": null,
+        "outcomeLabels": [],
+        "topStrategies": [],
+        "topTools": [],
+        "topSites": [],
+        "topModes": [],
+        "topTaskScenarios": [],
+        "topExperimentArms": []
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "test-plan",
+        "status": "empty",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 0,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": null,
+        "outcomeLabels": [],
+        "topStrategies": [],
+        "topTools": [],
+        "topSites": [],
+        "topModes": [],
+        "topTaskScenarios": [],
+        "topExperimentArms": []
+      }
+    ],
+    "byTool": [
+      {
+        "dimension": "tool",
+        "key": "chatgpt",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 3,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.913,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 3
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:security-winner",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "chatgpt",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "chatgpt.com",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "security-review",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "dimension": "tool",
+        "key": "lovable",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 3,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": 0.133,
+        "outcomeLabels": [
+          {
+            "key": "failed",
+            "value": 2
+          },
+          {
+            "key": "needs-work",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:ui-risk",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "lovable",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "lovable.dev",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "ui-ux",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "dimension": "tool",
+        "key": "gemini",
+        "status": "collecting",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 1,
+        "successfulOutcomeCount": 1,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 2,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.78,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:data-collecting",
+            "value": 1
+          }
+        ],
+        "topTools": [
+          {
+            "key": "gemini",
+            "value": 1
+          }
+        ],
+        "topSites": [
+          {
+            "key": "gemini.google.com",
+            "value": 1
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 1
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "data-analysis",
+            "value": 1
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "baseline_structure",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "bySite": [
+      {
+        "dimension": "site",
+        "key": "chatgpt.com",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 3,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.913,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 3
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:security-winner",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "chatgpt",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "chatgpt.com",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "security-review",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "dimension": "site",
+        "key": "lovable.dev",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 3,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": 0.133,
+        "outcomeLabels": [
+          {
+            "key": "failed",
+            "value": 2
+          },
+          {
+            "key": "needs-work",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:ui-risk",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "lovable",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "lovable.dev",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "ui-ux",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "dimension": "site",
+        "key": "gemini.google.com",
+        "status": "collecting",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 1,
+        "successfulOutcomeCount": 1,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 2,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.78,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:data-collecting",
+            "value": 1
+          }
+        ],
+        "topTools": [
+          {
+            "key": "gemini",
+            "value": 1
+          }
+        ],
+        "topSites": [
+          {
+            "key": "gemini.google.com",
+            "value": 1
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 1
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "data-analysis",
+            "value": 1
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "baseline_structure",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "byMode": [
+      {
+        "dimension": "mode",
+        "key": "continue",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 7,
+        "successfulOutcomeCount": 4,
+        "failedOutcomeCount": 3,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 0.571,
+        "avgOutcomeScore": 0.56,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 4
+          },
+          {
+            "key": "failed",
+            "value": 2
+          },
+          {
+            "key": "needs-work",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:security-winner",
+            "value": 3
+          },
+          {
+            "key": "llm:continue:medium:ui-risk",
+            "value": 3
+          },
+          {
+            "key": "llm:continue:medium:data-collecting",
+            "value": 1
+          }
+        ],
+        "topTools": [
+          {
+            "key": "chatgpt",
+            "value": 3
+          },
+          {
+            "key": "lovable",
+            "value": 3
+          },
+          {
+            "key": "gemini",
+            "value": 1
+          }
+        ],
+        "topSites": [
+          {
+            "key": "chatgpt.com",
+            "value": 3
+          },
+          {
+            "key": "lovable.dev",
+            "value": 3
+          },
+          {
+            "key": "gemini.google.com",
+            "value": 1
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 7
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "security-review",
+            "value": 3
+          },
+          {
+            "key": "ui-ux",
+            "value": 3
+          },
+          {
+            "key": "data-analysis",
+            "value": 1
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 6
+          },
+          {
+            "key": "baseline_structure",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "byStrategy": [
+      {
+        "dimension": "strategyId",
+        "key": "llm:continue:medium:security-winner",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 3,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.913,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 3
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:security-winner",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "chatgpt",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "chatgpt.com",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "security-review",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "dimension": "strategyId",
+        "key": "llm:continue:medium:ui-risk",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 3,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": 0.133,
+        "outcomeLabels": [
+          {
+            "key": "failed",
+            "value": 2
+          },
+          {
+            "key": "needs-work",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:ui-risk",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "lovable",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "lovable.dev",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "ui-ux",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      },
+      {
+        "dimension": "strategyId",
+        "key": "llm:continue:medium:data-collecting",
+        "status": "collecting",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 1,
+        "successfulOutcomeCount": 1,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 2,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.78,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:data-collecting",
+            "value": 1
+          }
+        ],
+        "topTools": [
+          {
+            "key": "gemini",
+            "value": 1
+          }
+        ],
+        "topSites": [
+          {
+            "key": "gemini.google.com",
+            "value": 1
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 1
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "data-analysis",
+            "value": 1
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "baseline_structure",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "byExperimentArm": [
+      {
+        "dimension": "experimentArm",
+        "key": "strategy_guided",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 6,
+        "successfulOutcomeCount": 3,
+        "failedOutcomeCount": 3,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 0.5,
+        "avgOutcomeScore": 0.523,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 3
+          },
+          {
+            "key": "failed",
+            "value": 2
+          },
+          {
+            "key": "needs-work",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:security-winner",
+            "value": 3
+          },
+          {
+            "key": "llm:continue:medium:ui-risk",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "chatgpt",
+            "value": 3
+          },
+          {
+            "key": "lovable",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "chatgpt.com",
+            "value": 3
+          },
+          {
+            "key": "lovable.dev",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 6
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "security-review",
+            "value": 3
+          },
+          {
+            "key": "ui-ux",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 6
+          }
+        ]
+      },
+      {
+        "dimension": "experimentArm",
+        "key": "baseline_structure",
+        "status": "collecting",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 1,
+        "successfulOutcomeCount": 1,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 2,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.78,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:data-collecting",
+            "value": 1
+          }
+        ],
+        "topTools": [
+          {
+            "key": "gemini",
+            "value": 1
+          }
+        ],
+        "topSites": [
+          {
+            "key": "gemini.google.com",
+            "value": 1
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 1
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "data-analysis",
+            "value": 1
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "baseline_structure",
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "winningStrategies": [
+      {
+        "dimension": "strategyId",
+        "key": "llm:continue:medium:security-winner",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 3,
+        "failedOutcomeCount": 0,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 1,
+        "avgOutcomeScore": 0.913,
+        "outcomeLabels": [
+          {
+            "key": "success",
+            "value": 3
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:security-winner",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "chatgpt",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "chatgpt.com",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "security-review",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      }
+    ],
+    "riskStrategies": [
+      {
+        "dimension": "strategyId",
+        "key": "llm:continue:medium:ui-risk",
+        "status": "ready",
+        "minOutcomeEvents": 3,
+        "outcomeCount": 3,
+        "successfulOutcomeCount": 0,
+        "failedOutcomeCount": 3,
+        "neededOutcomeEvents": 0,
+        "outcomeSuccessRate": 0,
+        "avgOutcomeScore": 0.133,
+        "outcomeLabels": [
+          {
+            "key": "failed",
+            "value": 2
+          },
+          {
+            "key": "needs-work",
+            "value": 1
+          }
+        ],
+        "topStrategies": [
+          {
+            "key": "llm:continue:medium:ui-risk",
+            "value": 3
+          }
+        ],
+        "topTools": [
+          {
+            "key": "lovable",
+            "value": 3
+          }
+        ],
+        "topSites": [
+          {
+            "key": "lovable.dev",
+            "value": 3
+          }
+        ],
+        "topModes": [
+          {
+            "key": "continue",
+            "value": 3
+          }
+        ],
+        "topTaskScenarios": [
+          {
+            "key": "ui-ux",
+            "value": 3
+          }
+        ],
+        "topExperimentArms": [
+          {
+            "key": "strategy_guided",
+            "value": 3
+          }
+        ]
+      }
+    ],
+    "collectionTargets": [
+      {
+        "dimension": "taskScenario",
+        "key": "data-analysis",
+        "status": "collecting",
+        "outcomeCount": 1,
+        "neededOutcomeEvents": 2,
+        "recommendation": "Collect more user-verified outcomes until the cohort reaches the comparable threshold."
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "code-review",
+        "status": "empty",
+        "outcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "recommendation": "Collect first user-verified outcomes for this cohort."
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "general",
+        "status": "empty",
+        "outcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "recommendation": "Collect first user-verified outcomes for this cohort."
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "product-idea",
+        "status": "empty",
+        "outcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "recommendation": "Collect first user-verified outcomes for this cohort."
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "prompt-engineering",
+        "status": "empty",
+        "outcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "recommendation": "Collect first user-verified outcomes for this cohort."
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "release-ops",
+        "status": "empty",
+        "outcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "recommendation": "Collect first user-verified outcomes for this cohort."
+      },
+      {
+        "dimension": "taskScenario",
+        "key": "test-plan",
+        "status": "empty",
+        "outcomeCount": 0,
+        "neededOutcomeEvents": 3,
+        "recommendation": "Collect first user-verified outcomes for this cohort."
+      },
+      {
+        "dimension": "tool",
+        "key": "gemini",
+        "status": "collecting",
+        "outcomeCount": 1,
+        "neededOutcomeEvents": 2,
+        "recommendation": "Collect more user-verified outcomes until the cohort reaches the comparable threshold."
+      }
+    ],
+    "recommendations": [
+      {
+        "key": "review_ready_cohorts",
+        "priority": "medium",
+        "recommendation": "Review ready task scenarios and compare winning/risk prompt strategies before changing defaults."
+      },
+      {
+        "key": "review_risk_strategies",
+        "priority": "high",
+        "recommendation": "Inspect low-success strategies and avoid expanding them until fixed."
+      },
+      {
+        "key": "fill_collection_gaps",
+        "priority": "medium",
+        "recommendation": "Collect outcomes for empty or collecting cohorts before claiming global quality improvement."
+      }
+    ],
+    "privacy": {
+      "promptTextNotStored": true,
+      "inputTextNotStored": true,
+      "pageBodyNotRequired": true,
+      "fullUrlNotStored": true,
+      "derivedFromAggregatePilotOutcomes": true,
+      "aggregateOnly": true
+    }
+  },
+  "text": "pilotOutcome=v6-pilot-outcome-readiness@1; readiness=ready total=7 readyScenarios=2 collectingScenarios=1 emptyScenarios=6; scenarios=security-review:ready:3/3:success=1 | ui-ux:ready:3/3:success=0 | data-analysis:collecting:1/3:success=1 | code-review:empty:0/3:success=0 | general:empty:0/3:success=0; winners=llm:continue:medium:security-winner:outcomes=3:success=1; risks=llm:continue:medium:ui-risk:outcomes=3:success=0; collectionTargets=taskScenario:data-analysis:need=2 | taskScenario:code-review:need=3 | taskScenario:general:need=3 | taskScenario:product-idea:need=3 | taskScenario:prompt-engineering:need=3; privacy=aggregate-only"
+}

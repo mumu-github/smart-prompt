@@ -1,0 +1,68 @@
+{
+  "schemaVersion": "codex-driver-real-atomic@1",
+  "createdAt": "2026-07-19T12:17:37.105Z",
+  "pass": false,
+  "promptLength": 578,
+  "promptHash": "7f068852",
+  "promptLineBreakCount": 23,
+  "promptWithoutLineBreaksLength": 555,
+  "openingLength": 70,
+  "openingHash": "35848d2c",
+  "insert": {
+    "elapsedMs": 2512,
+    "driverOk": false,
+    "reasonToken": "after_write_mismatch",
+    "attempted": true,
+    "guardMatched": true,
+    "leaseFreshAtCommit": true,
+    "method": "controlled_clipboard",
+    "clipboardRestored": true,
+    "readbackLength": 575,
+    "readbackMatched": false,
+    "editorNormalizedReadbackMatched": false,
+    "readbackLineBreakCount": 23,
+    "readbackWithoutLineBreaksLength": 552,
+    "lineBreakInsensitiveMatched": false,
+    "lineBreakInsensitiveHash": "6b84371d",
+    "expectedLineBreakInsensitiveHash": "ba7358a1",
+    "difference": {
+      "expectedCodePointLength": 578,
+      "actualCodePointLength": 575,
+      "lcsLength": 575,
+      "deletedCount": 3,
+      "insertedCount": 0,
+      "deletedCategories": {
+        "whitespace": 3
+      },
+      "insertedCategories": {},
+      "deletedWhitespaceSubtypes": {
+        "space": 3
+      },
+      "deletedPositions": {
+        "line_interior": 3
+      },
+      "deletedAdjacentToSpace": 3,
+      "deletedInsideFencedCode": 0,
+      "matchesAfterRemovingBackticks": false,
+      "matchesAfterRemovingZeroWidth": false,
+      "nfcMatched": false,
+      "nfkcMatched": false
+    },
+    "submitCount": 0
+  },
+  "undo": {
+    "elapsedMs": 2357,
+    "driverOk": true,
+    "reasonToken": "ready",
+    "clipboardRestored": true
+  },
+  "restored": true,
+  "finalLength": 70,
+  "finalHash": "35848d2c",
+  "privacy": {
+    "promptTextNotStored": true,
+    "draftTextNotStored": true,
+    "clipboardTextNotStored": true,
+    "onlyLengthsHashesAndStateTokens": true
+  }
+}

@@ -1,7 +1,7 @@
 param(
   [string]$Report = "research/v4-installer-smoke.latest.json",
   [int]$RemotePort = 9239,
-  [int]$ServicePort = 17391
+  [int]$ServicePort = 17371
 )
 $ErrorActionPreference = "Stop"
 
@@ -34,6 +34,27 @@ function ConvertTo-RelativePath([string]$PathValue) {
 function Invoke-CheckedProcess([string]$FilePath, [string[]]$Arguments) {
   $process = Start-Process -FilePath $FilePath -ArgumentList $Arguments -Wait -PassThru -WindowStyle Hidden
   return $process.ExitCode
+}
+
+function Stop-StaleSmartPromptSidecarOnPort([int]$Port) {
+  $stopped = 0
+  try {
+    $connections = Get-NetTCPConnection -LocalPort $Port -State Listen -ErrorAction SilentlyContinue
+    foreach ($connection in $connections) {
+      $process = Get-Process -Id $connection.OwningProcess -ErrorAction SilentlyContinue
+      if (
+        $process -and
+        $process.ProcessName -eq "local-service-sidecar" -and
+        [string]$process.Path -like "*\com.smartprompt.desktop\sidecar-runtime\*\bin\local-service-sidecar.exe"
+      ) {
+        Stop-Process -Id $process.Id -Force -ErrorAction Stop
+        $stopped += 1
+      }
+    }
+  } catch {
+    # Best-effort smoke cleanup only. A later health check will fail if the port remains stale.
+  }
+  return $stopped
 }
 
 function Restore-EnvValue([string]$Name, [object]$Value) {
@@ -105,6 +126,7 @@ try {
   $env:WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS = "--remote-debugging-port=$RemotePort"
   $env:SMART_PROMPT_PORT = "$ServicePort"
   $env:SMART_PROMPT_DATA_DIR = $ServiceDataDir
+  $reportObject.preflightStoppedSidecarCount = Stop-StaleSmartPromptSidecarOnPort $ServicePort
   $startAttempts = 0
   while ($startAttempts -lt 2) {
     $startAttempts += 1
@@ -193,6 +215,7 @@ try {
   if ($appProcess -and -not $appProcess.HasExited) {
     Stop-Process -Id $appProcess.Id -Force -ErrorAction SilentlyContinue
   }
+  $reportObject.cleanupStoppedSidecarCount = Stop-StaleSmartPromptSidecarOnPort $ServicePort
   Restore-EnvValue "WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS" $oldWebViewArgs
   Restore-EnvValue "SMART_PROMPT_PORT" $oldSmartPromptPort
   Restore-EnvValue "SMART_PROMPT_DATA_DIR" $oldSmartPromptDataDir

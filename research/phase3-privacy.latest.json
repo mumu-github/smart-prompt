@@ -1,0 +1,37 @@
+{
+  "schemaVersion": "phase3-privacy-scan@1",
+  "createdAt": "2026-07-19T09:07:01.476Z",
+  "pass": true,
+  "counts": {
+    "metricEvents": 1,
+    "promptHistoryEntries": 1,
+    "encryptedProviderKeys": 1,
+    "logEntries": 2,
+    "researchArtifacts": 2,
+    "forbiddenArtifactKeys": 0,
+    "absoluteArtifactPaths": 0
+  },
+  "checks": {
+    "local": {
+      "activationMetadataOnly": true,
+      "activationModelNotStored": true,
+      "settingsSecretsEmpty": true,
+      "noAutoSubmit": true,
+      "wholePageUploadDisabled": true,
+      "providerKeysEncrypted": true,
+      "metricSchemaMetadataOnly": true,
+      "historySchemaMetadataOnly": true,
+      "logsMetadataOnly": true
+    },
+    "api": {
+      "bootstrapSucceeded": true,
+      "settingsOpaque": true,
+      "diagnosticsPathRedacted": true,
+      "diagnosticsMetadataOnly": true
+    },
+    "research": {
+      "metadataOnly": true,
+      "noAbsolutePaths": true
+    }
+  }
+}

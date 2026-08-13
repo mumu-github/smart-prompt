@@ -1,0 +1,192 @@
+﻿{
+    "schemaVersion":  "m3-real-desktop-tools@1",
+    "createdAt":  "2026-07-19T10:01:21.3552875Z",
+    "platform":  "win32",
+    "pass":  true,
+    "requestedProfiles":  [
+                              "codex"
+                          ],
+    "supportedToolProfiles":  [
+                                  "codex",
+                                  "claude-code",
+                                  "hermes",
+                                  "workbuddy",
+                                  "trae"
+                              ],
+    "attach":  {
+                   "requested":  "codex",
+                   "attempted":  true,
+                   "windowFound":  true,
+                   "restoreWindow":  true,
+                   "setForeground":  true,
+                   "foregroundActivation":  {
+                                                "initialSetForeground":  true,
+                                                "initialForeground":  true,
+                                                "attachAttempted":  false,
+                                                "attachCurrentToForeground":  false,
+                                                "attachCurrentToTarget":  false,
+                                                "attachBringToTop":  false,
+                                                "attachSetForeground":  false,
+                                                "attachForeground":  false,
+                                                "altUnlockAttempted":  false,
+                                                "altUnlockSent":  false,
+                                                "altSetForeground":  false,
+                                                "altForeground":  false,
+                                                "switchAttempted":  false,
+                                                "switchForeground":  false,
+                                                "isForeground":  true
+                                            },
+                   "cursorInsideTargetWindow":  true,
+                   "cursorPlacement":  {
+                                           "attempted":  true,
+                                           "strategy":  "window_center",
+                                           "toolProfile":  "codex",
+                                           "setCursor":  true,
+                                           "cursorSupported":  false,
+                                           "cursorWithinCandidate":  false,
+                                           "ok":  true,
+                                           "targetPoint":  {
+                                                               "x":  0,
+                                                               "y":  0
+                                                           },
+                                           "cursorPoint":  {
+                                                               "x":  0,
+                                                               "y":  0
+                                                           }
+                                       },
+                   "processName":  "ChatGPT",
+                   "titleLength":  7,
+                   "titleHash":  "50a4122943273ad2",
+                   "detectedToolProfile":  "codex",
+                   "isVisible":  true,
+                   "isMinimized":  false,
+                   "isCloaked":  false,
+                   "isUsable":  true,
+                   "boundingRect":  {
+                                        "x":  0,
+                                        "y":  0,
+                                        "width":  1280,
+                                        "height":  820
+                                    },
+                   "childProcessCount":  0,
+                   "childToolProcessHintPresent":  false
+               },
+    "foreground":  {
+                       "processName":  "ChatGPT",
+                       "pidPresent":  true,
+                       "titleLength":  7,
+                       "titleHash":  "50a4122943273ad2",
+                       "detectedToolProfile":  "codex",
+                       "selectionSource":  "foreground_window",
+                       "hasTargetForeground":  true,
+                       "isVisible":  true,
+                       "isMinimized":  false,
+                       "isCloaked":  false,
+                       "isUsable":  true,
+                       "boundingRect":  {
+                                            "x":  0,
+                                            "y":  0,
+                                            "width":  1280,
+                                            "height":  820
+                                        }
+                   },
+    "snapshot":  {
+                     "exitCode":  0,
+                     "parseOk":  true,
+                     "parseError":  "",
+                     "probeOk":  true,
+                     "candidateCount":  167,
+                     "safeCandidateCount":  1,
+                     "valuePatternCandidates":  1,
+                     "textPatternCandidates":  104,
+                     "focusableCandidates":  59,
+                     "focusedCandidateCount":  0,
+                     "caretCandidateCount":  0,
+                     "bestCandidateIndex":  166,
+                     "bestCandidateScore":  80,
+                     "caretVisible":  false,
+                     "caretWindowPresent":  false,
+                     "selectionSource":  "foreground_window"
+                 },
+    "write":  {
+                  "allowed":  true,
+                  "attempted":  true,
+                  "pass":  true,
+                  "verified":  true,
+                  "strategy":  "clipboard_paste_fallback",
+                  "clipboardFallbackAllowed":  true,
+                  "clipboardFallbackTried":  true,
+                  "clipboardRestored":  true,
+                  "textPatternVerificationAllowed":  true,
+                  "textPatternVerificationTried":  false,
+                  "textPatternVerificationMatched":  false,
+                  "valuePatternVerificationTried":  false,
+                  "valuePatternVerificationMatched":  false,
+                  "nearbyTextVerificationTried":  true,
+                  "nearbyTextVerificationMatched":  true,
+                  "reason":  "",
+                  "expectedTitleHashMatched":  true,
+                  "expectedToolProfileMatched":  true,
+                  "candidateIndex":  166,
+                  "exitCode":  0,
+                  "summary":  {
+                                  "safeCandidateCount":  1,
+                                  "requestedTextLength":  70,
+                                  "requestedTextHash":  "35848d2c18970546",
+                                  "verifiedTextLength":  70,
+                                  "verifiedTextHash":  "35848d2c18970546",
+                                  "textPatternVerificationReadLength":  0,
+                                  "textPatternVerificationTextHash":  "",
+                                  "valuePatternVerificationReadLength":  0,
+                                  "valuePatternVerificationTextHash":  "",
+                                  "nearbyTextVerificationInspectedElementCount":  500,
+                                  "nearbyTextVerificationReadableElementCount":  9,
+                                  "nearbyTextVerificationReadLength":  47900,
+                                  "nearbyTextVerificationTextHash":  "27d9d6494d46952a",
+                                  "nearbyTextVerificationSource":  "root_document_text_pattern",
+                                  "autoSubmit":  false,
+                                  "submitSignalCount":  0
+                              }
+              },
+    "coverage":  [
+                     {
+                         "id":  "codex",
+                         "status":  "foreground_detected",
+                         "foregroundDetected":  true,
+                         "snapshotCandidateCount":  167,
+                         "realWindowWriteValidated":  true
+                     }
+                 ],
+    "checks":  {
+                   "snapshotOk":  true,
+                   "supportedProfilesPresent":  true,
+                   "foregroundClassified":  true,
+                   "hasTargetForeground":  true,
+                   "foregroundUsableForWrite":  true,
+                   "writeAttempted":  true,
+                   "writeValidated":  true,
+                   "privacyRedacted":  true,
+                   "rawTitleStored":  false,
+                   "rawElementNamesStored":  false,
+                   "rawInputValuesStored":  false,
+                   "rawPromptTextStored":  false,
+                   "noAutoSubmit":  true
+               },
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "caretTextNotRead":  true,
+                    "promptTextNotRead":  true,
+                    "writtenTextNotStored":  true,
+                    "clipboardTextNotStored":  true,
+                    "fallbackRequiresExplicitAllow":  true,
+                    "textPatternVerificationRequiresExplicitAllow":  true,
+                    "valuePatternVerificationRequiresExplicitAllow":  true,
+                    "nearbyTextVerificationRequiresExplicitAllow":  true,
+                    "verificationTextNotStored":  true,
+                    "verificationUsesLengthAndHash":  true,
+                    "autoSubmit":  false
+                },
+    "completionImpact":  "all_requested_real_tool_writes_validated"
+}

@@ -20,8 +20,9 @@ function sleep(ms) {
 
 async function getJson(url, headers = {}) {
   const response = await fetch(url, { headers });
-  if (!response.ok) throw new Error(`GET ${url} failed: ${response.status}`);
-  return response.json();
+  const text = await response.text();
+  if (!response.ok) throw new Error(`GET ${url} failed: ${response.status} ${summarizeHttpError(text)}`);
+  return JSON.parse(text);
 }
 
 async function postJson(url, body, headers = {}) {
@@ -33,8 +34,24 @@ async function postJson(url, body, headers = {}) {
     },
     body: JSON.stringify(body)
   });
-  if (!response.ok) throw new Error(`POST ${url} failed: ${response.status}`);
-  return response.json();
+  const text = await response.text();
+  if (!response.ok) throw new Error(`POST ${url} failed: ${response.status} ${summarizeHttpError(text)}`);
+  return JSON.parse(text);
+}
+
+function summarizeHttpError(text = "") {
+  const raw = String(text || "");
+  let message = raw;
+  try {
+    const parsed = JSON.parse(raw);
+    message = parsed?.error?.message || parsed?.error?.code || raw;
+  } catch {
+    // Non-JSON error bodies are summarized below.
+  }
+  return message
+    .replace(/[A-Za-z]:\\[^\s"'`]+/g, "REDACTED_PATH")
+    .replace(/\\\\\?\\[A-Za-z]:\\[^\s"'`]+/g, "REDACTED_PATH")
+    .slice(0, 500);
 }
 
 async function waitForTarget(remotePort) {
@@ -142,7 +159,7 @@ function findRelativeFile(root, predicate) {
 (async () => {
   const args = parseArgs(process.argv.slice(2));
   const remotePort = Number(args["remote-port"] || process.env.SMART_PROMPT_WEBVIEW_CDP_PORT || 9239);
-  const servicePort = Number(args["service-port"] || process.env.SMART_PROMPT_RUNTIME_SERVICE_PORT || 17391);
+  const servicePort = Number(args["service-port"] || process.env.SMART_PROMPT_RUNTIME_SERVICE_PORT || 17371);
   const installDir = args["install-dir"] ? path.resolve(args["install-dir"]) : "";
   const report = {
     createdAt: new Date().toISOString(),
@@ -202,7 +219,7 @@ function findRelativeFile(root, predicate) {
     report.checks.tauriApi = true;
 
     const source = await evaluate(client, `window.__TAURI__.core.invoke("get_local_service_source")`);
-    report.localServiceSource = source;
+    report.localServiceSource = String(source).replace(/binary=.*/, "binary=REDACTED_PATH");
     report.checks.sourceCommandBundled = source.includes("local-service-sidecar=bundled");
 
     const serviceResult = await evaluate(client, `window.__TAURI__.core.invoke("start_local_service")`);

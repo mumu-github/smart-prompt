@@ -1,0 +1,47 @@
+{
+    "schemaVersion":  "p25-overlay-background-hide@1",
+    "createdAt":  "2026-06-17T16:06:13.5828782Z",
+    "pass":  false,
+    "completionReady":  false,
+    "completionImpact":  "runtime_not_ready",
+    "steps":  {
+                  "runtimeReadiness":  0,
+                  "overlayAttach":  0
+              },
+    "runtimeReadiness":  {
+                             "report":  "research/p25-runtime-readiness.latest.json",
+                             "completionReady":  false,
+                             "processCount":  0,
+                             "matchingProcessCount":  0,
+                             "overlayWindowCount":  0,
+                             "overlayMatchesDesktopShellProcess":  false
+                         },
+    "overlayAttach":  {
+                          "report":  "research/p25-overlay-background-hide-attach.latest.json",
+                          "completionImpact":  "overlay_window_missing",
+                          "windowCount":  0,
+                          "windowFound":  false,
+                          "windowHidden":  true,
+                          "noActivateStyle":  false,
+                          "screenshotSaved":  false
+                      },
+    "safety":  {
+                   "verifiesBackgroundHideOnly":  true,
+                   "processStartAttempted":  false,
+                   "stopAttempted":  false,
+                   "killAttempted":  false,
+                   "replaceAttempted":  false,
+                   "realOverlayClickAttempted":  false,
+                   "targetWriteAttempted":  false,
+                   "screenshotWriteAttempted":  false
+               },
+    "privacy":  {
+                    "noPromptTextRead":  true,
+                    "noTargetInputRead":  true,
+                    "noRawTitlesRead":  true,
+                    "rawUiaNamesNotRead":  true,
+                    "clipboardTextNotRead":  true,
+                    "rawDesktopPixelsPersisted":  false,
+                    "onlyMetadataStored":  true
+                }
+}

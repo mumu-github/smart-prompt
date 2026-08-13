@@ -1,0 +1,25 @@
+{
+    "schemaVersion":  "p25-mascot-overlay-noactivate@1",
+    "createdAt":  "2026-06-17T16:06:00.2118022Z",
+    "pass":  false,
+    "releaseExe":  "apps/desktop-shell/src-tauri/target/release/smart-prompt-desktop.exe",
+    "report":  "research/p25-mascot-overlay-noactivate.latest.json",
+    "launchedProcessId":  null,
+    "attachedExisting":  false,
+    "attachOnly":  true,
+    "startError":  "attach_only_no_existing_overlay_window",
+    "checks":  {
+                   "releaseExePresent":  true,
+                   "processStartedOrFound":  false,
+                   "overlayWindowFound":  false,
+                   "overlayTitleMatches":  false,
+                   "noActivateStyle":  false
+               },
+    "overlayWindow":  null,
+    "privacy":  {
+                    "ownOverlayTitleOnly":  true,
+                    "targetToolTitleRead":  false,
+                    "targetInputRead":  false,
+                    "promptTextRead":  false
+                }
+}

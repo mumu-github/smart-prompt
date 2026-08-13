@@ -1,0 +1,120 @@
+﻿{
+    "schemaVersion":  "m3-windows-uia@1",
+    "createdAt":  "2026-06-18T02:13:28.4047034Z",
+    "platform":  "win32",
+    "selfTest":  false,
+    "selfTestProfile":  "",
+    "probeOk":  true,
+    "pass":  true,
+    "foreground":  {
+                       "processName":  "WorkBuddy",
+                       "pidPresent":  true,
+                       "isVisible":  true,
+                       "isMinimized":  false,
+                       "isCloaked":  false,
+                       "isUsable":  true,
+                       "boundingRect":  {
+                                            "x":  412,
+                                            "y":  87,
+                                            "width":  1002,
+                                            "height":  804
+                                        },
+                       "titleLength":  9,
+                       "titleHash":  "d754cc54dc1de6d8",
+                       "detectedToolProfile":  "workbuddy",
+                       "expectedToolProfile":  "",
+                       "expectedToolProfileMatched":  true,
+                       "childProcessCount":  1,
+                       "childToolProcessHintPresent":  false
+                   },
+    "caret":  {
+                  "source":  "win32_get_gui_thread_info",
+                  "supported":  true,
+                  "visible":  false,
+                  "windowHandlePresent":  false,
+                  "rect":  {
+                               "x":  0,
+                               "y":  0,
+                               "width":  0,
+                               "height":  0
+                           },
+                  "virtualCaretMayBeHidden":  true
+              },
+    "cursor":  {
+                   "source":  "win32_get_cursor_pos",
+                   "supported":  true,
+                   "windowHandlePresent":  true,
+                   "rootWindowHandlePresent":  true,
+                   "rect":  {
+                                "x":  812,
+                                "y":  615,
+                                "width":  1,
+                                "height":  1
+                            }
+               },
+    "supportedToolProfiles":  [
+                                  "codex",
+                                  "claude-code",
+                                  "hermes",
+                                  "workbuddy",
+                                  "trae"
+                              ],
+    "candidates":  [
+                       {
+                           "index":  0,
+                           "controlType":  "VisualWebViewComposer",
+                           "nameHash":  "",
+                           "automationIdHash":  "",
+                           "classNameHash":  "aac15feaab998dc3",
+                           "isKeyboardFocusable":  true,
+                           "isEnabled":  true,
+                           "hasValuePattern":  false,
+                           "hasTextPattern":  false,
+                           "boundingRect":  {
+                                                "x":  492,
+                                                "y":  550,
+                                                "width":  641,
+                                                "height":  145
+                                            },
+                           "inputSignals":  {
+                                                "score":  80,
+                                                "hasKeyboardFocus":  false,
+                                                "focusedElementMatch":  false,
+                                                "caretWithinBounds":  false,
+                                                "caretWindowMatch":  false,
+                                                "cursorWithinBounds":  true,
+                                                "nearWindowBottom":  true,
+                                                "broadDocument":  false,
+                                                "semanticComposerHint":  false,
+                                                "visualFallback":  true,
+                                                "visualAnchorFallback":  false,
+                                                "visualCursorFallback":  true,
+                                                "profileComposerCandidate":  true
+                                            }
+                       }
+                   ],
+    "summary":  {
+                    "candidateCount":  1,
+                    "valuePatternCandidates":  0,
+                    "textPatternCandidates":  0,
+                    "focusableCandidates":  1,
+                    "safeCandidateCount":  1,
+                    "focusedCandidateCount":  0,
+                    "caretCandidateCount":  0,
+                    "semanticCandidateCount":  0,
+                    "traversalTimedOut":  false,
+                    "inspectedElementCount":  3,
+                    "bestCandidateIndex":  0,
+                    "bestCandidateScore":  80,
+                    "caretVisible":  false,
+                    "caretWindowPresent":  false,
+                    "detectedToolProfile":  "workbuddy"
+                },
+    "privacy":  {
+                    "titleRedacted":  true,
+                    "elementNamesHashed":  true,
+                    "elementValuesNotRead":  true,
+                    "caretTextNotRead":  true,
+                    "promptTextNotRead":  true
+                }
+}

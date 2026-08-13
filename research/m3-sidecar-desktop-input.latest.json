@@ -1,12 +1,12 @@
 ﻿{
     "schemaVersion":  "m3-sidecar-desktop-input@1",
-    "createdAt":  "2026-06-07T19:40:38.1397106Z",
+    "createdAt":  "2026-06-18T03:29:37.2749783Z",
     "pass":  true,
     "port":  17441,
     "dataDir":  {
                     "redacted":  "REDACTED_PATH",
                     "length":  90,
-                    "sha256":  "220a210275406721"
+                    "sha256":  "62b3d1b6bc70b7d4"
                 },
     "checks":  {
                    "sidecarHealthy":  true,
@@ -24,14 +24,14 @@
     "snapshot":  {
                      "candidates":  [
                                         {
-                                            "automationIdHash":  "b13da45b56f9f7e5",
+                                            "automationIdHash":  "2a0037f7da836dab",
                                             "boundingRect":  {
                                                                  "height":  72,
                                                                  "width":  470,
-                                                                 "x":  206,
-                                                                 "y":  229
+                                                                 "x":  50,
+                                                                 "y":  73
                                                              },
-                                            "classNameHash":  "ef47f5b6113964e2",
+                                            "classNameHash":  "37d97d10939e8e83",
                                             "controlType":  "ControlType.Pane",
                                             "hasTextPattern":  false,
                                             "hasValuePattern":  false,
@@ -40,10 +40,12 @@
                                                                  "broadDocument":  false,
                                                                  "caretWindowMatch":  true,
                                                                  "caretWithinBounds":  true,
+                                                                 "cursorWithinBounds":  false,
                                                                  "focusedElementMatch":  true,
                                                                  "hasKeyboardFocus":  true,
                                                                  "nearWindowBottom":  true,
-                                                                 "score":  150
+                                                                 "score":  150,
+                                                                 "semanticComposerHint":  false
                                                              },
                                             "isEnabled":  true,
                                             "isKeyboardFocusable":  false,
@@ -54,8 +56,8 @@
                                    "rect":  {
                                                 "height":  12,
                                                 "width":  1,
-                                                "x":  341,
-                                                "y":  232
+                                                "x":  185,
+                                                "y":  76
                                             },
                                    "source":  "win32_get_gui_thread_info",
                                    "supported":  true,
@@ -63,13 +65,35 @@
                                    "visible":  true,
                                    "windowHandlePresent":  true
                                },
-                     "createdAt":  "2026-06-07T19:40:37.8131118Z",
+                     "createdAt":  "2026-06-18T03:29:37.1413817Z",
+                     "cursor":  {
+                                    "rect":  {
+                                                 "height":  1,
+                                                 "width":  1,
+                                                 "x":  973,
+                                                 "y":  695
+                                             },
+                                    "rootWindowHandlePresent":  true,
+                                    "source":  "win32_get_cursor_pos",
+                                    "supported":  true,
+                                    "windowHandlePresent":  true
+                                },
                      "foreground":  {
-                                        "childProcessCount":  0,
-                                        "childToolProcessHintPresent":  false,
+                                        "boundingRect":  {
+                                                             "height":  160,
+                                                             "width":  520,
+                                                             "x":  26,
+                                                             "y":  26
+                                                         },
+                                        "childProcessCount":  5,
+                                        "childToolProcessHintPresent":  true,
                                         "detectedToolProfile":  "codex",
                                         "expectedToolProfile":  "codex",
                                         "expectedToolProfileMatched":  true,
+                                        "isCloaked":  false,
+                                        "isMinimized":  false,
+                                        "isUsable":  true,
+                                        "isVisible":  true,
                                         "pidPresent":  true,
                                         "processName":  "powershell",
                                         "titleHash":  "1ce2043d4a53175b",
@@ -97,13 +121,19 @@
                                      "detectedToolProfile":  "codex",
                                      "focusableCandidates":  0,
                                      "focusedCandidateCount":  1,
+                                     "inspectedElementCount":  2,
+                                     "safeCandidateCount":  1,
+                                     "semanticCandidateCount":  0,
                                      "textPatternCandidates":  0,
+                                     "traversalTimedOut":  false,
                                      "valuePatternCandidates":  0
                                  },
                      "supportedToolProfiles":  [
                                                    "codex",
                                                    "claude-code",
-                                                   "hermes"
+                                                   "hermes",
+                                                   "workbuddy",
+                                                   "trae"
                                                ]
                  }
 }
