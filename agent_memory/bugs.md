@@ -1,170 +1,204 @@
 # 问题与风险
 
-## M3 收口后剩余风险 2026-06-08
+## 2026-07-19 Codex Outcome Learning Loop v1 当前风险
 
-- 已解决：豆包登录态网页当前有真实 composer 填入证据，1 次 Insert attempt、1 次回读验证成功、no-auto-send 通过，测试文本已清空。
-- 已解决：地区或安全拦截不再被误记为普通 selector 失败；报告支持 `region_or_security_gate_no_visible_composer`。
-- 范围更正：workBuddy、Trae 是本地工具，不作为网页 adapter 跑；DeepSeek 本轮不跑。
-- 仍需后续产品优化：如果要覆盖 workBuddy、Trae，需要走本地桌面工具识别/填入路径，而不是把公开网页当 composer。
-- 运行环境风险：`scripts/critic-m3.ps1` 会刷新 `research/m3-real-desktop-tools.latest.json` 为当前前台 snapshot-only 报告；真实三工具写入完成状态应看 `research/m3-real-desktop-tools-fill-matrix.latest.json`。
+- Outcome 只能在同一 Codex target 与同一项目作用域中归因；多条 pending 必须排队且幂等，不能因后一次填入、重启或跨项目打开而覆盖或误计成功。
+- Retry、Undo 和重新生成只是隐式负向信号，不等同于任务失败；模型自评不得替代真实结果，否则会形成 reward hacking 和自我强化偏差。
+- Token 只能在质量与安全过门后优化。不得为了减少 Token 牺牲任务完成率、验收覆盖、必要上下文或可执行性。
+- 语义向量不是绝对不可逆。默认应使用项目级 keyed feature hash；可选向量必须本地加密、禁止导出并通过正文反演与 membership inference 风险测试。
+- 每臂 10 条与 5% 改善只是试点下限，不代表统计显著；证据不足时不得自动稳定晋升。
+- Codex direct write 与剪贴板兜底都存在前台、焦点、草稿和剪贴板竞态；任一检查失败必须降级为 copy-only，不能显示 verified success。
+- 已收敛：Node 与 Rust 的 Learning Candidate Seed、编辑摘要和缺省任务场景现由同一 fixtures 校验；后续改场景规则必须同时更新 Node/Rust parity。
+- 已收敛：旧隐私扫描器已支持严格规范化的 `learningCandidateSeed` 与受限 `llm_fallback.errorCode`；新鲜隔离扫描的原始输入、明文凭证、禁止字段和绝对路径计数均为 0。
+- 仍开放：r10 尚未在本轮安装和执行真实 Codex GUI 事务。静态、fake adapter、冷启动和视觉通过不能替代前台读取、写回、机器回读、未发送、撤销与 60 秒 Pending Outcome 证据。
+- 只读审计已确认稳定安装目录中的 desktop/sidecar 哈希与最终 r10 不一致；不得把旧 installed runtime 的历史 Agnes/GUI 证据当作 r10 运行证据。
+- 仍开放：真实模型 benchmark 未获预算授权；不得用 fake benchmark 宣称真实质量、Token 或成本门槛通过。
+- 外部阻塞：连续三次 Goal 轮次未获得本轮真实闭环授权，已达到 blocked 门槛。不要自动安装、启动、切换前台、读取/写入 Codex、触碰剪贴板或调用真实 Provider；收到精确授权后按新一轮阻塞审计恢复。
+- 旧 ChatGPT 激活迁移不能伪装成 Codex 验证成功，也不能覆盖 Provider、Custom Provider、模型、加密凭证或旧证据。
+- 后台学习不得自动发起付费实验；Policy 必须可停用、可追踪、可自动回滚，权限、脚本与跨项目变更永远需要用户确认。
 
-## M3 真实桌面工具输入风险更新 2026-06-08
+## 2026-07-19 模型链路风险收口
 
-- 已解决：Claude Code 真实窗口曾因 UIA 元素 `BoundingRectangle` 出现 Infinity/无效坐标导致 snapshot 崩溃；`check-m3-desktop-input.ps1` 与 `check-m3-desktop-fill.ps1` 已改为安全转换 bounds，避免单个坏元素拖垮整次验证。
-- 已解决：真实桌面写入默认候选 0 容易指向整窗 `Document`；`check-m3-real-desktop-tools.ps1` 已改为默认使用 snapshot 的 `bestCandidateIndex`，除非调用方显式传入候选。
-- 已解决：三工具真实桌面输入均已验证 no-auto-submit；但测试文本会留在真实工具输入框中，后续真实内测前应由用户手动清空或覆盖，避免误发送测试标记。
-- 仍需关注：真实 beta adapter 网页内测 Insert 成功率仍为 M3 另一条线，不能因为桌面工具输入通过就标记整个 active goal 完成。
+- 已解除：Agnes Key 并未失效；安装版真实测试和真实生成均成功。不要再用通用“模型暂不可用”文案推断 Key、模型或网络中的任一具体根因。
+- 已解除：激活轮询不再重绘 Provider 表单，用户正在输入的 Key 和自定义模型不会每 1.2 秒被清空。
+- 已解除：错误候选 Key 不再先覆盖旧 Key；候选配置只在真实测试成功后持久化。最终安装版已用失败候选后再次调用真实 Agnes 测试验证旧凭证仍可用。
+- 已解除：`provider_error` 有独立 `provider-error/degraded` 语义；裸 404 归为 Provider 异常，除非响应明确指出 model/deployment 不存在或不支持。
+- 已解除：native `auto` 的真实执行、Provider 默认 Base URL/模型和 `/llm/providers.auto.provider` 状态上报现在使用同一优先级；不会再出现界面显示 OpenAI-compatible、实际调用 Anthropic/Gemini 的分叉。
+- 必须保留：后端模型校验要先于凭证写入，否则一次无效模型保存可能覆盖有效 Key；Node 与 native 都有回归测试守护。
+- 仍需用户动作：Chrome 不会因为桌面安装包升级而自动重载 unpacked extension。未重新加载并刷新页面前，浏览器中可能仍运行旧 content script；这不影响已安装桌面 sidecar 的 Agnes 连通性。
+- 发布风险未变：本机 NSIS/MSI 仍未做 Authenticode 签名，适合本机开发安装，不适合直接作为正式外部分发包。
 
-## M3 caret/focus 输入信号风险 2026-06-08
+## 阶段 3 仍需闭环的风险
 
-- 已解决一项观测缺口：输入候选现在会记录 caret/focus/底部位置/超大 Document 等强信号，便于解释为什么某个候选更像输入区。
-- 仍需谨慎：Codex 真实前台已证明 WebView/终端类工具可能不暴露 Win32 caret；`caretVisible:false` 不等于没有输入框，只能说明 OS 层拿不到真实光标。
-- 仍需谨慎：UIA focus 可能落在整窗 `ControlType.Document` 上；这说明用户正在工具容器内输入，但不能证明已经定位到安全可直写的 composer。直接写入仍必须受超大 Document guard 和显式 clipboard fallback 控制。
+- 已解除：用户手动重载正确 unpacked 扩展后，新建 ChatGPT 页观测到 r5/ready，真实 LLM 生成、编辑、verified insert、稳定回读和 activation complete 均通过，且无 Send/Enter。
+- 新桌面主窗口使用新的 `control-center-app.js`，旧 `app.js` 和旧 HTML 仍以隐藏兼容层存在；若后续删除旧兼容层，必须先迁移 overlay/interaction 回归覆盖，不能直接批量清理。
+- 已解除：最终 release 使用真实 activated 数据重启后，两个 `Tauri Window` 顶层窗口均为隐藏；tray/global-hotkey 基础设施和 native r6 均存在。
+- 阶段 3 代码、真实 GUI、隐私、视觉、三轮对抗审查和 professor critic 均已通过，Codex goal 已标记 `complete`。流程性残留是 OMX 对账：终态 `get_goal` 返回 `goal=null`，严格 completion 拒绝该快照；已记录显式 `blocked` verdict。不要把产品验收通过误写成 OMX 对账通过，也不要在本任务里重复相同 complete 命令。
+- `/data/all` 的恢复目录包含凭证归档，UI只展示本地恢复位置；后续对抗审查要确认恢复目录权限、不会出现在诊断导出中，且重启后不会重复迁移旧数据。
 
-## M3 剪贴板 fallback 风险 2026-06-08
+## 阶段 3 设计风险 2026-07-17
 
-- 已解决一项：当 UIA 只能识别 Terminal/WebView/自绘宿主容器、拿不到可写 `ValuePattern` 时，新增显式 `allowClipboardFallback` 作为受控降级路径；报告不保存剪贴板/写入原文，且会恢复原剪贴板。
-- 安全边界：真实窗口 fallback 仍必须有 `confirmForeground`、`expectedTitleHash`、`expectedToolProfile` 和 `allowClipboardFallback`；缺任一项或 hash/profile 不匹配时必须 `writeAttempted:false`。
-- 已解决一项误写风险：真实 Codex 前台的候选 0 是全窗口 `ControlType.Document`，现在会被 `directWriteBlocked:true` 阻断，返回 `foreground_candidate_requires_clipboard_fallback`，不再直接 `SetValue` 或 `SetWindowText`。
-- 已解决一项真实前台 fallback guard：`research/m3-real-desktop-clipboard-guard.latest.json` 证明即使显式开启真实写入和 clipboard fallback，title hash 不匹配时仍不会尝试粘贴。
-- 仍需验证：当前剪贴板 fallback 只有临时 TextBox self-test 和服务契约证据；尚未在真实 Codex/Claude Code/Hermes 前台窗口里记录成功写入与回读结果。
-- 运行环境风险：隐藏 sidecar 进程创建临时窗口时，Windows 前台抢占策略会让 `SendKeys` self-test 不稳定；因此 sidecar smoke 继续验证直接写回链路，剪贴板 fallback 由前台 self-test 和接口契约验证。
-- 运行环境风险：安装后 app smoke 曾出现一次“启动 5 秒内退出”的偶发失败，已在 `scripts/check-v4-installer-smoke.ps1` 增加一次启动重试；完整 M3 critic 后续已 PASS。
+- 不要把激活进度与运行健康合并。已经 `activated` 的用户发生瞬时网络或服务故障时，只能改变 `healthy/repairing/needs_repair`，不得回退激活并重新打开首次向导。
+- 不要让客户端直接宣称 `model_ready`；必须由本地服务在真实 `/llm/test` 成功后推进状态。
+- `browser-seen` 和 activation complete 必须复用本地服务认证并做严格 schema 校验，任意网页不能伪造激活完成。
+- 现有 `clearAllLocalData()` 使用 `fs.rmSync` 永久删除数据；阶段 3 隐私页不得直接暴露该路径。数据重置必须先进入可恢复归档或经过验证的 Windows 回收站机制。
+- ChatGPT 真实 GUI 证据只能使用非敏感合成草稿；截图必须遮挡或裁切，不能通过截图间接保存输入正文。
+- 三分钟口径只适用于应用与扩展已安装、ChatGPT 已登录、用户已有有效 Key 的单次内测流程；没有真实样本时不得声称“中位数小于三分钟”。
+- ChatGPT verified insert 与 copy 是两种不同证据：copy 可完成本阶段激活，但不得显示为 DOM 机器写回成功。
 
-## 当前 M3/V5 剩余风险 2026-06-07
+## 产品形态与体验分叉风险 2026-07-17
 
-- 已解决：Windows snapshot/fill self-test、Codex/Claude Code/Hermes 三工具画像 self-test、真实 Codex 前台窗口 snapshot-only 审计、受控前台窗口写回 guard、local-service 接口、native sidecar 接口、安装包 bundled sidecar smoke 均已通过 M3 critic；报告只保留长度、hash、策略和布尔校验，不保存 raw prompt、窗口标题原文或写入文本。
-- 已解决一项安全边界：真实前台窗口写回现在必须显式确认前台窗口，并匹配 title hash 与工具画像；hash/profile 不匹配时不会写入，避免误填当前 Codex/Claude/Hermes 以外的窗口。
-- 仍需验证：Codex、Claude Code、Hermes 真实工具窗口写回尚未通过实机验收；当前真实 Codex 证据只证明前台窗口 snapshot 和候选枚举，fill 证据仍来自临时 WinForms TextBox self-test，写入策略实际为 `win32_set_window_text_fallback`，不是目标工具的真实输入框成功。
-- 当前不做：用户已明确先不做 macOS AX；不要把 macOS AX 作为当前 M3 完成门槛。
-- 最新范围已更正：网页 pilot 只跑豆包登录态；workBuddy、Trae 走本地工具路径，DeepSeek 本轮不跑。
-- 运行环境注意：本轮完整 M3 critic 曾在 beta adapter pilot 处出现一次 Chrome/CDP 崩溃码 `-1073740791`，单独复跑和第二次完整 critic 均通过；不要把这次 transient crash 当作 adapter 成功或失败结论。
-- 发布注意：本轮改动已重新构建本地安装包用于 M3 smoke，但不代表 GitHub 上 `v0.2.0-beta.1` release assets 已随之更新；若要对外发布这些 M3 fill 改动，应新建后续 beta tag/release 或显式替换 release assets。
+- 阶段 2 已统一网页 Prompt Card 与桌面 expanded Overlay 的 DOM/CSS、文案、动作和键盘行为；不要再在两端分别添加用户控件，改动必须先进入 `packages/assistant-ui/` 再同步。
+- 桌面主窗口仍是第三套、且职责过载的界面；Assistant Card 统一不等于控制中心已经完成。下一步应进入阶段 3，将主窗口收敛为托盘运行时加低频控制中心。
+- 桌面主窗口当前同时承担营销、首次配置、日常生成、服务管理、研发指标、诊断和资料管理；普通用户无法判断启动后该做什么。后续应把它收敛为托盘运行时加低频控制中心。
+- Learning、Pilot、Quality、Segments、Service 启停和 Desktop Self-Test 对研发有价值，但不应继续出现在普通用户主界面。
+- 不要把技术状态直接暴露成 `payload_guard`、`visualOnly`、`safeCandidate` 或 evidence token；产品 UI 只应显示“可填入、需聚焦、仅复制、人工确认、已阻止”等用户结果和恢复动作。
+- WorkBuddy 仍可能只能人工确认或 copy-only。共享体验重构不能通过放宽 foreground、safe target、readback 或 no-auto-submit 守卫来制造一致性。
+- `scripts/check-p25-overlay-chat-visual.js` 已迁移为 `p25-overlay-chat-visual@2` 入口，旧英文/quick-reply 断言仅在显式 `SMART_PROMPT_USE_LEGACY_P25_VISUAL=1` 时运行；默认报告必须验证共享 Card、guarded fill、regenerate、mode routing 和 compact 透明度。
+- 浏览器和桌面 Headless Chrome 测试在本轮用保留临时产物模式运行，以避免永久删除；测试 profile 留在系统临时目录，不要用永久删除命令清理。
+- Windows 测试环境中的 Playwright `chrome-headless-shell` 需要本地静态页专用 `--no-sandbox`，否则 GPU 子进程崩溃并让 CDP `Runtime.enable` 超时；该参数只属于离线测试启动器，不得复制到产品 Tauri/Chrome 运行参数。
+- 阶段 2 没有执行真实 foreground write。`guardedFillRouting.pass=true` 只证明共享 Card 把 `insert` 映射到既有 `mascot_overlay_clicked + overlayAction=fill + noAutoSubmit=true` 通道，不证明目标工具实际写入或回读成功。
+- 目标方案见 `docs/smart-prompt-first-principles-product-plan-2026-07-17.md`。
 
-## M3 Pilot 与桌面输入识别风险 2026-06-07
+## 当前关键风险 2026-06-13
 
-- 仍需内测修复：`research/m3-pilot-adapters.latest.json` 当前证明 workBuddy、Trae、Doubao、DeepSeek 四站正式扩展加载成功，但 Insert 成功率为 0；每站已探测 5 个候选入口，失败原因细化为 `no_input_candidates_on_loaded_page: 2`、`public_or_marketing_page_no_visible_composer: 1` 与 `login_or_auth_gate_no_visible_composer: 1`，需要用登录态/正确 composer 路由继续定位。
-- 已解决一项：Windows UIA 目前已有 self-test、JS local-service 开发路径接口，以及 native sidecar source/dev 等价 `/desktop/input-snapshot`；`research/m3-sidecar-desktop-input.latest.json` 为 `pass:true`。
-- 已解决一项：安装包内 native sidecar 已重新打包复验 M3 `/desktop/input-snapshot`；`research/m3-installed-sidecar-desktop-input.latest.json` 为 `pass:true`，且证明 bundled UIA probe 已进入 `resources/smart-prompt-sidecar/scripts/`。
-- 仍需产品化：当前只证明安装包 self-test snapshot，可识别 UIA 输入候选；真实 Codex/Claude Code/Hermes 桌面输入框写回和剪贴板 fallback 仍未验收。
-- 当前平台范围：macOS AX 暂缓，当前只推进 Windows UIA。
-- 仍需工具实测：Codex、Claude Code、Hermes 已有工具画像和 synthetic/self-test 覆盖，但还没有在真实这些工具窗口中做 UIA Insert 或填入验证。
-- 隐私约束：UIA 报告不得保存窗口标题原文、元素名称原文、输入值、prompt 正文或整屏内容；当前 self-test 报告只保存长度/hash/候选能力。
+- 不要把用户截图中的大白块解释成小人 PNG 问题；它已按旧桌面 overlay/WebView 白底或旧运行包暴露处理。目标 compact 态必须是透明 `72x72` 窗口，`60x60` 小人入口 + 小状态点，且视觉报告必须同时有 DOM 透明与 PNG alpha 证据。
+- 不要把源码/dist/视觉 smoke 通过解释为用户前台真实桌面壳已经更新；当前只证明候选包和本地渲染输入是新的，真实前台运行包仍需单独验证。
+- 不要把 `visualOnly=true` 当作 safe composer candidate。它只是视觉锚点/引导入口，必须保持 `candidateIndex=-1` 或不可写语义，不得通过 `isMascotOverlayPayloadAligned()`，也不得触发 `/desktop/fill`。
+- 不要为了通过复验把 broad Document、按钮、静态文本、cursor fallback、非底部候选、未聚焦元素或 visualOnly 锚点升级为 safe candidate，因为会导致误写或绕过前台/隐私守卫。
+- 不要在 `safeCandidatesReady=false` 时添加 `-AllowRealOverlayClick`。最新只读 gate 已明确 `click.attempted=false`，这是正确状态。
 
-## V5 Beta 发布后剩余风险 2026-06-07
+## 运行包风险
 
-- 已解决：V5 不再依赖“Node + JS resources”作为发布 sidecar；当前 beta 包使用 `apps/local-service-sidecar` 编译出的 native executable，并由 Tauri 资源打包。
-- 已解决：V5 release-ready manifest 已通过，`v0.2.0-beta.1` tag 已推送到 GitHub；安装包 checksum、release notes、GitHub Release 页面和 installer assets 均已生成/上传。
-- 已解决：`docs/prd.md` 的 workBuddy/Trae/Doubao/DeepSeek 目标用户修改已被当前 V5 PRD 收尾目标确认，不再是“不要默认纳入”的未确认改动。
-- 仍需内测观察：`research/v5-pilot-loop.md` 是 beta pilot 计划与记录入口，后续真实用户使用后需要继续补 Insert 成功率、保存率、Undo/Retry 使用和失败站点 adapter 修复。
-- 仍需谨慎处理：workBuddy、Trae、Doubao、DeepSeek 新 adapter 是 beta allowlist，尚未用真实登录态页面完成连续成功率验收；不要把它们写成已稳定通过。
-- 工具对账风险：V5 OMX mission 的 handoff objective 是英文生成文本，但实际 Codex goal objective 是用户中文 V5 目标全文；`omx autoresearch-goal complete` 会严格比对 objective，因此拒绝写 `completion.json`。不要为通过对账伪造 Codex goal objective。
+- 默认 release 目录仍可能被旧 `local-service-sidecar.exe` 锁住；未获用户明确许可，不要停止/重启/替换桌面壳或 sidecar。
+- `target-p25-transparent-release` 是绕开默认 release 锁的备用 target，已被 `.gitignore` 忽略；它是候选包，不是当前前台运行包。
+- 透明 release candidate 证据只证明候选 exe 存在、较新、大小/hash 可追踪，并且晚于 dist/source 输入；它不能替代 fresh no-activate runtime evidence，也不能替代真实 latest-fill。
+- 最新候选 hash 前缀为 `bcaf87d8d6d8afd6`，但当前前台没有匹配的 `smart-prompt-desktop.exe` 进程；不要把该候选包当成已在用户真实桌面生效。
 
-## V4 完成后剩余风险 2026-06-07
+## 验证解读风险
 
-- 已解决：`INSTALLER_PASS` 现在有安装包 artifact 和安装后 runtime smoke 证据；安装后的桌面壳能从包内 `resources/smart-prompt-sidecar` 使用包内 `node.exe` 启动/停止 local-service，并通过 `/health`。
-- 已解决：旧 smoke 曾误把包内 `node.exe` 当成安装后的 app 启动；`scripts/check-v4-installer-smoke.ps1` 已改为优先选择 `smart-prompt-desktop.exe` 并排除 `node.exe`。
-- 已解决：V4 release manifest 已为 `releaseReady:true`，当前不再因安装包或 sidecar 源码路径阻塞。
-- 仍需作为后续 Beta 风险关注：`LIVE_SITE_STABILITY_PASS` 的 V4 通过方式是 `LOGIN_ROUTE_RECOVERY_PASS`，不是三次连续 full run；Claude 依赖 `.runtime/v2-live-chrome-profile` 登录态，Replit formal route 固定为 `https://replit.com/agent4`，站点改版时要重跑 formal evidence。
-- 仍需作为后续发布风险关注：当前 sidecar 打包了 Node runtime 和 JS service resources，已满足本机安装 smoke；后续若要更专业的发行形态，可再把 local-service 编成独立原生 sidecar executable。
-- 工具对账风险：OMX mission 和 ledger 已 `passed`，Codex goal 已 `complete`；但 `omx autoresearch-goal complete` 无 allow-mismatch 参数，因英文 handoff objective 与用户中文 Codex goal objective 不一致拒绝写 `completion.json`。这不是 V4 代码或证据门失败。
+- `scripts/check-p25-overlay-click-chain.ps1` 的 `pass=false` 目前是预期：它要求 fresh no-activate、target safe candidate、真实写入和真实 overlay click evidence；不要为了让它变绿而放宽守卫。
+- `overlayChatVisualPass=true`、`compactBackdropTransparent=true`、`compactScreenshotTransparent=true`、`desktopDistHasTransparentCompactOverlay=true` 只证明视觉输入和离线候选包证据，不证明真实桌面进程已加载新版 WebView。
+- `/desktop/prompt-state` ready 只证明 Smart Prompt 有可填入内容，不能证明目标 composer 可写；真实点击前仍必须满足 strict foreground 与 safe candidate。
+- Codex 目前能看到 1 个 browser-like blocked candidate，但 `safeCandidateCount=0`；这只能解释为什么小人应可视觉贴近输入区，不能作为真实写入依据。
 
-## V4 剩余风险更新 2026-06-07
+## 隐私边界
 
-- 已解决：`FIRST_RUN_PASS` 现在有机器证据，桌面壳能完成 provider key 保存、provider 测试、skill 导入、隐私边界展示与首启 ready 状态。
-- 已解决：`PROMPT_CARD_UX_PASS` 现在有机器证据，浏览器扩展 runtime demo 覆盖手动三模式、Retry、Insert、Copy/Save 既有路径、Undo 和反馈记录。
-- 仍未完成：`INSTALLER_PASS` 为 FAIL，因为没有 installer artifact，也没有安装/启动/退出/卸载 smoke evidence。
-- 仍未完成：`LIVE_SITE_STABILITY_PASS` 为 PARTIAL，目前只有 V3 单次 8 站 formal PASS，还缺连续 3 次或明确的登录态/route 恢复策略证据。
-- 当前不要标记 V4 Codex goal complete，因为 `research/v4-release-manifest.latest.json` 仍是 `releaseReady:false`。
+- 报告、记忆和 research JSON 只允许保存长度、hash、profile、candidate index、布尔 readiness、时间戳、文件大小/hash 前缀等元数据。
+- 不要保存 prompt 正文、目标输入正文、剪贴板正文、raw title 或 raw UIA name。
 
-## V4 风险 2026-06-07
+## Runtime verification gap notes
+- New: `p25-runtime-readiness@1` verifier now checks running `smart-prompt-desktop` only.
+- Open risk: no matching process currently running, so `completionReady` false; this is environmental, not script logic.
+- No residual PII risks: output includes process metadata and file metadata only, with explicit privacy false-positive flags set true.
+- Residual gap: if process path is inaccessible (`ExecutablePath` empty/denied), matching is marked as unknown/failed unless privilege allows path read.
 
-- 当前 V4 未完成，不能标记 Codex goal complete：`research/v4-release-manifest.latest.json` 为 `releaseReady:false`。
-- 已解决一项：`SIDECAR_SERVICE_PASS` 已有机器证据，Tauri runtime 能启动并停止 local-service；后续仍需把该服务做成真正可发布 sidecar/安装包内资源，而不仅是 dev profile 中通过 `node` 启动脚本。
-- 主要缺口：`INSTALLER_PASS` 仍为 FAIL，当前没有 installer artifact，也没有安装/启动/退出/卸载 smoke evidence。
-- `FIRST_RUN_PASS` 仍为 PARTIAL：已有 provider key、provider status、skill import 和真实 LLM 报告证据，但缺完整首次启动向导、真实 provider 测试按钮和隐私边界验收。
-- `LIVE_SITE_STABILITY_PASS` 仍为 PARTIAL：已有 V3 单次 8 站 formal PASS，缺连续 3 次或登录态恢复策略证据。
-- 已解决：`PROMPT_CARD_UX_PASS` 已为 PASS；Prompt Card 具备手动三模式、Retry、Undo、LLM/template badge、Insert 状态和 feedback runtime evidence。
-- 已解决：`LOCAL_DATA_PASS` 已为 PASS；local-service 具备搜索、去重、备份、恢复、versioned metadata 和本地 metrics，且测试覆盖指标不保存 prompt 正文。
+## 2026-06-13 当前未授权边界
 
-## V3 release-ready 风险 2026-06-07
+- 不要运行 `scripts/check-p25-visual.ps1 -Mode MascotOverlayNoActivate` 来刷新 no-activate 证据，除非用户明确允许启动/切换桌面壳；该模式默认会启动传入的 exe 做窗口样式检查。
+- 不要把 `overlayChatVisualPass=true` 解释成真实桌面壳已经更新；当前真实 runtime readiness 仍为 `no_smart_prompt_process_running`。
+- 不要在 `safeCandidatesReady=false` 时加 `-AllowRealOverlayClick`；本轮没有真实点击、没有真实写入、没有 latest-fill verified。
 
-- 已解决：`LIVE_SITE_FORMAL_PASS` 不再是 `PARTIAL`；当前 `research/v3-live-site-formal.latest.json` 为 `pass:true`，`research/v3-release-manifest.latest.json` 为 `releaseReady:true`。
-- 已解决：Replit `/ai` 无 visible input/display 的缺口；正式矩阵改用 `/agent4` 后 Replit display PASS，且没有放宽 required list、assertion、fallback 或 injected probe 规则。
-- 剩余运行环境风险：完整 formal 对 Claude 登录态有依赖；fresh profile 会失败在 Claude，复验时应使用 `.runtime/v2-live-chrome-profile` 或先完成 Claude 登录。
-- 剩余稳定性风险：`/agent4` route 的长期稳定性未长期观察；如果 Replit 改版，需要重新只读探查真实 Agent composer，而不是把普通营销输入框算作 PASS。
+## 2026-06-13 白块/旧 overlay 风险补记
 
-## V3 live-site formal 风险 2026-06-07
+- 不要把截图中的大白块判断为小人 PNG 问题；新版目标态必须由 `initialCompactProbe.largeWhiteBlockAbsent=true` 和 compact alpha 证据共同证明。
+- 当前离线候选已证明启动默认态不会露大白块，但真实前台是否已加载新候选仍需 runtime readiness 证明；在没有用户明确许可前，不要启动、停止、替换桌面壳或 sidecar。
 
-- 历史风险已解决：`LIVE_SITE_FORMAL_PASS` 曾为 `PARTIAL`，缺口是 Replit visible input/display；当前已通过 `/agent4` 和持久 Claude profile 跑到 PASS。
-- Insert strict evidence 已从 `card-close` 代理改为 DOM evidence；ChatGPT/Claude/Gemini 已进入 `insertPasses` 和 `noAutoSendPasses`。后续不要回退到“卡片关闭即 verified”的宽松口径。
-- 第三次 formal 探针出现 Windows 进程码 `-1073740791`，疑似 Chrome/CDP/profile 锁或浏览器崩溃；未覆盖上一份有效 partial report。不要把这次崩溃当产品 PASS/FAIL，只作为运行环境风险。
-- 机器上存在多个 Chrome 进程；后续跑 `-AttachCdp` 前需要确认 9232 CDP 可用，或使用干净 profile，避免 profile/port 冲突。
-- Replit `/ai` 页面在持久 profile 下仍无 visible input candidate；当前正式验收不要回退到 `/ai`，使用已验证的 `/agent4`。
+## 2026-06-13 状态条风险补记
 
-## 当前 V3 风险快照
+- 新增 `data-mascot-mood`/状态条只表示 overlay UI 情绪状态，不要把它解释为 safe candidate、真实 Fill readiness 或目标输入框可写证据。
+- `scan` mood 尤其只表示 visual-only/需要重新聚焦目标，不得升级为 `/desktop/fill` 资格；真实 Fill 仍必须通过 payload/readiness 对齐和只读 gate。
 
-- 主要缺口已解决：`LIVE_SITE_FORMAL_PASS` 为 PASS，release manifest 已记录 8 站 display 和 3 站 insert/no-auto-send。
-- Tauri 风险：`withGlobalTauri` 仍为 `true`，但已用 main window capability 和 CSP 收窄；完全关闭需要引入 `@tauri-apps/api` bundler/import 路径。`start_local_service` 当前仍是 Rust custom command 调 Node 脚本，发布版建议改 sidecar 或安装路径服务。
-- 凭据风险：provider keys 已不再明文写入 `settings.json`，Windows 优先 DPAPI；非 Windows 或 DPAPI 不可用时走 AES-256-GCM fallback。未配置 `SMART_PROMPT_KEY_ENCRYPTION_SECRET` 时，fallback 仍弱于真正 OS keychain。
-- 浏览器 Insert 风险：已新增 strategy-based write、after-write verification、composed input/change events、失败不关卡片和反馈记录；生产站点 composer 仍可能变化，需要持续复跑 live-site formal。
-- 已解决：V3 Tauri/security 当前 critic 通过；V3 skill routing 20 fixtures hit rate = 1.0；V3 release manifest 已生成并为 `releaseReady:true`。
+## 2026-06-13 覆盖式桌面小人 UI 增强
 
-## 当前问题
+- 结果：`scripts/check-p25-overlay-chat-visual.js` PASS（含新加 `mascotMood` 校验）。
+- 无代码层面的安全/隐私回归：未存储 prompt 文本、clipboard 或 raw 标识，仅保留长度/哈希元数据。
+- 未完成（环境限制）：未进行真实 overlay click 与 real-fill 认证；`safeCandidatesReady` 未变更，不影响本次交付范围。
+## 2026-06-13 小改风险收口（追加）
 
-- V3 发布化前仍可继续收紧 Tauri：`withGlobalTauri` 仍为 `true`，但当前已有 CSP、main-window capability allowlist 和 IPC 命令最小化证据。
-- V3 发布化前仍可继续强化凭据：provider keys 已迁出明文 settings JSON，Windows 走 DPAPI；非 Windows fallback 仍弱于真正 OS keychain。
+- `readiness hint` 增加了阻塞类文案，但当时未给 `scripts/check-p25-overlay-chat-visual.js` 补 no-safe-candidate / unsupported-profile 专门状态断言。
+- 风险：当前离线视觉脚本若未覆盖该文案分支，后续提示文案可见性变化可能缺少回归保护。
 
-- 当前无阻塞 V2 自动化代码路径推进的问题；完整 runtime 验收已经具备机器证据。
-- 本地 prompt/skill 库已支持导入、推荐、保存、列表和删除；当前不再是主要缺口。
-- 浏览器扩展 Prompt Card 的 Save 已接入本地 prompt 库；当前不再只保存到扩展本地收藏。
-- 浏览器扩展本地服务离线 fallback 已有 headless runtime 覆盖；当前不再只靠静态检查证明。
+## 2026-06-13 白块截图风险更新
+- 不要把“备用 release 构建命令成功”直接等同于 exe 已刷新；本轮曾出现 cargo 未重新链接，runtime verifier 正确报 `candidate_exe_older_than_source_or_dist`。
+- 已通过 `build.rs` 追踪 overlay/dist 文件缓解该风险；后续仍应以 runtime readiness 的 `candidate.fresh=true` 和 hash/mtime 为准。
+- 当前真实桌面壳仍未运行匹配新版候选，不能声称用户前台已看到新透明入口；需要用户明确允许启动/切换桌面壳后才能做真实视觉复验。
+## 2026-06-13 仍需注意（本次交付）
+- 风险：未做真实桌面进程与 safe candidate 的 end-to-end；当前 gate 显示完成度仍受 `safeCandidatesReady`、`runtimeReady` 等外部运行时条件影响。
+- 风险：离线脚本仍为展示层验证，未覆盖真实填充链路（按你要求本次不触发）。
+## 2026-06-13 已收敛风险与仍需守住的边界
 
-## 已知风险
+- 不要再把普通 `cargo build --release` 的 exe 当作真实生产壳验证候选；该产物会加载 `127.0.0.1:17372` devUrl，dev server 不在时主页面是 Chrome error page，前端自动贴附不会运行。
+- 不要让 Smart Prompt 主窗口启动即显示，因为会抢走 Codex/WorkBuddy/Trae 前台，导致 `/desktop/input-snapshot` 返回 `profile=unknown` 并隐藏小人。
+- 不要把 200% DPI 下的 overlay 尺寸当作图片缩放问题；本次根因是原生窗口尺寸使用 physical size 导致 WebView CSS viewport 只有 `36x36`。当前已改为 logical size，最终真实窗口为 `72x72`。
+- 视觉 ready 不等于真实 fill ready。当前真实点击/填充仍缺 safe composer candidate 与 latest-fill verified；在 `safeCandidatesReady=false` 时不要运行 `-AllowRealOverlayClick`。
+- 视觉/trace 报告只能保留几何、计数、hash、布尔和状态 token；不要保存 prompt 正文、目标输入正文、剪贴板文本、raw title 或 raw UIA name。
 
-- “全网深度调研”无法证明穷尽全网；当前采用多源、多社区、多关键词检索并保留来源链接。
-- SkillHub/ClawHub 命名和生态边界不唯一；文档已标注不确定性。
-- 自动识别并写入任意桌面/网页输入框涉及权限、隐私和平台安全限制；PRD 已限定 MVP 从 allowlist 网页输入框开始。
-- 当前浏览器 MVP 使用 DOM 写入；复杂 contenteditable/富文本编辑器可能仍可能受站点 UI 变更影响。本轮已补强 8 站点 selector、同步共享核心，并让 live-site probe 使用适配器 selector，但生产站点仍需持续 runtime 证据。
-- 真实 LLM gateway 代码路径已接入并支持 auto、OpenAI-compatible、Anthropic、Gemini provider，且有三模式 test double 覆盖；provider-specific saved keys、provider 默认模型和 auto provider 失败转移已支持，但当前可用 key/billing 不足时仍会回退本地模板，生成质量会受模板限制。
-- 真实 LLM 生成需要 API key 和可用 billing；没有 key 时本地服务只会按调用方允许返回 template fallback。
-- 当前 User 环境只发现 `OPENAI_API_KEY`，未发现 `ANTHROPIC_API_KEY`、`GEMINI_API_KEY` 或 `GOOGLE_API_KEY`；本地服务和验收脚本现在也支持读取桌面壳保存的 provider-specific keys，`check-v2-real-llm.ps1 -DryRun` 可预检配置，但尚未拿到 Anthropic/Gemini 真实联网通过证据。
-- strict runtime critic 现在会读取 `research/v2-real-llm.latest.json`，当前 OpenAI 429 报告会明确阻止 V2 完成。
-- 真实站点验证可能需要浏览器登录态和平台页面稳定性；当前不能用本地 demo 代替生产站点证据。Claude 可通过 `scripts/start-v2-claude-cdp.ps1` 打开持久 Chrome profile，再用 `-AttachCdp` 模式复用已登录 Chrome 会话，但仍需要真实登录态报告。
-- 默认隐私上下文已收窄到 host/origin/tool/inputKind/pathKind；后续如果要上传 URL、页面标题或页面内容，必须做成显式用户开关和可见范围提示。
-- 当前 Chrome/Edge 环境未接受命令行 unpacked extension 加载；已改用 browser-level CDP `Extensions.loadUnpacked` 获取正式扩展加载证据。
+## 2026-06-13 当前真实点击边界
 
-## 失败尝试
+- 真实视觉已通过，但不要因此运行 `-AllowRealOverlayClick`；当前 Codex 只读诊断仍是 `safeCandidateCount=0`，真实写入和 latest-fill 仍缺证据。
+- 小人遮挡提交按钮的当前风险已收敛：新定位和 2x 保守几何核算均显示小人与底部按钮候选不重叠；若用户继续看到遮挡，优先刷新 Codex 前台状态并复跑只读几何/视觉 attach，而不是放宽写入 gate。
 
-- 初始 critic 脚本包含中文字符串，Windows PowerShell 以非 UTF-8 解析时报错；已改为 ASCII-only 检查。
-- 初始 critic 在文档未填充时失败；后续补齐来源与文档。
-- 第二次 critic 在 UI/UX 图未生成时失败；后续生成图片并通过。
-- 调严 critic 后曾失败在缺少显式 `gpt-image-2` API 输出图：`assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`；用户后来确认不需要严格 `gpt-image-2`，该项已从完成门槛移除。
-- 本次按用户要求再次 dry-run 通过；随后在 User 级 `OPENAI_API_KEY` 生效后真实调用 `gpt-image-2`，但被 billing hard limit 拦截。
-- 用户配置 User 级 `OPENAI_API_KEY` 后再次真实调用；`uv run --with openai` 成功安装临时 SDK 并调用 Image API，但 OpenAI 返回 billing hard limit，未生成输出图。
-- Goal 续跑中再次真实调用 `gpt-image-2`；API 仍返回 billing hard limit。更新后的 critic 仍失败在缺少 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
+## 2026-06-15 overlay 隐藏残留风险
 
-## 待回顾
+- 如果用户看到 Codex/WorkBuddy/Trae 退出、最小化或切到不支持窗口后小人仍留在桌面，先查 runtime trace 是否已有 `overlay-hide-requested`；若已有，问题在原生 overlay 窗口没有真正隐藏，而不是 prompt-state/Draft 是否为空。
+- Windows no-activate/topmost 透明 overlay 不要只依赖 Tauri `window.hide()`；应保留 `hide_overlay_window()` 的 `ShowWindow(SW_HIDE)` 硬隐藏，否则 `check-p25-overlay-background-hide.ps1` 会回到 `overlay_window_still_visible`。
+- `foreground.isUsable=false`、`isMinimized=true`、`isCloaked=true` 或 `isVisible=false` 时不得使用 cursor/known-tool fallback 重新点亮 overlay，因为会让已退后台/最小化的真实工具继续被当作可贴靠目标。
 
-- 真实 Chrome/Edge 扩展在 ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit 等站点的逐站点兼容性。
-- V2 runtime evidence：Claude Insert 和真实 LLM 三模式；当前已提供 Claude CDP 登录准备脚本、CDP attach 模式、独立 Claude 报告路径和真实 LLM 报告路径，但还需要登录态/可用 billing 通过报告作为证据。
-- live-site probe 当前失败原因：Claude 跳到登录/登出页；Perplexity challenge；Replit/DeepSeek/Doubao 登录或区域限制。
+## 2026-06-15 快速前台窗口绑定风险
 
-## 已解决
+- 不要再只依赖慢速 `/desktop/input-snapshot` 判断小人是否应该显示，因为 UIA 快照可能耗时数秒到数十秒；目标工具退后台或最小化后，旧快照可能把小人重新点亮。
+- 当前应以 `get_foreground_window_state` 的快速 Win32 前台状态作为显示/隐藏第一守卫：非 Codex/WorkBuddy/Trae、`isUsable=false`、`isMinimized=true`、`isCloaked=true` 或 `isVisible=false` 时必须隐藏 overlay。
+- 快速 show 不要每 180ms 重发；只在首次支持工具前台或窗口签名变化时重发，否则会造成抖动和日志噪声。
 
-- V3 P0-1 已解决：本地服务不再使用 wildcard CORS 暴露受保护 API，受保护 API 需要 per-install auth token；浏览器扩展和桌面壳会 bootstrap token 并带 auth 调用；V3 security critic 已覆盖恶意 origin、无 token、Bearer token、`X-Smart-Prompt-Token` 和 no-wildcard CORS。
-- V3 P0-1 已解决：新增 evidence redaction 模块与 runtime check，V2/V3 runtime evidence 已机械脱敏，`research/v3-security-privacy.latest.json` 不保存 API key、token、完整 URL、profile path 或 prompt/value 正文。
-- 已补齐项目记忆文件。
-- 已完成研究文档、PRD、UI/UX 概念图。
-- 已完成一版不依赖 API billing 的内置 `image_gen` UI/UX 图，并本地贴入原始小人以避免模型重绘角色。
-- 已完成六种小人状态动作资产并抠成透明 PNG：normal、resting、thinking、suggesting、success、clapping。
-- 已完成 Remotion 轻量动画原型和两个 MP4 渲染资产。
-- 本地 critic 已按更新目标通过，OMX 已记录 pass verdict。
-- 已开始第一版实现：新增 Chrome/Edge MV3 浏览器扩展 MVP 原型和基础验证脚本。
-- 已接入 V2 本地服务、LLM gateway 代码路径、站点适配器、Tauri scaffold 和 V2 critic 自动化检查。
-- 已接入本地 prompt/skill 库：skill 文件夹导入/推荐与 prompt 保存/列表/删除 API，并在桌面壳暴露管理 UI。
-- 已接入浏览器扩展 Save 到 local-service `POST /prompts`，并保留 `chrome.storage.local` 离线回退。
-- 已补浏览器扩展离线 fallback runtime demo：不可达 `serviceUrl` 时生成回退模板、Save 写入 `smartPromptFavorites`、Insert 不提交。
-- 已安装 Rustup/Cargo，并通过 Tauri `cargo check`；当前剩余的是运行态 app 启动和全局快捷键验证，不是 Rust 编译环境缺失。
-- 已通过 `scripts/check-v2-tauri-runtime.ps1` 验证 Tauri 运行态启动、Tauri command、从 Tauri 启动本地服务和全局快捷键触发；Tauri runtime 不再是当前缺口。
-- 已通过 `scripts/check-v2-claude-insert.ps1 -AttachCdp -CdpPort 9232` 验证 Claude 生产站点正式扩展显示和 Insert：`research/v2-claude-insert.latest.json` 包含 `extensionLoad.ok: true`、`insertPasses: ["claude"]`、`passedDisplay: true`、`passedInsert: true`、`injectedProbe: false`。
+## 2026-06-16 原生 watcher 显隐边界
+- 不要只依赖 `/desktop/input-snapshot` 慢快照来隐藏小人，因为最小化/退后台时旧 UIA 快照可能晚到或复活 overlay；必须保留 `start_foreground_overlay_watcher` 的 80ms Win32 前台 watcher，且前台不支持、不可见、最小化或 cloaked 时由原生层直接 `SW_HIDE`。
+- 不要在 fast poll 或 slow snapshot in-flight 时丢弃新的显隐请求；当前 `pollPending` / `fastPollPending` 是为了保证工具出现、恢复、最小化这些状态变化会在当前请求结束后补跑。
+
+## 2026-06-17 整改边界风险
+
+- WorkBuddy/Trae 的 weak signal fallback 只能走 `VisualWebViewComposer` + `allowClipboardFallback` + foreground/title/profile 校验；不要把它解释成普通 UIA value pattern 直写资格。
+- 桌面 overlay 自动轮询已改为 `setTimeout` 递归调度；如果测试或脚本仍检查 `setInterval` 字符串，应同步改成检查 backoff 调度函数，否则会产生过期静态断言。
+- 非 Windows 凭证 fallback 改为本机随机 secret 文件；旧 `local-install-fallback` vault 仅用于兼容解密，不要继续用可预测字符串加密新凭证。
+
+## 2026-06-17 P3 收口风险
+
+- `prototypes/remotion-mascot/` 已标为未集成动画原型；不要把其中 MP4/PNG 预览解释为桌面壳 runtime 正在使用的生产动画资源。
+- 非 Windows 桌面输入现在返回 `capability.supported=false` 与 `reason=desktop_input_requires_windows_uia`；`pendingBackends` 只表示未来方向，不代表 macOS/Linux 当前可识别或可写入。
+- Rust Win32 unsafe 已补 SAFETY 注释并通过 `cargo check`；后续新增 Win32 unsafe 调用必须同步写明 HWND/指针/回调生命周期边界。
+- `server.js` 已把普通 CRUD、desktop、auth/public、report 与 `/generate` 路由迁入 `createAppRoutes()`/`findAppRoute()` 表驱动；业务路由 if 链已清空，当前仅保留 CORS `OPTIONS` 预检分支。后续新增 local-service 路由不要绕回散落 if 链，因为会重新制造 P3-2 的可维护性问题。
+- `apps/desktop-shell/src/desktop-overlay-logic.js` 必须先于 `src/app.js` 作为 classic script 加载；后续新增 overlay 纯判定/布局逻辑应继续放 helper，DOM、状态同步与 Tauri 调用仍留在 `app.js`，否则会重新把拆分边界粘回主文件。
+- 用户已经授权真实前台写回测试，但 2026-06-17T16:48Z 的探测显示前台仍是 `codex`，WorkBuddy/Trae 均 `windowFound=false`；不要把这次 `pass=true` 解读成真实写回通过，因为 `write.attempted=false`、`completionImpact=target_tool_not_foreground`。
+- 2026-06-17T17:24Z WorkBuddy 真实写回已进入更深一层：窗口可找到、前台/title/profile/safe candidate gate 通过，`write.attempted=true` 且 `noAutoSubmit=true`，但 UIA 读回验证不可用，`write.verified=false`；不要把该结果标成验收完成，除非后续获得脚本可验证读回或用户明确视觉确认并记录为人工确认。Trae 同轮仍 `windowFound=false`。
+- 浏览器扩展二值快捷反馈已加 `quick-outcome`/`quick-toast-outcome` 独立 action，避免抢旧 `outcome`/`toast-outcome` 按钮选择器；快捷 `needs-work` 本地事件不强制 failure reason，但 local-service 聚合指标仍会按既有规则归一为 `low_quality`。
+- shared core 已把技能数据 canonical 字段统一为 `riskLevel/sourceType`，rankSkills 内部变量统一为 `sourceBoost`；保留 `risk_level/source_type` 只用于读入旧数据兼容，不要再把 snake_case 写成新数据主字段。
+- WorkBuddy real write is now attempted but not machine-verified: `clipboard_paste_fallback` ran with foreground/profile/title match and no auto-submit, yet UIA/value/text/nearby readback did not expose the pasted text. Do not mark WorkBuddy as fully verified unless a later machine-readable signal or explicit manual visual confirmation is recorded.
+- User later confirmed the WorkBuddy paste was not visible. Treat the earlier WorkBuddy `clipboard_paste_fallback` attempt as failed, not partial acceptance.
+- WorkBuddy weak-signal `VisualWebViewComposer` fallback is now disabled. Do not re-enable it to force green reports; WorkBuddy real fill must have a strong safe candidate before writing.
+- Invisible/minimized/cloaked/unusable foreground windows are now blocked in both the orchestration script and the fill script. Do not bypass this with clipboard fallback, because it can paste into an unseen or wrong target.
+- Current WorkBuddy evidence is intentionally blocked: `candidateCount=0`, `safeCandidateCount=0`, `write.attempted=false`, reason `foreground_fill_requires_safe_candidate`.
+- Latest WorkBuddy blocker after `继续`: the attach target can regress to a minimized/offscreen WorkBuddy HWND (`x=-16000,y=-16000,width=157,height=25`). Treat this as environment/window-state blocked; do not paste, move cursor, or claim validation while `isUsable=false`.
+- WorkBuddy exposes only root window/pane UIA nodes in the current environment, so machine-readable WorkBuddy verification may remain unavailable unless the app exposes a real Edit/Document/TextPattern/ValuePattern candidate or a later readable signal. Manual visibility confirmation is still separate from machine verification and must be recorded explicitly.
+- Visual fallback coordinate math for WorkBuddy/Trae now uses Win32 bounds to avoid UIA root DPI mismatch. Do not mix UIA-root coordinates with Win32 cursor coordinates for WebView-only visual candidates.
+- Latest WorkBuddy visible-window blocker: even when the window is visible/usable, the process may block or redirect automatic cursor placement away from the predicted composer region. In that case reports must use `foreground_fill_requires_manual_composer_focus` and must keep `write.attempted=false`; do not re-enable weak clipboard fallback.
+- Trae real write is machine-verified: foreground/profile/title match, safe candidate, `write.attempted=true`, `verified=true`, and `noAutoSubmit=true`.
+- WorkBuddy focused rerun can now find a cursor-anchored visual safe candidate, but writeback remains not machine-verified because WorkBuddy exposes no readable Edit/Document/TextPattern/ValuePattern candidate. Treat `clipboard_paste_fallback` + `noAutoSubmit=true` as an attempted write only until either machine readback or explicit user visual confirmation is recorded.
+- Do not rely on the older top-level `pass=true` value in any WorkBuddy real-write report created before the 2026-06-18 pass-semantics fix. The authoritative fields for those reports are `write.attempted`, `write.verified`, `write.reason`, `checks.writeValidated`, and `completionImpact`.
+- Installed sidecar smoke can be polluted by a stale `local-service-sidecar.exe` already listening on the smoke test service port. The smoke script now stops only Smart Prompt sidecar-runtime processes on that exact port before/after the run; do not broaden this cleanup to arbitrary processes or default user service ports.
+- Any future M3 PowerShell probe dependency must be copied into `apps/desktop-shell/src-tauri/resources/smart-prompt-sidecar/` by `prepare-sidecar.js`. The installed app cannot use repo-local scripts/config after packaging; missing dependencies appear as `/desktop/input-snapshot` 500s.
+
+## 2026-07-18 options / 多实例风险收口
+
+- 根因 1：`options/options.html` 曾直接加载 `prompt-engine.js`，但未先加载其浏览器全局依赖 `smart-prompt-core.js`。以后新增独立 extension page 时必须显式遵守 shared core 加载顺序，并由页面级 runtime test 覆盖。
+- 根因 2：桌面壳此前没有 OS 级单实例守卫，重复启动会产生真实的多个 `smart-prompt-desktop.exe` 和任务栏图标。不要用前端 DOM 去重掩盖该问题；单实例插件必须保持为第一个注册的 Tauri 插件。
+- 单实例不能只验证第二进程退出：还必须验证主窗口由隐藏态显示/聚焦、由最小化态恢复/聚焦。Windows 探针不要使用 `Process.MainWindowHandle`，因为它可能选中 Tauri 的 `com.smartprompt.desktop-siw` 内部窗口；应按 PID + 精确标题 `Smart Prompt` 枚举顶层窗口。
+- Chrome 的 `chrome://extensions` 错误列表会保留历史错误。自动化安全策略不允许直接控制该内部页，因此本轮只证明新运行时不再产生错误，不能声称用户 Chrome 中旧条目已经自动清空；用户重载扩展后可手动清空历史记录再观察。
+- 当前运行的是隔离构建的修正版 release，不等于正式安装目录已被升级。后续发布/安装包构建必须包含更新后的 `Cargo.lock` 和单实例插件，安装升级后再做一次 installed-runtime 双启动验收。
+
+## 2026-07-18 安装验收风险收口
+
+- Windows UIA PowerShell 的 warning 可能写入 stdout 并位于 JSON 前；不要再对 probe stdout 整段执行 `serde_json::from_str`。当前解析器要求精确 input/fill schema、布尔 `pass` 和对象 `privacy`，并有 clean/noisy/unrelated/wrong-schema-first 四类测试。
+- 桌面壳固定使用 `17371`；installer smoke 与 installed-runtime probe 不得继续默认 `17391`，否则会把健康的安装版误报为 sidecar 未启动。
+- 当前 NSIS/MSI 与安装后的 exe 均未做 Authenticode 签名。它们适合本机开发安装，但正式分发前仍必须补代码签名与发布版本升级。
+- 旧 `C:\Users\lhy10\AppData\Local\Temp\smart-prompt-v4-installer-smoke\install` 目录仍作为可恢复历史产物保留，但卸载注册表、快捷方式和当前进程均已指向稳定安装目录；不要把旧目录重新当正式安装来源。
+- Windows 不保证每次 `set_focus()` 都能抢占当前前台；单实例验收应硬校验进程唯一、隐藏窗口可显示、最小化窗口可恢复，并保留 `set_focus()` 静态契约。测试主动最小化使用同步 `ShowWindow`，且启动前等待旧进程/互斥量稳定。

@@ -1,282 +1,196 @@
 # 当前进度
 
-## M3 beta adapter 与桌面输入收口更新 2026-06-08
+## 2026-07-19 Codex Outcome Learning Loop v1 实现收尾
 
-- 用户已更正范围：workBuddy、Trae 是本地工具，不作为网页 adapter 跑；DeepSeek 本轮不跑；网页 beta pilot 只验证已登录豆包。
-- 已用用户现有 Chrome 登录态验证 `https://www.doubao.com/chat/`：页面有可见 textarea composer，完成 1 次真实填入回读和 no-auto-send 检查，测试文本已在取证后清空。
-- 已刷新 `research/m3-pilot-adapters.latest.json`：当前 `pass:true`，siteIds 只有 `doubao`，1 次 Insert attempt、1 次成功、success rate 1.0；报告只保存 redacted URL、长度/hash、候选数量和布尔状态，不保存 prompt 正文或输入框正文。
-- `scripts/critic-m3.ps1` 已改为审计豆包登录态报告，不再自动用 headless 覆盖登录态证据，也不再要求 workBuddy/Trae/DeepSeek 出现在网页矩阵里。
-- 当前 active goal 两条要求均有机器证据：真实 beta adapter 数据已跑出成功率，当前豆包无失败；Codex、Claude Code、Hermes 真实桌面输入矩阵已 3/3 写入验证并 no-auto-submit。
+- 已完成共享 Outcome/Learning 契约、Codex target 事务、Pending Outcome、最终编辑摘要、四类候选、Policy canary/回滚/晋升、项目清除与恢复去信任。
+- `learning-candidate-seed@1` 已进入 Node/native 生产链路；Memory、Rule、Skill 在 2 个 Session、3 次成功结果后形成待审候选，未命中固定语义时形成 Generation Policy。
+- Assistant Card 打开时调用 `/learning/v1/reminder/resolve`，只做本地瞬时匹配且不调用模型；Node/native 缺省任务场景已用跨运行时 fixtures 对齐。
+- 四轮对抗审查最终 `PASS`，当前已知 P0/P1/P2 代码项为 0；审查记录为 `docs/reviews/codex-outcome-learning-loop-v1-adversarial-review.md`。
+- 最终 r10 已重新构建 MSI/NSIS。`cargo test` 为 24 + 1 + 7 + 2 + 4 + 7 + 2 全通过，outcome-learning 16/16，native Phase 3 5/5；package cold-start、隔离隐私扫描、Control Center 与 Assistant Card 视觉均通过。
+- 最终 r10 sidecar SHA-256 为 `F5379B2BD3BFAFDBD5ABFF0C789279E1523FAFDB0874216E626829DA0E7354E7`，NSIS 为 `B54F24AE42EE30043FB90DA3FEAD6DBD06A429CDE5E3C8F386A0AE748A28D2E9`，MSI 为 `D3E122330151F78BD08E2631CBA16C6092F793BAAB026FCD60CA8458FE5FA76A`。
+- 当前未执行：安装 r10、切换真实 Smart Prompt/Codex 前台、读取/完整替换/机器回读/未发送/撤销/Pending Outcome 60 秒复开、当前 Provider 连通性。以上需本轮精确授权。
+- 只读安装审计确认当前 installed desktop 为 `27A409BA2EFA5A61B0E99025A0EA0BE9F79E100F4AD12A81C921EE5EAC1C5332`、installed sidecar 为 `7AF0AC9A2800C2B13887368EDDC239BD77F9C3982C4D7046D1A64FFA67803B71`，均不同于 r10；当前没有 Smart Prompt/sidecar 进程运行。
+- 真实付费 benchmark 未执行，必须另行确认模型、请求数、Token 上限、最大重试和预算。
+- Goal 阻塞状态：连续三次 Goal 轮次均未收到精确口令 `授权本轮真实闭环`。剩余安装、前台切换、Codex 输入读取/写回、受控剪贴板与 Provider 请求均不能越权执行，因此 Goal 按严格规则标记 blocked；用户后续发送该口令即可重新开始真实闭环验收。
 
-## M3 真实桌面 Codex 填入验证更新 2026-06-08
+## 2026-07-19 Agnes 与自定义模型修复
 
-- 用户明确要求不要把新开的命令行窗口当作真实桌面工具端验收；本轮已移除刚生成的 CLI-window smoke 脚本与证据，不把 Windows Terminal/PowerShell 受控窗口计入 M3 完成。
-- `scripts/check-m3-real-desktop-tools.ps1` 已改为支持 `-AttachExistingWindow -AttachProfile <profile>`，只 attach 到已经打开的真实桌面窗口；不会启动命令行窗口，报告只保存标题长度/hash、工具画像、候选数量和写入验证摘要。
-- 已在真实 `Codex.exe` 桌面窗口上跑通受控填入：`research/m3-real-desktop-tools.latest.json` 为 `pass:true`，`write.attempted:true`，`write.verified:true`，`strategy:"clipboard_paste_fallback"`，`textPatternVerificationMatched:true`，`clipboardRestored:true`，`autoSubmit:false`，`submitSignalCount:0`。
-- 为了验证 Codex WebView/Document 类输入区，将 TextPattern 验证读取上限从 8192 提升到 65536；仍只做匹配判断并保存长度/hash，不保存验证文本原文。
-- 已继续完成 Claude Code 与 Hermes：`research/m3-real-desktop-tools-fill-matrix.latest.json` 为 `pass:true`，Codex/Claude Code/Hermes 均 `writeAttempted:true`、`writeVerified:true`、`textPatternVerificationMatched:true`、`noAutoSubmit:true`。Codex 使用 `clipboard_paste_fallback`，Claude Code/Hermes 使用 `uia_value_pattern`。
+- 已确认持久化设置为 Agnes / `agnes-2.0-flash` / `apihub.agnes-ai.com`，DPAPI 凭证仍为 `configured`；最终安装版真实原子 `/llm/test` 成功（`generatedBy=llm`，`settingsPersisted=true`，`promptLength=764`），真实 `/generate` 成功（`generatedBy=llm`，`promptLength=1263`）。
+- 控制中心已新增推荐模型与自定义模型 ID 切换、历史自定义值回显、Key 已保存状态和空值不覆盖语义；修复 1.2 秒激活轮询重绘表单导致用户输入丢失的问题。
+- Node/native 后端已补模型 ID 校验、无效设置 400 `model_invalid`、Gemini `models/` 前缀兼容，以及裸 404 与模型错误的精确区分。
+- 浏览器 Assistant Card 已将凭证、模型、网络、Provider 异常分别显示，不再把 `provider_error` 显示为“模型暂不可用”；首开生成会等待 browser-seen 结果，避免已激活用户被竞态误当成首次激活。
+- “保存并测试”已改为先测试候选配置、成功后持久化。最终安装版用伪造错误 Key 验证返回 502 `credential_invalid`，随后原 Agnes Key 继续真实测试成功，证明失败候选没有覆盖旧凭证。
+- 回归通过：Prompt Session、浏览器扩展、Node local-service、native Rust 8 项单测、native sidecar 5 项契约、桌面壳测试、Control Center 视觉测试和 scoped `git diff --check`；三轮对抗审查最终 verdict 为 `PASS`。
+- 此前 Agnes 修复轮次已生成并静默覆盖安装 NSIS，当时安装包 SHA-256 为 `3C61972774265FBF5BC6B5D54C504F8774E99D9F953B7D504EDC00B969FDB1D2`，installed sidecar 为 `541A0895156FD4B138DB7A7A692C41D6361E78050AE099F73B7A250441C945ED`；这不是当前 r10 已安装证据。
+- 已安装 WebView CDP 验证：Agnes 推荐项与自定义项均存在，Key 输入为空但状态为“已保存，留空不会覆盖”；自定义值在 1.8 秒轮询后仍保留。安装版非法模型返回 400 `model_invalid`，原模型和凭证状态不变。
 
-## M3 caret/focus 输入信号更新 2026-06-08
+## 待用户动作
 
-- 已回答“能否通过光标或输入强关联指标识别”的问题：可以作为候选排序强信号，但不能单独作为真实工具写入许可。
-- 已为 `scripts/check-m3-desktop-input.ps1` 新增 `inputSignals`、`caret`、`bestCandidateIndex`、`bestCandidateScore`、`focusedCandidateCount`、`caretCandidateCount` 等字段；报告仍不读取输入值或 prompt 正文。
-- 已把同类信号穿过 local-service sanitizer，并在 `apps/local-service/tests/local-service.test.js` 与 `scripts/critic-m3.ps1` 中加断言，防止 cursor/focus 证据回归丢失。
-- 已验证最小链路：`check-m3-desktop-input.ps1 -SelfTest -JsonOnly` PASS；`check-m3-desktop-fill.ps1 -SelfTest -JsonOnly` PASS；`node -c apps/local-service/src/desktop-input-detector.js` PASS。
-- 已复跑完整 `scripts/critic-m3.ps1` PASS，并记录 OMX verdict pass；Codex goal 仍保持 active，因为真实三工具写回尚未完成。
-- 真实 Codex 前台 snapshot 显示：候选数 116，`focusedCandidateCount:1`，`caretCandidateCount:0`，`caretVisible:false`，`bestCandidateIndex:0` 仍是超大 `ControlType.Document`；这解释了为什么仍不能直接把它当输入框写入。
-- 仍未完成：Codex/Claude Code/Hermes 真实工具窗口的安全填入成功率和失败原因还没有最终验收。
+- 对本轮真实闭环逐项授权：安装 r10 并保留安装，启动/切换 Smart Prompt 与 Codex，使用非敏感合成草稿，读取与完整替换当前输入，必要时受控使用并恢复剪贴板，验证未发送、自动收起、撤销和 Pending Outcome，再测试当前 Provider 连通性。
+- 真实 benchmark 另行确认预算；未获该授权时只保留 fake benchmark 和静态证据。
 
-## M3 剪贴板 fallback 更新 2026-06-08
+## 2026-07-17 阶段 3 方案锁定
 
-- 已解释并修复“工具内输入框一直识别不到”的主要技术缺口：桌面/CLI 工具常把输入区放在 Terminal、WebView 或自绘容器中，Windows UIA 可能只能看到宿主容器，无法暴露标准 `ValuePattern` 或原生 Edit 控件。
-- 已为 `scripts/check-m3-desktop-fill.ps1` 新增显式 `-AllowClipboardFallback`；该路径使用临时剪贴板文本粘贴，随后恢复原剪贴板，报告只保存长度/hash，不保存写入原文，也不发送 Enter/submit。
-- 已将 `allowClipboardFallback` 接入 local-service `POST /desktop/fill`、native sidecar `/desktop/fill`、sanitizer 和本地服务测试；真实前台窗口仍必须匹配 `confirmForeground`、`expectedTitleHash` 与 `expectedToolProfile` 才会尝试写入。
-- 新增证据 `research/m3-desktop-fill-clipboard.latest.json`，当前 `pass:true`、`strategy:"clipboard_paste_fallback"`、`clipboardFallbackTried:true`、`clipboardRestored:true`；`research/m3-desktop-fill.latest.json`、`research/m3-sidecar-desktop-fill.latest.json`、`research/m3-installed-sidecar-desktop-input.latest.json` 已同步新增隐私字段。
-- 已为 `scripts/check-v4-installer-smoke.ps1` 加一次启动重试，解决安装后 app 偶发 5 秒内退出导致 smoke 误失败的问题；完整 `scripts/critic-m3.ps1` 已复跑并 PASS，OMX verdict 已记录 pass。
-- 仍未完成：Codex/Claude Code/Hermes 真实工具窗口内写回成功率和剪贴板 fallback 成功率尚未验收；本轮没有对真实前台工具窗口执行写入，只做 self-test 和受控接口链路。
-- 本轮继续推进：`scripts/check-m3-real-desktop-tools.ps1` 现在会把 `-AllowClipboardFallback` 传入真实前台写入桥；新增 `research/m3-real-desktop-clipboard-guard.latest.json`，证明即使开启真实写入与 clipboard fallback，只要 title hash 不匹配，也不会尝试写入或粘贴。
-- 已新增超大 `ControlType.Document` 候选直写阻断：真实 Codex 前台候选 0 是全窗口 Document，`research/m3-desktop-fill-direct-guard.latest.json` 证明 hash/profile 匹配时也会返回 `foreground_candidate_requires_clipboard_fallback`、`directWriteBlocked:true`、`writeAttempted:false`，避免把整页/整窗候选当输入框覆盖。
-- 已验证：`npm test` in `apps/local-service` PASS；`scripts/check-m3-desktop-fill.ps1 -SelfTest` PASS；`scripts/check-m3-desktop-fill.ps1 -SelfTest -AllowClipboardFallback` PASS；真实 Codex 前台 direct guard PASS；真实前台 clipboard mismatch guard PASS；完整 `scripts/critic-m3.ps1` PASS；OMX verdict 已记录 pass。
+- 已通过逐项问答锁定阶段 3：首次激活优先、BYOK、多 Provider 选择加真实连通性测试、ChatGPT 浏览器首用、完成后托盘运行、四页最小控制中心。
+- 已确认内测前置条件：桌面应用与扩展已安装、ChatGPT 已登录、用户已有有效 Key；三分钟指标从首次向导可交互开始计算，单次结果不得表述为中位数。
+- 已确认激活完成条件：ChatGPT Assistant Card 完成生成和审核，并产生 verified insert 或成功 copy；模型测试通过不等于激活完成。
+- 已确认开发后执行最多三轮分级对抗审查；P0/P1 必须修复并复审，最终 verdict=`pass` 才能完成目标。
+- 已生成设计规格 `docs/superpowers/specs/2026-07-17-desktop-activation-control-center-design.md` 和 Goal 提示词 `docs/goals/smart-prompt-phase3-activation-goal-prompt.md`，并已进入阶段 3 实现。
 
-## M3 桌面写回与 PRD 状态 2026-06-07
+## 2026-07-17 阶段 3 当前实现
 
-- 用户已更新当前 M3 范围：先不做 macOS AX，本阶段只追 Windows UIA 桌面输入框识别与真实 adapter pilot 数据。
-- 本轮已新增真实前台工具窗口 snapshot-only 审计：`scripts/check-m3-real-desktop-tools.ps1` 生成 `research/m3-real-desktop-tools.latest.json`，当前 `pass:true`，真实前台窗口检测为 `codex`，UIA 候选数 116，`writeAttempted:false`，`completionImpact:"real_tool_write_still_pending"`；报告只保存 title hash/length、候选数量和隐私布尔项，不保存 raw title/input/prompt。
-- 本轮已新增三工具画像 self-test：`scripts/check-m3-desktop-input.ps1` 支持 `-SelfTestProfile codex|claude-code|hermes`；`scripts/check-m3-desktop-tool-profiles.ps1` 生成 `research/m3-desktop-tool-profiles.latest.json`，当前 `pass:true`，Codex/Claude Code/Hermes 三项均检测到正确工具画像、至少 1 个 UIA 候选，且不保存 raw title/raw input。
-- 本轮已补齐受控前台窗口写回协议：真实窗口写入必须显式传 `confirmForeground:true`，并同时匹配 `expectedTitleHash` 与 `expectedToolProfile`；不满足时返回 `writeAttempted:false`，避免误写当前前台窗口。
-- 已新增 guard evidence：`research/m3-desktop-fill-guard.latest.json` 当前按预期 `pass:false`、`reason:"foreground_title_hash_mismatch"`、`writeAttempted:false`，证明 title hash 不匹配时不会写入，也不会保存 raw text。
-- 本轮已补齐 Windows 桌面写回 self-test：`scripts/check-m3-desktop-fill.ps1` 生成 `research/m3-desktop-fill.latest.json`，当前 `pass:true`；写入策略为 `win32_set_window_text_fallback`，已验证写入和回读 hash/length，不保存写入文本原文，不自动提交。
-- 已补齐 local-service `POST /desktop/fill`，并在 `apps/local-service/tests/local-service.test.js` 覆盖 auth、工具画像、隐私脱敏和“不泄露 raw text”。
-- 已补齐 native sidecar `POST /desktop/fill`，并新增 `scripts/check-m3-sidecar-desktop-fill.ps1`；`research/m3-sidecar-desktop-fill.latest.json` 当前 `pass:true`。
-- 已补齐安装包 bundled sidecar fill smoke：`prepare-sidecar.js` 会打包 `check-m3-desktop-fill.ps1`，`research/m3-installed-sidecar-desktop-input.latest.json` 当前 `pass:true`，包含 `desktopFillFromInstalledSidecar`、`desktopFillSelfTestPass`、`desktopFillPrivacyRedacted`。
-- 已同步 `docs/prd.md` 与 `docs/m3-desktop-input.md`：PRD 当前是 v0.2 beta 收口版；M3 标记为进行中，Windows self-test/snapshot/fill、三工具画像 self-test、真实 Codex 前台 snapshot-only 审计、受控前台写回 guard 和 sidecar 链路已通过；真实 Codex/Claude Code/Hermes 工具窗口写回仍待完成，macOS AX 暂缓到后续跨平台阶段。
-- 已验证：`scripts/check-m3-real-desktop-tools.ps1` PASS；`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`cargo check` in `apps/local-service-sidecar` PASS；`scripts/check-m3-desktop-fill.ps1 -SelfTest` PASS；`scripts/check-m3-sidecar-desktop-fill.ps1` PASS；`scripts/check-m3-installed-sidecar-desktop-input.ps1` PASS；`scripts/critic-m3.ps1` PASS；`git diff --check` PASS。
-- 历史四站网页矩阵已被最新用户范围取代：workBuddy、Trae 走本地工具路径，DeepSeek 本轮不跑，网页 pilot 只保留豆包登录态证据。
+- 本地服务新增 `activation.json` 状态事实源、五段激活进度、三段运行健康、迁移和 metadata-only 激活 API；Provider 测试只推进到 `model_ready`，设置保存会先推进到 `configuring`。
+- 旧用户迁移覆盖：有效 Provider + 历史 ChatGPT verified insert/copy -> `activated`；有效 Provider 无核心循环 -> `awaiting_first_loop`；无有效 Provider -> `configuring`；新鲜空目录仍为 `not_started`。
+- `/data/all` 已改为把数据移动到 `.recovery/reset-*` 可恢复归档后重新初始化，不再永久删除；新增运行健康 API和 Provider 错误分类。
+- 浏览器扩展在 ChatGPT 目标上只提交 `browser-seen`、verified insert 或成功 copy 的脱敏激活证据；未发送 Prompt、剪贴板、标题或 DOM 正文，且保留 no-auto-submit。MV3 background bridge 固定本地服务端口 `17371`，令牌只留在 worker 内存中，`/auth/bootstrap` 不暴露给 content script。
+- 激活路由现在只接受固定 Chrome/Edge 扩展 Origin 和 `phase3-activation@1`；ChatGPT 页面 Origin、伪造扩展 Origin、Firefox/Safari 当前路径均被拒绝。ChatGPT verified insert 还必须带 `targetKind=chatgpt-composer`，decoy textbox 不得激活。
+- 桌面主窗口已加入阶段 3 控制中心入口：首次激活向导、当前 Provider 单字段、ChatGPT 目标、概览/模型/隐私/诊断四页；旧工作台仅隐藏保留给已有 overlay 回归脚本。
+- Tauri 主窗口启动隐藏、关闭转托盘、托盘可唤起，并提供固定 ChatGPT 外部打开命令；激活完成后自动收起到托盘。
+- 已通过：本地服务契约/集成测试、浏览器扩展全套测试（含 complete bridge）、native sidecar 合约、桌面壳静态/交互测试、Control Center 契约、阶段 3 视觉、Prompt Session、Tauri 运行时与只读隐私扫描。
+- 三轮独立对抗审查最终 `pass`，P0/P1/P2 均为 0；前两轮发现的 bridge 丢证据、打开 ChatGPT 不收起、eventId 等时放行、Node/native 诊断路径泄露均已修复并补回归测试。审查文档和最终 critic 脚本已生成。
+- 用户重载正确 unpacked 扩展后，真实 ChatGPT 闭环通过：r5/ready、`generatedBy=llm`、卡片编辑、`verified_insert`、`targetKind=chatgpt-composer`、稳定回读、消息数/路径不变、无 Send/Enter。单次观测为 `144446 ms`，低于三分钟且未表述为中位数。
+- 最终 release 使用同一 activated 数据重启后保持 activated；两个 Tauri 窗口均隐藏，native sidecar r6、托盘和全局快捷键基础设施均确认。最终 acceptance JSON、隐私报告、对抗审查和 professor critic 均为 pass，Codex goal 已标记 `complete`。
+- OMX 终态对账未成功：`update_goal` 返回 `complete` 后，按流程刷新的 `get_goal` 返回 `goal=null`；`omx autoresearch-goal complete` 使用该原样快照只尝试一次并按严格规则拒绝。已依 hook 要求记录显式 `blocked` verdict，证据为 `work/phase3-codex-goal-null-snapshot.json`，未重复或伪造终态快照。
 
-## M3 Pilot 与桌面输入识别进度 2026-06-07
+## 2026-07-17 产品重构方案
 
-- 已创建 OMX autoresearch-goal mission：`smart-prompt-m3-pilot-metrics-and-desktop-input-`，critic 命令为 `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-m3.ps1`。
-- 已新增 M3 beta adapter pilot 入口：`scripts/check-m3-pilot-adapters.ps1`，它会生成 `research/m3-pilot-adapters.latest.json`；最新默认范围已收窄为豆包登录态网页，记录 Insert attempts、成功率、失败原因和 redaction 检查。
-- 已跑真实 beta pilot：正式扩展加载成功，4 个新站点均尝试 Insert；当前 Insert 成功率为 0。失败原因已从单一 `no visible input candidate` 细化为 `no_input_candidates_on_loaded_page: 2`、`public_or_marketing_page_no_visible_composer: 1` 与 `login_or_auth_gate_no_visible_composer: 1`，每站带 `pageClassification`、`routeDiagnostics` 与 `routeMatrix`。这不是 M3 完成，只是明确了下一步需要登录态/正确 composer 路由/selector 修复。
-- 已新增 Windows UIA 桌面输入识别 self-test：`scripts/check-m3-desktop-input.ps1 -SelfTest` 会创建临时 TextBox 并用 UIA 枚举候选，生成 `research/m3-desktop-input.latest.json`；当前报告 `pass:true`，候选数 1，检测到 Codex 工具画像。
-- 已新增开发路径 local-service 接口：`GET /desktop/input-snapshot` 和 `?selfTest=1`，受 auth 保护；返回窗口 title hash/length、UIA 候选和工具画像，不返回标题原文、元素原文或输入值。
-- 已新增 native sidecar 等价接口：`GET /desktop/input-snapshot` 和 `?selfTest=1`；Windows source/dev 路径通过 PowerShell UIA bridge 调用 `scripts/check-m3-desktop-input.ps1`，非 Windows 返回 guarded pending。
-- 已新增 sidecar smoke：`scripts/check-m3-sidecar-desktop-input.ps1`，生成 `research/m3-sidecar-desktop-input.latest.json`；当前报告 `pass:true`，证明 native sidecar health/auth/snapshot 全链路可用且 dataDir 已脱敏。
-- 已补安装包内 M3 sidecar 复验：`apps/desktop-shell/scripts/prepare-sidecar.js` 会把 `check-m3-desktop-input.ps1` 打入 sidecar resources；`scripts/check-m3-installed-sidecar-desktop-input.ps1` 生成 `research/m3-installed-sidecar-desktop-input.latest.json`，当前 `pass:true`，证明安装后 app 能启动 bundled native sidecar 并调用 `desktop/input-snapshot?selfTest=1`。
-- 已同步 `docs/prd.md` 的 M3 状态：从“下一阶段”改为“进行中”，明确 Windows UIA/source-dev、native sidecar snapshot、安装包 bundled sidecar snapshot 和三工具画像 self-test 已通过；真实桌面写回仍待完成，macOS AX 暂缓。
-- 已新增 `packages/shared/desktop-tool-profiles.js`，覆盖 Codex、Claude Code、Hermes；VS Code/Windows Terminal/PowerShell/cmd 仅作为宿主，不会单独误报。
-- 已新增文档：`docs/m3-desktop-input.md`，明确 Windows UIA 已有可运行竖切，macOS AX 仍是 guarded/pending，不伪装完成。
-- 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`scripts/check-m3-desktop-input.ps1 -SelfTest` PASS；`scripts/check-m3-desktop-tool-profiles.ps1` PASS；`scripts/check-m3-sidecar-desktop-input.ps1` PASS；`scripts/check-m3-installed-sidecar-desktop-input.ps1` PASS；`scripts/check-m3-pilot-adapters.ps1 -Headless` PASS；`scripts/critic-m3.ps1` PASS。
-- 已记录 OMX professor-critic verdict `pass`，证据为 `research/m3-pilot-adapters.latest.json`、`research/m3-desktop-input.latest.json`、`research/m3-sidecar-desktop-input.latest.json`、`research/m3-installed-sidecar-desktop-input.latest.json`；Codex goal 仍保持 active，因为 M3 总目标尚未完成。
-- 本批收口范围：安装包内 M3 desktop snapshot resource 打包、installed sidecar smoke、M3 critic/report、M3 文档与 PRD 状态同步。
-- 仍未完成：Codex/Claude Code/Hermes 真实桌面输入框写回未验收；新 beta 站点尚未在登录态/真实 composer 中拿到成功 Insert；macOS AX 已按用户要求移出当前阶段。
+- 已完成网页扩展、桌面 Overlay、桌面主窗口、本地服务和运行证据的第一性原理复盘。
+- 已生成当前静态界面证据：`outputs/product-reassessment-2026-07-17/01-desktop-main.png` 与 `02-browser-extension-open.png`。
+- 已确认核心问题不是缺少功能，而是产品表面、状态模型和模块接口分叉；桌面主窗口当前有 12 个主区块、20 个按钮和 16 个输入控件，混合了多个使用频率和角色。
+- 已产出 `docs/smart-prompt-first-principles-product-plan-2026-07-17.md`，包含必要、优化、重构、移出、新增和暂缓清单，以及 6 阶段逐文件实施计划。
+- 阶段 0 已完成：`docs/product-contract.md` 与 `docs/assistant-state-spec.md` 固化一句话产品、唯一成功流程、P0/P1/P2、扩功能冻结、9 状态、有限 reason、Target Capability 和 `no-auto-submit` 契约。
+- 阶段 1 已完成：新增 `packages/prompt-session/`，浏览器 Card 与桌面 Overlay 已共同消费 `prompt-session@1` View Model；两份运行时副本由 `scripts/sync-prompt-session-runtime.js` 同步并由测试逐字校验。
+- 已验证正常、目标丢失、copy-only、阻断、机器验证、人工确认、Provider/写入失败恢复和撤销；浏览器真实 Demo 与桌面 Overlay Headless Chrome 渲染测试通过，截图在 `outputs/prompt-session-phase1/`。
+- 阶段 2 已完成：新增 `packages/assistant-ui/` 与 `scripts/sync-assistant-ui-runtime.js`，浏览器 Card 和桌面 expanded Overlay 已迁移到同一 Shadow DOM 组件；统一中文/英文、编辑器、模式、一个主操作、最多两个次操作、键盘与安全提示。
+- 浏览器运行时覆盖模式切换、重新生成、编辑保持、普通 Enter、填入后同卡 `inserted`、撤销和 Provider 离线降级；桌面运行时覆盖 8 个核心状态、编辑后 guarded fill、regenerate/mode Tauri 路由、compact `72x72` 与透明白块回归。
+- 阶段 2 验证通过：`packages/assistant-ui`、`packages/prompt-session`、浏览器扩展、桌面壳全量测试，桌面 `prompt-session-runtime-test`，`p25-overlay-chat-visual@2`，运行时/dist hash，PowerShell parser、`node --check` 与 `git diff --check`。
+- `scripts/check-p25-overlay-click-chain.ps1` 的共享 Card、target-missing、guarded fill、regenerate、mode routing 与视觉项均为 true；整体仍按预期为 false，因为本轮未启动真实桌面壳、未刷新 runtime readiness、未执行真实 overlay click 或真实写回。
+- 下一实施起点：阶段 3 桌面控制中心瘦身；不得把阶段 2 离线视觉与路由通过误报为真实前台写回完成。
 
-## V5 PRD 与发布资产收尾 2026-06-07
+## 当前状态快照（2026-06-17）
 
-- 已把 `docs/prd.md` 从 `v0.1` 草案更新为 `v0.2 beta` PRD，补入 V5 已完成项、验收证据、安装包路径、native sidecar、真实 LLM/provider、pilot 指标、里程碑状态和后续 M3 范围。
-- 已确认并纳入用户的工具范围修改：目标用户行包含 workBuddy、Trae、Doubao、DeepSeek、Hermes，并把 Codex/Claude Code/Hermes 作为桌面/CLI 工具画像进入 M3。
-- 已创建 GitHub Release：`https://github.com/mumu-github/smart-prompt/releases/tag/v0.2.0-beta.1`，并上传 MSI、NSIS exe、`v5-beta-checksums.sha256` 三个 assets。
-- 已补 beta 站点适配：浏览器扩展和 shared core 新增 workBuddy、Trae、Doubao、DeepSeek；manifest 与测试已同步。Codex/Claude Code/Hermes 已补工具画像，不冒充网页 adapter。
-- 已补真实内测 metrics 链路：扩展把 `card_ready`、`insert`、`save`、`retry`、`undo` 等 privacy-safe feedback 上报到 `/metrics`；local-service 和 native sidecar 汇总 Insert 成功率、保存率、Undo/Retry 使用率、adapter 失败率、失败原因。
-- 已验证：`npm test` in `prototypes/browser-extension` PASS；`npm test` in `apps/local-service` PASS；`C:\Users\lhy10\.cargo\bin\cargo.exe check` in `apps/local-service-sidecar` PASS；`git diff --check` 无空白错误。
-- 已提交并推送：`b93e227 Close V5 beta PRD and pilot metrics`。
-- 仍待真实内测：workBuddy、Trae、Doubao、DeepSeek selector 需要在真实登录态页面采集 Insert 成功率和失败原因后继续修正。
+- 当前目标：按 `C:/Users/lhy10/WorkBuddy/2026-06-17-13-11-49/Smart-Prompt-整改方案-校准整合版.md` 修复 Smart Prompt 可执行问题，并保持真实 Fill 的 foreground、safe candidate、no-auto-submit 与隐私元数据边界。
+- Autoresearch goal：已创建 `.omx/goals/autoresearch/smart-prompt/mission.json`；完成前必须记录 professor-critic `pass` verdict。
+- 旧进度流水账已归档到 `agent_memory/archive/progress-2026-06-17-before-rectification.md`；后续进度只按 checklist 记录，并必须绑定证据文件或验证命令。
 
-## V5 Beta 发布与真实内测闭环完成进度 2026-06-07
+## 证据绑定 checklist
 
-- 已完成分组提交链路，且显式排除 `docs/prd.md`：V3/V4 evidence、desktop shell、local-service、extension、release scripts 已先行分组提交，V5 最终新增 `Ship V5 beta native sidecar release` 与 `Record V5 beta release pass manifest` 两个提交。
-- 已完成 beta release 包证据：`docs/releases/v0.2.0-beta.1.md`、`research/v5-beta-checksums.sha256`、MSI/NSIS installer artifact、`v0.2.0-beta.1` tag。
-- 已完成 V5 技术加固：`apps/local-service-sidecar/` Rust native sidecar、desktop shell native sidecar 启动/重启/端口恢复、local-service 诊断导出与删除全部本地数据、key 迁移状态、桌面壳诊断/清空数据 UX。
-- 已完成内测产品闭环文档：`research/v5-pilot-loop.md` 覆盖 5 个真实使用场景、Insert 成功率、保存率、Undo/Retry 使用情况和 adapter 更新记录。
-- 已验证：`scripts/critic-v5.ps1` PASS；`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`npm test` in `prototypes/browser-extension` PASS；`npm run build` in `apps/desktop-shell` PASS；`scripts/check-v4-installer-smoke.ps1` PASS。
-- 已推送：远程分支 `codex/prompt-automation-research` 和远程 tag `v0.2.0-beta.1` 均已推送到 `origin`。
-- 已记录 OMX professor-critic verdict `pass`，证据为 `research/v5-beta-manifest.latest.json`；Codex goal 已通过 `update_goal(status=complete)` 完成。
-- 未写入 OMX `completion.json`：`omx autoresearch-goal complete` 因 mission handoff 英文 objective 与用户直接创建的中文 Codex goal objective 不一致而拒绝；这是对账文本不匹配，不是 V5 验收失败。
+| 状态 | 编号 | 事项 | 当前证据 |
+| --- | --- | --- | --- |
+| 进行中 | P0-1/P1-2 | WorkBuddy/Trae Fill 弱信号 fallback 与 safe candidate 配置化 | `packages/shared/desktop-tool-profiles.json`、`scripts/desktop-tool-profile-config.ps1`、`scripts/check-m3-desktop-input.ps1`、`scripts/check-m3-desktop-fill.ps1`、`scripts/check-m3-real-desktop-tools.ps1` |
+| 已完成 | P0-2 | `progress.md` 从自由流水账压缩为证据 checklist | `agent_memory/archive/progress-2026-06-17-before-rectification.md`、本文件 |
+| 已完成 | P1-3/P1-4 | 浏览器扩展 prompt engine 与 site adapters 改为复用 shared core | `prototypes/browser-extension/src/smart-prompt-core.js`、`prototypes/browser-extension/src/prompt-engine.js`、`prototypes/browser-extension/src/site-adapters.js`、`prototypes/browser-extension/tests/prompt-engine.test.js` |
+| 已完成 | P1-5 | 凭证 AES fallback 改为本机随机 secret 文件，并保留 legacy 解密兼容 | `apps/local-service/src/credential-vault.js` |
+| 已完成 | P1-6 | 浏览器扩展 local-service client 非 JSON 响应处理 | `prototypes/browser-extension/src/local-service-client.js` |
+| 已完成 | P1-7 | 桌面壳 overlay 自动轮询改为 `setTimeout` 递归调度 + 指数退避 | `apps/desktop-shell/src/app.js`、`apps/desktop-shell/tests/desktop-shell-interaction.test.js` |
+| 已完成 | P1-8 | 关键吞错点改为可观测或标注预期 fallback | `apps/desktop-shell/src/app.js`、`apps/desktop-shell/src/overlay.js` 增加脱敏 warning；`scripts/check-m3-desktop-input.ps1`、`scripts/check-m3-desktop-fill.ps1`、`scripts/check-m3-real-desktop-tools.ps1`、`scripts/check-p25-runtime-readiness.ps1` 为预期 best-effort fallback 加注释；源码范围裸空 catch 扫描无匹配 |
+| 已完成 | P1-1 | `prompt-quality.js` 12 模块拆分 | `packages/shared/prompt-quality.js` 仅保留兼容入口；实现拆到 `packages/shared/prompt-quality/*.js`；已验证 `node --check`、`node scripts/check-v6-prompt-quality.js`、`npm test --prefix apps/local-service` |
+| 已完成 | P2-1 | 忽略所有 `target-p25-*` 构建产物目录 | `.gitignore` |
+| 已完成 | P2-2 | 合并 visual-attach 脚本家族 | `scripts/check-p25-visual.ps1` 统一 `DesktopShellVisualRuntime` / `MascotOverlayNoActivate` / `OverlayWindowVisualAttach` 三个 mode；旧实现移入 `scripts/p25-visual/*.impl.ps1`；`check-p25-*.ps1` 入口数从 9 降到 7；已验证桌面测试与 background-hide 调用 |
+| 已完成 | P2-3 | 浏览器扩展版本对齐 0.2.0 | `prototypes/browser-extension/manifest.json`、`prototypes/browser-extension/package.json` |
+| 已完成 | P2-4/P2-5 | PRD 与 README 对齐真实 M3 证据和正确桌面壳构建命令 | `docs/prd.md`、`README.md` |
+| 已完成 | P2-6 | Node 侧重复工具函数抽到 `packages/shared/utils.js` | `packages/shared/utils.js`、`apps/local-service/src/store.js`、`apps/local-service/src/credential-vault.js`、`packages/shared/evidence-redaction.js` |
+| 已完成 | P2-7 | Rust sidecar 请求体读取/JSON 解析错误不再静默吞掉 | `apps/local-service-sidecar/src/main.rs` |
+| 已完成 | P3 | app.js 拆分、路由表、命名统一、Rust SAFETY、remotion 归档、二值反馈、macOS/Linux 输入检测 | 已补 `apps/desktop-shell/src-tauri/src/main.rs` Win32 unsafe SAFETY 注释、`prototypes/remotion-mascot/README.md` 未集成归档说明、`apps/local-service/src/desktop-input-detector.js` 非 Windows guarded unsupported capability 与测试；`apps/local-service/src/server.js` 已用 `createAppRoutes()`/`findAppRoute()` 覆盖普通 CRUD、desktop、auth/public、report 与 `/generate` 路由，并抽出 `buildGenerationContext()`、`buildDiagnosticsExport()`、`buildGenerateResponse()`；浏览器扩展已加二值快捷反馈并映射 success/needs-work；`packages/shared/smart-prompt-core.js` 已统一 `riskLevel/sourceType/sourceBoost` canonical 命名并保留旧输入兼容；`apps/desktop-shell/src/app.js` 已将 overlay 纯判定/布局逻辑拆到 `apps/desktop-shell/src/desktop-overlay-logic.js` 并保留同名 wrapper |
 
-## V4 可安装内测版完成进度 2026-06-07
+## 本轮已验证
 
-- 已补强发布链路：新增 `apps/desktop-shell/scripts/prepare-sidecar.js`，并把 Tauri `beforeBuildCommand` 改为 `npm run prepare-release`；build 会同时准备 frontend dist 和包内 local-service sidecar resources。
-- 已补强 Tauri local-service 启动：`apps/desktop-shell/src-tauri/src/main.rs` 新增 `get_local_service_source`，`start_local_service` 优先使用包内 `server.js` 与 `node.exe`，并注入 local data dir。
-- 已补强 installer smoke：`scripts/check-v4-installer-smoke.ps1` 现在会静默安装 NSIS 包，启动安装后的 `smart-prompt-desktop.exe`，通过 CDP 调 Tauri command 启停 local-service，确认包内 sidecar/Node/health，再关闭和卸载。
-- 已刷新 `research/v4-installer-smoke.latest.json`：`pass:true`，其中 `bundledSidecarResource`、`bundledNodeRuntime`、`sourceCommandBundled`、`localServiceStartedFromInstalledApp`、`serviceHealthFromInstalledApp`、`localServiceStoppedFromInstalledApp` 均为 true。
-- 已刷新 `research/v4-release-manifest.latest.json`：`pass:true`、`releaseReady:true`，所有 V4 验收门均为 PASS。
-- 已验证：`cargo check` PASS；`npm run build` in `apps/desktop-shell` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v4-installer-smoke.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v4.ps1` PASS；`git diff --check` 无空白错误。
-- 已记录 OMX autoresearch-goal verdict `pass`，并通过 Codex `update_goal(status=complete)` 完成 V4 goal；`omx autoresearch-goal complete` 因 mission handoff objective 与用户直接创建的中文 Codex goal objective 文本不一致被拒绝，未写 `completion.json`。
+- `npm.cmd test`（`packages/prompt-session`）：契约测试通过。
+- `SMART_PROMPT_KEEP_TEST_ARTIFACTS=1 npm.cmd test`（`prototypes/browser-extension`）：prompt engine、manifest、site adapters、真实 Demo 渲染/生成/写回/撤销通过；统一 `review`/`inserted` 状态、单行主操作和 `no-auto-submit` 断言通过。
+- `npm.cmd test` 与 `npm.cmd run prompt-session-runtime-test`（`apps/desktop-shell`）：静态、交互和 Headless Chrome Overlay 状态投影通过；覆盖 `idle`、`drafting`、`review`、`target_missing`、`copy_only`、机器/人工 `inserted` 和 `blocked`。
+- `Get-FileHash`：共享源码和浏览器/桌面运行时副本 SHA-256 相同；`git diff --check` 通过，仅有既有 LF/CRLF warning。
+- `node --check packages/shared/prompt-quality.js` 与 `packages/shared/prompt-quality/*.js`。
+- `node -e "const q=require('./packages/shared/prompt-quality'); ..."`：导出数 48，核心函数可用。
+- `node scripts/check-v6-prompt-quality.js`：`pass=true`。
+- `npm test --prefix apps/local-service`：通过。
+- `npm test --prefix prototypes/browser-extension`：通过。
+- `npm test --prefix apps/desktop-shell`：通过。
+- PowerShell parser：`scripts/check-p25-visual.ps1`、`scripts/p25-visual/*.impl.ps1`、`scripts/check-p25-overlay-background-hide.ps1`、`scripts/check-p25-overlay-click-chain.ps1` 通过。
+- `scripts/check-p25-visual.ps1 -Mode OverlayWindowVisualAttach -AllowFailure -TimeoutSeconds 0`：生成旧 schema 报告，未启动进程、未点击、未写入。
+- `scripts/check-p25-visual.ps1 -Mode MascotOverlayNoActivate -AttachOnly -KeepRunning -AllowFailure -TimeoutSeconds 0`：生成旧 schema 报告，未启动进程。
+- `scripts/check-p25-visual.ps1 -Mode DesktopShellVisualRuntime -AllowFailure -TimeoutSeconds 0`：生成旧 schema 聚合报告，停在 `start_not_allowed`，未尝试真实点击或填充。
+- `scripts/check-p25-overlay-background-hide.ps1 -AllowFailure -TimeoutSeconds 0`：通过新 visual 入口生成 attach 报告。
+- `node --check apps/desktop-shell/src/app.js apps/desktop-shell/src/overlay.js`：通过。
+- `npm test --prefix apps/desktop-shell`：通过。
+- `npm test --prefix apps/local-service`：通过。
+- `npm test --prefix prototypes/browser-extension`：通过。
+- `cargo check --manifest-path apps/local-service-sidecar/Cargo.toml`：通过。
+- PowerShell parser：`scripts/check-m3-desktop-input.ps1`、`scripts/check-m3-desktop-fill.ps1`、`scripts/check-m3-real-desktop-tools.ps1`、`scripts/check-p25-runtime-readiness.ps1` 通过。
+- M3 自测：`check-m3-desktop-input.ps1 -SelfTest -SelfTestProfile workbuddy -JsonOnly`、`check-m3-desktop-fill.ps1 -SelfTest -AllowClipboardFallback -JsonOnly`、`check-m3-real-desktop-tools.ps1 -Profiles workbuddy -JsonOnly` 通过；最后一项未写真实目标，`writeAttempted=false`。
+- 裸空 catch 扫描：`rg "catch \\{\\}|\\.catch\\(\\(\\) => \\{\\}\\)" scripts apps/desktop-shell/src packages prototypes/browser-extension/src -g "*.ps1" -g "*.js"` 无匹配。
+- `git diff --check`：通过；仅输出 LF/CRLF 转换 warning。
+- P3 增量验证：`npm test --prefix apps/local-service` 通过；`cargo check --manifest-path apps/desktop-shell/src-tauri/Cargo.toml` 通过；`git diff --check -- apps/local-service/src/desktop-input-detector.js apps/local-service/tests/local-service.test.js apps/local-service/README.md docs/m3-desktop-input.md prototypes/remotion-mascot/README.md assets/ui-ux/mascot-animations/README.md apps/desktop-shell/src-tauri/src/main.rs` 通过，仅 LF/CRLF warning。
+- P3-2/P3-6 增量验证：`npm test --prefix apps/local-service`、`npm test --prefix prototypes/browser-extension`、`npm test --prefix apps/desktop-shell` 均通过；`node --check apps/local-service/src/server.js` 通过；`rg "if \\(req\\.method === .*url\\.pathname|if \\(req\\.method === .*startsWith"` 确认业务路由 if 链已清空，仅保留 CORS `OPTIONS` 预检；`git diff --check -- apps/local-service/src/server.js apps/local-service/tests/local-service.test.js prototypes/browser-extension/src/content.js prototypes/browser-extension/src/content.css prototypes/browser-extension/tests/runtime-demo.test.js` 通过，仅 LF/CRLF warning。
+- P3-3 增量验证：`node -e "const core=require('./packages/shared/smart-prompt-core'); ..."` 证明 parse 输出 camelCase、无 `source_type`、sourceBoost=0.8、slug 长度 50、id 含 sourcePath hash；`npm test --prefix prototypes/browser-extension` 与 `npm test --prefix apps/local-service` 通过；`git diff --check -- packages/shared/smart-prompt-core.js prototypes/browser-extension/src/smart-prompt-core.js prototypes/browser-extension/tests/prompt-engine.test.js` 通过，仅 LF/CRLF warning。
+- P3 app.js 拆分验证：`node --check apps/desktop-shell/src/desktop-overlay-logic.js`、`node --check apps/desktop-shell/src/app.js`、`npm test --prefix apps/desktop-shell` 通过；`git diff --check -- apps/desktop-shell/src/app.js apps/desktop-shell/src/desktop-overlay-logic.js apps/desktop-shell/index.html apps/desktop-shell/tests/desktop-shell.test.js apps/desktop-shell/tests/desktop-shell-interaction.test.js` 通过，仅 LF/CRLF warning；`app.js` 从 3070 行降至 2831 行，新 helper 342 行。
 
-## V4 Prompt Card UX 进度 2026-06-07
+## 待验证
+- WorkBuddy real write attempt after foreground authorization: `scripts/check-m3-real-desktop-tools.ps1 -Profiles workbuddy -AttachExistingWindow -AllowForegroundWrite -AllowClipboardFallback -AllowTextPatternVerification -Report research/m3-real-desktop-tools-workbuddy.latest.json -JsonOnly` found `WorkBuddy`, `foreground.hasTargetForeground=true`, `safeCandidateCount=1`, `write.attempted=true`, `strategy=clipboard_paste_fallback`, `noAutoSubmit=true`, but `write.verified=false` with `reason=foreground_after_clipboard_paste_verification_unavailable`.
+- Trae remains unavailable: `scripts/check-m3-real-desktop-tools.ps1 -Profiles trae -AttachExistingWindow -AllowForegroundWrite -AllowClipboardFallback -AllowTextPatternVerification -Report research/m3-real-desktop-tools-trae.latest.json -JsonOnly` reported `windowFound=false`, `write.attempted=false`, `completionImpact=target_tool_not_foreground`.
+- Real foreground write attempt after user authorization: `check-m3-real-desktop-tools.ps1 -Profiles workbuddy,trae -AllowForegroundWrite -AllowClipboardFallback -AllowTextPatternVerification -JsonOnly` did not write because foreground was `codex` and `completionImpact=target_tool_not_foreground`; separate `-Profiles workbuddy -AttachExistingWindow -JsonOnly` and `-Profiles trae -AttachExistingWindow -JsonOnly` probes both reported `windowFound=false`.
+- WorkBuddy/Trae real fill remains blocked by environment: authorization exists, but no visible/foreground WorkBuddy or Trae target window was found; rerun only after the target input is open and foreground, or after `-AttachExistingWindow` can find a matching window.
 
-- 已实现浏览器扩展 Prompt Card 完整体验：卡片内新增 `spc-mode-selector` 手动切换 `idea/continue/polish`，保留生成中/失败/ready 状态，新增 `Retry`，新增 LLM/template `spc-source-badge`，Insert 失败时留在卡片并标记失败，Insert 成功后显示 `smart-prompt-undo` toast。
-- 已实现 Undo：Insert 前保存原输入，Undo 只把原输入写回当前输入框，不发送消息；同时写入 `smartPromptUndo*` DOM evidence 并记录 `undo` feedback。
-- 已补 runtime evidence：`prototypes/browser-extension/tests/runtime-demo.test.js` 在 headless Chrome 中覆盖手动模式切换到 polish、Retry、Insert 不自动发送、Undo 恢复原输入、在线 Save 和离线 fallback。
-- 已强化 V4 critic：`scripts/critic-v4.ps1` 现在依次跑 local-service、desktop-shell、browser-extension 三套测试，再生成 V4 manifest。
-- 已刷新 `research/v4-release-manifest.latest.json`：`PROMPT_CARD_UX_PASS` 现在为 PASS；整体仍 `releaseReady:false`，剩余缺口是 `INSTALLER_PASS` 和 `LIVE_SITE_STABILITY_PASS`。
-- 已验证：`npm test` in `prototypes/browser-extension` PASS；`scripts/critic-v4.ps1` 中三套测试均 PASS，最终按预期失败在 release-ready 未满足。
+- WorkBuddy/Trae 真实前台写回仍未完成；当前只有 profile/self-test 与 snapshot-only/guard 证据，不能标为真实 Fill 验收完成。
+- P3 结构项已收口；当前剩余未验收项仍是 WorkBuddy/Trae 真实前台 Fill 证据。
 
-## V4 首启向导进度 2026-06-07
+## 边界
 
-- 已新增 local-service `POST /llm/test`：该接口受 auth 保护，调用现有真实 LLM provider gateway，只返回 provider、model、mode、generatedBy、promptLength、skillCount、隐私固定项和 testedAt，不返回 prompt/card 正文。
-- 已新增桌面壳首启面板：`first-run-panel`、`first-run-progress`、`privacy-boundary`、`test-provider`、`provider-test-status`；首启进度会跟踪 provider 配置、provider key、provider test、skill import 和 privacy visibility。
-- 已补测试：`apps/local-service/tests/local-service.test.js` 覆盖 `/llm/test` auth/gateway/无正文泄露；`apps/desktop-shell/tests/desktop-shell-interaction.test.js` 覆盖保存 provider key、导入 skill、测试 provider 和 first-run ready 状态；`apps/desktop-shell/tests/desktop-shell.test.js` 覆盖静态 token。
-- 已刷新 `research/v4-release-manifest.latest.json`：`FIRST_RUN_PASS` 现在为 PASS；后续 Prompt Card UX 也已提升为 PASS；整体 `releaseReady:false`，剩余缺口是 `INSTALLER_PASS`、`LIVE_SITE_STABILITY_PASS`。
-- 已记录 OMX autoresearch-goal verdict `fail`，证据为最新 V4 manifest；该 fail 是阶段性验收结果，Codex goal 仍保持 active。
-- 已验证：`npm test` in `apps/local-service` PASS；`npm test` in `apps/desktop-shell` PASS；`scripts/critic-v4.ps1` 按预期失败在 release-ready 未满足。
+- 本轮不自动运行真实 overlay click，不自动写真实 Codex/WorkBuddy/Trae composer。
+- 真实 Fill 验收仍必须满足同轮 foreground/title/profile/candidate/clipboard fallback/no-auto-submit 证据；不能用视觉 ready 或 weak fallback 直接替代真实写回证据。
+- Real foreground write rerun after target focus: WorkBuddy attach succeeded (`windowFound=true`, `detectedToolProfile=workbuddy`, `safeCandidateCount=1`) and write was attempted via `clipboard_paste_fallback` with `noAutoSubmit=true`, but machine readback remained `verified=false` (`foreground_after_clipboard_paste_verification_unavailable`). Trae attach succeeded and passed full machine verification (`detectedToolProfile=trae`, `safeCandidateCount=1`, `write.attempted=true`, `verified=true`, `verifiedTextHash=60b0fcc569e3b7b0`, `noAutoSubmit=true`).
 
-## V4 进度 2026-06-07
+## 2026-06-17 WorkBuddy real-fill guard update
 
-- 已按 V4 目标创建 OMX autoresearch-goal mission：`smart-prompt-v4-installable-beta-turn-v3-validat`。
-- 已补 V4 sidecar 生命周期：Tauri 新增 `get_local_service_status`、`start_local_service`、`stop_local_service`；desktop shell 增加 Stop Service；退出托盘菜单会尝试停止本地服务。
-- 已更新桌面壳测试：静态/交互测试覆盖 start/stop/status Tauri command；runtime test 覆盖 Tauri WebView、快捷键、本地服务启动和停止。
-- 已新增 V4 证据脚本：`scripts/check-v4-sidecar-service.ps1`、`scripts/write-v4-release-manifest.js`、`scripts/critic-v4.ps1`。
-- 已验证：`npm test` in `apps/desktop-shell` PASS；`cargo check` in `apps/desktop-shell/src-tauri` PASS；`scripts/check-v4-sidecar-service.ps1` PASS，生成 `research/v4-sidecar-service.latest.json`。
-- 已补 V4 本地数据闭环：local-service/store 新增 `schemaVersion` metadata、prompt body hash 去重、prompt/skill 搜索、`/data/backup`、`/data/restore`、`/metrics`，指标不保存 prompt 正文。
-- 已验证：`npm test` in `apps/local-service` PASS；`research/v4-release-manifest.latest.json` 现在 `LOCAL_DATA_PASS: PASS`。
-- 已生成 `research/v4-release-manifest.latest.json`：当前 `releaseReady:false`；`SIDECAR_SERVICE_PASS: PASS`、`FIRST_RUN_PASS: PASS`、`KEYCHAIN_PASS: PASS`、`PROMPT_CARD_UX_PASS: PASS`、`LOCAL_DATA_PASS: PASS`，其余门仍未全部满足。
-- 已记录 OMX professor-critic verdict `fail`，证据为当前 V4 manifest；这是正常的阶段性 fail，不是 blocked。
+- User confirmed the prior WorkBuddy paste was not visible, so that result is invalid for acceptance.
+- Added real-write guards for invisible/minimized/cloaked/unusable foreground windows in `scripts/check-m3-real-desktop-tools.ps1` and `scripts/check-m3-desktop-fill.ps1`.
+- Disabled WorkBuddy weak-signal clipboard fallback in `packages/shared/desktop-tool-profiles.json` and `packages/shared/desktop-tool-profiles.js`; WorkBuddy now requires a strong safe candidate before any real paste.
+- Latest WorkBuddy report: `research/m3-real-desktop-tools-workbuddy.latest.json`; foreground WorkBuddy was visible and usable, but `candidateCount=0`, `safeCandidateCount=0`, `write.attempted=false`, reason `foreground_fill_requires_safe_candidate`.
+- Latest Trae rerun could not attach a Trae window; foreground remained WorkBuddy, `write.attempted=false`, `completionImpact=target_tool_not_foreground`. Earlier Trae machine-verified pass remains historical evidence, not refreshed in this rerun.
+- Verification after this guard update: PowerShell parser checks passed, fill self-test passed, `npm test --prefix apps/local-service`, `npm test --prefix prototypes/browser-extension`, and `npm test --prefix apps/desktop-shell` all passed; scoped `git diff --check` only reported LF/CRLF warnings.
 
-## V3 release-ready 更新 2026-06-07
+## 2026-06-17 WorkBuddy follow-up after `继续`
 
-- 按用户要求继续调用 multi-agent 执行 V3；Boole 作为只读验收/探查 agent 指出 Replit `/agent4` 比根页更适合作为 formal evidence，且不能放宽断言或使用 fallback。
-- 已将 `prototypes/browser-extension/tests/live-site-probe.test.js` 中 Replit formal URL 从 `/ai` 改为 `/agent4`。
-- 已验证 Replit 单站底层 formal probe PASS：正式扩展加载、`injectFallback:false`、`injectedProbe:false`、`focus.ok:true`、`visibleInputCount:1`、mascot 可见。
-- 已用 `.runtime/v2-live-chrome-profile` 跑通完整 V3 formal：8/8 display；ChatGPT/Claude/Gemini insert 与 no-auto-send 全通过；无 injected probe failures；无 redaction leaks。
-- 已更新 `research/v3-release-manifest.latest.json`：`pass:true`、`releaseReady:true`、`LIVE_SITE_FORMAL_PASS: PASS`。
-- 已验证：`npm test` in `prototypes/browser-extension` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v3-security.ps1` PASS。
+- Added `scripts/check-m3-uia-element-diagnostics.ps1`, a read-only metadata-only UIA map. It records control types, hashes, geometry, pattern/focus booleans, and never stores raw title, UIA names, input values, prompt text, or clipboard text.
+- WorkBuddy UIA diagnostics showed the real WorkBuddy window exposes only `ControlType.Window` plus two `ControlType.Pane` nodes, so there is no machine-readable Edit/Document child candidate to target.
+- Updated WorkBuddy/Trae visual fallback geometry in `scripts/check-m3-desktop-input.ps1` and `scripts/check-m3-desktop-fill.ps1` to use the Win32 foreground/window bounds for visual candidates, avoiding UIA root DPI coordinate mismatch.
+- Updated `scripts/check-m3-real-desktop-tools.ps1` attach evidence with `cursorPlacement` metadata and composer-region cursor targeting for WorkBuddy/Trae. This remains metadata-only.
+- Current blocker: latest WorkBuddy attach returned a minimized/offscreen handle (`isMinimized=true`, `isUsable=false`, bounding rect `x=-16000,y=-16000,width=157,height=25`), so cursor placement was not attempted and real write remains blocked. Do not run WorkBuddy real write until a visible usable WorkBuddy composer window is restored.
+- Verification after this follow-up: PowerShell parser checks passed, fill self-test passed, `npm test --prefix apps/local-service`, `npm test --prefix prototypes/browser-extension`, and `npm test --prefix apps/desktop-shell` all passed; scoped `git diff --check` only reported LF/CRLF warnings.
+- Continued rerun after user said `继续`: WorkBuddy became visible/usable, but automatic cursor placement into the composer region was blocked or redirected. Latest protected write report has `write.attempted=false`, reason `foreground_fill_requires_manual_composer_focus`, `candidateIndex=-1`, `safeCandidateCount=0`, and no auto-submit signals.
+- Validation for this increment: parser checks passed for M3 PowerShell scripts, fill self-test passed, `npm test --prefix apps/local-service` passed, and scoped `git diff --check` only reported LF/CRLF warnings.
 
-## V3 live-site formal 更新 2026-06-07
+## 2026-06-18 WorkBuddy focused foreground rerun
 
-- 本轮按用户要求调用 multi-agent 执行 V3；Pascal 作为专门验收 agent 做只读审查，结论是 `LIVE_SITE_FORMAL_PASS` 不能用 V2 5 站证据和 Claude 单站证据拼成 PASS。
-- 已新增/收紧 V3 live-site formal 证据链：`scripts/check-v3-live-sites.ps1`、`scripts/assert-v3-live-formal-evidence.js`、`prototypes/browser-extension/tests/live-site-probe.test.js` 的 `schemaVersion=v3-live-site-formal@1`、`formalExtensionOnly`、`injectFallback:false`、`noAutoSend`、`sites[]`、`summary` 字段。
-- `scripts/write-v3-release-manifest.js` 现在优先读取 `research/v3-live-site-formal.latest.json`；没有 V3 formal 报告或断言不通过时，`LIVE_SITE_FORMAL_PASS` 只能是 `PARTIAL`，不能从 legacy V2 evidence 升级为 PASS。
-- 已按验收 agent Dirac 的审查修掉过宽 Insert 依据：内容脚本现在通过 `documentElement.dataset.smartPromptInsert*` 发布只含状态/长度/策略的 DOM evidence；assertion 不再接受 `card-close` 作为 after-write 依据，只接受 `content-debug` 或 `dom-evidence`。
-- 最新 V3 formal 探针已生成 `research/v3-live-site-formal.latest.json`：正式扩展加载成功、`injectedProbe:false`、无 redaction leaks；8/8 display 通过；ChatGPT/Claude/Gemini 三站 insert 和 no-auto-send 均通过。
-- 已验证：`npm test` in `prototypes/browser-extension` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v3-security.ps1` PASS；release manifest 为 `releaseReady:true`。
+- After the user manually focused WorkBuddy, the read-only gate `research/m3-desktop-input-workbuddy-focused.latest.json` detected foreground `workbuddy`, `isUsable=true`, title hash `d754cc54dc1de6d8`, and one safe visual cursor-anchored candidate at index `0`.
+- Updated `scripts/check-m3-desktop-input.ps1` and `scripts/check-m3-desktop-fill.ps1` so WorkBuddy/Trae can create a cursor-anchored visual candidate when UIA exposes only panes and the cursor is inside the lower composer region.
+- Ran protected foreground write for WorkBuddy without attaching a new window. The latest evidence has `write.attempted=true`, strategy `clipboard_paste_fallback`, title/profile matched, `noAutoSubmit=true`, requested text length/hash only, but `write.verified=false` because WorkBuddy still does not expose machine-readable UIA/Text/Value readback.
+- Fixed `scripts/check-m3-real-desktop-tools.ps1` top-level `pass` semantics: when `-AllowForegroundWrite` is explicitly enabled, top-level pass now requires all requested profiles to have validated real writes; snapshot/privacy alone cannot turn a real-write report green.
+- Current blocker: WorkBuddy acceptance still needs either machine-readable verification or explicit user visual confirmation that the pasted test text is visible in the composer. Do not mark Codex goal or OMX autoresearch complete before that evidence is recorded.
+- Validation for this increment: PowerShell parser checks passed for M3 scripts; fill self-test passed; `npm test --prefix apps/local-service`, `npm test --prefix apps/desktop-shell`, and `npm test --prefix prototypes/browser-extension` passed; scoped `git diff --check` only reported LF/CRLF warnings.
 
-## 当前 V3 快照
+## 2026-06-18 Installed sidecar/critic repair
 
-- 任务目标：按用户 V3 goal 调用多 agent 执行“高频 AI 输入工作流 Beta”，继续推进 P0/P1 验收链路。
-- 本轮多 agent 分工：Dewey 只读审查 Tauri 发布安全；Cicero 只读审查站点矩阵/Insert 加固；Sartre 作为专门验收 agent 输出 V3 acceptance matrix。
-- 已完成：provider keys 迁出 `settings.json` 到 credential vault；Tauri 配置 CSP、main-window capability 并移除未用 shell plugin；浏览器扩展收敛 8 站 Beta 矩阵；Insert 新增 `ok/verified/strategy/kind/reason` after-write 校验、`composed:true` 事件、失败不关卡片；Prompt Card 展示 skill basis 和 privacy summary；Insert/Save/Copy 记录反馈事件；新增 V3 skill routing 20 fixture 和 release manifest。
-- 验证通过：`scripts/critic-v3-security.ps1` PASS；`scripts/critic-v2.ps1 -RequireRuntimeEvidence` PASS；`cargo check` PASS；`scripts/check-v2-tauri-runtime.ps1` PASS。
-- 当前 reports：`research/v3-security-privacy.latest.json` PASS；`research/v3-tauri-security.latest.json` PASS；`research/v3-skill-routing.latest.json` PASS，20 fixtures hit rate = 1.0；`research/v3-live-site-formal.latest.json` PASS；`research/v3-release-manifest.latest.json` PASS 且 `releaseReady:true`。
-- 当前首要缺口已清空：`LIVE_SITE_FORMAL_PASS` 为 PASS；后续复验需注意 Claude 登录态和 Replit `/agent4` route 稳定性。
-- 边界：`docs/prd.md` 是用户已有未确认改动，本轮继续不触碰/不纳入提交范围。
+- Full `scripts/critic-m3.ps1` initially failed after real-write pass semantics were tightened because the real foreground clipboard guard now exits non-zero when correctly blocked. Updated the critic to allow that expected guard exit and assert the JSON fields (`pass=false`, no write attempted, title-hash mismatch, no raw text leak).
+- Full critic then exposed an installed-sidecar packaging gap: `prepare-sidecar.js` copied the M3 input/fill scripts but not their new `desktop-tool-profile-config.ps1` and `packages/shared/desktop-tool-profiles.json` dependencies. Installed app `/desktop/input-snapshot?selfTest=1` returned 500.
+- Fixed `apps/desktop-shell/scripts/prepare-sidecar.js` to package the profile config script and JSON, and extended `apps/desktop-shell/tests/desktop-shell.test.js` to assert these resources are included.
+- Hardened `scripts/check-v4-installer-smoke.ps1` to clean stale Smart Prompt sidecar processes on the smoke test service port before/after the run, preventing an old sidecar from being mistaken for the newly installed app's sidecar.
+- Hardened `scripts/check-v4-installed-app-runtime.js` to include sanitized HTTP error summaries and redact the bundled sidecar binary path in raw runtime evidence.
+- Evidence refreshed: `research/m3-installed-sidecar-desktop-input.latest.json` now has `pass=true`, bundled native sidecar/input/fill probes true, installed app started/stopped sidecar true, desktop snapshot self-test true, desktop fill self-test true, and privacy checks true.
+- Full `powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-m3.ps1` now passes. Remaining non-critic gap is still WorkBuddy real foreground write verification: latest WorkBuddy evidence has one safe candidate and `write.attempted=true`/`noAutoSubmit=true`, but `write.verified=false`.
 
-## 当前任务
+## 2026-07-18 options 加载与桌面单实例修复
 
-- 任务目标：实现 V3 P0-1：本地服务鉴权、CORS 收窄、evidence 脱敏和 V3 security critic。
-- 成功标准：受保护本地 API 需要 per-install token；恶意 Origin 不能访问；浏览器扩展和桌面壳能 bootstrap token 并带 auth 调用；V2/V3 evidence 文件脱敏；`scripts/critic-v3-security.ps1` 通过；V2 严格 critic 仍通过。
-- 范围边界：不处理 Tauri CSP/keychain/sidecar 发布化；不创建 PR；不纳入 `docs/prd.md` 当前未确认改动。
+- 浏览器扩展设置页补齐 `smart-prompt-core.js -> prompt-engine.js -> options.js` 加载顺序，消除 `Smart Prompt shared core must be loaded before prompt-engine.js`。
+- 新增 options 静态顺序测试和真实 Chromium unpacked-extension 运行时测试；完整扩展测试通过，运行时确认 `SmartPromptCore === SmartPromptEngine`、设置页完成加载且无该异常。
+- 桌面壳引入 `tauri-plugin-single-instance` 并作为首个 Tauri 插件注册；重复启动会聚焦已有控制中心后退出，不再创建多个任务栏实例。
+- 对抗审查发现的两个 P2 已收口：`focus_main_window()` 增加 `unminimize()`；真实 runtime test 按 PID + 精确窗口标题覆盖“初始隐藏 -> 二次启动显示/聚焦 -> 最小化 -> 三次启动恢复/聚焦”，并验证全程仅一个 release 进程。
+- 已停止截图对应的 4 个旧 installer-smoke 桌面进程及其所属 sidecar，启动修正版 release；最终二次启动退出码为 0，修正版进程数为 1（PID `21120`），旧路径进程数为 0。
+- 验证通过：扩展 `npm.cmd test`、桌面壳 `npm.cmd test`、`cargo fmt --check`、隔离 target 的 `cargo check`、单实例真实二次启动探针、scoped `git diff --check`（仅 LF/CRLF warning）。
 
-## 已完成
+## 2026-07-18 正式安装包重建与安装
 
-- 读取并使用了 `oh-my-codex:autoresearch-goal` skill。
-- 创建了 OMX mission：`prompt-automation-tool`。
-- 创建并更新了 `agent_memory/`。
-- 建立了研究/PRD/视觉资产文档结构。
-- 完成 `docs/research-report.md`。
-- 完成 `docs/competitive-analysis.md`。
-- 完成 `docs/open-source-skills-analysis.md`。
-- 完成 `docs/prd.md`。
-- 生成并保存 UI/UX 概念图：`assets/ui-ux/prompt-copilot-uiux-v1.png`。
-- 新增可选显式 `gpt-image-2` 复跑提示词：`assets/ui-ux/gpt-image-2-uiux.prompt.txt`。
-- 复制用户指定小人原型到项目：`assets/ui-ux/mascot-token-run.png`；后续生成必须保留这个小人，不重新设计。
-- 新增显式 `gpt-image-2` 复跑脚本：`scripts/generate-uiux-gpt-image-2.ps1`。
-- 已 dry-run 验证复跑参数：endpoint `/v1/images/edits`，input image `assets/ui-ux/mascot-token-run.png`，model `gpt-image-2`，quality `high`，size `2048x1152`，目标输出 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png`。
-- 按用户要求用内置 `image_gen` 生成一版当前项目 UI/UX 图，并通过本地合成贴入原始小人 PNG：`assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png`。
-- 按用户要求补齐小人状态动作资产：`normal`、`resting`、`thinking`、`suggesting`、`success`、`clapping`，并保存为 `assets/ui-ux/mascot-states/*.png` 透明图。
-- 按原始目标补齐 Remotion 轻量动画原型：`prototypes/remotion-mascot`，并渲染 `assets/ui-ux/mascot-animations/mascot-state-loop.mp4` 与 `assets/ui-ux/mascot-animations/floating-prompt-assistant.mp4`。
-- 补充 `README.md` 与 `assets/ui-ux/README.md`。
-- 当前本地 critic 已按更新目标通过：`PASS: autoresearch artifacts meet local critic checks.`
-- OMX 已记录 professor-critic `pass` verdict。
-- 已创建 git 分支：`codex/prompt-automation-research`。
-- 已新增 `prototypes/browser-extension/` MV3 原型：manifest、content script、prompt engine、options 页、popup、demo 页、六态小人资产副本和无依赖测试。
-- 已新增 `scripts/critic-browser-extension.ps1` 浏览器 MVP 验收脚本。
-- 已创建 V2 OMX mission：`smart-prompt-v2`，并创建 Codex goal。
-- 已新增 V2 共享核心：`packages/shared/smart-prompt-core.js` 和 `packages/shared/llm-gateway.js`。
-- 已将真实 LLM gateway 从单一 OpenAI-compatible 扩展为 `auto`、`openai-compatible`、`anthropic`、`gemini` provider 路径，并补了 provider readiness、auto-provider selection、request/response test double。
-- 已新增 V2 本地服务：`apps/local-service/`，含 settings、skill 文件夹扫描、skill 推荐、LLM gateway、`/generate` API 和测试。
-- 已强化浏览器扩展：新增 `site-adapters.js`、`local-service-client.js`，manifest 允许本地服务，content script 优先调用本地服务，服务离线时回退模板。
-- 已新增 Tauri 桌面壳 scaffold：`apps/desktop-shell/`，含设置页、skill 管理 UI、服务启动入口、tray/global-shortcut Rust 代码和静态测试。
-- 已新增 V2 critic：`scripts/critic-v2.ps1`；默认自动化检查 PASS，`-RequireRuntimeEvidence` 会严格要求真实站点和 Tauri runtime evidence。
-- 已新增 Claude 登录态验证辅助脚本：`scripts/check-v2-claude-insert.ps1`，使用持久 Chrome profile、只跑 Claude、并提供登录等待窗口。
-- 已增强 Claude 登录态验证辅助脚本：默认写入 `research/v2-claude-insert.latest.json`，避免覆盖 `research/v2-live-site-probe.latest.json` 的 5 站点证据。
-- 已将 `apps/local-service/README.md` 补强为本地服务 API contract，并让 V2 critic 检查 settings、skill import/recommend、generate 和隐私 invariant。
-- 已新增本地 prompt/skill 库管理：local-service 支持 `GET /prompts`、`POST /prompts`、`DELETE /prompts/:id`、`DELETE /skills/:id`，桌面壳新增 Skill/Prompt Library 删除按钮并连接本地服务。
-- 已补强浏览器扩展到本地 prompt 库的桥接：Prompt Card 的 Save 优先调用 local-service `POST /prompts`，服务离线时回退 `chrome.storage.local`。
-- 已补强浏览器扩展本地服务离线 fallback 运行时证据：demo 可通过 `serviceUrl` 注入不可达服务地址，runtime demo 验证生成回退模板、Save 回退 `chrome.storage.local`、Insert 仍不提交。
-- 已补强本地服务 V2 测试：通过注入 `generateWithLlm` test double，经由 `/generate` 覆盖 `idea`、`continue`、`polish` 三模式且 `allowTemplateFallback: false`。
-- 已补强浏览器扩展测试：显式检查 ChatGPT、Claude、Gemini insert strategy，并扩大“不自动发送”静态禁区到 `submit`、`requestSubmit`、form submit path 和 Enter key。
-- 已补强默认隐私上下文：浏览器扩展不再把完整 `location.href` 或页面标题传给本地服务，改为 host/origin/tool/inputKind/pathKind；critic 检查不默认上传整页文本。
-- 已补强 8 站点适配器：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit 的选择器更具体，扩展适配器与共享核心 `SITE_ADAPTERS` 保持同步，`v0.app` 已进入共享核心。
-- 已补强 live-site probe 与适配器一致性：真实站点探针现在按 `site-adapters.js` 的站点 selector 聚焦输入框，并在报告中记录使用的 `inputSelectors`；内容脚本 debug 暴露 `lastAdapterId`。
-- 已补强 provider-specific API key 管理：local-service 与桌面壳可分别保存 OpenAI-compatible、Anthropic、Gemini key，`auto` 可选择已保存的 Anthropic/Gemini key。
-- 已补强 auto LLM provider：auto 模式现在按实际 provider 使用各自默认 baseUrl/model，且一个 provider 请求失败时可继续尝试下一个已配置 provider。
-- 已补强 settings 持久化一致性：local-service 默认数据目录固定为 `apps/local-service/.smart-prompt-data`，真实 LLM 验收脚本会读取同一份桌面壳保存的 provider settings。
-- 已补强真实 LLM 验收脚本：`scripts/check-v2-real-llm.ps1` 不再只依赖环境变量预检，支持读取桌面壳保存的 provider keys，并新增 `-Provider`、`-Model`、`-BaseUrl`、`-DataDir`、`-DryRun`。
-- 已补强 Claude 登录态验证路径：live-site probe 支持 `-AttachCdp` 附着到已开启远程调试端口的 Chrome，并用新标签复用现有 Claude 登录态跑 Insert 证据。
-- 已新增 Claude CDP 登录准备脚本：`scripts/start-v2-claude-cdp.ps1` 可打开持久 Chrome profile 到 Claude，并输出后续 `check-v2-claude-insert.ps1 -AttachCdp` 验证命令；`-DryRun` 已验证。
-- 已补强 runtime evidence 严格门：`critic-v2.ps1 -RequireRuntimeEvidence` 现在会读取 Claude Insert 和真实 LLM JSON 报告，避免只靠手写 marker 误判完成。
-- 已补强 live-site/Tauri 机器证据门：strict critic 现在会读取 5 站点正式扩展报告和 Tauri runtime JSON 报告。
-
-## 正在进行
-
-- V3 P0-1 已实现并验证：local-service 生成并保存 per-install token，`/auth/bootstrap` 只对可信 origin 暴露；`/settings`、`/generate`、`/prompts`、`/skills/*` 等受保护 API 需要 `Authorization: Bearer <token>` 或 `X-Smart-Prompt-Token`；CORS 不再 wildcard；浏览器扩展和桌面壳都会先 bootstrap token；新增 evidence redaction 模块、V3 security runtime check、V3 critic 和 `research/v3-security-privacy.latest.json`。
-- 已对现有 `research/v2-*.latest.json` runtime evidence 做机械脱敏，并确认 V2 strict critic 仍可读取通过。
-- 当前仍有用户本地改动 `docs/prd.md` 未提交，本轮继续保留不动。
-
-## 下一步
-
-- V3 下一步建议做 P0-2：Tauri CSP/capability 收窄、provider key 从 JSON 迁移到 OS keychain 或加密存储，并补对应 security critic。
-
-## 验证状态
-
-- 本轮 V3 P0-1 验证通过：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v3-security.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` PASS。
-- 本轮 V3 security report：`research/v3-security-privacy.latest.json` 为 `pass: true`，checks 包含 `healthPublic`、`unauthSettingsBlocked`、`evilOriginBlocked`、`trustedBootstrap`、`protectedBearerAccepted`、`protectedTokenHeaderAccepted`、`corsNoWildcard`、`redactionNoLeaks` 全部为 true。
-- 本轮 OMX autoresearch-goal `smart-prompt-v3-p0-1-local-service-auth-narrowed` 已记录 professor-critic `pass` verdict；`complete` reconciliation 因 active Codex goal 是用户直接创建的短 objective、不是 handoff 生成的长 objective 而拒绝 objective mismatch。未伪造快照；Codex goal 已通过 `update_goal(status=complete)` 完成。
-- 本轮有一次并行运行 V2 strict critic 和 V3 security critic 超时；原因是两个套件都包含浏览器 runtime/local-service 测试并争用本地端口。分开运行后两者均 PASS，不作为产品失败。
-- 本轮新版 Agnes 报告已通过：`research/v2-real-llm.latest.json` 为 `pass: true`，`dryRun: false`，provider/model 为 `agnes`/`agnes-2.0-flash`，`idea`、`continue`、`polish` 三项均 `ok: true`、`generatedBy: "llm"`、`mode` 与样本名一致，promptLength 分别大于 40。
-- 本轮校验用户 Agnes 报告时发现：用户运行的旧报告 `pass: true` 且三项均 `generatedBy: "llm"`，但 `polish` 样本返回的 `mode` 为 `continue`，不足以证明严格三模式。已补严 `check-v2-real-llm.ps1` 和 `critic-v2.ps1`，默认 `scripts/critic-v2.ps1` PASS；当前 Codex 进程没有 `AGNES_API_KEY`，无法代跑新版真实报告，需用户在有 key 的 PowerShell 中重新运行。
-- 本轮新增 Agnes provider：共享 LLM gateway 支持 `agnes`、`AGNES_API_KEY`、默认 `https://apihub.agnes-ai.com/v1` 和 `agnes-2.0-flash`；桌面壳暴露 Agnes Key；local-service/desktop-shell 测试和默认 `scripts/critic-v2.ps1` PASS；`scripts/check-v2-real-llm.ps1 -DryRun -Provider agnes` PASS；新版真实 Agnes 三模式报告已通过。
-- 本轮绝对路径复跑：`powershell -NoProfile -ExecutionPolicy Bypass -File "C:\Users\lhy10\Documents\Smart Prompt\scripts\check-v2-real-llm.ps1" -DryRun` 证明脚本路径可达，但仍只发现 `OPENAI_API_KEY`；真实运行同一绝对路径脚本仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing。该条件已多轮重复，当前无法在没有可用 API key/billing 或 Anthropic/Gemini 替代 key 的情况下继续证明 `REAL_LLM_3_MODES_PASS`。
-- 本轮复跑：`scripts/check-v2-real-llm.ps1 -DryRun` 只发现 `OPENAI_API_KEY`，未发现 Anthropic/Gemini 环境变量或桌面壳保存的 provider key；真实运行 `scripts/check-v2-real-llm.ps1` 仍在 `idea` 模式收到 OpenAI HTTP 429 quota/billing；`scripts/critic-v2.ps1 -RequireRuntimeEvidence` 当前只失败在缺少 `REAL_LLM_3_MODES_PASS` 和三模式真实 LLM 机器证据。
-- 本轮新增并验证桌面壳交互测试：`apps/desktop-shell/tests/desktop-shell-interaction.test.js` 通过 fake DOM/fetch/Tauri 执行真实 `src/app.js`，覆盖 provider/API key 保存、skill 导入/删除、prompt 保存/删除、本地服务启动和全局快捷键事件；`npm test` in `apps/desktop-shell` PASS，`scripts/critic-v2.ps1` 默认 PASS。
-- 严格 runtime evidence critic 仍未通过：`INSERT_CLAUDE_PASS` 已补齐，当前缺口只剩 `REAL_LLM_3_MODES_PASS`；真实 LLM 报告仍是 OpenAI quota/billing 429。
-
-- 已验证：`scripts/start-v2-claude-cdp.ps1` 语法解析和 `-DryRun` PASS；`scripts/check-v2-real-llm.ps1` 语法解析、默认 `-DryRun`、`-Provider gemini -DryRun` PASS，真实复跑写入新版 `research/v2-real-llm.latest.json` 且仍返回 OpenAI 429；`scripts/critic-v2.ps1` 默认自动化检查 PASS；local-service、browser-extension、desktop-shell 静态测试 PASS；local-service 测试已覆盖 `DELETE /skills/:id`、`DELETE /prompts/:id` 和 CORS `DELETE`；desktop-shell 静态测试已覆盖 skill/prompt 删除 UI；Node 语法检查 PASS；本地服务可启动并响应 `/health`、`/generate` fallback 和 `/prompts` 保存；Chrome headless demo 能显示小人和 prompt card，已确认在线 Save 写入本地 prompt 库、离线 Save 回退 `chrome.storage.local`，且 Insert 只写入不提交；8 站点适配器与共享核心同步测试 PASS；live-site probe 已静态验证使用适配器 selector；Rust/Cargo 已安装，Tauri `cargo check` PASS；`scripts/check-v2-tauri-runtime.ps1` 已验证 Tauri app 启动、Tauri command、从 Tauri 启动本地服务、全局快捷键触发计数；`scripts/check-v2-live-sites.ps1` 已通过 CDP `Extensions.loadUnpacked` 证明 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 站点正式扩展显示，且 ChatGPT/Gemini Insert 成功。
-- 未验证：无当前 V2 完成门阻塞项；Perplexity/Replit 等额外站点仍受 challenge/login/region 限制，不影响当前 5 站点正式扩展验收。
-- 验证命令或方式：`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start-v2-claude-cdp.ps1 -DryRun` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1 -DryRun -Report .runtime\v2-real-llm-dryrun.json` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1 -DryRun -Provider gemini -Report .runtime\v2-real-llm-gemini-dryrun.json` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-real-llm.ps1` 返回 OpenAI 429 并写入新版失败报告；`npm test` 已在 `prototypes/browser-extension` PASS；`npm test` 已在 `apps/local-service` PASS；`npm test` 已在 `apps/desktop-shell` PASS；`node -c apps\local-service\src\server.js`、`node -c apps\local-service\src\store.js`、`node -c apps\desktop-shell\src\app.js` PASS；`node -c packages\shared\smart-prompt-core.js`、`node -c prototypes\browser-extension\src\site-adapters.js`、`node -c prototypes\browser-extension\src\content.js`、`node -c prototypes\browser-extension\tests\site-adapters.test.js`、`node -c prototypes\browser-extension\tests\live-site-probe.test.js` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1` PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\critic-v2.ps1 -RequireRuntimeEvidence` 当前只失败在缺少 `REAL_LLM_3_MODES_PASS` 且 `research/v2-real-llm.latest.json` 非 pass；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-tauri-runtime.ps1` 已 PASS；`powershell -NoProfile -ExecutionPolicy Bypass -File scripts\check-v2-claude-insert.ps1 -AttachCdp -CdpPort 9232 -LoginWaitSeconds 30` 已 PASS。
-
-## 最近变化
-
-- 用户重新要求用该小人原型生成 UI/UX 图后，复查确认 User 级环境变量已有 `OPENAI_API_KEY`。使用 `uv run --with openai` 临时环境调用 `gpt-image-2` edit，API 返回 `Billing hard limit has been reached`，输出文件 `assets/ui-ux/prompt-copilot-uiux-gpt-image-2.png` 仍不存在。
-- 随后用户要求先用内置 `image_gen` 生成一版；已生成不含小人的 UI 底图，并把原始 `mascot-token-run.png` 贴入界面，最终图为 `assets/ui-ux/prompt-copilot-uiux-builtin-exact-mascot-v2.png`。
-- 用户追问缺少 thinking/suggesting/success 状态后，已生成三态板与单独透明 PNG；随后补齐 normal、resting、clapping，生成六态总览板 `assets/ui-ux/mascot-states/assistant-states-six-board-builtin-v2.png`。
-- Goal 续跑审计发现 Remotion 动画未形成项目资产；已新增 Remotion 原型并渲染两个轻量 MP4。
-- OMX autoresearch-goal verdict 已更新为 blocked，证据改为当前准确的 OpenAI API billing hard limit；当前不调用 Codex `update_goal(blocked)`，因为这是 resumed run 的首次 blocked audit。
-- 用户更新目标，明确“不需要严格 gpt-image-2”；已移除显式 API 输出图作为 critic 门槛，critic 和 OMX verdict 均已 PASS。
-- 用户新目标为“根据这个 prd.md 文档开始实现第一版”；当前已按 PRD M1 开始实现浏览器扩展 MVP。
-- 用户新目标为 V2；当前已实现主要代码路径，但未达到完整 runtime 验收。
-- V2 续跑新增 Chrome headless runtime demo 测试，覆盖本地服务桥接、卡片刷新、Insert 不提交；已安装 Rustup 并让 Tauri `cargo check` 进入默认 critic。
-- V2 继续补强 Tauri：开启 `withGlobalTauri`，修复带空格路径下的本地服务启动，新增 runtime smoke，验证真实 app 启动、Tauri command、本地服务启动和全局快捷键触发。
-- V2 继续补强真实站点探针：改用 browser-level CDP `Extensions.loadUnpacked` 正式加载扩展，补 `v0.app` 域名，扩展输入扫描支持 open shadow DOM。当前正式扩展证据达到 ChatGPT/Gemini/Bolt/v0.app/Lovable 5 个显示和 ChatGPT/Gemini Insert；Claude 仍因登录页未过。
-- V2 继续补强 Claude 验证路径：`check-v2-live-sites.ps1` 现支持 `-Report`、`-ProfileDir`、`-SiteIds`、`-LoginWaitSeconds`，可用持久 profile 复用 Claude 登录态后跑正式扩展 Insert 验收，并可独立保存 Claude 报告。
-- V2 继续补强本地 rubric 证据：local-service API 现在有三模式 LLM gateway test double 覆盖；browser-extension 测试显式覆盖 ChatGPT/Claude/Gemini insert strategy 与更严禁自动发送检查。
-- V2 继续补强本地 prompt/skill 库：本轮增加 prompt library API、桌面壳 Prompt Library UI、local-service/desktop-shell 测试和 critic 检查。
-- V2 继续补强本地 prompt/skill 库：本轮新增 `DELETE /skills/:id`、桌面壳 skill/prompt 删除按钮，并补 CORS `DELETE` 方法，local-service/desktop-shell 测试和 critic 均已覆盖。
-- V2 继续补强真实 LLM 可用性：本轮新增 `GET /llm/providers` readiness、`auto` provider、桌面壳 provider 状态显示与自动默认值；当前 User 环境只发现 `OPENAI_API_KEY`，auto 仍落到 OpenAI-compatible，复核仍为 429。
-- V2 继续补强真实 LLM 可用性：本轮新增 provider-specific saved keys，避免桌面壳只能保存单个 OpenAI-compatible key；仍需可用 billing/key 才能证明三模式真实 LLM。
-- V2 继续补强真实 LLM 可用性：本轮修正 auto provider 的模型/端点选择，并增加 provider 失败转移测试；当前环境仍只有 OpenAI key 且 429。
-- V2 继续补强真实 LLM 可用性：本轮统一 local-service/Tauri/验收脚本的默认 settings 数据目录；用户通过桌面壳保存的 provider keys 可被 `check-v2-real-llm.ps1` 复用。
-- V2 继续补强真实 LLM 验收路径：本轮让 `check-v2-real-llm.ps1` 支持 `-Provider`、`-Model`、`-BaseUrl`、`-DataDir`、`-DryRun`，移除“未读桌面 settings 前先要求环境变量 key”的硬拦截，并让报告输出 providerStatus/configuredProviders/settingsSummary。
-- V2 继续补强隐私边界：本轮移除扩展默认 context 中的完整 URL 和页面标题，并用测试/critic 固化不读取整页文本。
-- V2 继续补强站点适配：本轮将扩展适配器和共享核心的 8 站点 `SITE_ADAPTERS` 对齐，加入更具体的 Perplexity/Lovable/Bolt/v0/Replit 输入框 selector，并让 critic 检查这些 selector token。
-- V2 继续补强真实站点探针：本轮让 `live-site-probe.test.js` 从 `site-adapters.js` 读取每个站点的 selector，再追加泛 selector 兜底；报告会记录 `inputSelectors`，内容脚本 debug 会记录 `lastAdapterId`。
-- V2 继续补强测试稳定性：本轮放宽 `runtime-demo.test.js` 在 Windows 上清理临时 Chrome profile 的等待与重试，避免 EPERM 锁文件导致默认 critic 偶发失败。
-- V2 继续补强验收报告保全：Claude 单站点验证默认写入独立 `research/v2-claude-insert.latest.json`，不覆盖已有 5 站点 live probe 报告。
-- V2 继续补强 Claude runtime 验证：本轮新增 CDP attach 模式，可复用已登录 Chrome 会话而不杀掉用户浏览器，只关闭探针新标签。
-- V2 继续补强 Claude runtime 验证：本轮新增 `scripts/start-v2-claude-cdp.ps1`，一键打开持久 Chrome profile 到 Claude 并打印 attach 验证命令；`-DryRun` 已确认本机 Chrome 路径和 profile 路径。
-- V2 继续补强完成门：本轮新增 `research/v2-real-llm.latest.json` 输出和 strict critic 报告解析；当前严格门会同时卡住 Claude 报告与真实 LLM 429 报告。
-- V2 继续补强完成门：本轮让 `research/v2-live-site-probe.latest.json` 和 `research/v2-tauri-runtime.latest.json` 成为 strict critic 的机器证据来源。
-- 本轮 OMX `smart-prompt-v2` verdict 继续记为 `fail`：本地 prompt/skill 库删除管理已补强，默认 V2 critic PASS；严格 runtime critic 现在要求 Claude Insert JSON 报告与真实 LLM 三模式 JSON 报告，当前仍缺 Claude 通过证据且真实 LLM 复核为 OpenAI 429 quota/billing。
-- 本轮 V2 继续补强浏览器扩展与本地 prompt 库桥接：扩展 Save 现在优先 `POST /prompts`，离线回退本地收藏；runtime demo 和 critic 已覆盖该路径，默认 V2 critic PASS；严格 runtime critic 仍只失败在 Claude Insert 报告与真实 LLM 三模式机器证据。
-- 本轮 V2 继续补强浏览器扩展 local-service fallback：runtime demo 新增不可达 serviceUrl 场景，验证服务离线时仍能模板生成、保存到 `smartPromptFavorites`，且 Insert 不提交；默认 V2 critic PASS，严格 runtime critic 仍只失败在 Claude Insert 报告与真实 LLM 三模式机器证据。
+- 通过 `npm.cmd run build` 重新生成 MSI/NSIS；最终 NSIS 为 `apps/desktop-shell/src-tauri/target/release/bundle/nsis/Smart Prompt_0.2.0_x64-setup.exe`，SHA-256 `5335883C6793F0165C8749BDBCA736BB26F7B431C6D5936B112104F316F82F4D`。
+- 首次安装验收发现 packaged sidecar 无法解析 UIA PowerShell 在 JSON 前输出的 warning；新增 `parse_probe_json()` 和 4 个 Rust 回归测试，同时覆盖 desktop input/fill、错 schema 跳过和关键字段形状，并把 installer/runtime probe 默认端口从旧 `17391` 对齐固定端口 `17371`。
+- 修复后重新构建并覆盖安装到 `C:\Users\lhy10\AppData\Local\Programs\Smart Prompt`；安装 sidecar SHA-256 与构建资源一致，为 `2B4106E3170F8B55C55D18C5FE38C3AE70D67931C23D641134D4029E767FCB01`。
+- installed-runtime `pass=true`：WebView、Tauri API、bundled sidecar、健康接口、desktop snapshot/fill 自测、隐私约束和 stop 流程全部通过；安装版单实例 runtime test 也通过。
+- 最终运行态：安装版 app PID `38996`，sidecar PID `16060`，`17371/health` 返回 `smart-prompt-local-service`，重复启动退出码 0 且 app 进程数保持 1；已激活用户启动后主窗口按契约隐藏并驻留托盘。

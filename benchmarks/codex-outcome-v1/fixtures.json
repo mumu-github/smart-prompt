@@ -1,0 +1,608 @@
+{
+  "fixtureSetVersion": "codex-outcome-fixtures@1",
+  "fixtureSetToken": "codex_benchmark_fixtures_v1",
+  "syntheticOnly": true,
+  "deterministicStartedAt": "2026-01-01T00:00:00.000Z",
+  "tasks": [
+    {
+      "taskId": "feature_development_01",
+      "category": "feature_development",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_cache_service_v1",
+        "startingPointToken": "start_feature_development_01_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Add expiring entries to the cache."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "In the synthetic cache fixture, add optional TTL support without changing non-expiring behavior. Inspect the existing public API first, use the injected clock instead of wall time, remove expired entries on read, and keep capacity eviction deterministic. Update implementation and tests. Acceptance is the fixture test command; do not add dependencies or network access."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_feature_development_01_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/feature-cache.test.js"],
+        "assertionTokens": [
+          "non_expiring_behavior_preserved",
+          "ttl_uses_injected_clock",
+          "expired_read_is_empty",
+          "capacity_order_is_deterministic"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_feature_development_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_feature_development_01_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_feature_development_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_feature_development_01_v1"
+        }
+      }
+    },
+    {
+      "taskId": "feature_development_02",
+      "category": "feature_development",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_orbit_cli_v1",
+        "startingPointToken": "start_feature_development_02_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Add JSON output to the summary command."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Extend the synthetic orbit CLI summary command with a --json mode. Preserve the existing text output byte for byte, emit one stable JSON object with name, state, and itemCount, reject combining --json with --quiet, and keep stdout free of diagnostics. Add deterministic CLI tests and use no new dependencies or network calls."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_feature_development_02_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/orbit-summary.test.js"],
+        "assertionTokens": [
+          "legacy_text_output_exact",
+          "json_shape_exact",
+          "conflicting_flags_rejected",
+          "diagnostics_stay_on_stderr"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_feature_development_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_feature_development_02_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_feature_development_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_feature_development_02_v1"
+        }
+      }
+    },
+    {
+      "taskId": "bug_fix_01",
+      "category": "bug_fix",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_checkout_math_v1",
+        "startingPointToken": "start_bug_fix_01_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Fix checkout totals when quantity is zero."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Fix the synthetic checkout calculator so an explicit quantity of zero remains zero instead of falling back to one. Preserve behavior for missing quantities, reject negative or non-integer values through the existing error type, and avoid changing unrelated rounding logic. Add regression tests for zero, missing, negative, and fractional quantities."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_bug_fix_01_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/checkout-quantity.test.js"],
+        "assertionTokens": [
+          "zero_quantity_total_is_zero",
+          "missing_quantity_defaults_to_one",
+          "negative_quantity_rejected",
+          "fractional_quantity_rejected"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_bug_fix_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_bug_fix_01_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_bug_fix_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_bug_fix_01_v1"
+        }
+      }
+    },
+    {
+      "taskId": "bug_fix_02",
+      "category": "bug_fix",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_delimited_reader_v1",
+        "startingPointToken": "start_bug_fix_02_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "The parser breaks on quoted delimiters. Fix it."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Repair the synthetic delimited-row parser for delimiters inside quoted fields and doubled quote escapes. Keep unquoted parsing and empty-field behavior unchanged, return the existing malformed-row error for an unterminated quote, and do not replace the parser with a dependency. Add focused regression tests for all four cases."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_bug_fix_02_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/delimited-reader.test.js"],
+        "assertionTokens": [
+          "quoted_delimiter_preserved",
+          "doubled_quote_unescaped",
+          "empty_fields_preserved",
+          "unterminated_quote_rejected"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_bug_fix_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_bug_fix_02_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_bug_fix_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_bug_fix_02_v1"
+        }
+      }
+    },
+    {
+      "taskId": "refactor_01",
+      "category": "refactor",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_tag_normalizer_v1",
+        "startingPointToken": "start_refactor_01_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Clean up the tag normalization code."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Refactor the synthetic tag normalization module to isolate validation, canonicalization, and deduplication into pure helpers. Preserve every current export, error class, ordering rule, and return shape. Do not add features or dependencies. Existing tests and the fixture characterization tests must pass unchanged."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_refactor_01_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/tag-normalizer.test.js"],
+        "assertionTokens": [
+          "public_exports_unchanged",
+          "error_types_unchanged",
+          "output_order_unchanged",
+          "pure_helper_characterization_passes"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_refactor_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_refactor_01_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_refactor_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_refactor_01_v1"
+        }
+      }
+    },
+    {
+      "taskId": "refactor_02",
+      "category": "refactor",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_status_formatter_v1",
+        "startingPointToken": "start_refactor_02_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Deduplicate the status formatting functions."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Refactor the two synthetic status presenters to share one internal pure formatter while preserving their public function names and exact text output. Keep locale selection at the callers, preserve unknown-status fallback, and avoid changing module format. Run characterization tests for both presenters and the fallback branch."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_refactor_02_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/status-formatter.test.js"],
+        "assertionTokens": [
+          "presenter_exports_unchanged",
+          "known_status_text_exact",
+          "unknown_status_fallback_exact",
+          "shared_formatter_is_pure"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_refactor_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_refactor_02_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_refactor_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_refactor_02_v1"
+        }
+      }
+    },
+    {
+      "taskId": "test_completion_01",
+      "category": "test_completion",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_bounded_queue_v1",
+        "startingPointToken": "start_test_completion_01_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Add missing tests for the queue."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Complete tests for the synthetic bounded queue without changing production code. Cover empty dequeue, exact-capacity fill, overflow rejection, FIFO order after wraparound, and independence of two queue instances. Use deterministic inputs and assert the existing public errors rather than implementation details."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_test_completion_01_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/bounded-queue-tests.test.js"],
+        "assertionTokens": [
+          "required_test_cases_present",
+          "production_files_unchanged",
+          "tests_fail_against_seeded_fault",
+          "tests_pass_against_starting_behavior"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_test_completion_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_test_completion_01_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_test_completion_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_test_completion_01_v1"
+        }
+      }
+    },
+    {
+      "taskId": "test_completion_02",
+      "category": "test_completion",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_interval_math_v1",
+        "startingPointToken": "start_test_completion_02_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Improve coverage for interval overlap."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Add deterministic tests for the synthetic interval-overlap helper. Cover disjoint intervals, partial overlap, containment, equal intervals, touching half-open boundaries, and invalid reversed endpoints. Do not modify production code. The tests must detect the seeded inclusive-boundary mutation."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_test_completion_02_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/interval-overlap-tests.test.js"],
+        "assertionTokens": [
+          "six_edge_classes_covered",
+          "half_open_boundary_asserted",
+          "production_files_unchanged",
+          "seeded_mutation_is_killed"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_test_completion_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_test_completion_02_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_test_completion_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_test_completion_02_v1"
+        }
+      }
+    },
+    {
+      "taskId": "code_review_01",
+      "category": "code_review",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_lease_worker_diff_v1",
+        "startingPointToken": "start_code_review_01_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Review the lease worker change."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Review the synthetic lease-worker diff for correctness regressions. Report findings first with severity and precise synthetic file references; do not edit files. Check concurrent renewal, retry termination, ownership loss, and missing tests. Only report issues that can change behavior, and return no finding when evidence is absent."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_code_review_01_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/lease-worker-review.test.js"],
+        "assertionTokens": [
+          "finding_renewal_race_identified",
+          "finding_unbounded_retry_identified",
+          "finding_locations_precise",
+          "no_invented_third_finding"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_code_review_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_read_only_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_code_review_01_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_code_review_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_read_only_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_code_review_01_v1"
+        }
+      }
+    },
+    {
+      "taskId": "code_review_02",
+      "category": "code_review",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_request_guard_diff_v1",
+        "startingPointToken": "start_code_review_02_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Review this request guard."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Review the synthetic request-guard diff without modifying it. Prioritize exploitable or behavior-changing defects, then missing regression tests. Verify malformed signatures fail closed and diagnostics never retain request material. Findings must include severity, exact synthetic location, trigger, and impact; avoid style-only comments."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_code_review_02_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/request-guard-review.test.js"],
+        "assertionTokens": [
+          "finding_malformed_input_fail_open",
+          "finding_request_material_logged",
+          "impact_and_trigger_present",
+          "style_only_comments_absent"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_code_review_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_read_only_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_code_review_02_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_code_review_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_read_only_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_code_review_02_v1"
+        }
+      }
+    },
+    {
+      "taskId": "documentation_01",
+      "category": "documentation",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_scheduler_docs_v1",
+        "startingPointToken": "start_documentation_01_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Document the scheduler API."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Write the synthetic scheduler API reference from the checked-in public types and tests only. Cover create, cancel, and inspect operations; include one deterministic example per operation, documented error outcomes, and the half-open time-window rule. Do not claim unsupported persistence or network behavior. The documentation acceptance command must pass."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_documentation_01_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/scheduler-docs.test.js"],
+        "assertionTokens": [
+          "three_operations_documented",
+          "examples_are_executable",
+          "error_outcomes_documented",
+          "unsupported_claims_absent"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_documentation_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_documentation_01_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_documentation_01_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_documentation_01_v1"
+        }
+      }
+    },
+    {
+      "taskId": "documentation_02",
+      "category": "documentation",
+      "repository": {
+        "kind": "synthetic",
+        "templateToken": "synthetic_store_migration_v1",
+        "startingPointToken": "start_documentation_02_v1"
+      },
+      "inputs": {
+        "baseline": {
+          "kind": "raw-input",
+          "text": "Add a migration guide for version two."
+        },
+        "candidate": {
+          "kind": "optimized-input",
+          "text": "Create a version-two migration guide for the synthetic record store. Derive changes from the fixture changelog and type definitions, include prerequisites, a before-and-after example, rollback steps, and a compatibility table. Clearly mark the removed rename option and do not invent automated data conversion. Validate headings, examples, links, and prohibited claims with the fixture command."
+        }
+      },
+      "acceptance": {
+        "definitionToken": "accept_documentation_02_v1",
+        "deterministic": true,
+        "manualJudgmentRequired": false,
+        "networkAllowed": false,
+        "runner": ["node", "--test", "acceptance/store-migration-docs.test.js"],
+        "assertionTokens": [
+          "required_sections_present",
+          "before_after_example_valid",
+          "rollback_steps_present",
+          "invented_conversion_absent"
+        ]
+      },
+      "arms": {
+        "baseline": {
+          "inputKind": "raw-input",
+          "startingPointToken": "start_documentation_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_documentation_02_v1"
+        },
+        "candidate": {
+          "inputKind": "optimized-input",
+          "startingPointToken": "start_documentation_02_v1",
+          "modelFamilyToken": "model_family_codex_fixture",
+          "permissionProfileToken": "permission_workspace_write_no_network",
+          "budget": { "tokenLimit": 5000, "maxAgentTurns": 6, "maxRetries": 2 },
+          "acceptanceDefinitionToken": "accept_documentation_02_v1"
+        }
+      }
+    }
+  ]
+}

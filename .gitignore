@@ -1,7 +1,9 @@
 .smart-prompt-data/
+.smart-prompt-real-fill-data/
 .runtime/
 node_modules/
 target/
 apps/desktop-shell/src-tauri/gen/
+apps/desktop-shell/src-tauri/target-p25-*/
 apps/desktop-shell/dist/
 apps/desktop-shell/src-tauri/resources/

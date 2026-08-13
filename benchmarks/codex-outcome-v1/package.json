@@ -1,0 +1,15 @@
+{
+  "name": "@smart-prompt/codex-outcome-benchmark-v1",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Synthetic, budget-gated Codex outcome benchmark harness.",
+  "main": "index.js",
+  "scripts": {
+    "preview": "node cli.js preview",
+    "benchmark": "node cli.js run-fake",
+    "test": "node --test tests/harness.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

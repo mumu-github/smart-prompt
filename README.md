@@ -20,6 +20,7 @@ Smart Prompt 是一个面向网页 AI / Agent 工具的提示词协作助手。�
 - `apps/local-service/`：Node 本地服务和 API contract
 - `apps/desktop-shell/`：Tauri 桌面壳 scaffold
 - `packages/shared/`：共享 prompt core、站点配置和 LLM gateway
+- `packages/prompt-session/`：网页与桌面共用的状态机、reason、核心文案和 Assistant View Model
 - `assets/ui-ux/`：UI/UX 概念图、小人状态图、动画资产
 - `prototypes/remotion-mascot/`：小人动画 Remotion 原型
 - `docs/`：研究、竞品、开源 skills 分析和 PRD
@@ -96,6 +97,14 @@ cd apps\desktop-shell
 npm test
 cargo check --manifest-path src-tauri\Cargo.toml
 ```
+
+生产桌面壳请使用仓库约定的 Tauri 构建入口：
+
+```powershell
+npm run build --prefix apps/desktop-shell
+```
+
+不要把 `cargo build --release --manifest-path apps/desktop-shell/src-tauri/Cargo.toml` 的直产物用于真实桌面验收，因为该路径会加载 `tauri.conf.json` 中的 `devUrl`，在 dev server 未运行时可能只得到 WebView 错误页。
 
 Tauri runtime 验收脚本：
 

@@ -11,6 +11,7 @@
 
 - Remotion source project: `../../../prototypes/remotion-mascot`.
 - The animations use the transparent PNG sprites from `../mascot-states/`.
+- These files are preview artifacts from an archived prototype, not assets wired into the desktop shell runtime.
 
 ## Verification
 
