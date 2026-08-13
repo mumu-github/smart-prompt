@@ -3051,10 +3051,11 @@ async function handleFastForegroundState(state, source = "poll") {
   const previousProfile = String(desktopOverlayState.fastState?.detectedToolProfile || "").toLowerCase();
   const { supported, changed } = recordFastForegroundState(state, source);
   const profile = String(state?.detectedToolProfile || "").toLowerCase();
+  // 只保护真实的写回事务（已填入 + 可撤销）；pendingOutcome 只是服务端
+  // 队列的客户端缓存，目标切换时丢弃，下次打开 Codex 会重新 claim。
   const preserveVerifiedCodexTransaction = Boolean(
     codexTargetState.undoToken
       || codexTargetState.transactionId
-      || codexTargetState.pendingOutcome
   );
   if (previousProfile === "codex" && profile !== "codex" && !preserveVerifiedCodexTransaction) {
     clearCodexPromptSession("target_changed");
@@ -3087,7 +3088,11 @@ async function handleFastForegroundState(state, source = "poll") {
   if (!desktopOverlayState.visible || changed) {
     await showFastForegroundMascotOverlay(state, { force: changed });
   }
-  if ((changed || desktopOverlayState.lastPayload?.fastWindowProbe) && !desktopOverlayState.pollInFlight) {
+  if (
+    (changed || desktopOverlayState.lastPayload?.fastWindowProbe)
+    && !preserveVerifiedCodexTransaction
+    && !desktopOverlayState.pollInFlight
+  ) {
     refreshDesktopOverlaySnapshot().catch((error) => warnAsyncFailure("desktop-overlay-fast-followup-snapshot", error));
   }
   return true;

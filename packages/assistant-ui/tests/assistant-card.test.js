@@ -186,6 +186,9 @@ const hiddenCandidate = AssistantUI.createAssistantCardModel(viewModel({
 assert.equal(hiddenCandidate.attention.visible, false);
 
 const modelFailure = AssistantUI.createAssistantCardModel(viewModel({
+  // 生产语义：生成失败进入 error 态（无可用提示词），模型错误才抢占主操作；
+  // review 态（如离线模板回退）必须保留“填入输入框”。
+  state: "error",
   reason: {
     code: "provider-error",
     label: "Provider agnes score=0.12",

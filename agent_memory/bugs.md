@@ -1,5 +1,14 @@
 # 问题与风险
 
+## 2026-08-13 CI 与回归修复记录
+
+- 已修复：`assistant-card` 模型错误在 `review` 态抢占主操作，堵死离线模板回退的填入路径。现在仅在没有可用提示词时（error 等态）用 diagnostics 抢占；`packages/assistant-ui` 源 + 同步副本 + 单测（fixture 改为 error 态）已更新。
+- 已修复：桌面快速前台切换在存在 verified Codex 事务时仍触发 legacy `/desktop/input-snapshot` 跟进轮询（会与受保护事务争夺 overlay）；现在事务存活期间抑制该轮询，undo/事务结束后恢复。
+- 已修复：`preserveVerifiedCodexTransaction` 原把 `pendingOutcome` 计入保护，导致 undo 后重新打开卡片 re-claim 的 pending 问题使切工具时不清理旧草稿；现在只保护真实事务（undoToken/transactionId），pendingOutcome 是服务端队列的客户端缓存，目标切换丢弃后可重新 claim。
+- 已修复：`codex-target-routes-v1.test.js` 假时钟冻结在 2026-07-19，与服务端真实 `Date.now()` lease 清理冲突（时间炸弹）；现在锚定 `Date.now()`。同类冻结时钟测试仅在该文件失败，其余经运行确认。
+- 新增：根 `package.json` 聚合入口（`npm test` = 5 个 Node 包 + sidecar cargo test）与 `.github/workflows/ci.yml`（windows-latest，Node 22 + stable Rust，含 phase3 真二进制契约与桌面 Rust check）。
+- 待办（路线图阶段 A 剩余）：key critics 接入 CI；视觉测试 `chrome-headless-shell` 路径可配置化；文档漂移修复。
+
 ## 2026-07-19 Codex Outcome Learning Loop v1 当前风险
 
 - Outcome 只能在同一 Codex target 与同一项目作用域中归因；多条 pending 必须排队且幂等，不能因后一次填入、重启或跨项目打开而覆盖或误计成功。

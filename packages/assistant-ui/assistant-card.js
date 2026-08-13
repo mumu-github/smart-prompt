@@ -314,10 +314,12 @@
       }),
       reason: publicReason,
       attention,
-      primaryAction: modelError
+      // 模型错误只在没有可用提示词时抢占主操作；review 态（如离线模板回退）
+      // 保留“填入输入框”，错误只作为 attention 展示。
+      primaryAction: modelError && state !== "review"
         ? normalizeAction({ id: "diagnostics", label: copy.modelSettings, enabled: true })
         : primaryAction,
-      secondaryActions: Object.freeze(modelError ? [] : secondaryActions),
+      secondaryActions: Object.freeze(modelError && state !== "review" ? [] : secondaryActions),
       closeAction: Object.freeze({ id: "close", label: copy.closeLabel, enabled: true }),
       noAutoSubmit,
       safetyText: noAutoSubmit ? copy.safetyText : copy.safetyUnknown

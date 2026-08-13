@@ -18,7 +18,9 @@ const insertedPrompt = `${generatedPrompt}\n- Verify the edited writeback path.`
 const runtimeHash = "1".repeat(64);
 const focusHash = "2".repeat(64);
 const projectHash = "3".repeat(64);
-let nowMs = Date.parse("2026-07-19T12:00:00.000Z");
+// 假时钟锚定真实当前时间：服务端内存 lease 清理用真实 Date.now()，
+// 冻结历史日期会导致 targetLeases 被当作过期剪除（时间炸弹）。
+let nowMs = Date.now();
 const calls = [];
 const policyIncidentCalls = [];
 let forceInsertMismatch = false;
