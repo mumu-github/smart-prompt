@@ -6,7 +6,7 @@
 
 ## 0. 当前 Beta 状态
 
-v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA 竖切验证阶段，源码/dev sidecar、安装包内 bundled sidecar snapshot、Windows 写回 self-test、三工具画像 self-test、真实 Codex 前台窗口 snapshot-only 审计与受控前台窗口写回协议均已通过。下一阶段重点是真实内测数据闭环、真实桌面工具窗口写回验收和更多工具适配。
+v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配置、可诊断、可内测”的版本。当前已完成浏览器扩展、本地服务、Tauri 桌面壳、native sidecar、真实 LLM/provider 接入、安装包与 V5 验收证据；M3 已进入 Windows UIA 竖切验证阶段，源码/dev sidecar、安装包内 bundled sidecar snapshot、Windows 写回 self-test、三工具画像 self-test、真实 Codex 前台窗口 snapshot-only 审计、受控前台窗口写回协议与 Codex 真实写回均已有证据。Claude Code/Hermes/WorkBuddy/Trae 真实窗口写回仍需分别补齐最新验收。下一阶段重点是真实内测数据闭环、真实桌面工具窗口写回验收和更多工具适配。
 
 ### 已完成证据
 
@@ -117,7 +117,7 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 - 识别当前浏览器 tab host、页面标题、输入框类型和位置。
 - 正式 allowlist：ChatGPT、Claude、Gemini、Perplexity、Lovable、Bolt、v0、Replit。
 - Beta 扩展 allowlist：Doubao；进入真实内测后按失败原因调整 selector 和写入策略。
-- 桌面/CLI 工具画像：Codex、Claude Code、Hermes；workBuddy、Trae 后续按本地工具路径验证；M3 当前通过 Windows UIA 接入真实输入框。
+- 桌面/CLI 工具画像：Codex 已有真实写回证据；Claude Code、Hermes 已有工具画像 self-test；workBuddy、Trae 已归入本地桌面工具 profile 与 self-test 范围，真实窗口验证继续走 Windows UIA 本地工具路径；M3 当前为 Windows UIA 竖切验证中。
 - 对未知网页回退通用 `textarea/input/contenteditable/role=textbox` 检测。
 - 在桌面 app 中记录当前前台应用名称和窗口标题。
 
@@ -335,9 +335,9 @@ v0.2 beta 的目标是从“研究支撑原型”推进到“可安装、可配�
 
 ### M3：桌面输入框
 
-- 状态：进行中。
-- 已完成：Windows UIA self-test、Codex/Claude Code/Hermes 三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回协议、显式 `allowClipboardFallback` 剪贴板粘贴 self-test、超大 `Document` 候选直写阻断、开发路径 `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、native sidecar `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、安装包 bundled native sidecar snapshot/fill smoke、隐私脱敏报告。
-- 待完成：Codex/Claude Code/Hermes 真实工具窗口写回验收报告、真实工具窗口内剪贴板 fallback 成功率记录。
+- 状态：进行中；Codex 真实写回已验证，其余真实工具仍待补齐同等级证据。
+- 已完成：Windows UIA self-test、Codex/Claude Code/Hermes 三工具画像 self-test、Windows 写回 self-test、受控前台窗口写回协议、显式 `allowClipboardFallback` 剪贴板粘贴 self-test、超大 `Document` 候选直写阻断、开发路径 `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、native sidecar `GET /desktop/input-snapshot` 与 `POST /desktop/fill`、安装包 bundled native sidecar snapshot/fill smoke、隐私脱敏报告、Codex 真实工具窗口写回证据。
+- 待完成：Claude Code/Hermes/WorkBuddy/Trae 真实工具窗口写回验收报告、真实工具窗口内剪贴板 fallback 成功率记录。
 - 范围：Windows UIA 初步支持；Codex、Claude Code、Hermes、Cursor、Windsurf 专用工具画像和 prompt 模板；剪贴板 fallback 必须显式确认前台窗口身份后才可使用。macOS AX 暂缓到后续跨平台阶段。
 
 ### M4：评估与团队

@@ -1,5 +1,19 @@
 # M3 Desktop Input Recognition
 
+## 2026-06-09 P24 desktop mascot input fusion
+
+- Desktop shell now treats the mascot as the primary desktop input companion, not only a hero preview or diagnostics ornament. The new fusion console contains a clickable mascot, a draft field, an editable generated prompt field, guarded foreground fill, and a metadata-only evidence line.
+- The desktop flow mirrors the browser extension shape: focus/inspect the current tool, generate a prompt from the user's draft, let the user edit it, then fill the current foreground input only after an explicit action. It still never sends Enter or submits the target tool.
+- Foreground fill uses the existing M3 guard contract: `confirmForeground:true`, `expectedTitleHash`, `expectedToolProfile`, `candidateIndex`, and explicit `allowClipboardFallback:true`. Missing snapshot readiness, missing safe candidate count, missing title hash, or missing text blocks the fill path.
+- The UI only renders metadata that is already allowed by M3: tool profile, title hash, candidate counts, safe candidate count, best candidate index/score, strategy, and no-auto-submit status. It does not show raw window titles, UIA element names, element values, page bodies, or prompt/input text from the target tool.
+- Verification path: `npm test --prefix apps/desktop-shell` covers the mascot click -> foreground snapshot -> desktop prompt generation -> guarded foreground fill flow, including no-auto-submit and foreground guard parameters.
+
+## 2026-06-08 P23 tool profile update
+
+- `workbuddy` and `trae` are now local desktop tool profiles, not web adapter targets.
+- Current real-window evidence still centers on Codex, Claude Code, and Hermes. workBuddy and Trae have profile/self-test support and should be validated with the same Windows UIA foreground snapshot/fill protocol during pilot use.
+- The desktop shell Companion panel must show only redacted metadata: tool profile, title hash, candidate counts, best candidate index/score, and no-auto-submit status. It must not show raw window titles, element names, input values, prompt text, or page bodies.
+
 ## 2026-06-08 真实桌面工具端更新
 
 - M3 验收不再把“新开 Windows Terminal/PowerShell 命令行窗口跑 Codex/Claude/Hermes”当作真实工具端证据；这类受控 CLI smoke 只能说明终端宿主机制，不能替代真实桌面工具端。
@@ -19,6 +33,7 @@ M3 的目标是把 Smart Prompt 从网页输入框推进到桌面/CLI 工具输�
 
 - 很多桌面/CLI 工具会把输入区渲染在 Terminal、WebView 或自绘容器里。Windows UIA 可能只能看到宿主容器，看不到标准 `ValuePattern` 或原生 Edit 控件，所以会出现“能识别工具窗口，但识别不到可写输入框”的情况。
 - 输入识别现在会额外记录跟输入强关联的信号：Win32 caret 是否可见、caret 是否落在候选区域、候选是否拥有键盘焦点、是否匹配 UIA focused element、是否靠近窗口底部、是否是过大的宿主 `Document`，并输出 `inputSignals`、`bestCandidateIndex` 和 `bestCandidateScore`。这些信号可以帮助排序候选，但不能单独作为写入许可；真实 Codex WebView 已证明 caret 可能完全不暴露，focus 也可能只落在整窗 `Document` 上。
+- WorkBuddy/Trae 额外使用 `semanticComposerHint` 作为辅助安全信号：只匹配固定占位符、AutomationId 或 className 里的已知 composer 标记，并且仍要求候选位于底部 composer 几何范围内、不是整窗 `Document`。报告只保存布尔值和计数，不保存占位符原文、用户输入或输入框值。
 - `scripts/check-m3-desktop-fill.ps1` 已新增显式 `-AllowClipboardFallback`：使用临时剪贴板文本加 `Ctrl+V` 写入，随后恢复原剪贴板；报告只保存长度/hash，不保存原文，也不会发送 Enter 或 submit 信号。
 - 真实前台窗口使用仍必须同时满足 `-ConfirmForeground`、`-ExpectedTitleHash`、`-ExpectedToolProfile` 和 `-AllowClipboardFallback`。缺少确认字段或窗口身份不匹配时，必须返回 `writeAttempted:false`。
 - `POST /desktop/fill` 和 native sidecar 也支持 `allowClipboardFallback:true`，用于 Codex、Claude Code、Hermes 这类 UIA 写入 pattern 不可用的终端/WebView 输入区。
@@ -102,7 +117,13 @@ VS Code、Windows Terminal、PowerShell、cmd 这类宿主进程不会单独触�
 
 ## 暂缓项
 
-macOS AXUIElement 仍是后续跨平台方向，但本轮先不做识别实现，也不把 macOS 作为当前 M3 完成门槛。当前非 Windows 平台仍返回 guarded unsupported 状态。
+macOS AXUIElement 与 Linux AT-SPI 仍是后续跨平台方向，但本轮先不做识别实现，也不把 macOS/Linux 作为当前 M3 完成门槛。当前非 Windows 平台必须返回 guarded unsupported 状态：
+
+- `pass:false`。
+- `/desktop/fill` 必须返回 `writeAttempted:false`、`verified:false`，不写入真实前台窗口。
+- `reason:"desktop_input_requires_windows_uia"`。
+- `capability.supported:false`、`requiredPlatform:"win32"`、`snapshotBackend:"none"`、`fillBackend:"none"`。
+- `capability.pendingBackends` 可列出 `macos_axuielement` 与 `linux_atspi`，但这只表示后续方向，不代表当前已支持。
 
 ## Pilot 数据
 
