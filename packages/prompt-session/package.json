@@ -1,0 +1,9 @@
+{
+  "name": "@smart-prompt/prompt-session",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared Prompt Session state, reason, and View Model contract.",
+  "scripts": {
+    "test": "node tests/prompt-session.test.js"
+  }
+}

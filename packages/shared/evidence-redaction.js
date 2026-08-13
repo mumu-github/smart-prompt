@@ -1,4 +1,4 @@
-const crypto = require("node:crypto");
+const { hashTextSha } = require("./utils");
 
 const TEXT_KEY_PATTERN = /^(prompt|body|bodyPreview|input|output|value|beforeValue|title|pageTitle|text|content)$/i;
 const PATH_KEY_PATTERN = /(profileDir|profilePath|userDataDir|dataDir|path)$/i;
@@ -27,11 +27,7 @@ function isSecretKey(key) {
 }
 
 function hashValue(value) {
-  return crypto
-    .createHash("sha256")
-    .update(String(value || ""), "utf8")
-    .digest("hex")
-    .slice(0, 16);
+  return hashTextSha(value);
 }
 
 function pathKindFromUrl(url) {

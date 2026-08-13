@@ -1,0 +1,9 @@
+{
+  "name": "@smart-prompt/assistant-ui",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shared framework-free Assistant Card for browser and desktop surfaces.",
+  "scripts": {
+    "test": "node tests/assistant-card.test.js"
+  }
+}

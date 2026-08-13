@@ -1,0 +1,13 @@
+{
+  "name": "@smart-prompt/outcome-learning",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Canonical versioned contracts for the Codex Outcome Learning Loop.",
+  "main": "index.js",
+  "scripts": {
+    "test": "node --test tests/outcome-learning.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

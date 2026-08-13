@@ -1,0 +1,45 @@
+{
+  "schemaVersion": "edit-feature-summary-fixtures@1",
+  "cases": [
+    {
+      "id": "unchanged",
+      "generated": "Implement the fixture.",
+      "inserted": "Implement the fixture.",
+      "expected": {
+        "userEdited": false,
+        "lengthDeltaBucket": "none",
+        "structureChanged": false
+      }
+    },
+    {
+      "id": "same-length-word-edit",
+      "generated": "Fix alpha.",
+      "inserted": "Fix bravo.",
+      "expected": {
+        "userEdited": true,
+        "lengthDeltaBucket": "small",
+        "structureChanged": false
+      }
+    },
+    {
+      "id": "medium-inline-extension",
+      "generated": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "inserted": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbbbbbbbbbbbbb",
+      "expected": {
+        "userEdited": true,
+        "lengthDeltaBucket": "medium",
+        "structureChanged": false
+      }
+    },
+    {
+      "id": "large-structural-extension",
+      "generated": "Implement the fixture.",
+      "inserted": "Implement the fixture.\n- Run the focused tests.",
+      "expected": {
+        "userEdited": true,
+        "lengthDeltaBucket": "large",
+        "structureChanged": true
+      }
+    }
+  ]
+}

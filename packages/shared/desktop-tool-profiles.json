@@ -1,0 +1,86 @@
+{
+  "schemaVersion": "smart-prompt-desktop-tool-profiles@1",
+  "supportedProfiles": ["codex", "claude-code", "hermes", "workbuddy", "trae"],
+  "trustedOverlayClickProfiles": ["codex", "workbuddy", "trae"],
+  "profiles": [
+    {
+      "id": "codex",
+      "label": "Codex",
+      "kind": "desktop-cli",
+      "processHints": ["codex", "openaicodex", "codex desktop"],
+      "titlePatterns": ["codex", "openai codex", "openai-codex"],
+      "trustedExecutablePathPatterns": ["^[A-Za-z]:\\\\(?:Program Files\\\\)?WindowsApps\\\\OpenAI\\.Codex_[^\\\\]+__2p2nqsd0c76g0\\\\app\\\\ChatGPT\\.exe$"],
+      "inputKinds": ["terminal", "webview", "textarea", "edit"]
+    },
+    {
+      "id": "claude-code",
+      "label": "Claude Code",
+      "kind": "desktop-cli",
+      "processHints": ["claude"],
+      "titlePatterns": ["claude code", "claude-code"],
+      "inputKinds": ["terminal", "textarea", "edit"]
+    },
+    {
+      "id": "hermes",
+      "label": "Hermes",
+      "kind": "desktop-cli",
+      "processHints": ["hermes"],
+      "titlePatterns": ["hermes"],
+      "inputKinds": ["terminal", "textarea", "edit"]
+    },
+    {
+      "id": "workbuddy",
+      "label": "workBuddy",
+      "kind": "desktop-app",
+      "processHints": ["workbuddy", "work-buddy"],
+      "titlePatterns": ["workbuddy", "work buddy", "work-buddy"],
+      "inputKinds": ["webview", "textarea", "edit"]
+    },
+    {
+      "id": "trae",
+      "label": "Trae",
+      "kind": "desktop-app",
+      "processHints": ["trae"],
+      "titlePatterns": ["trae"],
+      "inputKinds": ["webview", "textarea", "edit"]
+    }
+  ],
+  "policies": {
+    "workbuddy": {
+      "composerGuard": {
+        "minWidth": 240,
+        "minHeight": 36,
+        "maxHeight": 260,
+        "requireNearWindowBottom": true,
+        "blockBroadDocument": true,
+        "strongSignals": [
+          "hasKeyboardFocus",
+          "focusedElementMatch",
+          "caretWithinBounds",
+          "caretWindowMatch",
+          "cursorWithinBounds",
+          "semanticComposerHint"
+        ],
+        "allowWeakSignalClipboardFallback": false
+      }
+    },
+    "trae": {
+      "composerGuard": {
+        "minWidth": 240,
+        "minHeight": 36,
+        "maxHeight": 260,
+        "requireNearWindowBottom": true,
+        "blockBroadDocument": true,
+        "strongSignals": [
+          "hasKeyboardFocus",
+          "focusedElementMatch",
+          "caretWithinBounds",
+          "caretWindowMatch",
+          "cursorWithinBounds",
+          "semanticComposerHint"
+        ],
+        "allowWeakSignalClipboardFallback": true
+      }
+    }
+  }
+}

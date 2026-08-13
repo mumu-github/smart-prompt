@@ -1,0 +1,210 @@
+{
+  "schemaVersion": "learning-candidate-seed-fixtures@1",
+  "cases": [
+    {
+      "id": "default-has-no-semantic-seed",
+      "input": "Fix the deterministic fixture bug.",
+      "taskScenarioToken": "bug_fix",
+      "expected": null
+    },
+    {
+      "id": "memory-tauri-environment",
+      "input": "This project uses Tauri for its desktop shell.",
+      "taskScenarioToken": "feature_development",
+      "expected": {
+        "schemaVersion": "learning-candidate-seed@1",
+        "artifactType": "memory",
+        "patternToken": "memory_tauri",
+        "payload": {
+          "category": "technology_stack",
+          "statement": "The project uses Tauri."
+        }
+      }
+    },
+    {
+      "id": "memory-react-environment",
+      "input": "The technology stack includes React and TypeScript.",
+      "taskScenarioToken": "ui_ux",
+      "expected": {
+        "schemaVersion": "learning-candidate-seed@1",
+        "artifactType": "memory",
+        "patternToken": "memory_typescript",
+        "payload": {
+          "category": "technology_stack",
+          "statement": "The project uses TypeScript."
+        }
+      }
+    },
+    {
+      "id": "rule-preserve-existing-changes",
+      "input": "Preserve existing changes while implementing the request.",
+      "taskScenarioToken": "feature_development",
+      "expected": {
+        "schemaVersion": "learning-candidate-seed@1",
+        "artifactType": "rule",
+        "patternToken": "rule_preserve_existing_changes",
+        "payload": {
+          "directive": "Preserve existing user changes while completing scoped work.",
+          "taskScenarioTokens": [
+            "workspace_change"
+          ]
+        }
+      }
+    },
+    {
+      "id": "rule-recoverable-removal-chinese",
+      "input": "\u4e0d\u8981\u6c38\u4e45\u5220\u9664\u6587\u4ef6\uff0c\u8bf7\u79fb\u5165\u56de\u6536\u7ad9\u3002",
+      "taskScenarioToken": "release_ops",
+      "expected": {
+        "schemaVersion": "learning-candidate-seed@1",
+        "artifactType": "rule",
+        "patternToken": "rule_recoverable_removal_only",
+        "payload": {
+          "directive": "Use a recoverable Trash or Recycle Bin operation for removals.",
+          "taskScenarioTokens": [
+            "workspace_change"
+          ]
+        }
+      }
+    },
+    {
+      "id": "skill-bug-fix-workflow",
+      "input": "Create a reusable workflow for recurring bug fixes.",
+      "taskScenarioToken": "bug_fix",
+      "expected": {
+        "schemaVersion": "learning-candidate-seed@1",
+        "artifactType": "skill",
+        "patternToken": "skill_bug_fix",
+        "payload": {
+          "triggerConditionTokens": [
+            "bug_fix"
+          ],
+          "stepTokens": [
+            "reproduce_issue",
+            "identify_root_cause",
+            "apply_scoped_fix",
+            "run_regression_tests"
+          ],
+          "verificationTokens": [
+            "focused_checks_pass",
+            "acceptance_evidence_recorded"
+          ],
+          "resourceTokens": [
+            "project_files",
+            "project_test_runner"
+          ],
+          "permissionTokens": [
+            "workspace_read",
+            "workspace_write_reviewed"
+          ],
+          "failureRecoveryTokens": [
+            "stop_on_guard_failure",
+            "restore_scoped_change"
+          ],
+          "scriptsExecutable": false,
+          "permissionCheckPassed": false,
+          "isolationTestPassed": false,
+          "adversarialReviewPassed": false
+        }
+      }
+    },
+    {
+      "id": "skill-code-review-alias",
+      "input": "Use this standard process whenever a review repeats.",
+      "taskScenarioToken": "code-review",
+      "expected": {
+        "schemaVersion": "learning-candidate-seed@1",
+        "artifactType": "skill",
+        "patternToken": "skill_code_review",
+        "payload": {
+          "triggerConditionTokens": [
+            "code_review"
+          ],
+          "stepTokens": [
+            "inspect_diff",
+            "identify_behavioral_risks",
+            "verify_evidence",
+            "report_findings"
+          ],
+          "verificationTokens": [
+            "focused_checks_pass",
+            "acceptance_evidence_recorded"
+          ],
+          "resourceTokens": [
+            "project_files",
+            "project_test_runner"
+          ],
+          "permissionTokens": [
+            "workspace_read",
+            "workspace_write_reviewed"
+          ],
+          "failureRecoveryTokens": [
+            "stop_on_guard_failure",
+            "restore_scoped_change"
+          ],
+          "scriptsExecutable": false,
+          "permissionCheckPassed": false,
+          "isolationTestPassed": false,
+          "adversarialReviewPassed": false
+        }
+      }
+    },
+    {
+      "id": "workflow-classification-precedes-rule",
+      "input": "Define a reusable workflow that must run tests before completion.",
+      "taskScenarioToken": "test_plan",
+      "expected": {
+        "schemaVersion": "learning-candidate-seed@1",
+        "artifactType": "skill",
+        "patternToken": "skill_test_plan",
+        "payload": {
+          "triggerConditionTokens": [
+            "test_plan"
+          ],
+          "stepTokens": [
+            "identify_risk_surface",
+            "add_failing_test",
+            "implement_fixture",
+            "run_test_matrix"
+          ],
+          "verificationTokens": [
+            "focused_checks_pass",
+            "acceptance_evidence_recorded"
+          ],
+          "resourceTokens": [
+            "project_files",
+            "project_test_runner"
+          ],
+          "permissionTokens": [
+            "workspace_read",
+            "workspace_write_reviewed"
+          ],
+          "failureRecoveryTokens": [
+            "stop_on_guard_failure",
+            "restore_scoped_change"
+          ],
+          "scriptsExecutable": false,
+          "permissionCheckPassed": false,
+          "isolationTestPassed": false,
+          "adversarialReviewPassed": false
+        }
+      }
+    },
+    {
+      "id": "private-context-does-not-enter-seed",
+      "input": "Do not permanently delete anything from the private workspace.",
+      "taskScenarioToken": "release_ops",
+      "expected": {
+        "schemaVersion": "learning-candidate-seed@1",
+        "artifactType": "rule",
+        "patternToken": "rule_recoverable_removal_only",
+        "payload": {
+          "directive": "Use a recoverable Trash or Recycle Bin operation for removals.",
+          "taskScenarioTokens": [
+            "workspace_change"
+          ]
+        }
+      }
+    }
+  ]
+}

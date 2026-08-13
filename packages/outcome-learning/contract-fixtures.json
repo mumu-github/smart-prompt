@@ -1,0 +1,1357 @@
+{
+  "fixtureSetVersion": "outcome-learning-contract-fixtures@1",
+  "bundleVersion": "outcome-learning@1",
+  "contractVersions": {
+    "prompt_session_event": "prompt-session@2",
+    "codex_target_adapter_result": "codex-target-adapter-result@1",
+    "pending_outcome": "pending-outcome@1",
+    "learning_observation": "learning-observation@1",
+    "learning_artifact": "learning-artifact@1",
+    "generation_policy": "generation-policy@1",
+    "policy_rollout": "policy-rollout@1",
+    "benchmark_result": "benchmark-result@1",
+    "runtime_evidence": "runtime-evidence@1",
+    "context_source": "context-source@1"
+  },
+  "valid": [
+    {
+      "id": "prompt-session-verified-insert",
+      "contract": "prompt_session_event",
+      "value": {
+        "contractVersion": "prompt-session@2",
+        "eventId": "event_001",
+        "eventType": "verified_insert",
+        "occurredAt": "2026-07-19T02:00:00.000Z",
+        "sessionId": "session_001",
+        "generationId": "generation_001",
+        "target": "codex",
+        "projectScopeToken": "project_scope_alpha",
+        "strategyId": "strategy_compact",
+        "strategyVersion": "v2",
+        "modelFamilyToken": "model_family_fast",
+        "outcomeId": "outcome_001",
+        "policyId": "policy_001",
+        "policyVersion": 2,
+        "taskOutcomeToken": "unknown",
+        "insertVerified": true,
+        "noAutoSubmit": true,
+        "failureReasonTokens": [],
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "codex-adapter-verified-direct-insert",
+      "contract": "codex_target_adapter_result",
+      "value": {
+        "contractVersion": "codex-target-adapter-result@1",
+        "adapterResultId": "adapter_result_001",
+        "operation": "insert",
+        "status": "ready",
+        "target": "codex",
+        "attempted": true,
+        "verified": true,
+        "verification": "machine",
+        "writeMethod": "direct",
+        "reasonToken": "inserted",
+        "publicReason": "none",
+        "foregroundVerified": true,
+        "targetIdentityVerified": true,
+        "focusVerified": true,
+        "draftUnchanged": true,
+        "payloadFresh": true,
+        "readbackMatched": true,
+        "clipboardRestored": null,
+        "noAutoSubmit": true,
+        "occurredAt": "2026-07-19T02:00:01.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "pending-outcome-unknown",
+      "contract": "pending_outcome",
+      "value": {
+        "contractVersion": "pending-outcome@1",
+        "outcomeId": "outcome_001",
+        "generationId": "generation_001",
+        "sessionId": "session_001",
+        "strategyId": "strategy_compact",
+        "strategyVersion": "v2",
+        "target": "codex",
+        "projectScopeToken": "project_scope_alpha",
+        "modelFamilyToken": "model_family_fast",
+        "createdAt": "2026-07-19T02:00:00.000Z",
+        "eligibleAt": "2026-07-19T02:01:00.000Z",
+        "expiresAt": "2026-07-20T02:00:00.000Z",
+        "status": "unknown",
+        "insertVerified": true,
+        "policyId": null,
+        "policyVersion": null,
+        "feedbackPromptedAt": null,
+        "failureReasonTokens": [],
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "learning-observation-keyed-feature-hash",
+      "contract": "learning_observation",
+      "value": {
+        "contractVersion": "learning-observation@1",
+        "observationId": "observation_001",
+        "projectScopeToken": "project_scope_alpha",
+        "taskScenarioToken": "contract_implementation",
+        "modeToken": "polish",
+        "strategyId": "strategy_compact",
+        "strategyVersion": "v2",
+        "modelFamilyToken": "model_family_fast",
+        "contextSourceTokens": [],
+        "editFeatureSummary": {
+          "userEdited": true,
+          "lengthDeltaBucket": "small",
+          "structureChanged": true
+        },
+        "insertVerified": true,
+        "retryCount": 0,
+        "undoUsed": false,
+        "taskOutcomeToken": "completed",
+        "failureReasonTokens": [],
+        "inputTokens": 120,
+        "outputTokens": 180,
+        "cachedTokens": 20,
+        "reasoningTokens": 40,
+        "insertedPromptTokenEstimate": 165,
+        "latencyMs": 840,
+        "tokenAccountingSource": "provider",
+        "semanticFingerprint": {
+          "kind": "keyed_feature_hash",
+          "projectScoped": true,
+          "algorithm": "hmac_sha256",
+          "valueToken": "2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f2f",
+          "encryptedAtRest": false,
+          "exportable": false,
+          "absoluteIrreversibilityClaimed": false,
+          "inversionRiskTested": false,
+          "membershipInferenceRiskTested": false,
+          "residualRisk": "low"
+        },
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        },
+        "createdAt": "2026-07-19T02:05:00.000Z"
+      }
+    },
+    {
+      "id": "learning-observation-encrypted-local-embedding",
+      "contract": "learning_observation",
+      "value": {
+        "contractVersion": "learning-observation@1",
+        "observationId": "observation_002",
+        "projectScopeToken": "project_scope_alpha",
+        "taskScenarioToken": "contract_implementation",
+        "modeToken": "polish",
+        "strategyId": "strategy_compact",
+        "strategyVersion": "v2",
+        "modelFamilyToken": "model_family_fast",
+        "contextSourceTokens": [],
+        "editFeatureSummary": {
+          "userEdited": false,
+          "lengthDeltaBucket": "none",
+          "structureChanged": false
+        },
+        "insertVerified": true,
+        "retryCount": 0,
+        "undoUsed": false,
+        "taskOutcomeToken": "unknown",
+        "failureReasonTokens": [],
+        "inputTokens": null,
+        "outputTokens": null,
+        "cachedTokens": null,
+        "reasoningTokens": null,
+        "insertedPromptTokenEstimate": null,
+        "latencyMs": 360,
+        "tokenAccountingSource": "unavailable",
+        "semanticFingerprint": {
+          "kind": "encrypted_local_embedding",
+          "projectScoped": true,
+          "algorithm": "local_embedding_aes_256_gcm",
+          "valueToken": "encrypted_embedding_blob_accepted_001",
+          "encryptedAtRest": true,
+          "exportable": false,
+          "absoluteIrreversibilityClaimed": false,
+          "inversionRiskTested": true,
+          "membershipInferenceRiskTested": true,
+          "residualRisk": "accepted"
+        },
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        },
+        "createdAt": "2026-07-19T02:06:00.000Z"
+      }
+    },
+    {
+      "id": "learning-artifact-memory",
+      "contract": "learning_artifact",
+      "value": {
+        "contractVersion": "learning-artifact@1",
+        "artifactId": "artifact_memory_001",
+        "artifactType": "memory",
+        "status": "pending_review",
+        "scope": {
+          "kind": "project",
+          "projectScopeToken": "project_scope_alpha"
+        },
+        "payload": {
+          "category": "environment_fact",
+          "statement": "Use the verified build identifier when checking packaged behavior."
+        },
+        "evidenceSummary": {
+          "sessionCount": 2,
+          "successfulOutcomeCount": 3,
+          "explicitNegativeFeedbackCount": 0,
+          "evidenceTokenCount": 3
+        },
+        "permissions": {
+          "execution": "none",
+          "scopeExpansion": "user_confirmation_required"
+        },
+        "review": {
+          "required": true,
+          "decision": "pending",
+          "ignoredCount": 0
+        },
+        "autoCreated": true,
+        "effective": false,
+        "createdAt": "2026-07-19T03:00:00.000Z",
+        "updatedAt": "2026-07-19T03:00:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "learning-artifact-rule",
+      "contract": "learning_artifact",
+      "value": {
+        "contractVersion": "learning-artifact@1",
+        "artifactId": "artifact_rule_001",
+        "artifactType": "rule",
+        "status": "pending_review",
+        "scope": {
+          "kind": "project",
+          "projectScopeToken": "project_scope_alpha"
+        },
+        "payload": {
+          "directive": "Keep no-auto-submit enabled for every insert.",
+          "taskScenarioTokens": [
+            "safe_insert"
+          ]
+        },
+        "evidenceSummary": {
+          "sessionCount": 2,
+          "successfulOutcomeCount": 3,
+          "explicitNegativeFeedbackCount": 0,
+          "evidenceTokenCount": 3
+        },
+        "permissions": {
+          "execution": "none",
+          "scopeExpansion": "user_confirmation_required"
+        },
+        "review": {
+          "required": true,
+          "decision": "pending",
+          "ignoredCount": 0
+        },
+        "autoCreated": true,
+        "effective": false,
+        "createdAt": "2026-07-19T03:01:00.000Z",
+        "updatedAt": "2026-07-19T03:01:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "learning-artifact-skill",
+      "contract": "learning_artifact",
+      "value": {
+        "contractVersion": "learning-artifact@1",
+        "artifactId": "artifact_skill_001",
+        "artifactType": "skill",
+        "status": "pending_review",
+        "scope": {
+          "kind": "project",
+          "projectScopeToken": "project_scope_alpha"
+        },
+        "payload": {
+          "triggerConditionTokens": [
+            "package_contract_change"
+          ],
+          "stepTokens": [
+            "inspect_contract",
+            "run_fixture_tests"
+          ],
+          "verificationTokens": [
+            "tests_pass",
+            "fixtures_parse"
+          ],
+          "resourceTokens": [
+            "node_builtin_test_runner"
+          ],
+          "permissionTokens": [
+            "workspace_read",
+            "package_write"
+          ],
+          "failureRecoveryTokens": [
+            "stop_without_integration"
+          ],
+          "scriptsExecutable": false,
+          "permissionCheckPassed": true,
+          "isolationTestPassed": true,
+          "adversarialReviewPassed": true
+        },
+        "evidenceSummary": {
+          "sessionCount": 2,
+          "successfulOutcomeCount": 3,
+          "explicitNegativeFeedbackCount": 0,
+          "evidenceTokenCount": 3
+        },
+        "permissions": {
+          "execution": "review_required",
+          "scopeExpansion": "user_confirmation_required"
+        },
+        "review": {
+          "required": true,
+          "decision": "pending",
+          "ignoredCount": 0
+        },
+        "autoCreated": true,
+        "effective": false,
+        "createdAt": "2026-07-19T03:02:00.000Z",
+        "updatedAt": "2026-07-19T03:02:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "learning-artifact-generation-policy",
+      "contract": "learning_artifact",
+      "value": {
+        "contractVersion": "learning-artifact@1",
+        "artifactId": "artifact_policy_001",
+        "artifactType": "generation_policy",
+        "status": "pending_review",
+        "scope": {
+          "kind": "project",
+          "projectScopeToken": "project_scope_alpha"
+        },
+        "payload": {
+          "policyId": "policy_001",
+          "policyVersion": 2
+        },
+        "evidenceSummary": {
+          "sessionCount": 2,
+          "successfulOutcomeCount": 3,
+          "explicitNegativeFeedbackCount": 0,
+          "evidenceTokenCount": 3
+        },
+        "permissions": {
+          "execution": "none",
+          "scopeExpansion": "user_confirmation_required"
+        },
+        "review": {
+          "required": true,
+          "decision": "pending",
+          "ignoredCount": 0
+        },
+        "autoCreated": true,
+        "effective": false,
+        "createdAt": "2026-07-19T03:03:00.000Z",
+        "updatedAt": "2026-07-19T03:03:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "generation-policy-benchmarked",
+      "contract": "generation_policy",
+      "value": {
+        "contractVersion": "generation-policy@1",
+        "policyId": "policy_001",
+        "version": 2,
+        "scope": {
+          "kind": "project",
+          "target": "codex",
+          "projectScopeToken": "project_scope_alpha",
+          "taskScenarioToken": "contract_implementation",
+          "modelFamilyToken": "model_family_fast"
+        },
+        "selectedStrategy": {
+          "strategyId": "strategy_compact",
+          "strategyVersion": "v2"
+        },
+        "directives": [
+          {
+            "directiveId": "directive_001",
+            "kind": "detail_level",
+            "valueToken": "concise",
+            "priority": 1
+          },
+          {
+            "directiveId": "directive_002",
+            "kind": "context_budget",
+            "valueToken": "bounded",
+            "priority": 2
+          }
+        ],
+        "contextBudget": {
+          "maxInputTokens": 1200,
+          "maxContextSourceTokens": 300
+        },
+        "evidenceSummary": {
+          "attributableOutcomeCount": 6,
+          "successfulOutcomeCount": 5,
+          "negativeOutcomeCount": 0,
+          "retryRate": 0.1,
+          "undoRate": 0,
+          "tokenDeltaRatio": -0.06,
+          "evidenceTokenCount": 6
+        },
+        "baselineVersion": 1,
+        "status": "benchmarked",
+        "riskLevel": "low",
+        "automaticRolloutEligible": true,
+        "createdAt": "2026-07-19T04:00:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "policy-rollout-canary",
+      "contract": "policy_rollout",
+      "value": {
+        "contractVersion": "policy-rollout@1",
+        "rolloutId": "rollout_001",
+        "policyId": "policy_001",
+        "policyVersion": 2,
+        "baselineVersion": 1,
+        "projectScopeToken": "project_scope_alpha",
+        "status": "canary",
+        "canaryShareBps": 1000,
+        "minimums": {
+          "perArmAttributableOutcomes": 10,
+          "tokenImprovementRatio": 0.05,
+          "minimumEffectRatio": 0.03,
+          "confidenceThreshold": 0.9
+        },
+        "arms": {
+          "baseline": {
+            "attributableOutcomes": 10,
+            "successRate": 0.8,
+            "retryRate": 0.2,
+            "undoRate": 0.1,
+            "averageTokens": 1000,
+            "averageLatencyMs": 1200,
+            "averageReworkCount": 0.3
+          },
+          "candidate": {
+            "attributableOutcomes": 10,
+            "successRate": 0.8,
+            "retryRate": 0.2,
+            "undoRate": 0.1,
+            "averageTokens": 930,
+            "averageLatencyMs": 1180,
+            "averageReworkCount": 0.3
+          }
+        },
+        "gates": {
+          "benchmarkPassed": true,
+          "taskQualityNotDegraded": true,
+          "retryUndoNotDegraded": true,
+          "efficiencyImproved": true,
+          "statisticalRequirementMet": false,
+          "safetyIncidentCount": 0,
+          "privacyIncidentCount": 0,
+          "permissionIncidentCount": 0,
+          "autoSubmitIncidentCount": 0,
+          "miswriteIncidentCount": 0
+        },
+        "rollbackReasonToken": "none",
+        "startedAt": "2026-07-19T05:00:00.000Z",
+        "endedAt": null,
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "benchmark-result-fake-passed",
+      "contract": "benchmark_result",
+      "value": {
+        "contractVersion": "benchmark-result@1",
+        "benchmarkId": "benchmark_001",
+        "status": "passed",
+        "executor": "fake",
+        "initiatedBy": "test",
+        "authorization": {
+          "required": false,
+          "granted": false
+        },
+        "modelFamilyToken": "model_family_fixture",
+        "fixtureSetToken": "codex_benchmark_fixtures_v1",
+        "taskCount": 12,
+        "categoryCounts": {
+          "feature_development": 2,
+          "bug_fix": 2,
+          "refactor": 2,
+          "test_completion": 2,
+          "code_review": 2,
+          "documentation": 2
+        },
+        "comparability": {
+          "sameModelFamily": true,
+          "sameStartingPoint": true,
+          "samePermissions": true,
+          "sameBudget": true,
+          "deterministicAcceptance": true
+        },
+        "budget": {
+          "tokenLimit": 120000,
+          "maxAgentTurns": 6,
+          "maxRetries": 2,
+          "estimatedCostMicros": 0,
+          "consumedTokens": 62000,
+          "exhausted": false
+        },
+        "arms": {
+          "baseline": {
+            "completedTasks": 10,
+            "safetyPassedTasks": 12,
+            "totalTokens": 33000,
+            "totalDurationMs": 64000,
+            "totalRetries": 4,
+            "totalToolCalls": 44
+          },
+          "candidate": {
+            "completedTasks": 10,
+            "safetyPassedTasks": 12,
+            "totalTokens": 29000,
+            "totalDurationMs": 59000,
+            "totalRetries": 3,
+            "totalToolCalls": 41
+          }
+        },
+        "safety": {
+          "qualityGatePassed": true,
+          "noAutoSubmitPassed": true,
+          "privacyPassed": true,
+          "permissionPassed": true
+        },
+        "startedAt": "2026-07-19T06:00:00.000Z",
+        "finishedAt": "2026-07-19T06:10:00.000Z",
+        "publicReason": "none",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "runtime-evidence-node-contract",
+      "contract": "runtime_evidence",
+      "value": {
+        "contractVersion": "runtime-evidence@1",
+        "evidenceId": "runtime_evidence_001",
+        "kind": "contract_test",
+        "consumer": "node",
+        "status": "pass",
+        "buildId": "fixture_build_001",
+        "observedAt": "2026-07-19T07:00:00.000Z",
+        "contractVersions": {
+          "prompt_session_event": "prompt-session@2",
+          "codex_target_adapter_result": "codex-target-adapter-result@1",
+          "pending_outcome": "pending-outcome@1",
+          "learning_observation": "learning-observation@1",
+          "learning_artifact": "learning-artifact@1",
+          "generation_policy": "generation-policy@1",
+          "policy_rollout": "policy-rollout@1",
+          "benchmark_result": "benchmark-result@1",
+          "runtime_evidence": "runtime-evidence@1",
+          "context_source": "context-source@1"
+        },
+        "checkTokens": [
+          "fixtures_parse",
+          "valid_cases_accepted",
+          "invalid_cases_rejected"
+        ],
+        "checks": {
+          "contractParsed": true,
+          "fixturesPassed": true,
+          "machineReadbackVerified": false,
+          "noAutoSubmitVerified": true,
+          "privacyScanPassed": true
+        },
+        "evidenceDigest": "3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a",
+        "publicReason": "none",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "context-source-disabled-project-files",
+      "contract": "context_source",
+      "value": {
+        "contractVersion": "context-source@1",
+        "contextSourceId": "context_source_001",
+        "sourceType": "project_files",
+        "enabled": false,
+        "permissionStatus": "not_granted",
+        "trustLevel": "untrusted",
+        "independentAuthorizationRequired": true,
+        "preview": {
+          "status": "not_available",
+          "itemCount": 0,
+          "tokenEstimate": 0,
+          "removable": true,
+          "reviewed": false
+        },
+        "tokenBudget": 512,
+        "collectResult": {
+          "status": "not_implemented",
+          "itemCount": 0,
+          "tokenCount": 0,
+          "contentHandleToken": null,
+          "promptInjectionRisk": "unknown"
+        },
+        "executionPermissionsExpanded": false,
+        "createdAt": "2026-07-19T08:00:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    }
+  ],
+  "invalid": [
+    {
+      "id": "prompt-session-verified-insert-auto-submit",
+      "contract": "prompt_session_event",
+      "expectedErrorCodes": [
+        "safety_invariant"
+      ],
+      "value": {
+        "contractVersion": "prompt-session@2",
+        "eventId": "event_invalid_001",
+        "eventType": "verified_insert",
+        "occurredAt": "2026-07-19T02:00:00.000Z",
+        "sessionId": "session_001",
+        "generationId": "generation_001",
+        "target": "codex",
+        "projectScopeToken": "project_scope_alpha",
+        "strategyId": "strategy_compact",
+        "strategyVersion": "v2",
+        "modelFamilyToken": "model_family_fast",
+        "outcomeId": "outcome_001",
+        "policyId": "policy_001",
+        "policyVersion": 2,
+        "taskOutcomeToken": "unknown",
+        "insertVerified": true,
+        "noAutoSubmit": false,
+        "failureReasonTokens": [],
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "adapter-verified-without-readback",
+      "contract": "codex_target_adapter_result",
+      "expectedErrorCodes": [
+        "verification_invariant"
+      ],
+      "value": {
+        "contractVersion": "codex-target-adapter-result@1",
+        "adapterResultId": "adapter_result_invalid_001",
+        "operation": "insert",
+        "status": "ready",
+        "target": "codex",
+        "attempted": true,
+        "verified": true,
+        "verification": "machine",
+        "writeMethod": "direct",
+        "reasonToken": "inserted",
+        "publicReason": "none",
+        "foregroundVerified": true,
+        "targetIdentityVerified": true,
+        "focusVerified": true,
+        "draftUnchanged": true,
+        "payloadFresh": true,
+        "readbackMatched": false,
+        "clipboardRestored": null,
+        "noAutoSubmit": true,
+        "occurredAt": "2026-07-19T02:00:01.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "pending-outcome-feedback-too-early",
+      "contract": "pending_outcome",
+      "expectedErrorCodes": [
+        "time_window"
+      ],
+      "value": {
+        "contractVersion": "pending-outcome@1",
+        "outcomeId": "outcome_invalid_001",
+        "generationId": "generation_001",
+        "sessionId": "session_001",
+        "strategyId": "strategy_compact",
+        "strategyVersion": "v2",
+        "target": "codex",
+        "projectScopeToken": "project_scope_alpha",
+        "modelFamilyToken": "model_family_fast",
+        "createdAt": "2026-07-19T02:00:00.000Z",
+        "eligibleAt": "2026-07-19T02:00:30.000Z",
+        "expiresAt": "2026-07-20T02:00:00.000Z",
+        "status": "unknown",
+        "insertVerified": true,
+        "policyId": null,
+        "policyVersion": null,
+        "feedbackPromptedAt": null,
+        "failureReasonTokens": [],
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "observation-embedding-irreversibility-claim",
+      "contract": "learning_observation",
+      "expectedErrorCodes": [
+        "fingerprint_policy"
+      ],
+      "value": {
+        "contractVersion": "learning-observation@1",
+        "observationId": "observation_invalid_001",
+        "projectScopeToken": "project_scope_alpha",
+        "taskScenarioToken": "contract_implementation",
+        "modeToken": "polish",
+        "strategyId": "strategy_compact",
+        "strategyVersion": "v2",
+        "modelFamilyToken": "model_family_fast",
+        "contextSourceTokens": [],
+        "editFeatureSummary": {
+          "userEdited": false,
+          "lengthDeltaBucket": "none",
+          "structureChanged": false
+        },
+        "insertVerified": true,
+        "retryCount": 0,
+        "undoUsed": false,
+        "taskOutcomeToken": "completed",
+        "failureReasonTokens": [],
+        "inputTokens": null,
+        "outputTokens": null,
+        "cachedTokens": null,
+        "reasoningTokens": null,
+        "insertedPromptTokenEstimate": null,
+        "latencyMs": 840,
+        "tokenAccountingSource": "unavailable",
+        "semanticFingerprint": {
+          "kind": "encrypted_local_embedding",
+          "projectScoped": true,
+          "algorithm": "local_embedding_aes_256_gcm",
+          "valueToken": "encrypted_embedding_blob_001",
+          "encryptedAtRest": true,
+          "exportable": false,
+          "absoluteIrreversibilityClaimed": true,
+          "inversionRiskTested": true,
+          "membershipInferenceRiskTested": true,
+          "residualRisk": "accepted"
+        },
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        },
+        "createdAt": "2026-07-19T02:05:00.000Z"
+      }
+    },
+    {
+      "id": "artifact-auto-candidate-below-threshold",
+      "contract": "learning_artifact",
+      "expectedErrorCodes": [
+        "candidate_threshold"
+      ],
+      "value": {
+        "contractVersion": "learning-artifact@1",
+        "artifactId": "artifact_invalid_001",
+        "artifactType": "memory",
+        "status": "pending_review",
+        "scope": {
+          "kind": "project",
+          "projectScopeToken": "project_scope_alpha"
+        },
+        "payload": {
+          "category": "environment_fact",
+          "statement": "Keep verified evidence attached to a version token."
+        },
+        "evidenceSummary": {
+          "sessionCount": 1,
+          "successfulOutcomeCount": 2,
+          "explicitNegativeFeedbackCount": 0,
+          "evidenceTokenCount": 2
+        },
+        "permissions": {
+          "execution": "none",
+          "scopeExpansion": "user_confirmation_required"
+        },
+        "review": {
+          "required": true,
+          "decision": "pending",
+          "ignoredCount": 0
+        },
+        "autoCreated": true,
+        "effective": false,
+        "createdAt": "2026-07-19T03:00:00.000Z",
+        "updatedAt": "2026-07-19T03:00:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "generation-policy-unknown-status",
+      "contract": "generation_policy",
+      "expectedErrorCodes": [
+        "enum"
+      ],
+      "value": {
+        "contractVersion": "generation-policy@1",
+        "policyId": "policy_invalid_001",
+        "version": 2,
+        "scope": {
+          "kind": "project",
+          "target": "codex",
+          "projectScopeToken": "project_scope_alpha",
+          "taskScenarioToken": "contract_implementation",
+          "modelFamilyToken": "model_family_fast"
+        },
+        "selectedStrategy": {
+          "strategyId": "strategy_compact",
+          "strategyVersion": "v2"
+        },
+        "directives": [],
+        "contextBudget": {
+          "maxInputTokens": 1200,
+          "maxContextSourceTokens": 300
+        },
+        "evidenceSummary": {
+          "attributableOutcomeCount": 6,
+          "successfulOutcomeCount": 5,
+          "negativeOutcomeCount": 0,
+          "retryRate": 0.1,
+          "undoRate": 0,
+          "tokenDeltaRatio": -0.06,
+          "evidenceTokenCount": 6
+        },
+        "baselineVersion": 1,
+        "status": "self_promoted",
+        "riskLevel": "low",
+        "automaticRolloutEligible": true,
+        "createdAt": "2026-07-19T04:00:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "rollout-promoted-with-insufficient-evidence",
+      "contract": "policy_rollout",
+      "expectedErrorCodes": [
+        "rollout_gate"
+      ],
+      "value": {
+        "contractVersion": "policy-rollout@1",
+        "rolloutId": "rollout_invalid_001",
+        "policyId": "policy_001",
+        "policyVersion": 2,
+        "baselineVersion": 1,
+        "projectScopeToken": "project_scope_alpha",
+        "status": "promoted",
+        "canaryShareBps": 1000,
+        "minimums": {
+          "perArmAttributableOutcomes": 10,
+          "tokenImprovementRatio": 0.05,
+          "minimumEffectRatio": 0.03,
+          "confidenceThreshold": 0.9
+        },
+        "arms": {
+          "baseline": {
+            "attributableOutcomes": 4,
+            "successRate": 0.75,
+            "retryRate": 0.25,
+            "undoRate": 0,
+            "averageTokens": 1000,
+            "averageLatencyMs": 1200,
+            "averageReworkCount": 0.3
+          },
+          "candidate": {
+            "attributableOutcomes": 4,
+            "successRate": 0.75,
+            "retryRate": 0.25,
+            "undoRate": 0,
+            "averageTokens": 940,
+            "averageLatencyMs": 1180,
+            "averageReworkCount": 0.3
+          }
+        },
+        "gates": {
+          "benchmarkPassed": true,
+          "taskQualityNotDegraded": true,
+          "retryUndoNotDegraded": true,
+          "efficiencyImproved": true,
+          "statisticalRequirementMet": false,
+          "safetyIncidentCount": 0,
+          "privacyIncidentCount": 0,
+          "permissionIncidentCount": 0,
+          "autoSubmitIncidentCount": 0,
+          "miswriteIncidentCount": 0
+        },
+        "rollbackReasonToken": "none",
+        "startedAt": "2026-07-19T05:00:00.000Z",
+        "endedAt": null,
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "benchmark-real-executor-without-authorization",
+      "contract": "benchmark_result",
+      "expectedErrorCodes": [
+        "authorization_gate"
+      ],
+      "value": {
+        "contractVersion": "benchmark-result@1",
+        "benchmarkId": "benchmark_invalid_001",
+        "status": "not_run",
+        "executor": "codex",
+        "initiatedBy": "user",
+        "authorization": {
+          "required": true,
+          "granted": false
+        },
+        "modelFamilyToken": "model_family_fixture",
+        "fixtureSetToken": "codex_benchmark_fixtures_v1",
+        "taskCount": 0,
+        "categoryCounts": {
+          "feature_development": 0,
+          "bug_fix": 0,
+          "refactor": 0,
+          "test_completion": 0,
+          "code_review": 0,
+          "documentation": 0
+        },
+        "comparability": {
+          "sameModelFamily": true,
+          "sameStartingPoint": true,
+          "samePermissions": true,
+          "sameBudget": true,
+          "deterministicAcceptance": true
+        },
+        "budget": {
+          "tokenLimit": 120000,
+          "maxAgentTurns": 6,
+          "maxRetries": 2,
+          "estimatedCostMicros": 500000,
+          "consumedTokens": 0,
+          "exhausted": false
+        },
+        "arms": {
+          "baseline": {
+            "completedTasks": 0,
+            "safetyPassedTasks": 0,
+            "totalTokens": 0,
+            "totalDurationMs": 0,
+            "totalRetries": 0,
+            "totalToolCalls": 0
+          },
+          "candidate": {
+            "completedTasks": 0,
+            "safetyPassedTasks": 0,
+            "totalTokens": 0,
+            "totalDurationMs": 0,
+            "totalRetries": 0,
+            "totalToolCalls": 0
+          }
+        },
+        "safety": {
+          "qualityGatePassed": false,
+          "noAutoSubmitPassed": false,
+          "privacyPassed": false,
+          "permissionPassed": false
+        },
+        "startedAt": null,
+        "finishedAt": null,
+        "publicReason": "permission_required",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "runtime-evidence-public-reason-mismatch",
+      "contract": "runtime_evidence",
+      "expectedErrorCodes": [
+        "public_reason_mismatch"
+      ],
+      "value": {
+        "contractVersion": "runtime-evidence@1",
+        "evidenceId": "runtime_evidence_invalid_001",
+        "kind": "contract_test",
+        "consumer": "rust",
+        "status": "pass",
+        "buildId": "fixture_build_001",
+        "observedAt": "2026-07-19T07:00:00.000Z",
+        "contractVersions": {
+          "prompt_session_event": "prompt-session@2",
+          "codex_target_adapter_result": "codex-target-adapter-result@1",
+          "pending_outcome": "pending-outcome@1",
+          "learning_observation": "learning-observation@1",
+          "learning_artifact": "learning-artifact@1",
+          "generation_policy": "generation-policy@1",
+          "policy_rollout": "policy-rollout@1",
+          "benchmark_result": "benchmark-result@1",
+          "runtime_evidence": "runtime-evidence@1",
+          "context_source": "context-source@1"
+        },
+        "checkTokens": [
+          "fixtures_parse"
+        ],
+        "checks": {
+          "contractParsed": true,
+          "fixturesPassed": true,
+          "machineReadbackVerified": false,
+          "noAutoSubmitVerified": true,
+          "privacyScanPassed": true
+        },
+        "evidenceDigest": "4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b4b",
+        "publicReason": "unknown",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "context-source-enabled-without-permission",
+      "contract": "context_source",
+      "expectedErrorCodes": [
+        "permission_gate"
+      ],
+      "value": {
+        "contractVersion": "context-source@1",
+        "contextSourceId": "context_source_invalid_001",
+        "sourceType": "clipboard",
+        "enabled": true,
+        "permissionStatus": "not_granted",
+        "trustLevel": "untrusted",
+        "independentAuthorizationRequired": true,
+        "preview": {
+          "status": "not_available",
+          "itemCount": 0,
+          "tokenEstimate": 0,
+          "removable": true,
+          "reviewed": false
+        },
+        "tokenBudget": 256,
+        "collectResult": {
+          "status": "not_requested",
+          "itemCount": 0,
+          "tokenCount": 0,
+          "contentHandleToken": null,
+          "promptInjectionRisk": "unknown"
+        },
+        "executionPermissionsExpanded": false,
+        "createdAt": "2026-07-19T08:00:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "context-source-high-risk-injection-collected",
+      "contract": "context_source",
+      "expectedErrorCodes": [
+        "prompt_injection_gate"
+      ],
+      "value": {
+        "contractVersion": "context-source@1",
+        "contextSourceId": "context_source_injection_001",
+        "sourceType": "attachment",
+        "enabled": true,
+        "permissionStatus": "granted",
+        "trustLevel": "untrusted",
+        "independentAuthorizationRequired": true,
+        "preview": {
+          "status": "reviewed",
+          "itemCount": 1,
+          "tokenEstimate": 120,
+          "removable": true,
+          "reviewed": true
+        },
+        "tokenBudget": 256,
+        "collectResult": {
+          "status": "collected",
+          "itemCount": 1,
+          "tokenCount": 120,
+          "contentHandleToken": "session_context_handle_001",
+          "promptInjectionRisk": "high"
+        },
+        "executionPermissionsExpanded": false,
+        "createdAt": "2026-07-19T08:00:00.000Z",
+        "privacyFlags": {
+          "rawInputStored": false,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        }
+      }
+    },
+    {
+      "id": "observation-privacy-flag-violation",
+      "contract": "learning_observation",
+      "expectedErrorCodes": [
+        "privacy_flag"
+      ],
+      "value": {
+        "contractVersion": "learning-observation@1",
+        "observationId": "observation_invalid_002",
+        "projectScopeToken": "project_scope_alpha",
+        "taskScenarioToken": "contract_implementation",
+        "modeToken": "polish",
+        "strategyId": "strategy_compact",
+        "strategyVersion": "v2",
+        "modelFamilyToken": "model_family_fast",
+        "contextSourceTokens": [],
+        "editFeatureSummary": {
+          "userEdited": false,
+          "lengthDeltaBucket": "none",
+          "structureChanged": false
+        },
+        "insertVerified": true,
+        "retryCount": 0,
+        "undoUsed": false,
+        "taskOutcomeToken": "completed",
+        "failureReasonTokens": [],
+        "inputTokens": 10,
+        "outputTokens": 20,
+        "cachedTokens": 0,
+        "reasoningTokens": 0,
+        "insertedPromptTokenEstimate": 18,
+        "latencyMs": 120,
+        "tokenAccountingSource": "estimated",
+        "semanticFingerprint": {
+          "kind": "keyed_feature_hash",
+          "projectScoped": true,
+          "algorithm": "hmac_sha256",
+          "valueToken": "5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c5c",
+          "encryptedAtRest": false,
+          "exportable": false,
+          "absoluteIrreversibilityClaimed": false,
+          "inversionRiskTested": false,
+          "membershipInferenceRiskTested": false,
+          "residualRisk": "low"
+        },
+        "privacyFlags": {
+          "rawInputStored": true,
+          "generatedPromptStored": false,
+          "chatContentStored": false,
+          "clipboardContentStored": false,
+          "windowTitleStored": false,
+          "absoluteProjectPathStored": false,
+          "credentialStored": false,
+          "rawEvidenceStored": false
+        },
+        "createdAt": "2026-07-19T02:05:00.000Z"
+      }
+    }
+  ]
+}

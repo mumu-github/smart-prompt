@@ -1,0 +1,60 @@
+{
+  "schemaVersion": "task-scenario-inference-fixtures@1",
+  "cases": [
+    {
+      "id": "security-review",
+      "input": "Review authentication permissions and credential privacy.",
+      "expected": "security-review"
+    },
+    {
+      "id": "test-plan",
+      "input": "Create an end-to-end regression test plan.",
+      "expected": "test-plan"
+    },
+    {
+      "id": "code-review",
+      "input": "Use this standard process whenever a review repeats.",
+      "expected": "code-review"
+    },
+    {
+      "id": "ui-ux",
+      "input": "Improve the responsive UI layout and interaction.",
+      "expected": "ui-ux"
+    },
+    {
+      "id": "release-ops",
+      "input": "Build the sidecar installer and verify its checksum.",
+      "expected": "release-ops"
+    },
+    {
+      "id": "data-analysis",
+      "input": "Analyze the cohort metrics and summarize a KPI report.",
+      "expected": "data-analysis"
+    },
+    {
+      "id": "prompt-engineering",
+      "input": "Optimize the prompt used by the coding agent.",
+      "expected": "prompt-engineering"
+    },
+    {
+      "id": "product-idea",
+      "input": "Draft an MVP product roadmap for this feature.",
+      "expected": "product-idea"
+    },
+    {
+      "id": "ordered-precedence",
+      "input": "Create tests for the authentication security review.",
+      "expected": "security-review"
+    },
+    {
+      "id": "chinese-code-review",
+      "input": "排查代码中的修复和接口问题。",
+      "expected": "code-review"
+    },
+    {
+      "id": "general",
+      "input": "Continue with the next scoped step.",
+      "expected": "general"
+    }
+  ]
+}
