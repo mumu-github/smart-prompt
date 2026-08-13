@@ -7,8 +7,15 @@ const TARGET_ADAPTER: &str = include_str!("../src/target_adapter.rs");
 const SIDECAR_MAIN: &str = include_str!("../src/main.rs");
 const PREPARE_SIDECAR_SOURCE: &str = include_str!("../../desktop-shell/scripts/prepare-sidecar.js");
 
+// 源码级多行断言对行尾免疫：不同 checkout 可能给出 CRLF，先归一为 LF。
+fn lf(source: &str) -> String {
+    source.replace("\r\n", "\n")
+}
+
 #[test]
 fn installed_native_sidecar_bundles_the_codex_driver_without_a_repository_dependency() {
+    let target_adapter = lf(TARGET_ADAPTER);
+    let sidecar_main = lf(SIDECAR_MAIN);
     assert!(PREPARE_SIDECAR.contains("codex-target-adapter-driver.ps1"));
     assert!(PREPARE_SIDECAR.contains("path.join(resourcesRoot, \"scripts\""));
     assert!(TAURI_CONFIG.contains("resources/smart-prompt-sidecar/"));
@@ -26,13 +33,13 @@ fn installed_native_sidecar_bundles_the_codex_driver_without_a_repository_depend
             .join("codex-target-adapter-driver.ps1"),
         expected
     );
-    assert!(TARGET_ADAPTER.contains("bundled_driver_path_for_executable"));
-    assert!(TARGET_ADAPTER.contains("#[cfg(debug_assertions)]"));
-    assert!(TARGET_ADAPTER.contains(
+    assert!(target_adapter.contains("bundled_driver_path_for_executable"));
+    assert!(target_adapter.contains("#[cfg(debug_assertions)]"));
+    assert!(target_adapter.contains(
         "#[cfg(debug_assertions)]\n            if let Some(configured) = std::env::var_os(\"SMART_PROMPT_CODEX_TARGET_DRIVER\")"
     ));
-    assert!(!TARGET_ADAPTER.contains("C:\\Users\\lhy10\\Documents\\Smart Prompt"));
-    assert!(SIDECAR_MAIN.contains("#[cfg(debug_assertions)]\nfn extend_dev_m3_script_roots"));
+    assert!(!target_adapter.contains("C:\\Users\\lhy10\\Documents\\Smart Prompt"));
+    assert!(sidecar_main.contains("#[cfg(debug_assertions)]\nfn extend_dev_m3_script_roots"));
     assert!(PREPARE_SIDECAR_SOURCE.contains("assertNoEmbeddedRepoPath"));
 }
 

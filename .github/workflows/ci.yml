@@ -20,8 +20,20 @@ jobs:
         with:
           node-version: 22
 
+      # 扩展页运行时测试需要 --load-extension：品牌版 Chrome stable（137+）
+      # 已禁用命令行加载扩展，必须使用 Playwright 的 chrome-headless-shell。
+      - name: Install Chromium headless shell for extension runtime tests
+        shell: pwsh
+        run: |
+          npx --yes playwright@latest install chrome-headless-shell
+          $shell = Get-ChildItem "$env:LOCALAPPDATA\ms-playwright\chrome-headless-shell-*\chrome-headless-shell-win64\chrome-headless-shell.exe" |
+            Sort-Object LastWriteTime -Descending |
+            Select-Object -First 1 -ExpandProperty FullName
+          if (-not $shell) { throw "chrome-headless-shell not found after install" }
+          "CHROME_PATH=$shell" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+
       # 浏览器扩展 runtime-demo/options-runtime 需要本机 Chrome：
-      # windows-latest 镜像自带 Google Chrome；若镜像变化需另装或改 CHROME_PATH。
+      # 通过上一步安装的 chrome-headless-shell（CHROME_PATH）运行。
       - name: Run all Node test suites
         shell: pwsh
         run: npm run test:node

@@ -12,8 +12,15 @@ const SERVICE_PORT = Number(process.env.SMART_PROMPT_VISUAL_SERVICE_PORT || 1737
 const PREVIEW_PORT = Number(process.env.SMART_PROMPT_VISUAL_PREVIEW_PORT || 17372);
 const nativeSidecarPath = process.env.SMART_PROMPT_PHASE3_SIDECAR
   || path.join(root, "src-tauri", "resources", "smart-prompt-sidecar", "bin", process.platform === "win32" ? "local-service-sidecar.exe" : "local-service-sidecar");
+const playwrightChromePath = path.join(
+  process.env.LOCALAPPDATA || "",
+  "ms-playwright",
+  "chromium_headless_shell-1223",
+  "chrome-headless-shell-win64",
+  "chrome-headless-shell.exe"
+);
 const chromePath = process.env.CHROME_PATH
-  || path.join(process.env.LOCALAPPDATA || "", "ms-playwright", "chromium_headless_shell-1223", "chrome-headless-shell-win64", "chrome-headless-shell.exe");
+  || (fs.existsSync(playwrightChromePath) ? playwrightChromePath : "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe");
 const outputDir = path.join(repoRoot, "outputs", "phase3-activation");
 const learningFixture = JSON.parse(fs.readFileSync(path.join(__dirname, "fixtures", "outcome-learning-ui.json"), "utf8"));
 const screenshotPaths = {

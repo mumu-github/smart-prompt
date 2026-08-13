@@ -7,7 +7,7 @@
 - 已修复：`preserveVerifiedCodexTransaction` 原把 `pendingOutcome` 计入保护，导致 undo 后重新打开卡片 re-claim 的 pending 问题使切工具时不清理旧草稿；现在只保护真实事务（undoToken/transactionId），pendingOutcome 是服务端队列的客户端缓存，目标切换丢弃后可重新 claim。
 - 已修复：`codex-target-routes-v1.test.js` 假时钟冻结在 2026-07-19，与服务端真实 `Date.now()` lease 清理冲突（时间炸弹）；现在锚定 `Date.now()`。同类冻结时钟测试仅在该文件失败，其余经运行确认。
 - 新增：根 `package.json` 聚合入口（`npm test` = 5 个 Node 包 + sidecar cargo test）与 `.github/workflows/ci.yml`（windows-latest，Node 22 + stable Rust，含 phase3 真二进制契约与桌面 Rust check）。
-- 待办（路线图阶段 A 剩余）：key critics 接入 CI；视觉测试 `chrome-headless-shell` 路径可配置化；文档漂移修复。
+- 待办（路线图阶段 A 剩余）：key critics 接入 CI（需 headless 子集，缓行）；文档漂移已修复（assistant-state-spec 补齐 clarification/outcome/collapse 命令与 View Model 实际形状，local-service /health 版本 0.3.0 对齐 0.2.0）。
 
 ## 2026-07-19 Codex Outcome Learning Loop v1 当前风险
 

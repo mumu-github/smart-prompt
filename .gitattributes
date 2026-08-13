@@ -1,0 +1,9 @@
+# 统一 LF 行尾：仓库所有文本文件以 LF 存储与检出，
+# 避免 Windows CI 上 autocrlf 转成 CRLF 破坏源码级字符串断言。
+* text=auto eol=lf
+
+# 二进制文件不做行尾转换
+*.png binary
+*.ico binary
+*.gif binary
+*.mp4 binary

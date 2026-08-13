@@ -49,7 +49,9 @@
 
 - [ ] **Node/Rust 双实现收敛**：Rust sidecar 退化为薄代理（凭证 DPAPI、写回事务、隐私守卫、健康接口）；学习/策略逻辑只保留 Node 一份。消除 `main.rs`（6765 行）与 `learning_policy.rs`（5394 行）的业务逻辑重复，并消除 phase3 契约只测 sidecar 的行为漂移风险。
 - [ ] **验证脚本收敛**：165k 行 PowerShell 从"每次人肉跑 30 个"收敛为 5-8 个 key critics（critic-v2、critic-m3、phase3、privacy、installer、visual），其余归档为历史；新增根级 `npm test` 聚合入口。
-- [x] **补 CI**：GitHub Actions 聚合测试入口（根 `npm test`，`.github/workflows/ci.yml`）；[ ] key critics 接入与视觉测试 `chrome-headless-shell` 路径可配置化。
+- [x] **补 CI**：GitHub Actions 聚合测试入口（根 `npm test`，`.github/workflows/ci.yml`）。
+- [x] 视觉测试 `chrome-headless-shell` 路径可配置化：全部视觉入口统一 `CHROME_PATH` → Playwright → 系统 Chrome 回退链。
+- [ ] key critics 接入 CI（缓行）：critic-m3/phase3 等探测真实桌面应用与已安装二进制，CI runner 无 GUI 环境，需先为 critics 设计 headless 子集或保留人工运行。
 - [ ] **同步机制收口**：`smart-prompt-core` 无 sync 脚本，要么补 sync，要么合并进 `packages/prompt-session`，禁止第三份裸奔拷贝。
 - [ ] 拆分 God files（`app.js` 3761 行、`server.js`、`store.js`），小步提交，以 phase3 契约测试为安全网。
 
