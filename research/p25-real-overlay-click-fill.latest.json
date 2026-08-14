@@ -1,14 +1,14 @@
 ﻿{
     "schemaVersion":  "p25-real-overlay-click-fill@1",
-    "createdAt":  "2026-06-16T16:41:23.2032159Z",
+    "createdAt":  "2026-08-13T18:23:49.4047169Z",
     "pass":  true,
     "completionReady":  false,
-    "completionImpact":  "real_overlay_click_requires_explicit_allow",
+    "completionImpact":  "overlay_noactivate_missing",
     "requestedProfiles":  [
                               "codex"
                           ],
     "allowRealOverlayClick":  false,
-    "desktopPromptPrepared":  true,
+    "desktopPromptPrepared":  false,
     "manualDesktopPromptPrepared":  false,
     "refreshedTargets":  false,
     "reports":  {
@@ -26,9 +26,9 @@
                           "composerDiagnosticsReportPresent":  true,
                           "browserLikeComposerBlocked":  false,
                           "overlayNoActivateReportPresent":  true,
-                          "overlayNoActivateReady":  true,
+                          "overlayNoActivateReady":  false,
                           "desktopPromptStatePresent":  true,
-                          "desktopPromptStateReady":  true,
+                          "desktopPromptStateReady":  false,
                           "manualDesktopPromptPrepared":  false,
                           "explicitClickAllowed":  false,
                           "clickPreconditionsReady":  false
@@ -70,21 +70,21 @@
     "desktopPromptState":  {
                                "schemaVersion":  "p25-desktop-prompt-state@1",
                                "recordedAtPresent":  true,
-                               "source":  "desktop-overlay-real-generate-prep",
-                               "prepared":  true,
-                               "activeTextKind":  "generated",
-                               "activeTextLength":  167,
-                               "activeTextHashPresent":  true,
-                               "generatedBy":  "llm",
+                               "source":  "desktop-shell",
+                               "prepared":  false,
+                               "activeTextKind":  "none",
+                               "activeTextLength":  0,
+                               "activeTextHashPresent":  false,
+                               "generatedBy":  "unknown",
                                "readiness":  {
-                                                 "candidateIndex":  180,
+                                                 "candidateIndex":  2,
                                                  "noAutoSubmit":  true,
-                                                 "overlayReadinessReason":  "ready",
-                                                 "overlayReady":  true,
-                                                 "profile":  "codex",
-                                                 "readinessReason":  "ready",
-                                                 "ready":  true,
-                                                 "titleHash":  ""
+                                                 "overlayReadinessReason":  "unknown-profile",
+                                                 "overlayReady":  false,
+                                                 "profile":  "unknown",
+                                                 "readinessReason":  "unknown-profile",
+                                                 "ready":  false,
+                                                 "titleHash":  "4eca3e5f9a90e5a6"
                                              }
                            },
     "overlayWindow":  null,
@@ -96,7 +96,7 @@
     "verification":  {
                          "servicePort":  17371,
                          "serviceReachable":  true,
-                         "desktopPromptStateReady":  true,
+                         "desktopPromptStateReady":  false,
                          "beforeFillRecordedAtPresent":  false,
                          "latestFillObserved":  false,
                          "fillVerified":  false,
