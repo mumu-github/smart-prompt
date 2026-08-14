@@ -359,7 +359,13 @@ function Get-FocusedComposerMetadata {
   $candidateRight = [double]$bounds.X + [double]$bounds.Width
   $rootBottom = [double]$root.Y + [double]$root.Height
   $rootRight = [double]$root.X + [double]$root.Width
-  $maxHeight = [Math]::Min(420.0, [double]$root.Height * 0.45)
+  # The 420px composer-height cap encodes a 96-DPI logical intent; UIA bounds
+  # are physical pixels, so scale the cap by the target window DPI. At 96 DPI
+  # the behavior is unchanged (420); at 200% DPI the physical cap is 840.
+  $windowDpi = [int][SmartPromptCodexTargetNative]::GetDpiForWindow($Context.Handle)
+  if ($windowDpi -le 0) { $windowDpi = 96 }
+  $dpiScale = [double]$windowDpi / 96.0
+  $maxHeight = [Math]::Min(420.0 * $dpiScale, [double]$root.Height * 0.45)
   $baseGeometryMatched = [bool](
     $bounds.Width -ge 120 -and
     $bounds.Height -ge 24 -and
@@ -1136,6 +1142,23 @@ function Invoke-ReplaceOperation {
       -PasteApplied $false
   }
 
+  # The ChatGPT-packaged Codex composer collapses newlines on ValuePattern
+  # SetValue (multi-line prompts get flattened). Its paste handler preserves
+  # them, so this profile prefers the controlled clipboard write when the
+  # caller allows it. Direct SetValue remains the fallback path.
+  $codexWritePolicy = Get-SmartPromptDesktopToolProfilePolicy -ToolProfile "codex"
+  $preferClipboard = [bool](
+    $null -ne $codexWritePolicy -and
+    $null -ne $codexWritePolicy.composerGuard -and
+    $codexWritePolicy.composerGuard.preferControlledClipboard -eq $true
+  )
+  if (
+    $preferClipboard -and
+    $Command.allowClipboardFallback -eq $true -and
+    $guard.Metadata.CanControlledClipboard
+  ) {
+    return Invoke-ControlledClipboardReplacement -Command $Command -InitialGuard $guard
+  }
   if ($guard.Metadata.CanSetValue -and $null -ne $guard.Metadata.ValuePattern) {
     return Invoke-DirectReplacement -Command $Command -Guard $guard
   }
@@ -1158,7 +1181,28 @@ function Invoke-ReplaceOperation {
     -PasteApplied $false
 }
 
-$rawInput = [Console]::In.ReadToEnd()
+# NOTE: this file MUST stay ASCII-only. PowerShell 5.1 parses no-BOM .ps1 as
+# ANSI; non-ASCII bytes can swallow newlines and break here-strings.
+# Under CreateNoWindow (native sidecar spawn), the process has no console:
+# [Console]::In.ReadToEnd() returns empty and [Console]::OpenStandardInput()
+# throws. Read the OS-level stdin handle (redirected pipe) via GetStdHandle.
+Add-Type @"
+using System;
+using System.Runtime.InteropServices;
+public static class SmartPromptDriverStdin {
+  [DllImport("kernel32.dll", SetLastError = true)]
+  public static extern IntPtr GetStdHandle(int nStdHandle);
+}
+"@
+$stdinHandle = [SmartPromptDriverStdin]::GetStdHandle(-10)
+if ($stdinHandle -eq [IntPtr]::Zero -or $stdinHandle -eq [IntPtr](-1)) {
+  throw "stdin_unavailable"
+}
+$stdinReader = New-Object System.IO.StreamReader(
+  (New-Object System.IO.FileStream($stdinHandle, [System.IO.FileAccess]::Read)),
+  [System.Text.Encoding]::UTF8)
+$rawInput = $stdinReader.ReadToEnd()
+$stdinReader.Close()
 $command = $null
 $kind = "invalid"
 $result = $null
@@ -1210,6 +1254,8 @@ public static class SmartPromptCodexTargetNative {
   public static extern uint GetClipboardSequenceNumber();
   [DllImport("user32.dll")]
   public static extern void keybd_event(byte virtualKey, byte scanCode, uint flags, UIntPtr extraInfo);
+  [DllImport("user32.dll")]
+  public static extern uint GetDpiForWindow(IntPtr hWnd);
   [DllImport("dwmapi.dll")]
   public static extern int DwmGetWindowAttribute(
     IntPtr hWnd,

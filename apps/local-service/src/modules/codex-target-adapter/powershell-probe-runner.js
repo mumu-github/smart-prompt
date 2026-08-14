@@ -4,8 +4,11 @@ const childProcess = require("node:child_process");
 const path = require("node:path");
 
 const DRIVER_SCHEMA_VERSION = "codex-target-adapter-driver@1";
-const DEFAULT_TIMEOUT_MS = 30000;
-const MAX_TIMEOUT_MS = 30000;
+// UIA 遍历在 Codex/ChatGPT 桌面应用（OpenAI.Codex 包）实测可达 89 秒，
+// 30 秒会导致真实闭环的 inspect 恒超时；默认 90 秒、硬上限 120 秒，
+// 超时仍会中止并拒绝写入（安全守卫不变）。
+const DEFAULT_TIMEOUT_MS = 90000;
+const MAX_TIMEOUT_MS = 120000;
 const MAX_INPUT_BYTES = 512 * 1024;
 const MAX_OUTPUT_BYTES = 512 * 1024;
 const ALLOWED_KINDS = new Set(["inspect", "read_exact", "replace_all_atomic"]);

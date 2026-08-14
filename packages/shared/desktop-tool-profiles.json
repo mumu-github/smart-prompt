@@ -46,6 +46,25 @@
     }
   ],
   "policies": {
+    "codex": {
+      "composerGuard": {
+        "minWidth": 240,
+        "minHeight": 36,
+        "maxHeight": 420,
+        "requireNearWindowBottom": true,
+        "blockBroadDocument": true,
+        "strongSignals": [
+          "hasKeyboardFocus",
+          "focusedElementMatch",
+          "caretWithinBounds",
+          "caretWindowMatch",
+          "cursorWithinBounds",
+          "semanticComposerHint"
+        ],
+        "allowWeakSignalClipboardFallback": false,
+        "preferControlledClipboard": true
+      }
+    },
     "workbuddy": {
       "composerGuard": {
         "minWidth": 240,

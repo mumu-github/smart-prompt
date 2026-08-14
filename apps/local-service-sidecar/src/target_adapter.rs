@@ -22,8 +22,11 @@ pub const VERIFIED_TRANSACTION_TTL_MS: i64 = 5 * 60 * 1_000;
 pub const TRANSACTION_VERSION: &str = "codex-verified-insert-transaction@1";
 pub const TRANSACTION_CLAIM_VERSION: &str = "codex-verified-insert-claim@1";
 pub const DRIVER_SCHEMA_VERSION: &str = "codex-target-adapter-driver@1";
-pub const DEFAULT_DRIVER_TIMEOUT_MS: u64 = 30_000;
-pub const MAX_DRIVER_TIMEOUT_MS: u64 = 30_000;
+// UIA traversal on the Codex/ChatGPT desktop app (OpenAI.Codex package) can
+// take ~89s; 30s made real closure inspects time out deterministically.
+// Timeout still aborts and refuses writes — safety guards unchanged.
+pub const DEFAULT_DRIVER_TIMEOUT_MS: u64 = 90_000;
+pub const MAX_DRIVER_TIMEOUT_MS: u64 = 120_000;
 pub const MAX_DRIVER_IO_BYTES: usize = 512 * 1024;
 pub const DRIVER_FILE_NAME: &str = "codex-target-adapter-driver.ps1";
 
@@ -380,11 +383,16 @@ impl PowerShellProbeRunner {
                 return Err(ProbeError::new("codex_probe_output_too_large"));
             }
             if !status.success() {
+                eprintln!("[diag] probe nonzero exit {status}: stderr={}", String::from_utf8_lossy(&stderr).chars().take(500).collect::<String>());
                 return Err(ProbeError::new("codex_probe_process_failed"));
             }
             let contract = extract_driver_contract(&stdout, kind)
-                .ok_or_else(|| ProbeError::new("codex_probe_invalid_output"))?;
+                .ok_or_else(|| {
+                    eprintln!("[diag] probe invalid output: stdout={}", String::from_utf8_lossy(&stdout).chars().take(500).collect::<String>());
+                    ProbeError::new("codex_probe_invalid_output")
+                })?;
             if contract.get("driverOk").and_then(Value::as_bool) != Some(true) {
+                eprintln!("[diag] probe driverOk=false contract={}", contract);
                 return Err(ProbeError::new(
                     contract
                         .get("reasonToken")

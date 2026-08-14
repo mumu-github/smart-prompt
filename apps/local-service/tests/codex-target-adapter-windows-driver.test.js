@@ -45,7 +45,7 @@ function expectSafeError(action, code, sentinels = []) {
 }
 
 assert.equal(DRIVER_SCHEMA_VERSION, "codex-target-adapter-driver@1");
-assert.equal(DEFAULT_TIMEOUT_MS, 30000);
+assert.equal(DEFAULT_TIMEOUT_MS, 90000);
 
 {
   const first = JSON.stringify(driverContract("inspect", "first"));
@@ -229,12 +229,13 @@ const driverSource = fs.readFileSync(driverPath, "utf8");
 const nativeAdapterSource = fs.readFileSync(nativeAdapterPath, "utf8");
 assert.match(
   nativeAdapterSource,
-  /DEFAULT_DRIVER_TIMEOUT_MS:\s*u64\s*=\s*30_000/,
-  "native atomic UIA replacement must retain the production 30 second timeout"
+  /DEFAULT_DRIVER_TIMEOUT_MS:\s*u64\s*=\s*90_000/,
+  "native atomic UIA replacement must retain the calibrated 90 second timeout (Codex/ChatGPT UIA can exceed 30s)"
 );
 
 for (const required of [
-  "[Console]::In.ReadToEnd()",
+  "SmartPromptDriverStdin",
+  "GetStdHandle(-10)",
   "[Console]::InputEncoding = New-Object System.Text.UTF8Encoding($false)",
   "ConvertFrom-Json",
   "ConvertTo-Json -Depth 8 -Compress",
