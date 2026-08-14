@@ -1,5 +1,13 @@
 # 当前进度
 
+## 2026-08-14 真实闭环 8 轮尝试后的诚实状态
+
+- 已完成并入库 4 个写回链路真实修复：驱动 stdin（GetStdHandle，CreateNoWindow 下管道可达）、几何守卫 DPI 适配（420px 上限按窗口 DPI 缩放）、探针超时校准（90s/120s，Node+Rust 一致）、codex 画像 `preferControlledClipboard`（ChatGPT 桌面应用 SetValue 压平换行，粘贴实测保留）。
+- CDP 修复已入库：Evergreen Runtime 151 忽略 WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS（外部与进程内均失效），需固定版 Runtime 133（`.runtime/webview2-fixed-133/`）+ `SMART_PROMPT_CDP_PORT` 进程内注入；启动命令见 bugs.md。
+- 闭环当前被**环境性阻塞**（8 轮尝试，`research/codex-outcome-learning-loop-v1-real-closure.latest.json` 诚实记录 pass=false）：本机多个 AI 工具悬浮层（LLM HUD、CordC、Accio 等）周期性抢占前台，ChatGPT 窗口反复被最小化/cloak，严格 foreground + focused-composer 契约无法连续维持 3.5 分钟；无人值守运行同样失败（trace 显示每 10-30 秒一次前台闪变）。
+- 继续闭环的条件：关闭/卸载抢占前台的悬浮层工具（或换一台干净机器）后重跑 `node scripts/check-codex-outcome-real-closure.js`（前置：固定 Runtime env + CDP env + ChatGPT 前台聚焦 + 干净草稿）。
+- 本次会话的工程产出（入库、CI、文档、7 个 bug 修复）均已在 `codex/prompt-automation-research` 分支。
+
 ## 2026-08-13 阶段 A 收口与真实闭环准备
 
 - 已完成：7 周工作分批入库（8 批 371 文件）、根级 `npm test` 聚合入口、GitHub Actions CI（远程全绿）、文档漂移修复、视觉测试 Chrome 路径可配置化、官网单页与上架/招募材料。
